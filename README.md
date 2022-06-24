@@ -6,7 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of annual.report.june.2022 is to …
+The goal of the annual.updates repository is to:
 
 -   Serve as a repository of all the figures and underlying datasets of
     the AQLI Annual Reports and factsheets.
