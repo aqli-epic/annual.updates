@@ -1,0 +1,23 @@
+---
+title: "Annual Report June 2022"
+author: "Aarsh Batra"
+date: '2022-06-21'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r load_libraries}
+
+```
+
+
+
+# Figure 1
+```{r}
+
+```
+
