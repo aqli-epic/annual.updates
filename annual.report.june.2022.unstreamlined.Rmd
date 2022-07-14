@@ -33,6 +33,9 @@ devtools::document()
 # read in latest color file
 color_2020 <- read_csv("./june.2022/master.dataset/color.csv")
 
+# GBD final results file (resulting file that we get after applying the steps in the GBD technical appendix)
+gbd_results <- read_csv("./june.2022/other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
+
 # global variables
 who_guideline <- 5
 le_constant <- 0.098
@@ -51,7 +54,7 @@ le_constant <- 0.098
 
 # Figure 2: Global Trends in PM2.5 Concentrations, 2000-2020
 
-```{r}
+```{r ar-fig2}
 
 # calculating population weights and replacing the "pm" columns with their population weighted counterparts
 color_2020_pop_weighted <- color_2020 %>%
@@ -93,7 +96,7 @@ write_csv(global_trends_figure_2020_dataset_filtered, "./june.2022/annual.report
 
 # Figure 3: Potential Gain in Life Expectancy from Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline in the 10 Most Populated Countries in the World
 
-```{r}
+```{r ar-fig3}
 
 # Creating the master dataset with all relevant columns to plot the 3 figures in the panel (will be arranged in a single row)
 ar_fig3_dataset <- color_2020 %>%
@@ -153,5 +156,40 @@ ggsave("./june.2022/annual.report/figure3.data.graph/ar_fig3.png", ar_fig3)
 
 # save the dataset that was reduced to generate the figure
 write_csv(ar_fig3_dataset , "./june.2022/annual.report/figure3.data.graph/ar_fig3_data.csv")
+```
+
+
+# Figure 4
+
+```{r ar-fig4}
+
+# prepare the gbd figure dataset keeping relevant causes of death and filtering out others
+ar_fig_4_dataset <- gbd_results %>%
+  filter(location == "global", 
+         cause_of_death %in% c("PM2.5 relative to WHO", "Smoking", 
+                               "Alcohol use", "Unsafe water, sanitation, and handwashing",
+                               "Road injuries", "HIV/AIDS", 
+                               "Malaria", "Conflict and terrorism")) %>%
+  select(cause_of_death, est_le_diff_vs_actual_aggregate) 
+
+# plot the gbd figure
+ar_fig4 <- ggplot(gbd_fig_4_dataset, mapping = aes(x = fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate, .desc = TRUE), y = est_le_diff_vs_actual_aggregate)) + 
+  geom_col(mapping = aes(fill = est_le_diff_vs_actual_aggregate), width = 0.5) +
+  ggthemes::theme_tufte() + 
+  labs(x = "", y = "Life Years Lost") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust=0.90), 
+        legend.position = "none") +
+  ggtitle(str_c("Life Expectany Impact of Mortality Causes & Risks:", "Global", sep = " ")) +
+   scale_fill_gradient(low = "darkgoldenrod1", high = "darkorange")
+ 
+# save the plot in the appropriate folder
+ggsave("./june.2022/annual.report/figure4.data.graph/ar_fig4.png", ar_fig4)
+
+# save the dataset that was reduced to generate the figure
+write_csv(ar_fig4_dataset , "./june.2022/annual.report/figure4.data.graph/ar_fig4_data.csv")
+
+ 
+
+
 ```
 
