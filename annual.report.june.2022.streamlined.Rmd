@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r load-lib-helper-files}
+```{r load-lib-helper-files-data}
 
 # libraries
 library(readr)
@@ -29,6 +29,9 @@ library(devtools)
 # load and document to keep things updated
 devtools::load_all()
 devtools::document()
+
+# read in color file
+master_df <- read_csv("./june.2022/master.dataset/color.csv")
 
 ```
 
