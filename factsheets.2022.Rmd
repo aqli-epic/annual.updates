@@ -226,7 +226,7 @@ southkorea_fs_fig2 <- southkorea_fs_fig2_dataset %>%
 
 # save southkorea factsheet figure2
 
-ggsave("./june.2022/factsheets/southkorea/graphs/southkorea_fs_fig2.png", nigeria_fs_fig4) 
+ggsave("./june.2022/factsheets/southkorea/graphs/southkorea_fs_fig2.png", southkorea_fs_fig2) 
 
 # southkorea factsheet figure 3 dataset
 southkorea_fs_fig3_dataset <- color_2020_south_korea %>%
@@ -263,10 +263,13 @@ southkorea_fs_fig3_dataset %>%
         axis.title.x = element_text(size = 9)) +  geom_text(x = 2003.6, y = 6.3, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, ""))) +
     geom_text(x = 2014, y = 26.3, label = expression(paste("South Korea PM2.5 National Standard: 25 ", mu, "g","/", m^3, "")))
   
+  
+# save southkorea factsheet figure2
+ggsave("./june.2022/factsheets/southkorea/graphs/southkorea_fs_fig3.png", southkorea_fs_fig3)   
 
 # South Korea fact sheet appendix table
 
-color_2020_south_korea %>%
+southkorea_fs_appendix_table <- color_2020_south_korea %>%
   mutate(le_gain_who = round((pm2020 - who_guideline)*le_constant, 1), 
          le_gain_who = ifelse(le_gain_who < 0, 0, le_gain_who), 
          le_gain_nat_stan = round((pm2020 - nat_stan_sk)*le_constant, 1), 
@@ -283,7 +286,11 @@ color_2020_south_korea %>%
          `PM 2.5 concentration 2020 (µg/m³)` = pm2020, 
          `From 2020 Concentration to WHO Guideline of 5 µg/m³` = le_gain_who, 
          `From 2020 Concentration to the National Standard of 25 µg/m³` = le_gain_nat_stan)
-  write_csv("./output/south_korea_factsheet/appendix_table_Updated_March292022.csv")
+
+# South Korea factsheet appendix table save
+southkorea_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/southkorea/graph.wise.datasets/southkorea_fs_appendix_table.csv")
+ 
 
 
 ```
