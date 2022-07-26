@@ -425,3 +425,134 @@ bangladesh_fs_appendix_table %>%
   write_csv("./june.2022/factsheets/bangladesh/bangladesh_fs_appendix_table.csv")
 ```
 
+
+# Nepal Factsheet
+
+```{r}
+
+# filtering the color dataset for Nepal
+color_2020_nepal <- color_2020 %>%
+  filter(country == "Nepal")
+
+# nepal factsheet figure 2 dataset
+nepal_fs_fig2_dataset <- color_2020_nepal %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save nepal factsheet figure 2 dataset
+nepal_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/nepal/graph.wise.datasets/nepal_fs_fig2_dataset.csv")
+
+# nepal fs figure 2
+ nepal_fs_fig2 <- nepal_fs_fig2_dataset %>% 
+   ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = le_gain), width = 0.5) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 12, 1)) +
+  coord_flip() +
+   scale_fill_gradient(low = "red", high = "darkred") +
+  theme_classic() +
+  theme(legend.position = "none")
+ 
+ # save nepal fs figure 2
+ ggsave("./june.2022/factsheets/nepal/graphs/nepal_fs_fig2.png", nepal_fs_fig2)
+
+
+
+# filtering gbd results for Nepal
+gbd_results_nepal <- gbd_results %>%
+  filter(location == "Nepal")
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+gbd_results_nepal_filter <- gbd_results_nepal %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco", 
+                                "Household air pollution from solid fuels"))
+
+nepal_fs_fig3_dataset <- gbd_results_nepal_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6)
+
+# save nepal factsheet figure 3 dataset
+nepal_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/nepal/graph.wise.datasets/nepal_fs_fig3_dataset.csv")
+
+# nepal factsheet figure 3
+nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) +
+  labs(x = "Cause of Death", y = "Years Lost") +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()  
+
+ # save nepal fs figure 3
+ ggsave("./june.2022/factsheets/nepal/graphs/nepal_fs_fig3.png", nepal_fs_fig3)
+
+
+
+# nepal factsheet figure 4 dataset
+nepal_fs_fig4_dataset <- color_2020_nepal %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5) 
+
+# save nepal factsheet figure 4 dataset
+nepal_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/nepal/graph.wise.datasets/nepal_fs_fig4_dataset.csv")
+
+# nepal factsheet figure 4
+ nepal_fs_fig4 <- nepal_fs_fig4_dataset %>%
+   ggplot() +
+  geom_line(mapping = ggplot2::aes(x = as.integer(years), y = as.double(pop_weighted_avg_pm2.5)), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 60)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2))  +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+   geom_text(x = 2003.5, y = 8.7, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+ 
+  # save nepal fs figure 4
+ ggsave("./june.2022/factsheets/nepal/graphs/nepal_fs_fig4.png", nepal_fs_fig4)
+
+ 
+# Nepal Factsheet Appendix Table 
+nepal_fs_appendix_table <- color_2020_nepal %>%
+  mutate(pm2020 = round(pm2020, 2),
+         le_gain_red_to_who = round((pm2020 - who_guideline)*le_constant, 2),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2020*0.3)*le_constant, 2), 
+         pop_millions = round(population/1000000, 2)) %>%
+  select(name_2, pop_millions, pm2020, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+    rename(Region = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = pm2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = le_gain_red_to_who, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save nepal factsheet appendix table
+nepal_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/nepal/nepal_fs_appendix_table.csv")
+```
+
