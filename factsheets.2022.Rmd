@@ -47,6 +47,7 @@ le_constant <- 0.098
 ncap_midpoint <- 25
 nat_stan_india <- 40
 nat_stan_sk <- 25
+nat_stan_bangladesh <- 15
 
 # global operations
 `%notin%` <- Negate(`%in%`)
@@ -268,7 +269,6 @@ southkorea_fs_fig3_dataset %>%
 ggsave("./june.2022/factsheets/southkorea/graphs/southkorea_fs_fig3.png", southkorea_fs_fig3)   
 
 # South Korea fact sheet appendix table
-
 southkorea_fs_appendix_table <- color_2020_south_korea %>%
   mutate(le_gain_who = round((pm2020 - who_guideline)*le_constant, 1), 
          le_gain_who = ifelse(le_gain_who < 0, 0, le_gain_who), 
@@ -289,9 +289,139 @@ southkorea_fs_appendix_table <- color_2020_south_korea %>%
 
 # South Korea factsheet appendix table save
 southkorea_fs_appendix_table %>%
-  write_csv("./june.2022/factsheets/southkorea/graph.wise.datasets/southkorea_fs_appendix_table.csv")
+  write_csv("./june.2022/factsheets/southkorea/southkorea_fs_appendix_table.csv")
  
 
 
+```
+
+# Bangladesh Factsheet
+
+```{r}
+
+# filtering color dataset and keeping only bangladesh
+color_2020_bangladesh <- color_2020 %>%
+  filter(country == "Bangladesh")
+
+
+# bangladesh fs figure 2 dataset
+bangladesh_fs_fig2_dataset <- color_2020_bangladesh %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save bangladesh fs figure 2 dataset
+bangladesh_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig2_dataset.csv")
+
+# bangladesh fs figure 2
+bangladesh_fs_fig2 <- bangladesh_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = le_gain), width = 0.5) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 12, 1)) +
+  scale_fill_gradient(low = "red", high = "darkred") +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = "none")
+
+# save bangladesh factsheet figure 2
+ggsave("./june.2022/factsheets/bangladesh/graphs/bangladesh_fs_figure2.png", bangladesh_fs_fig2)
+
+# filtering out the master GBD file for Bnagladesh
+gbd_results_bangladesh <- gbd_results %>% 
+  filter(location  == "Bangladesh")
+
+# remove categories that are sort of* already covered under the PM2.5 category
+gbd_results_bangladesh_filter <- gbd_results_bangladesh %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco", 
+                                "Household air pollution from solid fuels"))
+
+# bangladesh factsheet fig3 dataset
+bangladesh_fs_fig3_dataset <- gbd_results_bangladesh_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6) 
+
+# save bangladesh fs figure 3 dataset
+bangladesh_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig3_dataset.csv")
+
+# bangladesh factsheet figure 3
+bangladesh_fs_fig3 <- ggplot(bangladesh_fs_fig3_dataset) + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) +
+  labs(x = "Cause of Death", y = "Years Lost") +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  scale_y_continuous(breaks = seq(0, 8, 1)) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()  
+
+# save bangladesh factsheet figure 3  
+ggsave("./june.2022/factsheets/bangladesh/graphs/bangladesh_fs_figure3.png", bangladesh_fs_fig3)
+
+# bangladesh factsheet fig4 dataset
+bangladesh_fs_fig4_dataset <- color_2020_bangladesh %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5) 
+
+# save bangladesh fs figure 4 dataset
+bangladesh_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig4_dataset.csv")
+
+# bangladesh factsheet fig4
+bangladesh_fs_fig4 <- bangladesh_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = ggplot2::aes(x = as.integer(years), y = as.double(pop_weighted_avg_pm2.5)), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 80, 5), limits = c(0, 80)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2))  +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+   geom_text(x = 2002.8, y = 8.7, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+# save bangladesh factsheet figure 4  
+ggsave("./june.2022/factsheets/bangladesh/graphs/bangladesh_fs_figure4.png", bangladesh_fs_fig4)
+
+# bangladesh fs appendix table
+bangladesh_fs_appendix_table <- color_2020_bangladesh %>%
+  mutate(pm2020 = round(pm2020, 2),
+         le_gain_red_to_who = round((pm2020 - who_guideline)*le_constant, 2),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_to_nat = round((pm2020 - nat_stan_bangladesh)*le_constant, 2),
+         le_gain_red_to_nat = ifelse(le_gain_red_to_nat < 0, 0, le_gain_red_to_nat),
+         le_gain_red_by_30_percent = round((pm2020*0.3)*le_constant, 2), 
+         pop_millions = round(population/1000000, 2)) %>%
+  select(name_2, pop_millions, pm2020, le_gain_red_to_who, le_gain_red_to_nat, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+    rename(Region = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = pm2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = le_gain_red_to_who,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to National Standard of 15 µg/m³` = le_gain_red_to_nat, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save bangladesh factsheet appendix table
+bangladesh_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/bangladesh/bangladesh_fs_appendix_table.csv")
 ```
 
