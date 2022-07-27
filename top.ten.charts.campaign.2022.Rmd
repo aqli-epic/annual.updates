@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
+# get packages, global variables, datasets
 ```{r load-lib-helper-files-data-global-var}
 
 # libraries
@@ -53,9 +53,11 @@ nat_stan_india <- 40
 
 ```
 
+
 # Chart #10: Year over Year Change in PM2.5 Levels in 2020, the first year of the Pandemic
 
-```{r}
+```{r chart#10}
+
 # Prepare  data set for chart number 10
 chart10_dataset <- color_2020 %>%
   group_by(country) %>%
@@ -91,7 +93,7 @@ ggsave("./june.2022/top.ten.charts.campaign/chart10.data.graph/chart10.png", cha
 
 # Chart #9: Life Expectancy Impacts of Particulate Pollution and Other Health Threats in the Four Most Populous Countries in Central and West Africa
 
-```{r}
+```{r chart#9}
 
 # GBD results filtered for relevant cause of death and countries 
 chart9_dataset <- gbd_results %>%
@@ -161,7 +163,7 @@ chart9_dataset %>%
 ```
 # Chart #8: Comparison of Life Expectancy Lost Due to Particulate Pollution Not Meeting the WHO Guideline (Eastern v/s Western Europe)
 
-```{r}
+```{r chart#8}
 
 # make a copy of the color dataset, so as to convert the columns in the new dataset into lower case, specifically for this chart
 color_2020_chart8 <- color_2020
@@ -257,7 +259,7 @@ ggsave("./june.2022/top.ten.charts.campaign/chart8.data.graph/chart8.png", chart
 
 # Chart #7: Average PM2.5 Concentrations in India, 1998 to 2020
 
-```{r}
+```{r chart#7}
 
 # filtering the color dataset for India
 color_2020_india <- color_2020 %>%

@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
+# get packages, global variables and datasets
 ```{r load-lib-helper-files-data-global-var}
 
 # libraries
@@ -57,7 +57,7 @@ nat_stan_bangladesh <- 15
 
 # Nigeria Factsheet
 
-```{r}
+```{r nigeria_fs}
 
 # No National Standard for Nigeria
 nat_stan_nigeria <- "No National Standard"
@@ -192,7 +192,7 @@ nigeria_appendix_table %>%
 
 # South Korea factsheet
 
-```{r}
+```{r south_korea_fs}
 
 # filter dataset for south korea
 color_2020_south_korea <- color_2020 %>%
@@ -297,7 +297,7 @@ southkorea_fs_appendix_table %>%
 
 # Bangladesh Factsheet
 
-```{r}
+```{r bangladesh_fs}
 
 # filtering color dataset and keeping only bangladesh
 color_2020_bangladesh <- color_2020 %>%
@@ -428,7 +428,7 @@ bangladesh_fs_appendix_table %>%
 
 # Nepal Factsheet
 
-```{r}
+```{r nepal_fs}
 
 # filtering the color dataset for Nepal
 color_2020_nepal <- color_2020 %>%

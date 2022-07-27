@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
+# get packages, global variables, datasets
 ```{r load-lib-helper-files-data-global-var}
 
 # libraries
@@ -50,15 +50,43 @@ le_constant <- 0.098
 
 # Annual Report Figures
 
-# Figure 1
+# Figure 1: Impact of the Revised WHO Guideline on Polluted Regions in the World
 
-```{r figure-1}
+```{r ar-fig-1}
+
+# dividing color dataset into 3 pollution groups: [0, 5], (5, 10], (10, inf)
+
+ar_fig1_dataset <- color_2020 %>%
+  mutate(region = ifelse(pm2020 >= 0 & pm2020 <= 5, "In Compliance with new WHO Guideline", pm2020), 
+         region = ifelse((pm2020 > 5 & pm2020 <= 10), "Newly out of compliance", region),
+         region = ifelse((pm2020 > 10), "Already out of compliance", region))
+
+
+# read in color map shape file
+colormap_shp <- st_read("./june.2022/other.important.calculations.data/color.map.shape.file/colormap.shp")
+
+# ar figure 1 dataset
+ar_fig1_dataset <- ar_fig1_dataset %>%
+  left_join(colormap_shp, by = c("country" = "NAME_0", "name_1" = "NAME_1", "name_2" = "NAME_2")) %>%
+  select(country, name_1, name_2, pm2020, region, geometry)
+
+# save annual report figure 1 dataset
+ar_fig1_dataset %>%
+  st_write("./june.2022/annual.report/figure1.data.graph/ar_fig1_dataset.shp")
+
+# plot ar figure 1
+ar_fig1 <- ar_fig1_dataset %>%
+  st_as_sf() %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = region))
+
+# image saved separately by taking a screenshot from high definiton monitor
 
 ```
 
 # Figure 2: Global Trends in PM2.5 Concentrations, 2000-2020
 
-```{r ar-fig2}
+```{r ar-fig-2}
 
 # calculating population weights and replacing the "pm" columns with their population weighted counterparts
 color_2020_pop_weighted <- color_2020 %>%
@@ -100,7 +128,7 @@ write_csv(global_trends_figure_2020_dataset_filtered, "./june.2022/annual.report
 
 # Figure 3: Potential Gain in Life Expectancy from Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline in the 10 Most Populated Countries in the World
 
-```{r ar-fig3}
+```{r ar-fig-3}
 
 # Creating the master dataset with all relevant columns to plot the 3 figures in the panel (will be arranged in a single row)
 ar_fig3_dataset <- color_2020 %>%
@@ -165,7 +193,7 @@ write_csv(ar_fig3_dataset , "./june.2022/annual.report/figure3.data.graph/ar_fig
 
 # Figure 4: Life Expectancy Impact of PM2.5 and Unassociated Causes/Risks of Death, Global
 
-```{r ar-fig4}
+```{r ar-fig-4}
 
 # prepare the gbd figure dataset keeping relevant causes of death and filtering out others
 ar_fig4_dataset <- gbd_results %>%
@@ -198,7 +226,7 @@ write_csv(ar_fig4_dataset , "./june.2022/annual.report/figure4.data.graph/ar_fig
 
 # Figure 5: Global Trends in PM2.5 Concentrations, 2000-2020
 
-```{r ar-fig5}
+```{r ar-fig-5}
 # AR Figure 5
  
 # South Asia definition
@@ -252,16 +280,84 @@ ggsave("./june.2022/annual.report/figure5.data.graph/ar_fig5.png", ar_fig5)
 ```
 
 
-# Figure 6:
+# Figure 6: Distribution of Person-Years Gained if PM2.5 is Reduced to WHO Guideline Around the World
 
-```{r}
+```{r ar-fig6}
+
+# oecd countries
+oecd_countries <- c("Australia", "Austria", "Belgium",
+"Canada", "Chile", "Colombia", "Costa Rica", "Czech Republic", "Denmark",
+"Estonia", "Finland", "France", "Germany", "Greece", "Hungary",
+"Iceland", "Ireland", "Israel", "Italy", "Japan", "North Korea", "South Korea",
+"Latvia", "Lithuania", "Luxembourg", "Mexico", "Netherlands",
+"New Zealand", "Norway", "Poland", "Portugal", "Slovakia", "Slovenia",
+"Spain", "Sweden", "Switzerland", "Turkey", "United Kingdom", "United States")
+
+# add a le_gain and le_gain_grp column in the color_2020 dataset, this is to group regions into LE gains buckets
+ar_fig6_dataset <- color_2020 %>%
+  mutate(le_gain = (pm2020 - who_guideline)*le_constant, 
+         le_gain = ifelse(le_gain < 0, 0, le_gain), 
+         le_gain_grp = ifelse(le_gain == 0, "0", le_gain), 
+         le_gain_grp = ifelse(le_gain > 0 & le_gain <= 1, ">0-1", le_gain_grp), 
+         le_gain_grp = ifelse(le_gain > 1 & le_gain <= 2, ">1-2", le_gain_grp), 
+         le_gain_grp = ifelse(le_gain > 2 & le_gain <= 3, ">2-3", le_gain_grp), 
+         le_gain_grp = ifelse(le_gain > 3 & le_gain <= 4, ">3-4", le_gain_grp),
+         le_gain_grp = ifelse(le_gain > 4 & le_gain <= 5, ">4-5", le_gain_grp),
+         le_gain_grp = ifelse(le_gain > 5 & le_gain <= 6, ">5-6", le_gain_grp), 
+         le_gain_grp = ifelse(le_gain > 6 & le_gain <= 7, ">6-7", le_gain_grp), 
+         le_gain_grp = ifelse(le_gain > 7 & le_gain <= 8, ">7-8", le_gain_grp),
+         le_gain_grp = ifelse(le_gain > 8 & le_gain <= 9, ">8-9", le_gain_grp),
+         le_gain_grp = ifelse(le_gain > 9, ">9", le_gain_grp)) %>%
+  mutate(country_grp = ifelse(country %in% oecd_countries, "OECD countries", country), 
+         country_grp = ifelse(country_grp %in% c("OECD countries", "India", "China", "Bangladesh", "Pakistan", "Indonesia"), 
+                              country_grp, "Rest of the World")) %>%
+  select(country, name_1, name_2, population, pm2020, le_gain_grp, country_grp) 
+
+# add a ordering column that will help us arrange the le_gain buckets in the final figure
+ar_fig6_dataset <- ar_fig6_dataset %>%
+  group_by(le_gain_grp, country_grp) %>%
+  summarise(tot_population = sum(population, na.rm = TRUE), 
+            tot_population_millions = tot_population/1000000) %>%
+  ungroup() %>%
+  mutate(le_gain_grp_order = ifelse(le_gain_grp == "0", 1, 0), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">0-1", 2, le_gain_grp_order), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">1-2", 3, le_gain_grp_order), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">2-3", 4, le_gain_grp_order), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">3-4", 5, le_gain_grp_order), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">4-5", 6, le_gain_grp_order), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">5-6", 7, le_gain_grp_order), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">6-7", 8, le_gain_grp_order), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">7-8", 9, le_gain_grp_order), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">8-9", 10, le_gain_grp_order), 
+         le_gain_grp_order = ifelse(le_gain_grp == ">9", 11, le_gain_grp_order))
+
+# changing the ordering column type to type numeric
+ar_fig6_dataset$le_gain_grp_order <- as.numeric(ar_fig6_dataset$le_gain_grp_order)
+
+# save annual report figure 6 dataset
+ar_fig6_dataset %>%
+  write_csv("./june.2022/annual.report/figure6.data.graph/ar_fig6_dataset.csv")
+
+  
+# plot ar fig6 dataset
+ar_fig6 <- ar_fig6_dataset %>%
+    ggplot() +
+  geom_bar(mapping = aes(x = fct_reorder(le_gain_grp, le_gain_grp_order), y = tot_population_millions, fill = country_grp), stat = "identity") +
+    scale_fill_manual(values = c("chocolate3", "red", "black", "lightgreen", "lightblue", "orange", "grey"), name = "Region") +
+    scale_y_continuous(breaks = seq(0, 2500, 500)) +
+  labs(x = "Years of Life Gained if Pollution is reduced to WHO Guideline",
+       y = "People (in Millions)") +
+    theme_classic() 
+
+# save annual report figure 6
+ggsave("./june.2022/annual.report/figure6.data.graph/ar_fig6.png")
 
 ```
 
 
 # Figure 7: Year-Over-Year Change in PM2.5 Levels in 2020, the First Year of the Pandemic
 
-```{r}
+```{r ar-fig7}
 
 # Prepare AR Figure 7 data set
 ar_fig7_dataset <- color_2020 %>%
@@ -294,15 +390,16 @@ ar_fig7 <- ar_fig7_dataset %>%
 # Save AR figure 7
 ggsave("./june.2022/annual.report/figure7.data.graph/ar_fig7.png", ar_fig7)
 ```
-# Figure 8:
+# Figure 8: Potential Gain in Years of Life Expectancy Through Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, South Asia
 
-```{r}
+```{r ar-fig8}
 
+# This is a screenshot from the AQLI Index page.
 ```
 
 # Figure 9: Potential Gain in Years of Life Expectancy Through Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, in 10 Most Populated Regions in Southeast Asia
 
-```{r}
+```{r ar-fig9}
 
 # South East Asia Definition
 se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia", "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", "Vietnam")
@@ -343,21 +440,23 @@ ggsave("./june.2022/annual.report/figure9.data.graph/ar_fig9.png", ar_fig9)
 
 ```
 
-# Figure 10:
+# Figure 10: Potential Gain in Years of Life Expectancy Through Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, Southeast Asia
 
-```{r}
+```{r ar-fig10}
+
+# This is a screenshot from the AQLI Index page.
 
 ```
 
-# Figure 11:
+# Figure 11: Potential Gain in Life Expectancy from Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, Central and West Africa
 
-```{r}
-
+```{r ar-fig11}
+# This is a screenshot from the AQLI Index page.
 ```
 
 # Figure 12: Life Expectancy Impacts of Particulate Pollution and Other Health Threats in the Five Most Populous Countries in Central and West Africa
 
-```{r}
+```{r ar-fig12}
 
 # GBD results filtered for relevant cause of death and countries 
 gbd_results_fig12 <- gbd_results %>%
@@ -427,7 +526,7 @@ gbd_results_fig12 %>%
 
 # Figure 13: Potential Gain in Years of Life Expectancy Through Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, in 15 Most Populated Regions in Latin America
 
-```{r}
+```{r ar-fig13}
 
 # Latin America definition
 latin_america_countries_vec <- c("Mexico", "Guatemala", "Honduras", 
@@ -477,9 +576,16 @@ ggsave("./june.2022/annual.report/figure13.data.graph/ar_fig13.png", ar_fig13)
 ```
 
 
+# Figure 14: Potential Gain in Life Expectancy from Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, Latin America
+
+```{r ar-fig14}
+
+```
+
+
 # Figure 15: PM2.5 Concentrations in Major Regions in Mainland China Over Time
 
-```{r}
+```{r ar-fig15}
 
 # filter master dataset for China
 color_2020_china <- color_2020 %>%
@@ -565,9 +671,35 @@ ggsave("./june.2022/annual.report/figure15.data.graph/ar_fig15.png", ar_fig15)
 ```
 
 
+# Figure 16: Potential Gain in Life Expectancy from Reducing PM2.5 to the WHO Guideline in Mainland China, 2013 vs. 2020
+
+```{r ar-fig16}
+
+```
+
+
+# Figure 17: Change in Life Expectancy Due to Change in PM2.5 in United States, 1970-2020
+
+```{r ar-fig17}
+
+```
+
+# Figure 18: Change in Life Expectancy Due to Change in PM2.5 Concentrations in Europe, 1998-2020
+
+```{r ar-fig18}
+
+```
+
+# Figure 19: Potential Gain in Life Expectancy From Permanently Reducing PM2.5 From 2020 Concentrations to the WHO Guideline, Europe
+
+```{r ar-fig19}
+
+```
+
+
 # Figure 20: Global Population Weighted PM2.5 concentrations over time
 
-```{r}
+```{r ar-fig20}
 
 # add population weighted pm column in the 2020 color dataset
 color_2020_fig20 <- color_2020 %>%
