@@ -31,14 +31,14 @@ devtools::load_all()
 devtools::document()
 
 # read in latest color file
-color_2020 <- read_csv("./june.2022/master.dataset/color_2020.csv")
+color_2020 <- read_csv("./master.dataset/color_2020.csv")
 
 # read in old available color datasets
-color_2019 <- read_csv("./june.2022/master.dataset/color_2019.csv")
-color_2016 <- read_csv("./june.2022/master.dataset/color_2016.csv")
+color_2019 <- read_csv("./master.dataset/color_2019.csv")
+color_2016 <- read_csv("./master.dataset/color_2016.csv")
 
 # GBD final results file (resulting file that we get after applying the steps in the GBD technical appendix)
-gbd_results <- read_csv("./june.2022/other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
+gbd_results <- read_csv("./other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
 
 # global variables
 who_guideline <- 5
@@ -63,7 +63,7 @@ ar_fig1_dataset <- color_2020 %>%
 
 
 # read in color map shape file
-colormap_shp <- st_read("./june.2022/other.important.calculations.data/color.map.shape.file/colormap.shp")
+colormap_shp <- st_read("./other.important.calculations.data/color.map.shape.file/colormap.shp")
 
 # ar figure 1 dataset
 ar_fig1_dataset <- ar_fig1_dataset %>%
@@ -72,7 +72,7 @@ ar_fig1_dataset <- ar_fig1_dataset %>%
 
 # save annual report figure 1 dataset
 ar_fig1_dataset %>%
-  st_write("./june.2022/annual.report/figure1.data.graph/ar_fig1_dataset.shp")
+  st_write("./annual.report/figure1.data.graph/ar_fig1_dataset.shp")
 
 # plot ar figure 1
 ar_fig1 <- ar_fig1_dataset %>%
@@ -119,10 +119,10 @@ ar_fig2 <- ggplot() +
   theme(legend.position = "none", legend.title = element_blank(), axis.title.x =  element_text(size = 8), axis.title.y = element_text(size = 10))
 
 # save figure
-ggsave("./june.2022/annual.report/figure2.data.graph/ar_fig2.png", ar_fig2)
+ggsave("./annual.report/figure2.data.graph/ar_fig2.png", ar_fig2)
 
 # save figure data
-write_csv(global_trends_figure_2020_dataset_filtered, "./june.2022/annual.report/figure2.data.graph/ar_fig2_data.csv")
+write_csv(global_trends_figure_2020_dataset_filtered, "./annual.report/figure2.data.graph/ar_fig2_data.csv")
 
 ```
 
@@ -184,10 +184,10 @@ plt_top10_most_populous_tot_person_years_gained <- ar_fig3_dataset %>%
 ar_fig3 <- gridExtra::grid.arrange(plt_top10_most_populous_population , plt_top10_most_populous_le_gains_per_person, plt_top10_most_populous_tot_person_years_gained, nrow = 1)
 
 # save the plot in the appropriate folder
-ggsave("./june.2022/annual.report/figure3.data.graph/ar_fig3.png", ar_fig3)
+ggsave("./annual.report/figure3.data.graph/ar_fig3.png", ar_fig3)
 
 # save the dataset that was reduced to generate the figure
-write_csv(ar_fig3_dataset , "./june.2022/annual.report/figure3.data.graph/ar_fig3_data.csv")
+write_csv(ar_fig3_dataset , "./annual.report/figure3.data.graph/ar_fig3_data.csv")
 ```
 
 
@@ -215,10 +215,10 @@ ar_fig4 <- ggplot(gbd_fig_4_dataset, mapping = aes(x = fct_reorder(cause_of_deat
    scale_fill_gradient(low = "darkgoldenrod1", high = "darkorange")
  
 # save the plot in the appropriate folder
-ggsave("./june.2022/annual.report/figure4.data.graph/ar_fig4.png", ar_fig4)
+ggsave("./annual.report/figure4.data.graph/ar_fig4.png", ar_fig4)
 
 # save the dataset that was reduced to generate the figure
-write_csv(ar_fig4_dataset , "./june.2022/annual.report/figure4.data.graph/ar_fig4_data.csv")
+write_csv(ar_fig4_dataset , "./annual.report/figure4.data.graph/ar_fig4_data.csv")
 
  
 ```
@@ -258,7 +258,7 @@ color_2020_long_2000_2020 <- color_2020_long %>%
 
 # Save AR figure 5 dataset
 color_2020_long_2000_2020 %>%
-  write_csv("./june.2022/annual.report/figure5.data.graph/ar_fig5_data.csv")
+  write_csv("./annual.report/figure5.data.graph/ar_fig5_data.csv")
   
 
 # AR figure 5 plot
@@ -274,7 +274,7 @@ ar_fig5 <- ggplot(color_2020_long_2000_2020) +  geom_line(mapping = ggplot2::aes
   scale_x_continuous(breaks = seq(2000, 2020, 1))
 
 # save the plot in the appropriate folder
-ggsave("./june.2022/annual.report/figure5.data.graph/ar_fig5.png", ar_fig5)
+ggsave("./annual.report/figure5.data.graph/ar_fig5.png", ar_fig5)
 
 
 ```
@@ -336,7 +336,7 @@ ar_fig6_dataset$le_gain_grp_order <- as.numeric(ar_fig6_dataset$le_gain_grp_orde
 
 # save annual report figure 6 dataset
 ar_fig6_dataset %>%
-  write_csv("./june.2022/annual.report/figure6.data.graph/ar_fig6_dataset.csv")
+  write_csv("./annual.report/figure6.data.graph/ar_fig6_dataset.csv")
 
   
 # plot ar fig6 dataset
@@ -349,8 +349,19 @@ ar_fig6 <- ar_fig6_dataset %>%
        y = "People (in Millions)") +
     theme_classic() 
 
+# ar figure6 version 2
+tmp <- ar_fig6_dataset %>%
+    ggplot() +
+  geom_bar(mapping = aes(x = fct_reorder(le_gain_grp, le_gain_grp_order), y = tot_population_millions, fill = country_grp), stat = "identity", position = position_dodge()) +
+    scale_fill_manual(values = c("chocolate3", "red", "black", "lightgreen", "lightblue", "orange", "grey"), name = "Region") +
+    scale_y_continuous(breaks = seq(0, 1500, 250)) +
+  labs(x = "Years of Life Gained if Pollution is reduced to WHO Guideline",
+       y = "People (in Millions)") +
+    theme_classic() 
+
+
 # save annual report figure 6
-ggsave("./june.2022/annual.report/figure6.data.graph/ar_fig6.png")
+ggsave("./annual.report/figure6.data.graph/ar_fig6.png")
 
 ```
 
@@ -375,7 +386,7 @@ ar_fig7_dataset <- color_2020 %>%
   
 # Save AR figure 7 dataset as a csv
 ar_fig7_dataset %>% 
-  write_csv("./june.2022/annual.report/figure7.data.graph/ar_fig7_dataset.csv")
+  write_csv("./annual.report/figure7.data.graph/ar_fig7_dataset.csv")
 
 # AR figure 7 plot
 ar_fig7 <- ar_fig7_dataset %>%  
@@ -388,7 +399,7 @@ ar_fig7 <- ar_fig7_dataset %>%
 
 
 # Save AR figure 7
-ggsave("./june.2022/annual.report/figure7.data.graph/ar_fig7.png", ar_fig7)
+ggsave("./annual.report/figure7.data.graph/ar_fig7.png", ar_fig7)
 ```
 # Figure 8: Potential Gain in Years of Life Expectancy Through Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, South Asia
 
@@ -423,7 +434,7 @@ ar_fig9_dataset <- color_2020 %>%
 
 # Save AR figure 9 dataset as a csv
 ar_fig9_dataset %>% 
-  write_csv("./june.2022/annual.report/figure9.data.graph/ar_fig9_dataset.csv")
+  write_csv("./annual.report/figure9.data.graph/ar_fig9_dataset.csv")
 
 # AR figure 9
 ar_fig9 <- ar_fig9_dataset %>%
@@ -436,7 +447,7 @@ ar_fig9 <- ar_fig9_dataset %>%
   theme(legend.position = "none")
 
 # save AR figure 9
-ggsave("./june.2022/annual.report/figure9.data.graph/ar_fig9.png", ar_fig9)
+ggsave("./annual.report/figure9.data.graph/ar_fig9.png", ar_fig9)
 
 ```
 
@@ -512,7 +523,7 @@ ar_fig12 <- ggplot(gbd_results_fig12, mapping = aes(x = cause_of_death, y = est_
   theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank()) 
 
 # save annual report figure 12
-ggsave("./june.2022/annual.report/figure12.data.graph/ar_fig12.png", ar_fig12)
+ggsave("./annual.report/figure12.data.graph/ar_fig12.png", ar_fig12)
 
 
 # save AR figure 12 data set
@@ -520,7 +531,7 @@ gbd_results_fig12 %>%
   select(location, cause_of_death, est_le_diff_vs_actual_aggregate) %>%
   rename(life_years_lost = est_le_diff_vs_actual_aggregate) %>%
   mutate(life_years_lost = round(life_years_lost, 1)) %>%
-  write_csv("./june.2022/annual.report/figure12.data.graph/ar_fig12_dataset.csv")
+  write_csv("./annual.report/figure12.data.graph/ar_fig12_dataset.csv")
 
 ```
 
@@ -547,7 +558,7 @@ ar_fig13_dataset <- color_2020 %>%
 
 # Save AR Figure 13 dataset
 ar_fig13_dataset %>%
-  write_csv("./june.2022/annual.report/figure13.data.graph/ar_fig13_dataset.csv")
+  write_csv("./annual.report/figure13.data.graph/ar_fig13_dataset.csv")
 
 
 # Plot AR figure 13 dataset
@@ -571,7 +582,7 @@ ar_fig13 <- ar_fig13_dataset %>%
         axis.text.y = element_text(size = 12))
 
 # save annual report figure 13
-ggsave("./june.2022/annual.report/figure13.data.graph/ar_fig13.png", ar_fig13)
+ggsave("./annual.report/figure13.data.graph/ar_fig13.png", ar_fig13)
 
 ```
 
@@ -645,7 +656,7 @@ ar_fig15_dataset <- rbind(trendlines_china_region_wise_df, trendline_national_av
 
 # Save AR Figure 15 data set as a csv
 ar_fig15_dataset %>%  
-  write_csv("./june.2022/annual.report/figure15.data.graph/ar_fig15_dataset.csv")
+  write_csv("./annual.report/figure15.data.graph/ar_fig15_dataset.csv")
 
 # plot AR Figure 15
 ar_fig15 <- ggplot(ar_fig15_dataset) +
@@ -667,7 +678,7 @@ ar_fig15 <- ggplot(ar_fig15_dataset) +
   
 
 # Save AR figure 15
-ggsave("./june.2022/annual.report/figure15.data.graph/ar_fig15.png", ar_fig15)
+ggsave("./annual.report/figure15.data.graph/ar_fig15.png", ar_fig15)
 ```
 
 
@@ -749,7 +760,7 @@ ar_fig20_dataset <- final_dataset %>%
 
 # Save AR Figure 20 data set as a csv
 ar_fig20_dataset %>%  
-  write_csv("./june.2022/annual.report/figure15.data.graph/ar_fig20_dataset.csv")
+  write_csv("./annual.report/figure15.data.graph/ar_fig20_dataset.csv")
 
 # plotting Annual Report Figure 20
 ar_fig20 <- ggplot(ar_fig20_dataset) +
@@ -764,7 +775,7 @@ ar_fig20 <- ggplot(ar_fig20_dataset) +
 
 
 # Save AR figure 20
-ggsave("./june.2022/annual.report/figure20.data.graph/ar_fig20.png", ar_fig20)
+ggsave("./annual.report/figure20.data.graph/ar_fig20.png", ar_fig20)
 
 ```
 
