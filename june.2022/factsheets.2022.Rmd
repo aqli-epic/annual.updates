@@ -32,14 +32,14 @@ devtools::load_all()
 devtools::document()
 
 # read in latest color file
-color_2020 <- read_csv("./june.2022/master.dataset/color_2020.csv")
+color_2020 <- read_csv("./master.dataset/color_2020.csv")
 
 # read in old available color datasets
-color_2019 <- read_csv("./june.2022/master.dataset/color_2019.csv")
-color_2016 <- read_csv("./june.2022/master.dataset/color_2016.csv")
+color_2019 <- read_csv("./master.dataset/color_2019.csv")
+color_2016 <- read_csv("./master.dataset/color_2016.csv")
 
 # GBD final results file (resulting file that we get after applying the steps in the GBD technical appendix)
-gbd_results <- read_csv("./june.2022/other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
+gbd_results <- read_csv("./other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
 
 # global variables
 who_guideline <- 5
@@ -81,7 +81,7 @@ nigeria_fs_fig2_dataset <-  color_2020_nigeria %>%
 
 # save nigeria fs fig2 dataset
 nigeria_fs_fig2_dataset %>%
-  write_csv("./june.2022/factsheets/nigeria/graph.wise.datasets/nigeria_fs_fig2_dataset.csv")
+  write_csv("./factsheets/nigeria/graph.wise.datasets/nigeria_fs_fig2_dataset.csv")
 
 # nigeria fs figure 2
  nigeria_fs_fig2 <- nigeria_fs_fig2_dataset %>% ggplot() +
@@ -94,7 +94,7 @@ nigeria_fs_fig2_dataset %>%
   theme(legend.position = "none")
  
 # save nigeria factsheet figure 2
-ggsave("./june.2022/factsheets/nigeria/graphs/nigeria_fs_fig2.png", nigeria_fs_fig2)
+ggsave("./factsheets/nigeria/graphs/nigeria_fs_fig2.png", nigeria_fs_fig2)
 
 
 # getting gbd result for Nigeria from the master file
@@ -112,7 +112,7 @@ nigeria_fs_fig3_dataset <- gbd_nigeria_filter %>%
 
 # save nigeria fs figure 3 dataset
 nigeria_fs_fig3_dataset %>%
-  write_csv("./june.2022/factsheets/nigeria/graph.wise.datasets/nigeria_fs_fig3_dataset.csv")
+  write_csv("./factsheets/nigeria/graph.wise.datasets/nigeria_fs_fig3_dataset.csv")
 
 # nigeria fs figure 3
 nigeria_fs_fig3 <- nigeria_fs_fig3_dataset %>%
@@ -127,7 +127,7 @@ nigeria_fs_fig3 <- nigeria_fs_fig3_dataset %>%
   coord_flip()
 
 # save nigeria factsheet figure 3
-ggsave("./june.2022/factsheets/nigeria/graphs/nigeria_fs_fig3.png", nigeria_fs_fig3)
+ggsave("./factsheets/nigeria/graphs/nigeria_fs_fig3.png", nigeria_fs_fig3)
 
 # nigeria factsheet figure 4 dataset 
 nigeria_fs_fig4_dataset <- color_2020_nigeria %>%
@@ -142,7 +142,7 @@ nigeria_fs_fig4_dataset <- color_2020_nigeria %>%
 
 # save nigeria fs figure 4 dataset
 nigeria_fs_fig4_dataset %>%
-  write_csv("./june.2022/factsheets/nigeria/graph.wise.datasets/nigeria_fs_fig4_dataset.csv")
+  write_csv("./factsheets/nigeria/graph.wise.datasets/nigeria_fs_fig4_dataset.csv")
   
 
 # nigeria factsheet figure 4 
@@ -164,7 +164,7 @@ nigeria_fs_fig4_dataset %>%
 
   
 # save nigeria factsheet figure 4
-ggsave("./june.2022/factsheets/nigeria/graphs/nigeria_fs_fig4.png", nigeria_fs_fig4)  
+ggsave("./factsheets/nigeria/graphs/nigeria_fs_fig4.png", nigeria_fs_fig4)  
 
 # appendix table nigeria factsheet 
 
@@ -184,7 +184,7 @@ nigeria_appendix_table <- color_2020_nigeria %>%
 
 # save nigeria factsheet appendix table
 nigeria_appendix_table %>%
-   write_csv("./june.2022/factsheets/nigeria/nigeria_fs_appendix_table_2022.csv")
+   write_csv("./factsheets/nigeria/nigeria_fs_appendix_table_2022.csv")
   
 
 ```
@@ -211,7 +211,7 @@ southkorea_fs_fig2_dataset <- color_2020_south_korea %>%
 
 # save south korea fs figure 2 dataset
 southkorea_fs_fig2_dataset %>%
-  write_csv("./june.2022/factsheets/southkorea/graph.wise.datasets/southkorea_fs_fig2_dataset.csv")
+  write_csv("./factsheets/southkorea/graph.wise.datasets/southkorea_fs_fig2_dataset.csv")
 
 
 # southkorea fs figure 2
@@ -227,7 +227,7 @@ southkorea_fs_fig2 <- southkorea_fs_fig2_dataset %>%
 
 # save southkorea factsheet figure2
 
-ggsave("./june.2022/factsheets/southkorea/graphs/southkorea_fs_fig2.png", southkorea_fs_fig2) 
+ggsave("./factsheets/southkorea/graphs/southkorea_fs_fig2.png", southkorea_fs_fig2) 
 
 # southkorea factsheet figure 3 dataset
 southkorea_fs_fig3_dataset <- color_2020_south_korea %>%
@@ -243,7 +243,7 @@ southkorea_fs_fig3_dataset <- color_2020_south_korea %>%
 
 # save south korea fs figure 3 dataset
 southkorea_fs_fig3_dataset %>%
-  write_csv("./june.2022/factsheets/southkorea/graph.wise.datasets/southkorea_fs_fig3_dataset.csv")
+  write_csv("./factsheets/southkorea/graph.wise.datasets/southkorea_fs_fig3_dataset.csv")
 
 
   southkorea_fs_fig3 <- southkorea_fs_fig3_dataset %>%
@@ -266,7 +266,7 @@ southkorea_fs_fig3_dataset %>%
   
   
 # save southkorea factsheet figure2
-ggsave("./june.2022/factsheets/southkorea/graphs/southkorea_fs_fig3.png", southkorea_fs_fig3)   
+ggsave("./factsheets/southkorea/graphs/southkorea_fs_fig3.png", southkorea_fs_fig3)   
 
 # South Korea fact sheet appendix table
 southkorea_fs_appendix_table <- color_2020_south_korea %>%
@@ -289,7 +289,7 @@ southkorea_fs_appendix_table <- color_2020_south_korea %>%
 
 # South Korea factsheet appendix table save
 southkorea_fs_appendix_table %>%
-  write_csv("./june.2022/factsheets/southkorea/southkorea_fs_appendix_table.csv")
+  write_csv("./factsheets/southkorea/southkorea_fs_appendix_table.csv")
  
 
 
@@ -317,7 +317,7 @@ bangladesh_fs_fig2_dataset <- color_2020_bangladesh %>%
 
 # save bangladesh fs figure 2 dataset
 bangladesh_fs_fig2_dataset %>%
-  write_csv("./june.2022/factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig2_dataset.csv")
+  write_csv("./factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig2_dataset.csv")
 
 # bangladesh fs figure 2
 bangladesh_fs_fig2 <- bangladesh_fs_fig2_dataset %>%
@@ -331,7 +331,7 @@ bangladesh_fs_fig2 <- bangladesh_fs_fig2_dataset %>%
   theme(legend.position = "none")
 
 # save bangladesh factsheet figure 2
-ggsave("./june.2022/factsheets/bangladesh/graphs/bangladesh_fs_figure2.png", bangladesh_fs_fig2)
+ggsave("./factsheets/bangladesh/graphs/bangladesh_fs_figure2.png", bangladesh_fs_fig2)
 
 # filtering out the master GBD file for Bnagladesh
 gbd_results_bangladesh <- gbd_results %>% 
@@ -348,7 +348,7 @@ bangladesh_fs_fig3_dataset <- gbd_results_bangladesh_filter %>%
 
 # save bangladesh fs figure 3 dataset
 bangladesh_fs_fig3_dataset %>%
-  write_csv("./june.2022/factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig3_dataset.csv")
+  write_csv("./factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig3_dataset.csv")
 
 # bangladesh factsheet figure 3
 bangladesh_fs_fig3 <- ggplot(bangladesh_fs_fig3_dataset) + 
@@ -362,7 +362,7 @@ bangladesh_fs_fig3 <- ggplot(bangladesh_fs_fig3_dataset) +
   coord_flip()  
 
 # save bangladesh factsheet figure 3  
-ggsave("./june.2022/factsheets/bangladesh/graphs/bangladesh_fs_figure3.png", bangladesh_fs_fig3)
+ggsave("./factsheets/bangladesh/graphs/bangladesh_fs_figure3.png", bangladesh_fs_fig3)
 
 # bangladesh factsheet fig4 dataset
 bangladesh_fs_fig4_dataset <- color_2020_bangladesh %>%
@@ -377,7 +377,7 @@ bangladesh_fs_fig4_dataset <- color_2020_bangladesh %>%
 
 # save bangladesh fs figure 4 dataset
 bangladesh_fs_fig4_dataset %>%
-  write_csv("./june.2022/factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig4_dataset.csv")
+  write_csv("./factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig4_dataset.csv")
 
 # bangladesh factsheet fig4
 bangladesh_fs_fig4 <- bangladesh_fs_fig4_dataset %>%
@@ -397,7 +397,7 @@ bangladesh_fs_fig4 <- bangladesh_fs_fig4_dataset %>%
    geom_text(x = 2002.8, y = 8.7, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
 
 # save bangladesh factsheet figure 4  
-ggsave("./june.2022/factsheets/bangladesh/graphs/bangladesh_fs_figure4.png", bangladesh_fs_fig4)
+ggsave("./factsheets/bangladesh/graphs/bangladesh_fs_figure4.png", bangladesh_fs_fig4)
 
 # bangladesh fs appendix table
 bangladesh_fs_appendix_table <- color_2020_bangladesh %>%
@@ -422,7 +422,7 @@ bangladesh_fs_appendix_table <- color_2020_bangladesh %>%
 
 # save bangladesh factsheet appendix table
 bangladesh_fs_appendix_table %>%
-  write_csv("./june.2022/factsheets/bangladesh/bangladesh_fs_appendix_table.csv")
+  write_csv("./factsheets/bangladesh/bangladesh_fs_appendix_table.csv")
 ```
 
 
@@ -447,7 +447,7 @@ nepal_fs_fig2_dataset <- color_2020_nepal %>%
 
 # save nepal factsheet figure 2 dataset
 nepal_fs_fig2_dataset %>%
-  write_csv("./june.2022/factsheets/nepal/graph.wise.datasets/nepal_fs_fig2_dataset.csv")
+  write_csv("./factsheets/nepal/graph.wise.datasets/nepal_fs_fig2_dataset.csv")
 
 # nepal fs figure 2
  nepal_fs_fig2 <- nepal_fs_fig2_dataset %>% 
@@ -461,7 +461,7 @@ nepal_fs_fig2_dataset %>%
   theme(legend.position = "none")
  
  # save nepal fs figure 2
- ggsave("./june.2022/factsheets/nepal/graphs/nepal_fs_fig2.png", nepal_fs_fig2)
+ ggsave("./factsheets/nepal/graphs/nepal_fs_fig2.png", nepal_fs_fig2)
 
 
 
@@ -479,7 +479,7 @@ nepal_fs_fig3_dataset <- gbd_results_nepal_filter %>%
 
 # save nepal factsheet figure 3 dataset
 nepal_fs_fig3_dataset %>%
-  write_csv("./june.2022/factsheets/nepal/graph.wise.datasets/nepal_fs_fig3_dataset.csv")
+  write_csv("./factsheets/nepal/graph.wise.datasets/nepal_fs_fig3_dataset.csv")
 
 # nepal factsheet figure 3
 nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
@@ -493,7 +493,7 @@ nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
   coord_flip()  
 
  # save nepal fs figure 3
- ggsave("./june.2022/factsheets/nepal/graphs/nepal_fs_fig3.png", nepal_fs_fig3)
+ ggsave("./factsheets/nepal/graphs/nepal_fs_fig3.png", nepal_fs_fig3)
 
 
 
@@ -510,7 +510,7 @@ nepal_fs_fig4_dataset <- color_2020_nepal %>%
 
 # save nepal factsheet figure 4 dataset
 nepal_fs_fig4_dataset %>%
-  write_csv("./june.2022/factsheets/nepal/graph.wise.datasets/nepal_fs_fig4_dataset.csv")
+  write_csv("./factsheets/nepal/graph.wise.datasets/nepal_fs_fig4_dataset.csv")
 
 # nepal factsheet figure 4
  nepal_fs_fig4 <- nepal_fs_fig4_dataset %>%
@@ -530,7 +530,7 @@ nepal_fs_fig4_dataset %>%
    geom_text(x = 2003.5, y = 8.7, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
  
   # save nepal fs figure 4
- ggsave("./june.2022/factsheets/nepal/graphs/nepal_fs_fig4.png", nepal_fs_fig4)
+ ggsave("./factsheets/nepal/graphs/nepal_fs_fig4.png", nepal_fs_fig4)
 
  
 # Nepal Factsheet Appendix Table 
@@ -553,6 +553,6 @@ nepal_fs_appendix_table <- color_2020_nepal %>%
 
 # save nepal factsheet appendix table
 nepal_fs_appendix_table %>%
-  write_csv("./june.2022/factsheets/nepal/nepal_fs_appendix_table.csv")
+  write_csv("./factsheets/nepal/nepal_fs_appendix_table.csv")
 ```
 

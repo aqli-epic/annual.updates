@@ -31,7 +31,7 @@ devtools::load_all()
 devtools::document()
 
 # read in color file
-master_df <- read_csv("./june.2022/master.dataset/color.csv")
+master_df <- read_csv("./master.dataset/color.csv")
 
 ```
 

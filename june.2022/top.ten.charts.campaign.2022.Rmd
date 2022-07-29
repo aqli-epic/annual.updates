@@ -32,14 +32,14 @@ devtools::load_all()
 devtools::document()
 
 # read in latest color file
-color_2020 <- read_csv("./june.2022/master.dataset/color_2020.csv")
+color_2020 <- read_csv("./master.dataset/color_2020.csv")
 
 # read in old available color datasets
-color_2019 <- read_csv("./june.2022/master.dataset/color_2019.csv")
-color_2016 <- read_csv("./june.2022/master.dataset/color_2016.csv")
+color_2019 <- read_csv("./master.dataset/color_2019.csv")
+color_2016 <- read_csv("./master.dataset/color_2016.csv")
 
 # GBD final results file (resulting file that we get after applying the steps in the GBD technical appendix)
-gbd_results <- read_csv("./june.2022/other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
+gbd_results <- read_csv("./other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
 
 # global variables
 who_guideline <- 5
@@ -74,7 +74,7 @@ chart10_dataset <- color_2020 %>%
 
 # Save AR chart number 10 dataset as a csv
 chart10_dataset %>% 
-  write_csv("./june.2022/top.ten.charts.campaign/chart10.data.graph/chart10_dataset.csv")
+  write_csv("./top.ten.charts.campaign/chart10.data.graph/chart10_dataset.csv")
 
 # Plot chart number 10
 chart10 <- chart10_dataset %>%  
@@ -87,7 +87,7 @@ chart10 <- chart10_dataset %>%
 
 
 # Save chart number 10
-ggsave("./june.2022/top.ten.charts.campaign/chart10.data.graph/chart10.png", chart10)
+ggsave("./top.ten.charts.campaign/chart10.data.graph/chart10.png", chart10)
 ```
 
 
@@ -150,7 +150,7 @@ chart9 <- ggplot(chart9_dataset, mapping = aes(x = cause_of_death, y = est_le_di
   theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank()) 
 
 # Save chart number 9
-ggsave("./june.2022/top.ten.charts.campaign/chart9.data.graph/chart9.png", chart9)
+ggsave("./top.ten.charts.campaign/chart9.data.graph/chart9.png", chart9)
 
 
 # save chart9 dataset
@@ -158,7 +158,7 @@ chart9_dataset %>%
   select(location, cause_of_death, est_le_diff_vs_actual_aggregate) %>%
   rename(life_years_lost = est_le_diff_vs_actual_aggregate) %>%
   mutate(life_years_lost = round(life_years_lost, 1)) %>%
- write_csv("./june.2022/top.ten.charts.campaign/chart9.data.graph/chart9_dataset.csv")
+ write_csv("./top.ten.charts.campaign/chart9.data.graph/chart9_dataset.csv")
 
 ```
 # Chart #8: Comparison of Life Expectancy Lost Due to Particulate Pollution Not Meeting the WHO Guideline (Eastern v/s Western Europe)
@@ -176,7 +176,7 @@ color_2020_chart8$name_2 <- str_to_lower(color_2020_chart8$name_2)
 
 
 # europe countries
-europe_countries <- read_csv("./june.2022/other.important.calculations.data/europe_countries.csv")
+europe_countries <- read_csv("./other.important.calculations.data/europe_countries.csv")
 
 # europe countries converted to lower case
 europe_countries$Country <- str_to_lower(europe_countries$Country)
@@ -210,7 +210,7 @@ color_2020_europe_custom_country_level <- color_2020_europe_custom %>%
 # Note: for all operations in chart #8 post this point, you would need the country shape file, so please request that file in case you'd
 # like to proceed.
 
-country_shp <- st_read("./june.2022/other.important.calculations.data/world.country.level.shape.file/color_country.shp")
+country_shp <- st_read("./other.important.calculations.data/world.country.level.shape.file/color_country.shp")
 
 # renaming shape file columns and selecting only relevant columns
 country_shp <- country_shp %>%
@@ -239,7 +239,7 @@ chart8_dataset <- color_2020_europe_custom_final %>%
   select(country:name_2, in_western_europe, geometry)
 
 # write chart8 shape file
-st_write(chart8_dataset, "./june.2022/top.ten.charts.campaign/chart8.data.graph/chart8_dataset.shp")
+st_write(chart8_dataset, "./top.ten.charts.campaign/chart8.data.graph/chart8_dataset.shp")
 
 
 # chart 8 plot (be careful with the column names in the fill aesthetic, st_read and st_write sometimes abbreviates them)
@@ -253,7 +253,7 @@ chart8 <- ggplot(data = foo, mapping = aes(fill = in_western_europe)) +
   theme(legend.position = "none")
 
 # Save chart number 8
-ggsave("./june.2022/top.ten.charts.campaign/chart8.data.graph/chart8.png", chart8)
+ggsave("./top.ten.charts.campaign/chart8.data.graph/chart8.png", chart8)
 
 ```
 
@@ -300,7 +300,7 @@ chart7_dataset <- rbind(chart7_region_wise_data, chart_7_national_avg_1998_2020_
 
 # chart 7 dataset write as csv
 chart7_dataset %>%
-  write_csv("./june.2022/top.ten.charts.campaign/chart7.data.graph/chart7_dataset.csv")
+  write_csv("./top.ten.charts.campaign/chart7.data.graph/chart7_dataset.csv")
   
 # chart 7 plot
 chart7 <- ggplot(chart7_dataset) +
@@ -319,7 +319,7 @@ chart7 <- ggplot(chart7_dataset) +
      geom_text(x = 2002.8, y = 10, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
 
 # save chart7
-ggsave("./june.2022/top.ten.charts.campaign/chart7.data.graph/chart7.png", chart7)
+ggsave("./top.ten.charts.campaign/chart7.data.graph/chart7.png", chart7)
  
 ```
 
