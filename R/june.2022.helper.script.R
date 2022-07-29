@@ -24,14 +24,14 @@ devtools::load_all()
 devtools::document()
 
 # read in latest color file
-color_2020 <- read_csv("./master.dataset/color_2020.csv")
+color_2020 <- read_csv("./june.2022/master.dataset/color_2020.csv")
 
 # read in old available color datasets
-color_2019 <- read_csv("./master.dataset/color_2019.csv")
-color_2016 <- read_csv("./master.dataset/color_2016.csv")
+color_2019 <- read_csv("./june.2022/master.dataset/color_2019.csv")
+color_2016 <- read_csv("./june.2022/master.dataset/color_2016.csv")
 
 # GBD final results file (resulting file that we get after applying the steps in the GBD technical appendix)
-gbd_results <- read_csv("./other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
+gbd_results <- read_csv("./june.2022/other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
 
 # global variables
 who_guideline <- 5

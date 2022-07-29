@@ -1,0 +1,46 @@
+---
+title: "annual.report.june.2022"
+author: "Aarsh"
+date: '2022-07-12'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r load-lib-helper-files-data}
+
+# libraries
+library(readr)
+library(dplyr)
+library(stringr)
+library(magrittr)
+library(ggplot2)
+library(readr)
+library(tidytext)
+library(tidyr)
+library(tidyverse)
+library(sf)
+library(usethis)
+library(devtools)
+
+# load and document to keep things updated
+devtools::load_all()
+devtools::document()
+
+# read in color file
+master_df <- read_csv("./june.2022/master.dataset/color.csv")
+
+```
+
+
+
+# Annual Report Figures
+
+# Figure 1
+```{r figure-1}
+
+```
+
