@@ -361,6 +361,10 @@ chart6_dataset <- ds_pop_le %>%
 chart6_dataset <- ds_3 %>%
   slice_max(total_ly_lost_millions, n = 5)
 
+# write chart6 data to csv
+chart6_dataset %>%
+  write_csv("./june.2022/top.ten.charts.campaign/chart6.data.graph.code/chart6_dataset.csv")
+
 #> plot the above 3 columns in 3 separate plots and then combine into a single plot
 
 # population plot
