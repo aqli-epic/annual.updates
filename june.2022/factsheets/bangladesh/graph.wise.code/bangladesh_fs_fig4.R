@@ -1,6 +1,6 @@
-# Load in master helper file for june.2022 folder-------------------------------
+# Load in master helper file for june.2022 folder (uncomment this before running)-------------------------------
 
-source("./june.2022/R/june.2022.helper.script.R")
+# source("./june.2022/R/june.2022.helper.script.R")
 
 #> Bangladesh factsheet figure 4: PM2.5 trendline: 1998 to 2020-----------------
 

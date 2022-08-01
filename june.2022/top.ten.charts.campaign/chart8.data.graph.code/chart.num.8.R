@@ -1,6 +1,6 @@
-# Load in master helper file for june.2022 folder-------------------------------
+# Load in master helper file for june.2022 folder (uncomment this before running)-------------------------------
 
-source("./june.2022/R/june.2022.helper.script.R")
+# source("./june.2022/R/june.2022.helper.script.R")
 
 #> Chart number 8:  Comparison of Life Expectancy Lost Due to Particulate Pollution Not Meeting the WHO Guideline (Eastern v/s Western Europe)
 

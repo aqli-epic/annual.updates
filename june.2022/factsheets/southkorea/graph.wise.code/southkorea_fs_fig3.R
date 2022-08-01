@@ -1,6 +1,6 @@
-# Load in master helper file for june.2022 folder-------------------------------
+# Load in master helper file for june.2022 folder (uncomment this before running)-------------------------------
 
-source("./june.2022/R/june.2022.helper.script.R")
+# source("./june.2022/R/june.2022.helper.script.R")
 
 #> South Korea fact sheet figure 3: Average PM2.5 concentrations from 1998 to 2020
 

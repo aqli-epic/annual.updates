@@ -1,6 +1,6 @@
-# Load in master helper file for june.2022 folder-------------------------------
+# Load in master helper file for june.2022 folder (uncomment this before running)-------------------------------
 
-source("./june.2022/R/june.2022.helper.script.R")
+# source("./june.2022/R/june.2022.helper.script.R")
 
 #> Nepal Factsheet figure 2: LE gains if PM2.5 pollution is reduced to the WHO guideline, in top 10 most populous name_1 regions of Nepal
 

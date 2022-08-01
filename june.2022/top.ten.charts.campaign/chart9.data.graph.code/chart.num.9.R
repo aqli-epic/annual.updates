@@ -1,6 +1,6 @@
-# Load in master helper file for june.2022 folder-------------------------------
+# Load in master helper file for june.2022 folder (uncomment this before running)-------------------------------
 
-source("./june.2022/R/june.2022.helper.script.R")
+# source("./june.2022/R/june.2022.helper.script.R")
 
 #> Chart number 9: Life Expectancy Impacts of Particulate Pollution and Other Health Threats in the Four Most Populous Countries in Central and West Africa
 
