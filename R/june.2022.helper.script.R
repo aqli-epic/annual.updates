@@ -20,8 +20,8 @@ library(devtools)
 library(data.table)
 
 # load and document to keep things updated
-devtools::load_all()
-devtools::document()
+# devtools::load_all()
+# devtools::document()
 
 # read in latest color file
 color_2020 <- read_csv("./june.2022/master.dataset/color_2020.csv")
