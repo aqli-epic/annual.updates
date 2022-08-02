@@ -53,6 +53,30 @@ nat_stan_bangladesh <- 15
 nat_stan_pak <- 15
 nat_stan_india <- 40
 
+#> other region wise defintions
+
+# central africa definition
+central_african_countries <- c("Angola", "Burundi", "Cameroon", 
+                                        "Central African Republic", "Chad", 
+                                        "Republic of Congo",
+                                        "Democratic Republic of the Congo", 
+                                        "Equatorial Guinea", "Gabon",
+                                        "São Tomé and Príncipe", 
+                                        "Rwanda")
+# west africa definition
+west_african_countries <- c("Benin", "Burkina Faso", "Cape Verde", 
+                            "Gambia", "Ghana", "Guinea", "Guinea-Bissau", 
+                            "Côte d'Ivoire", "Liberia", "Mali", "Mauritania", 
+                            "Niger", "Nigeria", "Senegal", "Sierra Leone", 
+                            "Togo")
+
+# central and west africa countries definition, combine in a single vector
+central_and_west_african_countries <- c(central_african_countries, west_african_countries)
+
+# South East Asia definition
+se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia", "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", "Vietnam")
+
+
 # global operations
 `%notin%` <- Negate(`%in%`)
 
@@ -1028,9 +1052,6 @@ indonesia_fs_appendix_table %>%
 
 #> Figure 2: Potential Gain in Years of Life Expectancy Through Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, in 10 Largest Regions in Southeast Asia
 
-# South East Asia definition
-se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor Leste", "Indonesia", "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", "Vietnam")
-
 # filtering color file for South East Asia
 color_data_se_asia <- color_2020 %>%
   filter(country %in% se_asia_vec) %>%
@@ -1139,36 +1160,167 @@ seasia_fs_appendix_table %>%
 
 ```{r cwafrica_fs}
 
-# central africa definition
-central_african_countries <- c("Angola", "Burundi", "Cameroon", 
-                                        "Central African Republic", "Chad", 
-                                        "Republic of Congo",
-                                        "Democratic Republic of the Congo", 
-                                        "Equatorial Guinea", "Gabon",
-                                        "são tomé and Príncipe", 
-                                        "Rwanda")
-# west africa definition
-west_african_countries <- c("Benin", "Burkina Faso", "Cape Verde", 
-                            "Gambia", "Ghana", "Guinea", "Guinea-Bissau", 
-                            "Côte d'Ivoire", "Liberia", "Mali", "Mauritania", 
-                            "Niger", "Nigeria", "Senegal", "Sierra Leone", 
-                            "Togo")
 
-# central and west africa countries
-central_and_west_african_countries <- c(central_african_countries, west_african_countries)
-
-
-color_data <- read_csv("./data-raw/raw_files_all/2020_update_peru/color.csv")
-
-color_data$country <- str_to_lower(color_data$country)
-color_data$name_1 <- str_to_lower(color_data$name_1)
-color_data$name_2 <- str_to_lower(color_data$name_2)
-
-color_data_cen_west_africa <- color_data %>%
+# filtering color 2020 data for central and west african countries
+color_data_cen_west_africa <- color_2020 %>%
   filter(country %in% central_and_west_african_countries) %>%
   mutate(name_1_country = str_c(name_1, "(", country, ")", sep = ""), 
          region = ifelse(country %in% central_african_countries, "central african", 
                          "west african")) 
+
+
+#> cwafrica fig2
+
+# GBD results filtered for relevant cause of death and countries 
+gbd_results_cwafrica_fig2 <- gbd_results %>%
+  filter(cause_of_death %in% c("PM2.5 relative to WHO",
+                               "Malaria", "Unsafe water, sanitation, and handwashing", 
+                               "HIV/AIDS"), location %in% c("nigeria", "democratic republic of the congo", "Angola", "ghana", "cameroon"))
+
+# making the 'location' column of type factor
+gbd_results_cwafrica_fig2$location <- factor(gbd_results_cwafrica_fig2$location, 
+                                        levels = c("nigeria", "democratic republic of the congo", "Angola", "ghana", "cameroon"))
+
+# Rename Democratic Republic of the Congo to DRC
+gbd_results_cwafrica_fig2$location <-  str_replace(gbd_results_cwafrica_fig2$location, 
+            "democratic republic of the congo", "DRC")
+
+# Converting 'cause_of_death' to type factor
+gbd_results_cwafrica_fig2$cause_of_death <- as.factor(gbd_results_cwafrica_fig2$cause_of_death)
+
+# Rearranging 'cause of death' levels
+levels(gbd_results_cwafrica_fig2$cause_of_death) <- c("HIV/AIDS", "Malaria", "PM2.5 relative to WHO", "Unsafe Water, Sanitation and Handwashing")
+
+# wrapping x-axis labels text 
+levels(gbd_results_cwafrica_fig2$cause_of_death) <- str_wrap(levels(gbd_results_cwafrica_fig2$cause_of_death), 15)
+
+# getting country wise population
+country_wise_population <- color_2020 %>%
+  group_by(country) %>%
+  summarise(population_total = sum(population, na.rm = TRUE)) %>%
+  ungroup() %>%
+  filter(country %in% c("Cameroon", "Nigeria", "Angola", "Ghana", 
+                  "Democratic Republic of the Congo")) %>%
+  arrange(desc(population_total))
+
+# reorder within each location as per the total life years lost column
+gbd_results_cwafrica_fig2 <- gbd_results_cwafrica_fig2 %>% 
+  mutate(cause_of_death = reorder_within(cause_of_death, est_le_diff_vs_actual_aggregate, location))
+
+# clean the "cause of death" column and save the cwafrica factsheet figure 2
+cwafrica_fs_fig2_dataset <- gbd_results_cwafrica_fig2 %>%
+  mutate(`Cause of Death` = str_remove(cause_of_death, "___.+"))
+
+# save cw africa figure 2 dataset
+cwafrica_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/cwafrica/graph.wise.datasets/cwafrica_fs_fig2_dataset.csv")
+
+# plot AR figure 2
+cwafrica_fs_fig2 <- cwafrica_fs_fig2_dataset %>%
+  ggplot(mapping = aes(x = cause_of_death, y = est_le_diff_vs_actual_aggregate)) + 
+  geom_col(mapping = aes(fill = `Cause of Death`), width = 0.7, color = "white") +
+  facet_wrap(~factor(location, levels = c("nigeria", "DRC", "Angola", 
+                  "ghana", "cameroon")), scales = "free_x", ncol = 5) +
+  scale_fill_manual(values = c("darkcyan", "deepskyblue", "red",
+                               "aquamarine")) +
+  labs(x = "", y = "Years Lost", title = "Life Expectancy Impacts of PM2.5 & Other Health Threats", 
+       subtitle = "Five Most Populous Countries in Central and West Africa") +
+  ggthemes::theme_fivethirtyeight() +
+  theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank()) 
+
+ # save cwafrica fig2
+ ggsave("./june.2022/factsheets/cwafrica/graphs/cwafrica_fig2.png", cwafrica_fs_fig2)
+
+#> cwafrica figure 3
+
+# central and west africa figure 3 dataset
+ cwafrica_fs_fig3_dataset <- color_data_cen_west_africa %>%
+  group_by(name_1_country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_pop_weighted = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            gain_in_le = (avg_pm2.5_pop_weighted - who_guideline) * 0.098, 
+            gain_in_le = ifelse(gain_in_le < 0, 0, gain_in_le)) %>%
+  ungroup() %>%
+  slice_max(tot_pop, n = 15) 
+ 
+ # save cw africa figure 3 dataset
+cwafrica_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/cwafrica/graph.wise.datasets/cwafrica_fs_fig3_dataset.csv")
+
+# central and west africa figure 3
+ cwafrica_fs_fig3 <- cwafrica_fs_fig3_dataset %>%
+   ggplot(mapping = aes(x = forcats::fct_reorder(name_1_country, avg_pm2.5_pop_weighted), y = gain_in_le, fill = gain_in_le)) +
+  geom_col(width = 0.5) + 
+  labs(y = "Gain In Life Expectancy (Years)", x = "Region") +
+  coord_flip() + 
+  ggthemes::theme_clean() +
+   scale_y_continuous(breaks = seq(0, 4, 1), limits = c(0, 4)) +
+   scale_fill_gradient(low = "orange", high = "red") +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 12), 
+        axis.text.y = element_text(size = 9))
+
+ # save cwafrica fig3
+ ggsave("./june.2022/factsheets/cwafrica/graphs/cwafrica_fig3.png", cwafrica_fs_fig3) 
+ 
+#> cwafrica figure 4 dataset
+cwafrica_fs_fig4_dataset <- color_data_cen_west_africa %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save cw africa figure 4 dataset
+cwafrica_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/cwafrica/graph.wise.datasets/cwafrica_fs_fig4_dataset.csv")
+
+
+#> cwafrica figure 4
+
+ cwafrica_fs_fig4 <- cwafrica_fs_fig4_dataset %>%
+   ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.1) +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 36, 2), limits = c(0, 36)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("central african" = "darkred", "west african" = "orange")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 6.5), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+     geom_text(x = 2002.8, y = 7, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+ 
+ # save cwafrica fig4
+ ggsave("./june.2022/factsheets/cwafrica/graphs/cwafrica_fig4.png", cwafrica_fs_fig4)
+ 
+ #> cw africa appendix table
+ cwafrica_fs_appendix_table <- color_data_cen_west_africa %>%
+  mutate(pm2020 = round(pm2020, 2),
+         le_gain_red_to_who = round((pm2020 - who_guideline)*le_constant, 2),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2020*0.30)*le_constant, 2), 
+         pop_millions = round(population/1000000, 2)) %>%
+  select(country, name_2, pop_millions, pm2020, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pm2020, n = 50) %>%
+    rename(Country = country, 
+           Region = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = pm2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = le_gain_red_to_who, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = le_gain_red_by_30_percent) 
+ 
+ 
 
 ```
 
