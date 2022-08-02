@@ -51,6 +51,7 @@ nat_stan_india <- 40
 nat_stan_sk <- 25
 nat_stan_bangladesh <- 15
 nat_stan_pak <- 15
+nat_stan_india <- 40
 
 # global operations
 `%notin%` <- Negate(`%in%`)
@@ -711,6 +712,170 @@ pakistan_appendix_table_gadm2 <- color_2020_pak %>%
 # save appendix table
 pak_fs_fig2_dataset %>%
   write_csv("./june.2022/factsheets/pakistan/pak_fs_app_table.csv")
+
+
+```
+
+# India factsheet
+
+```{r india_fs}
+
+# Filtering color dataset for India
+color_2020_india <- color_2020 %>%
+  filter(country %in% "India")
+
+# adding a north India/rest of india region column (specifically Indo gangetic plain)
+north_india <- c("West Bengal", "Uttar Pradesh", "Punjab", "Haryana", 
+                 "Chandigarh", "Bihar", "NCT of Delhi")
+
+color_2020_india <- color_2020_india %>%
+  mutate(region = ifelse(name_1 %in% north_india, "North India", "All other regions (excluding North India)"))
+
+#> Figure 2 
+
+# fig 2 dataset: PM2.5 in top 10 most populous states in 2020 
+india_fs_fig2_dataset <- color_2020_india %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save figure 2 dataset
+
+india_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/india/graph.wise.datasets/india_fs_fig2_dataset.csv")
+
+# Fig 2 plot
+ india_fs_fig2 <- india_fs_fig2_dataset %>%
+   ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = avg_pm2.5_2020), width = 0.5) +
+  labs(x = "State", y = "Average PM2.5 concentrations (in µg/m³)", 
+       subtitle = "Top 10 Most Polluted States in India") +
+  scale_y_continuous(breaks = seq(0, 9, 1)) +
+  scale_fill_gradient(low = "red", high = "darkred") +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  ggtitle("Average PM2.5 concentrations in 2020") 
+ 
+ # save india fs figure 2
+ ggsave("./june.2022/factsheets/india/graphs/india_fs_fig2.png", india_fs_fig2)
+
+ #> Figure 3: India GBD
+ 
+ # GBD results for India
+ gbd_india <- gbd_results %>%
+   filter(location == "India")
+
+# filtering out some of the causes of deaths that are similar to PM2.5
+gbd_india_filter <- gbd_india %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco"))
+
+# figure 3 dataset: choosing top 6 causes of deaths from the remaining causes of deaths
+india_fs_fig3_dataset <- gbd_india_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6)
+
+
+# save india factsheet figure 3 dataset
+india_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/india/graph.wise.datasets/india_fs_fig3_dataset.csv")
+
+
+# figure 3 plot
+india_fs_fig3 <- india_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) +
+  labs(x = "Cause of Death", y = "Years Lost") +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()
+
+ # save india fs figure 3
+ ggsave("./june.2022/factsheets/india/graphs/india_fs_fig3.png", india_fs_fig3)
+
+
+#> Figure 4: Average PM2.5 pollution in North India, All regions (excluding North India), National Average: 1998 to 2020
+
+# creating India's region wise average PM2.5 data from 1998 to 2020 
+region_wise_avg_pm2.5_india_ts <- color_2020_india %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# creating a national average PM2.5 trendlines data from 1998 to 2020
+national_avg_pm2.5_india_ts <- color_2020_india %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# India factsheet figure 4 dataset
+india_fs_fig4_dataset <- rbind(region_wise_avg_pm2.5_india_ts, national_avg_pm2.5_india_ts)
+
+# save india factsheet figure 4 dataset
+india_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/india/graph.wise.datasets/india_fs_fig4_dataset.csv")
+  
+# India factsheet figure 4
+india_fs_fig4 <- ggplot(india_fs_fig4_dataset) +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.1) +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 100)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("National Average" = "darkgrey", "North India" = "darkred", "All other regions (excluding North India)" = "orange")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 6.5), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+     geom_text(x = 2002.8, y = 10, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+
+ # save india fs figure 4
+ ggsave("./june.2022/factsheets/india/graphs/india_fs_fig4.png", india_fs_fig4)
+
+# Appendix table
+
+india_fs_appendix_table <- color_2020_india %>%
+  group_by(name_1) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm2017_pop_weighted = pop_weights*pm2017) %>%
+  summarise(total_population_millions = (sum(population, na.rm = TRUE))/1000000, avg_pm2.5_2020 = round(sum(pm2020_pop_weighted, na.rm = TRUE), 2),
+            avg_pm2.5_2017 = round(sum(pm2017_pop_weighted, na.rm = TRUE), 2),
+            life_exp_gain_2020_who  = round((avg_pm2.5_2020 - who_guideline)*le_constant, 2), 
+            life_exp_gain_2020_nat_standard = round((avg_pm2.5_2020 - nat_stan_india)*le_constant, 2), 
+            life_exp_gain_2017_25perc_reduce = round(((avg_pm2.5_2017*(ncap_midpoint/100))*le_constant), 2)) %>%
+  ungroup() %>%
+  mutate(life_exp_gain_2020_who = ifelse(life_exp_gain_2020_who < 0, 0, life_exp_gain_2020_who), 
+         life_exp_gain_2020_nat_standard = ifelse(life_exp_gain_2020_nat_standard < 0, 0, life_exp_gain_2020_nat_standard)) %>%
+  select(-avg_pm2.5_2017) %>%
+  rename(`State/UT` = name_1, `Population (Millions)` = total_population_millions, 
+         `PM 2.5 concentration 2020 (µg/m³)` = avg_pm2.5_2020, 
+         `From 2020 Concentration to WHO Guideline of 5 µg/m³` = life_exp_gain_2020_who, 
+         `From 2020 Concentration to the National Standard of 40 µg/m³` = life_exp_gain_2020_nat_standard, 
+         `From 2017 Concentration by 25% per NCAP` = life_exp_gain_2017_25perc_reduce)
+
+# save appendix table
+india_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/india/india_fs_appendix_table.csv")
 
 
 ```
