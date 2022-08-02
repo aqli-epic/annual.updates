@@ -880,3 +880,145 @@ india_fs_appendix_table %>%
 
 ```
 
+# Indonesia Factsheet
+
+```{r indonesia_fs}
+
+# color 2020 Indonesia
+color_2020_indonesia <- color_2020 %>%
+  filter(country == "Indonesia")
+
+#> Figure 2: Potential Gain in Life Expectancy through Reducing PM2.5 to the WHO Guideline in 10 Largest gadm level 1 regions in Indonesia.
+
+
+# fig2 dataset
+indonesia_fs_fig2_dataset <-  color_2020_indonesia %>%
+  mutate(name_1 = str_replace(name_1, "Jawa Barat", "West Java"),
+         name_1 = str_replace(name_1, "Jawa Timur", "East Java"), 
+         name_1 = str_replace(name_1, "Jawa Tengah", "Central Java")) %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), gain_in_life_expectancy = (avg_pm2.5_2020 - who_guideline)*le_constant,
+            gain_in_life_expectancy = ifelse(gain_in_life_expectancy < 0,  0, gain_in_life_expectancy),
+            tot_pop = sum(population, na.rm = TRUE)) %>%
+  slice_max(tot_pop, n = 10)  
+
+# save indonesia factsheet figure 2 dataset
+indonesia_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/indonesia/graph.wise.datasets/indonesia_fs_fig2_dataset.csv")
+
+# fig2 plot
+
+indonesia_fs_fig2 <- indonesia_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, gain_in_life_expectancy), y = gain_in_life_expectancy, fill = gain_in_life_expectancy), width = 0.6) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 0.5)) +
+  scale_fill_gradient(low = "darkgoldenrod1", high = "darkorange") +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = "none")
+
+# save figure 2
+ggsave("./june.2022/factsheets/indonesia/graphs/indonesia_fs_fig2.png", indonesia_fs_fig2)
+
+
+#> Figure 3: · Life Expectancy Impact of PM2.5 and Unassociated Causes/ Risks of Death
+
+# filtering master GBD file for Indonesia
+gbd_indonesia <- gbd_results %>%
+  filter(location == "indonesia")
+
+# filtering out some of the GBD causes of deaths that are sort of* covered in PM2.5
+gbd_indonesia_filter <- gbd_indonesia %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco"))
+
+# indonesia factsheet figure3 dataset: filtering out top 6 causes of deaths (in terms of years of life lost)
+indonesia_fs_fig3_dataset <- gbd_indonesia_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6)
+
+# save indonesia factsheet figure 3 dataset
+indonesia_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/indonesia/graph.wise.datasets/indonesia_fs_fig3_dataset.csv")
+
+# indonesia factsheet figure 3
+indonesia_fs_fig3 <- indonesia_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) +
+  labs(x = "Cause of Death", y = "Years Lost") +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()  
+
+# save figure 3
+ggsave("./june.2022/factsheets/indonesia/graphs/indonesia_fs_fig3.png", indonesia_fs_fig3)
+
+
+#> Figure 4: Average PM2.5 Concentration in Indonesia from 1998-2020, Indonesia
+
+# indonesia factsheet figure 4 dataset: creating Indonesia's national average PM2.5 data from 1998 to 2020 
+indonesia_fs_fig4_dataset <- color_2020_indonesia %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save indonesia factsheet figure 4 dataset
+indonesia_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/indonesia/graph.wise.datasets/indonesia_fs_fig4_dataset.csv")
+
+# indonesia factsheet figure 4
+ indonesia_fs_fig4 <- indonesia_fs_fig4_dataset %>% 
+   ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 30, 5), limits = c(0, 30)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("National Average" = "darkgrey")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) + 
+    geom_text(x = 2002.8, y = 6.3, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+# save figure 4
+ggsave("./june.2022/factsheets/indonesia/graphs/indonesia_fs_fig4.png", indonesia_fs_fig4) 
+ 
+ 
+# indonesia factsheet appendix table
+ 
+indonesia_fs_appendix_table <- color_2020_indonesia %>%
+   mutate(name_1 = str_replace(name_1, "Jawa Barat", "West Java"),
+         name_1 = str_replace(name_1, "Jawa Timur", "East Java"), 
+         name_1 = str_replace(name_1, "Jawa Tengah", "Central Java")) %>%
+  group_by(name_1) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(total_population_millions = round((sum(population, na.rm = TRUE))/1000000, 2), avg_pm2.5_2020 = round(sum(pm2020_pop_weighted, na.rm = TRUE), 2),
+            life_exp_gain_2020_who  = round((avg_pm2.5_2020 - who_guideline)*le_constant, 2), 
+            life_exp_gain_2020_30perc_reduce = round(((avg_pm2.5_2020*(0.3))*le_constant), 2)) %>%
+  ungroup() %>%
+  mutate(life_exp_gain_2020_who = ifelse(life_exp_gain_2020_who < 0, 0, life_exp_gain_2020_who)) %>% rename(`Province` = name_1, 
+         `Population (Millions)` = total_population_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = avg_pm2.5_2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = life_exp_gain_2020_who, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = life_exp_gain_2020_30perc_reduce)
+
+# save indonesia factsheet appendix table
+indonesia_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/indonesia/indonesia_fs_appendix_table.csv")
+
+
+```
+
