@@ -1134,3 +1134,42 @@ seasia_fs_appendix_table %>%
 
 ```
 
+
+# Central and West Africa factsheet
+
+```{r cwafrica_fs}
+
+# central africa definition
+central_african_countries <- c("Angola", "Burundi", "Cameroon", 
+                                        "Central African Republic", "Chad", 
+                                        "Republic of Congo",
+                                        "Democratic Republic of the Congo", 
+                                        "Equatorial Guinea", "Gabon",
+                                        "são tomé and Príncipe", 
+                                        "Rwanda")
+# west africa definition
+west_african_countries <- c("Benin", "Burkina Faso", "Cape Verde", 
+                            "Gambia", "Ghana", "Guinea", "Guinea-Bissau", 
+                            "Côte d'Ivoire", "Liberia", "Mali", "Mauritania", 
+                            "Niger", "Nigeria", "Senegal", "Sierra Leone", 
+                            "Togo")
+
+# central and west africa countries
+central_and_west_african_countries <- c(central_african_countries, west_african_countries)
+
+
+color_data <- read_csv("./data-raw/raw_files_all/2020_update_peru/color.csv")
+
+color_data$country <- str_to_lower(color_data$country)
+color_data$name_1 <- str_to_lower(color_data$name_1)
+color_data$name_2 <- str_to_lower(color_data$name_2)
+
+color_data_cen_west_africa <- color_data %>%
+  filter(country %in% central_and_west_african_countries) %>%
+  mutate(name_1_country = str_c(name_1, "(", country, ")", sep = ""), 
+         region = ifelse(country %in% central_african_countries, "central african", 
+                         "west african")) 
+
+```
+
+
