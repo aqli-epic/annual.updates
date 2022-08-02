@@ -1022,3 +1022,115 @@ indonesia_fs_appendix_table %>%
 
 ```
 
+# South East Asia Factsheet
+
+```{r se_asia_fs}
+
+#> Figure 2: Potential Gain in Years of Life Expectancy Through Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, in 10 Largest Regions in Southeast Asia
+
+# South East Asia definition
+se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor Leste", "Indonesia", "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", "Vietnam")
+
+# filtering color file for South East Asia
+color_data_se_asia <- color_2020 %>%
+  filter(country %in% se_asia_vec) %>%
+  mutate(name_1_country = str_c(name_1, "(", country, ")", sep = "")) 
+
+# seasia factsheet figure 2 dataset: filter dataset for South East Asia and add a new column that combines gadm_1 and gadm_0 columns
+seasia_fs_fig2_dataset <- color_data_se_asia %>%
+  mutate(name_1_country = str_c(name_1, "(", country, ")", sep = "")) %>%
+  group_by(name_1_country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_pop_weighted = sum(pm2020_pop_weighted, na.rm = TRUE),
+            gain_in_le = (avg_pm2.5_pop_weighted - who_guideline) * le_constant,
+            gain_in_le = ifelse(gain_in_le < 0, 0, gain_in_le)) %>%
+  ungroup() %>%
+  mutate(name_1_country = str_replace(name_1_country, "Jawa Barat", "West Java"),
+         name_1_country = str_replace(name_1_country, "Jawa Timur", "East Java"),
+         name_1_country = str_replace(name_1_country, "Jawa Tengah", "Central Java")
+  ) %>%
+  slice_max(tot_pop, n = 10)
+
+# save seasia figure 2 dataset
+seasia_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/seasia/graph.wise.datasets/se_asia_fig2_dataset.csv")
+
+
+# seasia figure 2
+seasia_fs_fig2 <- seasia_fs_fig2_dataset %>%
+  ggplot(mapping = aes(x = forcats::fct_reorder(name_1_country, gain_in_le), y = gain_in_le, fill = gain_in_le)) +
+  geom_col() +
+  labs(y = "Gain In Life Expectancy (Years)", x = "Region") +
+  coord_flip() +
+  scale_fill_gradient(low = "darkgoldenrod1", high = "darkorange2") +
+  ggthemes::theme_tufte() +
+  theme(legend.position = "none")
+
+# save seasia figure 2
+ggsave("./june.2022/factsheets/seasia/graphs/seasia_fs_fig2.png", seasia_fs_fig2)
+
+#> seasia figure 3 
+
+# seasia figure 3 dataset
+seasia_fs_fig3_dataset <- color_data_se_asia %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "Southeast Asia average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save seasia figure 3 dataset
+seasia_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/seasia/graph.wise.datasets/se_asia_fig3_dataset.csv")
+
+
+# seasia figure 3
+seasia_fs_fig3 <- seasia_fs_fig3_dataset %>%
+  ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 25, 2), limits = c(0, 25)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "none", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+   geom_text(x = 2002.8, y = 6.2, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+# save seasia figure 3
+ggsave("./june.2022/factsheets/seasia/graphs/seasia_fs_fig3.png", seasia_fs_fig3)
+
+#> Appendix Table, SE Asia factsheet
+
+seasia_fs_appendix_table <- color_data_se_asia %>%
+  mutate(pm2020 = round(pm2020, 2),
+         le_gain_red_to_who = round((pm2020 - who_guideline)*le_constant, 2),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2020*0.3)*le_constant, 2), 
+         pop_millions = round(population/1000000, 2)) %>%
+  select(country, name_2, pop_millions, pm2020, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pm2020, n = 25) %>%
+    rename(Country = country, 
+           Region = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = pm2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = le_gain_red_to_who, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save se asia appendix table
+seasia_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/seasia/seasia_fs_appendix_table.csv")
+
+```
+
