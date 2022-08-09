@@ -548,6 +548,6 @@ chart4 <- ggplot(chart4_dataset) +
   
 
 # Save chart4
-ggsave("./june.2022/top.ten.charts.campaign/chart4.png", chart4)
+ggsave("./june.2022/top.ten.charts.campaign/chart4.data.graph.code/chart4.png", chart4)
 ```
 
