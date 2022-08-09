@@ -46,6 +46,9 @@ gbd_results <- read_csv("./june.2022/other.important.calculations.data/estimated
 
 # Countries with Ambient Air Quality Standards
  aaqs_places <- read_csv("./june.2022/other.important.calculations.data/countries_list_with_aaqs.csv")
+ 
+# read in "county for aqli pm2.5 dataset" (US technical appendix output file)
+county_for_aqli_pm2.5_dataset <- read_csv("./june.2022/other.important.calculations.data/county_pm25_foraqli_stats.csv")
 
 
 # global variables
@@ -555,10 +558,6 @@ ggsave("./june.2022/top.ten.charts.campaign/chart4.data.graph.code/chart4.png", 
 # Chart #3: Percent of Population falling in different Life years lost buckets in 2020 v/s 1970
 
 ```{r chart#3}
-#> Figure 4: LA times US 1970, 2020 categorical bar graph
-
-# converting certain character columns to lower case in 236 counties dataset
-county_for_aqli_pm2.5_dataset <- read_csv("./june.2022/other.important.calculations.data/county_pm25_foraqli_stats.csv")
 
 # us color dataset
 color_2020_usa <- color_2020 %>%
