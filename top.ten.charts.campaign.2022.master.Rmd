@@ -559,7 +559,7 @@ ggsave("./june.2022/top.ten.charts.campaign/chart4.data.graph.code/chart4.png", 
 ```
 
 
-# Chart # 2: Global trends in PM2.5 concentrations, 2000-2020
+# Chart #2: Global trends in PM2.5 concentrations, 2000-2020
 
 ```{r}
  
@@ -609,7 +609,39 @@ chart2 <- chart2_dataset %>%
   scale_x_continuous(breaks = seq(2000, 2020, 1))
 
 # save the plot in the appropriate folder
-ggsave("./june.2022/top.ten.charts.campaign/chart2.data.graph.code/chart2.png", ar_fig5)
+ggsave("./june.2022/top.ten.charts.campaign/chart2.data.graph.code/chart2.png", chart2, width = 13, height = 13)
+
+```
+
+# chart #1: Life Expectancy Impact of PM2.5 and Unassociated Causes/Risks of Death, Global
+
+```{r}
+# prepare the gbd figure dataset keeping relevant causes of death and filtering out others
+chart1_dataset <- gbd_results %>%
+  filter(location == "global", 
+         cause_of_death %in% c("PM2.5 relative to WHO", "Smoking", 
+                               "Alcohol use", "Unsafe water, sanitation, and handwashing",
+                               "Road injuries", "HIV/AIDS", 
+                               "Malaria", "Conflict and terrorism")) %>%
+  select(cause_of_death, est_le_diff_vs_actual_aggregate) 
+
+# save chart 1 dataset
+chart1_dataset %>%
+  write_csv("./june.2022/top.ten.charts.campaign/chart1.data.graph.code/chart1_dataset.csv")
+
+# plot the gbd figure
+chart1 <- chart1_dataset %>%
+  ggplot(mapping = aes(x = fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate, .desc = TRUE), y = est_le_diff_vs_actual_aggregate)) + 
+  geom_col(mapping = aes(fill = est_le_diff_vs_actual_aggregate), width = 0.5) +
+  theme_classic() + 
+  labs(x = "", y = "Life Years Lost") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, hjust=0.90), 
+        legend.position = "none") +
+  ggtitle(str_c("Life Expectany Impact of Mortality Causes & Risks:", "Global", sep = " ")) +
+   scale_fill_gradient(low = "darkgoldenrod1", high = "darkorange")
+ 
+# save the plot in the appropriate folder
+ggsave("./june.2022/top.ten.charts.campaign/chart1.data.graph.code/chart1.png", chart1)
 
 ```
 
