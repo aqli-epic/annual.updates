@@ -52,6 +52,7 @@ nat_stan_sk <- 25
 nat_stan_bangladesh <- 15
 nat_stan_pak <- 15
 nat_stan_india <- 40
+nat_stan_china <- 35
 
 #> other region wise defintions
 
@@ -1329,39 +1330,9 @@ cwafrica_fs_fig4_dataset %>%
 
 ```{r china_fs}
 
-# China color file
+# filtering the color file for China
 color_2020_china <- color_2020 %>%
   filter(country == "China")
-
-color_2020_china %>%
-  group_by(name_1) %>% 
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pop_weights*pm2020) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
-            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
-            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
-  slice_max(tot_pop, n = 10) %>%
-  ungroup() %>%
-  ggplot() +
-  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = le_gain), width = 0.7) +
-  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
-  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
-  coord_flip() +
-  theme_classic() +
-  theme(legend.position = "none")
-
-
-
-
-
-
-
-
-
-
-# filter master dataset for China
-color_2020_china <- color_2020 %>%
-  filter(country %in% "China")
 
 # BTH region (name_1)
 bth_region <- c("Beijing", "Tianjin", "Hebei")
@@ -1377,19 +1348,45 @@ prd_region_name_2_guandong_regions <- c("Dongguan", "Foshan", "Guangzhou",
 
 prd_region_name_1 <- c("Hong Kong", "Macao")
 
-# prd combined
 prd <- c(prd_region_name_2_guandong_regions, prd_region_name_1)
 
 
-# add region column in the China dataset
+# add region column
 color_2020_china  <- color_2020_china %>%
   mutate(region = ifelse(name_1 %in% bth_region, "BTH", "others"), 
          region = ifelse(name_1 %in% yrd_region,  "YRD", region), 
          region = ifelse(name_1 %in% prd_region_name_1, "PRD", region), 
          region = ifelse(name_2 %in% prd_region_name_2_guandong_regions, "PRD", region))
-  
 
-# AR figure 15 (part-1): trend lines figure region wise (BTH, YRD, PRD) dataset
+# China factsheet figure 2 dataset
+china_fs_fig2_dataset <- color_2020_china %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save China factsheet figure 2 dataset
+china_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/china/graph.wise.datasets/china_fs_fig2.csv")
+
+# plot China factsheet figure 2 dataset
+china_fs_fig2 <- china_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = le_gain), width = 0.7) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = "none")
+
+# save China factsheet figure 2
+ggsave("./june.2022/factsheets/china/graphs/china_fs_fig2.png", china_fs_fig2)
+
+# China factsheet figure 3 (part-1): trend lines figure region wise (BTH, YRD, PRD) dataset
 trendlines_china_region_wise_df <- color_2020_china %>%
   group_by(region) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
@@ -1401,7 +1398,7 @@ trendlines_china_region_wise_df <- color_2020_china %>%
   select(years, region, pop_weighted_avg_pm2.5) %>%
   filter(region %in% c("YRD", "BTH", "PRD"))
 
-# AR figure 15 (part-2): trend line national average dataset
+# China factsheet figure 3 (part-2): trend line national average dataset
 trendline_national_avg_df <- color_2020_china %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
@@ -1412,15 +1409,15 @@ trendline_national_avg_df <- color_2020_china %>%
          region = "China") %>% 
   select(years, region, pop_weighted_avg_pm2.5)
 
-# AR Figure 15 part 1 and part 2 datasets combined
-ar_fig15_dataset <- rbind(trendlines_china_region_wise_df, trendline_national_avg_df)
+# China factsheet figure 3 dataset final
+china_fs_fig3_dataset <- rbind(trendlines_china_region_wise_df, trendline_national_avg_df)
 
-# Save AR Figure 15 data set as a csv
-ar_fig15_dataset %>%  
-  write_csv("./june.2022/annual.report/figure15.data.graph.code/ar_fig15_dataset.csv")
+# save China factsheet figure 3 dataset
+china_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/china/graph.wise.datasets/china_fs_fig3.csv")
 
-# plot AR Figure 15
-ar_fig15 <- ggplot(ar_fig15_dataset) +
+# plot china factsheet figure 3
+china_fs_fig3 <- ggplot(ar_fig15_dataset) +
   geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.1) +
     geom_hline(mapping = aes(yintercept = 5), lwd = 0.5, linetype = "dashed") +
     geom_vline(mapping = aes(xintercept = 2014), lwd = 0.5, linetype = "dashed") +
@@ -1438,8 +1435,33 @@ ar_fig15 <- ggplot(ar_fig15_dataset) +
     geom_text(x = 2016.5, y = 93, label = str_wrap("China announces war on pollution", width = 18))
   
 
-# Save AR figure 15
-ggsave("./june.2022/annual.report/figure15.data.graph.code/ar_fig15.png", ar_fig15)
+# save China factsheet figure 3
+ggsave("./june.2022/factsheets/china/graphs/china_fs_fig3.png", china_fs_fig3)
+
+# China factsheet appendix table
+
+china_fs_appendix_table <- color_2020_china %>%
+  mutate(le_gain_who = round((pm2020 - who_guideline)*0.098, 1), 
+         le_gain_who = ifelse(le_gain_who < 0, 0, le_gain_who), 
+         le_gain_nat_stan = round((pm2020 - nat_stan_china)*le_constant, 1), 
+         le_gain_nat_stan = ifelse(le_gain_nat_stan < 0, 0, le_gain_nat_stan), 
+         change_poll_since_2014 = pm2014 - pm2020,
+         le_gain_from_2014_2020 = round(change_poll_since_2014*le_constant, 1),
+         le_gain_from_2014_2020 = ifelse(le_gain_from_2014_2020 < 0, 0, le_gain_from_2014_2020),
+         pop_millions = round(population/1000000, 1), 
+         pm2020 = round(pm2020, 1)) %>%
+  slice_max(population, n = 25) %>%
+  select(name_2, pop_millions, pm2020, le_gain_from_2014_2020,
+         le_gain_who, le_gain_nat_stan) %>%
+  rename(Prefectures = name_2, `Population (Millions)` = pop_millions, 
+         `PM 2.5 concentration 2020 (µg/m³)` = pm2020, 
+         `Life Expectancy Gains From 2014 concentrations to 2020 concentrations` = le_gain_from_2014_2020,
+         `From 2020 Concentration to WHO Guideline of 5 µg/m³` = le_gain_who, 
+         `From 2020 Concentration to the National Standard of 35 µg/m³` = le_gain_nat_stan)
+
+# save China factsheet appendix table
+china_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/china/china_fs_appendix_table.csv")
 
 
 ```
