@@ -1,0 +1,688 @@
+iso_alpha3,country,state,district,region_type,population,whostandard,natstandard,pm2.5_2020,lyl_rel_to_who_2020,lyl_rel_to_nat_stan_2020,lml_rel_to_who_2020,lml_rel_to_nat_stan_2020,ldl_rel_to_who_stan_2020,ldl_rel_to_nat_stan_2020
+IND,India,Ladakh,Leh (Ladakh),Predominantly Rural,161241,5,40,5.6375737,0.1170333,0,1.4,0,42.72,0
+IND,India,Arunachal Pradesh,Dibang Valley,Predominantly Rural,10359,5,40,7.9421563,0.28840891,0,3.46,0,105.27,0
+IND,India,Arunachal Pradesh,Upper Siang,Predominantly Rural,40953,5,40,9.3362608,0.42495358,0,5.1,0,155.11,0
+IND,India,Arunachal Pradesh,Anjaw,Predominantly Rural,23867,5,40,10.072217,0.49707726,0,5.96,0,181.43,0
+IND,India,Arunachal Pradesh,Lower Dibang Valley,Predominantly Rural,60086,5,40,10.144035,0.50411546,0,6.05,0,184,0
+IND,India,Tamil Nadu,The Nilgiris,Predominantly Urban,772027,5,40,10.472665,0.53632116,0,6.44,0,195.76,0
+IND,India,Arunachal Pradesh,Lohit,Predominantly Rural,76360,5,40,11.62841,0.64958423,0,7.8,0,237.1,0
+IND,India,Arunachal Pradesh,East Siang,Predominantly Rural,108476,5,40,11.830828,0.66942114,0,8.03,0,244.34,0
+IND,India,Kerala,Wayanad,Predominantly Rural,812784,5,40,11.859867,0.6722669,0,8.07,0,245.38,0
+IND,India,Ladakh,Kargil,Predominantly Rural,146997,5,40,12.270621,0.71252084,0,8.55,0,260.07,0
+IND,India,Andaman and Nicobar,Nicobars,Predominantly Rural,37143,5,40,12.430124,0.72815216,0,8.74,0,265.78,0
+IND,India,Arunachal Pradesh,West Siang,Predominantly Rural,123273,5,40,12.631765,0.747913,0,8.97,0,272.99,0
+IND,India,Arunachal Pradesh,Kurung Kumey,Predominantly Rural,75237,5,40,12.701174,0.75471503,0,9.06,0,275.47,0
+IND,India,Arunachal Pradesh,Upper Subansiri,Predominantly Rural,94862,5,40,12.726643,0.75721103,0,9.09,0,276.38,0
+IND,India,Karnataka,Kodagu,Predominantly Rural,579522,5,40,12.913102,0.77548403,0,9.31,0,283.05,0
+IND,India,Kerala,Idukki,Predominantly Rural,1110554,5,40,13.091758,0.79299223,0,9.52,0,289.44,0
+IND,India,Arunachal Pradesh,Lower Subansiri,Predominantly Rural,126680,5,40,13.541197,0.83703727000000006,0,10.04,0,305.52,0
+IND,India,Arunachal Pradesh,Tawang,Predominantly Rural,55930,5,40,14.129418,0.89468306,0,10.74,0,326.56,0
+IND,India,Kerala,Kasaragod,Predominantly Rural,1289009,5,40,14.538755,0.93479806,0,11.22,0,341.2,0
+IND,India,Kerala,Palakkad,Predominantly Rural,2928889,5,40,14.576653,0.93851191,0,11.26,0,342.56,0
+IND,India,Puducherry,Mahe,Predominantly Urban,173274,5,40,14.919459,0.97210705,0,11.67,0,354.82,0
+IND,India,Kerala,Kollam,Predominantly Urban,2604096,5,40,15.09792,0.98959619,0,11.88,0,361.2,0
+IND,India,Kerala,Kannur,Predominantly Urban,2370850,5,40,15.25417,1.0049087,0,12.06,0,366.79,0
+IND,India,Arunachal Pradesh,Namsai,Predominantly Rural,82777,5,40,15.254491,1.0049402,0,12.06,0,366.8,0
+IND,India,Arunachal Pradesh,Changlang,Predominantly Rural,168472,5,40,15.582513,1.0370862,0,12.45,0,378.54,0
+IND,India,Kerala,Pathanamthitta,Predominantly Rural,1274497,5,40,15.903557,1.0685486,0,12.82,0,390.02,0
+IND,India,Karnataka,Dakshina Kannada,Predominantly Urban,2246541,5,40,16.413458,1.1185189,0,13.42,0,408.26,0
+IND,India,Kerala,Thrissur,Predominantly Urban,3013604,5,40,16.637983,1.1405225,0,13.69,0,416.29,0
+IND,India,Arunachal Pradesh,East Kameng,Predominantly Rural,60939,5,40,16.728666,1.1494093,0,13.79,0,419.53,0
+IND,India,Arunachal Pradesh,West Kameng,Predominantly Rural,125101,5,40,16.753864,1.1518787,0,13.82,0,420.44,0
+IND,India,Kerala,Malappuram,Predominantly Urban,4027957,5,40,17.410864,1.2162647,0,14.6,0,443.94,0
+IND,India,Kerala,Thiruvananthapuram,Predominantly Urban,3189011,5,40,17.784575,1.2528883,0,15.03,0,457.3,0
+IND,India,Karnataka,Udupi,Predominantly Rural,1263371,5,40,18.307713,1.3041558,0,15.65,0,476.02,0
+IND,India,Kerala,Kottayam,Predominantly Rural,1942519,5,40,18.66712,1.3393779,0,16.07,0,488.87,0
+IND,India,Karnataka,Chikmagalur,Predominantly Rural,1210777,5,40,18.781597,1.3505965,0,16.21,0,492.97,0
+IND,India,Kerala,Kozhikode,Predominantly Urban,3041638,5,40,19.192684,1.3908831,0,16.69,0,507.67,0
+IND,India,Karnataka,Hassan,Predominantly Rural,1898894,5,40,19.204943,1.3920844000000001,0,16.71,0,508.11,0
+IND,India,Arunachal Pradesh,Papum Pare,Predominantly Urban,145957,5,40,19.212952,1.3928694,0,16.71,0,508.4,0
+IND,India,Tamil Nadu,Kanniyakumari,Predominantly Urban,1994420,5,40,19.214951,1.3930651,0,16.72,0,508.47,0
+IND,India,Kerala,Alappuzha,Predominantly Urban,2093295,5,40,19.540627,1.4249814,0,17.1,0,520.12,0
+IND,India,Assam,Tinsukia,Predominantly Rural,1410423,5,40,19.679384,1.4385797,0,17.26,0,525.08,0
+IND,India,Karnataka,Shivamogga,Predominantly Rural,1668135,5,40,19.80431,1.4508224,0,17.41,0,529.55,0
+IND,India,Assam,Dhemaji,Predominantly Rural,640023,5,40,19.901127,1.4603105,0,17.52,0,533.01,0
+IND,India,Kerala,Ernakulam,Predominantly Urban,3261280,5,40,20.019596,1.4719205,0,17.66,0,537.25,0
+IND,India,Tamil Nadu,Theni,Predominantly Urban,1345892,5,40,20.353184,1.504612,0,18.06,0,549.18,0
+IND,India,Himachal Pradesh,Lahul & Spiti,Predominantly Rural,32979,5,40,21.074072,1.575259,0,18.9,0,574.97,0
+IND,India,Arunachal Pradesh,Tirap,Predominantly Rural,75836,5,40,21.402853,1.6074796,0,19.29,0,586.73,0
+IND,India,Andaman and Nicobar,South Andaman,Predominantly Urban,240117,5,40,21.41419,1.6085907,0,19.3,0,587.14,0
+IND,India,Andaman and Nicobar,North & Middle Andaman,Predominantly Rural,107802,5,40,21.528074,1.6197513,0,19.44,0,591.21,0
+IND,India,Nagaland,Kiphire,Predominantly Rural,69351,5,40,21.565157,1.6233853,0,19.48,0,592.54,0
+IND,India,Arunachal Pradesh,Longding,Predominantly Rural,53728,5,40,21.809366,1.6473179,0,19.77,0,601.27,0
+IND,India,Nagaland,Tuensang,Predominantly Rural,168435,5,40,21.827187,1.6490643,0,19.79,0,601.91,0
+IND,India,Karnataka,Mysore,Predominantly Urban,3191921,5,40,21.857016,1.6519876,0,19.82,0,602.98,0
+IND,India,Karnataka,Haveri,Predominantly Rural,1700492,5,40,21.908716,1.6570542,0,19.88,0,604.82,0
+IND,India,Tamil Nadu,Tirunelveli,Predominantly Urban,3169188,5,40,21.979168,1.6639584,0,19.97,0,607.34,0
+IND,India,Puducherry,Karaikal,Predominantly Urban,275525,5,40,21.990057,1.6650256,0,19.98,0,607.73,0
+IND,India,Himachal Pradesh,Kinnaur,Predominantly Rural,88682,5,40,22.067207,1.6725863,0,20.07,0,610.49,0
+IND,India,Jammu and Kashmir,Kishtwar,Predominantly Rural,247037,5,40,22.109394,1.6767207,0,20.12,0,612,0
+IND,India,Assam,Lakhimpur,Predominantly Rural,1268061,5,40,22.25338,1.6908313,0,20.29,0,617.15,0
+IND,India,Tamil Nadu,Coimbatore,Predominantly Urban,3286592,5,40,22.277893,1.6932335,0,20.32,0,618.03,0
+IND,India,Manipur,Ukhrul,Predominantly Rural,199862,5,40,22.521666,1.7171233,0,20.61,0,626.75,0
+IND,India,Karnataka,Uttara Kannada,Predominantly Rural,1539021,5,40,22.590492,1.7238683,0,20.69,0,629.21,0
+IND,India,Tamil Nadu,Nagappattinam,Predominantly Rural,1659552,5,40,22.722404,1.7367957,0,20.84,0,633.93,0
+IND,India,Nagaland,Phek,Predominantly Rural,146130,5,40,22.731325,1.7376698,0,20.85,0,634.25,0
+IND,India,Tamil Nadu,Ariyalur,Predominantly Rural,805087,5,40,22.962639,1.7603385,0,21.12,0,642.52,0
+IND,India,Karnataka,Chamrajnagar,Predominantly Rural,1094938,5,40,22.983145,1.7623482,0,21.15,0,643.26,0
+IND,India,Jammu and Kashmir,Ganderbal,Predominantly Rural,616325,5,40,23.002565,1.7642514,0,21.17,0,643.95,0
+IND,India,Assam,Dibrugarh,Predominantly Rural,1427102,5,40,23.01436,1.7654074,0,21.18,0,644.37,0
+IND,India,Himachal Pradesh,Kullu,Predominantly Rural,474958,5,40,23.042925,1.7682066,0,21.22,0,645.4,0
+IND,India,Tamil Nadu,Ramanathapuram,Predominantly Rural,1466958,5,40,23.067886,1.7706528,0,21.25,0,646.29,0
+IND,India,Jammu and Kashmir,Bandipore,Predominantly Rural,308845,5,40,23.098213,1.7736249,0,21.28,0,647.37,0
+IND,India,Tamil Nadu,Pudukkottai,Predominantly Rural,1795532,5,40,23.174707,1.7811213,0,21.37,0,650.11,0
+IND,India,Andhra Pradesh,Chittoor,Predominantly Rural,4338421,5,40,23.21162,1.7847388,0,21.42,0,651.43,0
+IND,India,Karnataka,Davanagere,Predominantly Rural,2277907,5,40,23.237471,1.7872721,0,21.45,0,652.35,0
+IND,India,Nagaland,Zunheboto,Predominantly Rural,154520,5,40,23.31678,1.7950444,0,21.54,0,655.19,0
+IND,India,Uttarakhand,Pithoragarh,Predominantly Rural,544226,5,40,23.348103,1.7981141,0,21.58,0,656.31,0
+IND,India,Tamil Nadu,Perambalur,Predominantly Rural,574109,5,40,23.513754,1.814348,0,21.77,0,662.24,0
+IND,India,Tamil Nadu,Thoothukudi,Predominantly Urban,1974339,5,40,23.520378,1.8149971,0,21.78,0,662.47,0
+IND,India,Tamil Nadu,Sivaganga,Predominantly Rural,1416568,5,40,23.523481,1.8153013,0,21.78,0,662.58,0
+IND,India,Karnataka,Dharwad,Predominantly Urban,1980208,5,40,23.594301,1.8222414,0,21.87,0,665.12,0
+IND,India,Uttarakhand,Almora,Predominantly Rural,666778,5,40,23.642626,1.8269773,0,21.92,0,666.85,0
+IND,India,Tamil Nadu,Cuddalore,Predominantly Rural,2847626,5,40,23.65098,1.827796,0,21.93,0,667.15,0
+IND,India,Gujarat,Gir Somnath,Predominantly Rural,1156818,5,40,23.817574,1.8441223,0,22.13,0,673.1,0
+IND,India,Puducherry,Puducherry,Predominantly Urban,813014,5,40,23.828596,1.8452023,0,22.14,0,673.5,0
+IND,India,Tamil Nadu,Madurai,Predominantly Urban,3252593,5,40,23.854469,1.847738,0,22.17,0,674.42,0
+IND,India,Jammu and Kashmir,Doda,Predominantly Rural,496452,5,40,23.938848,1.8560072,0,22.27,0,677.44,0
+IND,India,Meghalaya,West Khasi Hills,Predominantly Rural,296514,5,40,23.954262,1.8575177,2.8020219e-4,22.29,0,677.99,0.1
+IND,India,Tamil Nadu,Thiruvarur,Predominantly Rural,1441625,5,40,23.955145,1.8576041,0,22.29,0,678.03,0
+IND,India,Uttarakhand,Champawat,Predominantly Rural,285978,5,40,23.998154,1.8618191,3.7558344e-5,22.34,0,679.56,0.01
+IND,India,Tamil Nadu,Dindigul,Predominantly Rural,2272798,5,40,23.999199,1.8619214,0,22.34,0,679.6,0
+IND,India,Tamil Nadu,Virudhunagar,Predominantly Urban,2051510,5,40,24.131636,1.8749003,0,22.5,0,684.34,0
+IND,India,Tamil Nadu,Viluppuram,Predominantly Rural,3961663,5,40,24.295534,1.8909624,0,22.69,0,690.2,0
+IND,India,Nagaland,Kohima,Predominantly Urban,249234,5,40,24.296352,1.8910425,0,22.69,0,690.23,0
+IND,India,Jammu and Kashmir,Ramban,Predominantly Rural,269159,5,40,24.398544,1.9010574,0,22.81,0,693.89,0
+IND,India,Daman and Diu,Diu,Predominantly Urban,47615,5,40,24.500875,1.9110858,0,22.93,0,697.55,0
+IND,India,Tamil Nadu,Thanjavur,Predominantly Rural,2503264,5,40,24.587713,1.919596,0,23.04,0,700.65,0
+IND,India,Karnataka,Kolar,Predominantly Rural,1668100,5,40,24.671974,1.9278535,0,23.13,0,703.67,0
+IND,India,Jammu and Kashmir,Anantnag,Predominantly Rural,1171748,5,40,24.724705,1.9330211,0,23.2,0,705.55,0
+IND,India,Andhra Pradesh,Sri Potti Sriramulu Nellore,Predominantly Rural,3102921,5,40,24.729671,1.9335078,0,23.2,0,705.73,0
+IND,India,Himachal Pradesh,Mandi,Predominantly Rural,1043392,5,40,24.786129,1.9390405,0,23.27,0,707.75,0
+IND,India,Tamil Nadu,Vellore,Predominantly Urban,4139247,5,40,24.826178,1.9429655,0,23.32,0,709.18,0
+IND,India,Himachal Pradesh,Chamba,Predominantly Rural,539130,5,40,24.827017,1.9430476,0,23.32,0,709.21,0
+IND,India,Uttarakhand,Bageshwar,Predominantly Rural,272944,5,40,24.869928,1.947253,0,23.37,0,710.75,0
+IND,India,Himachal Pradesh,Shimla,Predominantly Rural,871860,5,40,24.946419,1.954749,0,23.46,0,713.48,0
+IND,India,Karnataka,Chitradurga,Predominantly Rural,1775766,5,40,25.047899,1.9646941,0,23.58,0,717.11,0
+IND,India,Assam,Sonitpur,Predominantly Rural,2130267,5,40,25.101616,1.9699584,0,23.64,0,719.03,0
+IND,India,Gujarat,Junagadh,Predominantly Rural,2381694,5,40,25.13802,1.9735259,0,23.68,0,720.34,0
+IND,India,Nagaland,Mon,Predominantly Rural,255642,5,40,25.154224,1.975114,0,23.7,0,720.92,0
+IND,India,Uttarakhand,Chamoli,Predominantly Rural,463462,5,40,25.302923,1.9896865,0,23.88,0,726.24,0
+IND,India,Tamil Nadu,Krishnagiri,Predominantly Rural,1993063,5,40,25.399237,1.9991252,0,23.99,0,729.68,0
+IND,India,Meghalaya,East Khasi Hills,Predominantly Urban,963565,5,40,25.417641,2.0009289,0.018057441,24.01,0.22,730.34,6.59
+IND,India,Maharashtra,Sindhudurg,Predominantly Rural,913090,5,40,25.450874,2.0041857,0,24.05,0,731.53,0
+IND,India,Manipur,Senapati,Predominantly Rural,492660,5,40,25.528042,2.0117481,0,24.14,0,734.29,0
+IND,India,Nagaland,Longleng,Predominantly Rural,51314,5,40,25.662277,2.0249031,0,24.3,0,739.09,0
+IND,India,Karnataka,Gadag,Predominantly Rural,1136787,5,40,25.692774,2.0278919,0,24.33,0,740.18,0
+IND,India,Tamil Nadu,Tiruvannamalai,Predominantly Rural,2612005,5,40,25.871244,2.0453818,0,24.54,0,746.56,0
+IND,India,Goa,South Goa,Predominantly Urban,656170,5,40,25.931633,2.0513,0,24.62,0,748.72,0
+IND,India,Andhra Pradesh,Prakasam,Predominantly Rural,3513296,5,40,25.978371,2.0558803,0,24.67,0,750.4,0
+IND,India,Jammu and Kashmir,Udhampur,Predominantly Rural,643221,5,40,26.090347,2.066854,0,24.8,0,754.4,0
+IND,India,Gujarat,Porbandar,Predominantly Urban,657279,5,40,26.157616,2.0734463,0,24.88,0,756.81,0
+IND,India,Jammu and Kashmir,Kupwara,Predominantly Rural,973849,5,40,26.16062,2.0737407,0,24.88,0,756.92,0
+IND,India,Jammu and Kashmir,Pulwama,Predominantly Rural,692269,5,40,26.172695,2.0749242,0,24.9,0,757.35,0
+IND,India,Nagaland,Mokokchung,Predominantly Rural,186249,5,40,26.198307,2.0774341,0,24.93,0,758.26,0
+IND,India,Goa,North Goa,Predominantly Urban,830799,5,40,26.287296,2.0861549,0,25.03,0,761.45,0
+IND,India,Maharashtra,Ratnagiri,Predominantly Rural,1732857,5,40,26.414473,2.0986185,0,25.18,0,766,0
+IND,India,Jammu and Kashmir,Kulgam,Predominantly Rural,517702,5,40,26.453871,2.1024795,0,25.23,0,767.41,0
+IND,India,Karnataka,Tumakuru,Predominantly Rural,2874051,5,40,26.489115,2.1059332,0,25.27,0,768.67,0
+IND,India,Karnataka,Bangalore Rural,Predominantly Rural,1093122,5,40,26.628395,2.1195827,0,25.43,0,773.65,0
+IND,India,Tamil Nadu,Tiruchirappalli,Predominantly Urban,2884727,5,40,26.700815,2.1266799,0,25.52,0,776.24,0
+IND,India,Karnataka,Ramanagara,Predominantly Rural,1146230,5,40,26.834539,2.1397848,0,25.68,0,781.02,0
+IND,India,Meghalaya,South West Khasi Hills,Predominantly Rural,158885,5,40,26.880911,2.1443293,0.076704912,25.73,0.92,782.68,28
+IND,India,Gujarat,Devbhumi Dwarka,Predominantly Rural,761703,5,40,26.889999,2.14522,0,25.74,0,783.01,0
+IND,India,Himachal Pradesh,Kangra,Predominantly Rural,1600762,5,40,26.941452,2.1502621,8.1744604e-4,25.8,0.01,784.85,0.3
+IND,India,Tamil Nadu,Dharmapuri,Predominantly Rural,1599582,5,40,26.949644,2.1510651,0,25.81,0,785.14,0
+IND,India,Karnataka,Mandya,Predominantly Rural,1928718,5,40,27.028011,2.1587451,0,25.9,0,787.94,0
+IND,India,Odisha,Gajapati,Predominantly Rural,634830,5,40,27.03907,2.1598289,0,25.92,0,788.34,0
+IND,India,Uttarakhand,Rudraprayag,Predominantly Rural,148140,5,40,27.045547,2.1604636,0,25.93,0,788.57,0
+IND,India,Jammu and Kashmir,Shupiyan,Predominantly Rural,472891,5,40,27.058197,2.1617033,0,25.94,0,789.02,0
+IND,India,Tamil Nadu,Tiruppur,Predominantly Urban,2979782,5,40,27.290045,2.1844244,0,26.21,0,797.31,0
+IND,India,Jammu and Kashmir,Reasi,Predominantly Rural,317908,5,40,27.312086,2.1865845,0,26.24,0,798.1,0
+IND,India,Assam,Sivasagar,Predominantly Rural,1272891,5,40,27.35887,2.1911693,0,26.29,0,799.78,0
+IND,India,Telangana,Nagarkurnool,Predominantly Urban,926091,5,40,27.431135,2.1982512,0,26.38,0,802.36,0
+IND,India,Uttarakhand,Uttarkashi,Predominantly Rural,370070,5,40,27.487749,2.2037995,0,26.45,0,804.39,0
+IND,India,Gujarat,Kachchh,Predominantly Rural,2295891,5,40,27.527321,2.2076776,0,26.49,0,805.8,0
+IND,India,Dadra and Nagar Haveli,Dadra and Nagar Haveli,Predominantly Urban,408138,5,40,27.536552,2.2085822,0,26.5,0,806.13,0
+IND,India,Andhra Pradesh,Y.S.R.,Predominantly Rural,3006259,5,40,27.558313,2.2107146,0,26.53,0,806.91,0
+IND,India,Maharashtra,Palghar,Predominantly Rural,2575103,5,40,27.632906,2.2180247,0,26.62,0,809.58,0
+IND,India,Tamil Nadu,Karur,Predominantly Urban,1130586,5,40,27.706535,2.2252405,0,26.7,0,812.21,0
+IND,India,Gujarat,Amreli,Predominantly Rural,1148774,5,40,27.759493,2.2304301,0,26.77,0,814.11,0
+IND,India,Assam,Jorhat,Predominantly Rural,1184395,5,40,27.872356,2.2414908,0,26.9,0,818.14,0
+IND,India,Tamil Nadu,Salem,Predominantly Urban,3816512,5,40,27.922543,2.2464092,0,26.96,0,819.94,0
+IND,India,Karnataka,Chikballapur,Predominantly Rural,1346750,5,40,28.00948,2.2549291,0,27.06,0,823.05,0
+IND,India,Telangana,Mahabubnagar,Predominantly Rural,1542559,5,40,28.26494,2.2799642,0,27.36,0,832.19,0
+IND,India,Gujarat,Dang,Predominantly Rural,237689,5,40,28.408266,2.2940102000000002,0,27.53,0,837.31,0
+IND,India,Karnataka,Ballari,Predominantly Rural,2613980,5,40,28.411535,2.2943304,0,27.53,0,837.43,0
+IND,India,Nagaland,Wokha,Predominantly Rural,157530,5,40,28.419411,2.2951024,0,27.54,0,837.71,0
+IND,India,Jammu and Kashmir,Rajouri,Predominantly Rural,735852,5,40,28.43895,2.2970171,0,27.56,0,838.41,0
+IND,India,Gujarat,Valsad,Predominantly Rural,1902674,5,40,28.538567,2.3067796,0,27.68,0,841.97,0
+IND,India,Assam,Golaghat,Predominantly Rural,1149896,5,40,28.556917,2.308578,0,27.7,0,842.63,0
+IND,India,Manipur,Chandel,Predominantly Rural,162606,5,40,28.687414,2.3213665,0,27.86,0,847.3,0
+IND,India,Tamil Nadu,Kancheepuram,Predominantly Urban,3558472,5,40,28.700375,2.3226368,0,27.87,0,847.76,0
+IND,India,Karnataka,Bidar,Predominantly Rural,1818344,5,40,28.711138,2.3236914,0,27.88,0,848.15,0
+IND,India,Andhra Pradesh,Kurnool,Predominantly Rural,4218285,5,40,28.722071,2.3247628,0,27.9,0,848.54,0
+IND,India,Karnataka,Belgaum,Predominantly Rural,5101356,5,40,28.78672,2.3310986,0,27.97,0,850.85,0
+IND,India,Uttarakhand,Tehri Garhwal,Predominantly Rural,692332,5,40,28.789795,2.3313999,0,27.98,0,850.96,0
+IND,India,Mizoram,Champhai,Predominantly Rural,139439,5,40,28.973541,2.349407,0,28.19,0,857.53,0
+IND,India,Jammu and Kashmir,Srinagar,Predominantly Urban,1404241,5,40,29.032784,2.3552127,0,28.26,0,859.65,0
+IND,India,Karnataka,Bagalkot,Predominantly Rural,2024898,5,40,29.053513,2.3572443,0,28.29,0,860.39,0
+IND,India,Daman and Diu,Daman,Predominantly Urban,251425,5,40,29.070133,2.3588731,0,28.31,0,860.99,0
+IND,India,Manipur,Tamenglong,Predominantly Rural,150310,5,40,29.082605,2.3600953,0,28.32,0,861.43,0
+IND,India,Telangana,Vikarabad,Predominantly Rural,928679,5,40,29.212263,2.3728018,0,28.47,0,866.07,0
+IND,India,Tamil Nadu,Erode,Predominantly Urban,2237513,5,40,29.229734,2.3745139,0,28.49,0,866.7,0
+IND,India,Meghalaya,Jaintia Hills,Predominantly Rural,458346,5,40,29.244402,2.3759515,0.0037212742,28.51,0.04,867.22,1.36
+IND,India,Assam,Udalguri,Predominantly Rural,846964,5,40,29.333698,2.3847024,0,28.62,0,870.42,0
+IND,India,Tamil Nadu,Thiruvallur,Predominantly Urban,4023165,5,40,29.383646,2.3895974,0,28.68,0,872.2,0
+IND,India,Karnataka,Koppal,Predominantly Rural,1490780,5,40,29.400576,2.3912563,0,28.7,0,872.81,0
+IND,India,Manipur,Churachandpur,Predominantly Rural,306014,5,40,29.473143,2.3983681,0,28.78,0,875.4,0
+IND,India,Andhra Pradesh,Visakhapatnam,Predominantly Urban,4454507,5,40,29.494835,2.4004939,0,28.81,0,876.18,0
+IND,India,Andhra Pradesh,Anantapur,Predominantly Rural,4247937,5,40,29.495592,2.400568,0,28.81,0,876.21,0
+IND,India,Puducherry,Yanam,Predominantly Urban,11106,5,40,29.501198,2.4011173,0,28.81,0,876.41,0
+IND,India,Jammu and Kashmir,Baramulla,Predominantly Rural,1003183,5,40,29.580046,2.4088445,0,28.91,0,879.23,0
+IND,India,Himachal Pradesh,Hamirpur,Predominantly Rural,476446,5,40,29.601023,2.4109001,0,28.93,0,879.98,0
+IND,India,Nagaland,Peren,Predominantly Rural,83296,5,40,29.642979,2.4150119,0,28.98,0,881.48,0
+IND,India,Gujarat,Rajkot,Predominantly Urban,3385897,5,40,29.64543,2.415252,0,28.98,0,881.57,0
+IND,India,Andhra Pradesh,Guntur,Predominantly Rural,4957362,5,40,29.82136,2.4324932,0,29.19,0,887.86,0
+IND,India,Jammu and Kashmir,Poonch,Predominantly Rural,522929,5,40,29.854418,2.4357331,0,29.23,0,889.04,0
+IND,India,Telangana,Bhadradri Kothagudem,Predominantly Rural,1090727,5,40,29.868172,2.4370809,0,29.24,0,889.53,0
+IND,India,Karnataka,Yadgir,Predominantly Rural,1243230,5,40,29.926035,2.4427514,0,29.31,0,891.6,0
+IND,India,Tamil Nadu,Chennai,Predominantly Urban,5728166,5,40,29.960291,2.4461086,0,29.35,0,892.83,0
+IND,India,Jammu and Kashmir,Badgam,Predominantly Rural,602997,5,40,30.033459,2.453279,0,29.44,0,895.45,0
+IND,India,Karnataka,Vijaypura,Predominantly Rural,2307853,5,40,30.170706,2.4667292,0,29.6,0,900.36,0
+IND,India,Telangana,Wanaparthy,Predominantly Rural,532004,5,40,30.175146,2.4671643,0,29.61,0,900.51,0
+IND,India,Sikkim,North Sikkim,Predominantly Rural,45569,5,40,30.263269,2.4758003,0.0011129277,29.71,0.01,903.67,0.41
+IND,India,Odisha,Kandhamal,Predominantly Rural,776459,5,40,30.298372,2.4792404,0.0061578555,29.75,0.07,904.92,2.25
+IND,India,Andhra Pradesh,Krishna,Predominantly Urban,4662238,5,40,30.301487,2.4795458,0,29.75,0,905.03,0
+IND,India,Gujarat,Jamnagar,Predominantly Urban,1633586,5,40,30.371725,2.48642899999999,0,29.84,0,907.55,0
+IND,India,Telangana,Jogulamba Gadwal,Predominantly Rural,669981,5,40,30.439217,2.4930434,0,29.92,0,909.96,0
+IND,India,Telangana,Khammam,Predominantly Rural,1507496,5,40,30.462931,2.4953673,0,29.94,0,910.81,0
+IND,India,Karnataka,Kalaburagi,Predominantly Rural,2759954,5,40,30.531857,2.5021219,0,30.03,0,913.27,0
+IND,India,Tamil Nadu,Namakkal,Predominantly Urban,2061215,5,40,30.790598,2.5274787,0,30.33,0,922.53,0
+IND,India,Telangana,Mahabubabad,Predominantly Urban,596427,5,40,30.822712,2.5306258,0,30.37,0,923.68,0
+IND,India,Gujarat,Morbi,Predominantly Rural,1118186,5,40,30.880133,2.536253,0,30.44,0,925.73,0
+IND,India,Odisha,Malkangiri,Predominantly Rural,645056,5,40,30.887909,2.5370152,0,30.44,0,926.01,0
+IND,India,Andhra Pradesh,Srikakulam,Predominantly Rural,2779873,5,40,30.898228,2.5380263,0,30.46,0,926.38,0
+IND,India,Andhra Pradesh,East Godavari,Predominantly Rural,5570653,5,40,31.047583,2.5526631,0,30.63,0,931.72,0
+IND,India,Uttarakhand,Pauri Garhwal,Predominantly Rural,873319,5,40,31.109982,2.5587783,0.024303412,30.71,0.29,933.95,8.87
+IND,India,Karnataka,Raichur,Predominantly Rural,2070618,5,40,31.350637,2.5823624,0,30.99,0,942.56,0
+IND,India,Assam,Karbi Anglong,Predominantly Rural,1038130,5,40,31.593994,2.6062114,0,31.27,0,951.27,0
+IND,India,Assam,Baksa,Predominantly Rural,1018615,5,40,31.673687,2.6140213,0,31.37,0,954.12,0
+IND,India,Andhra Pradesh,West Godavari,Predominantly Rural,4153561,5,40,31.686878,2.615314,0,31.38,0,954.59,0
+IND,India,Chhattisgarh,Sukma,Predominantly Rural,308720,5,40,31.930777,2.6392162,0,31.67,0,963.31,0
+IND,India,Jammu and Kashmir,Kathua,Predominantly Rural,763436,5,40,31.994194,2.645431,0.0020498445,31.75,0.02,965.58,0.75
+IND,India,Gujarat,Surendranagar,Predominantly Rural,1593735,5,40,32.115894,2.6573577,7.1274524e-4,31.89,0.01,969.94,0.26
+IND,India,Telangana,Siddipet,Predominantly Rural,1062699,5,40,32.136642,2.6593909,0,31.91,0,970.68,0
+IND,India,Telangana,Sangareddy,Predominantly Rural,1540139,5,40,32.157543,2.6614394,0,31.94,0,971.43,0
+IND,India,Odisha,Ganjam,Predominantly Rural,3730168,5,40,32.176323,2.6632798,4.1321193e-5,31.96,0,972.1,0.02
+IND,India,Nagaland,Dimapur,Predominantly Urban,380330,5,40,32.240555,2.6695745,0,32.03,0,974.39,0
+IND,India,Himachal Pradesh,Bilaspur,Predominantly Rural,392257,5,40,32.320946,2.6774528,0.003896222,32.13,0.05,977.27,1.42
+IND,India,Telangana,Jangaon,Predominantly Rural,492768,5,40,32.330784,2.6784167,0,32.14,0,977.62,0
+IND,India,Andhra Pradesh,Vizianagaram,Predominantly Rural,2440389,5,40,32.388584,2.6840813,0,32.21,0,979.69,0
+IND,India,Himachal Pradesh,Solan,Predominantly Rural,629917,5,40,32.600048,2.7048047,0.0065411502,32.46,0.08,987.25,2.39
+IND,India,Odisha,Rayagada,Predominantly Rural,1042416,5,40,32.681393,2.7127767,0.0044947602,32.55,0.05,990.16,1.64
+IND,India,Maharashtra,Osmanabad,Predominantly Rural,1772832,5,40,32.715706,2.7161391,0,32.59,0,991.39,0
+IND,India,Telangana,Medak,Predominantly Rural,788513,5,40,32.746895,2.7191958,0,32.63,0,992.51,0
+IND,India,Gujarat,Botad,Predominantly Rural,528837,5,40,32.811188,2.7254963,0,32.71,0,994.81,0
+IND,India,Maharashtra,Sangli,Predominantly Rural,2995608,5,40,32.815544,2.7259233,0,32.71,0,994.96,0
+IND,India,Chhattisgarh,Dantewada,Predominantly Rural,240742,5,40,32.833385,2.7276716,0,32.73,0,995.6,0
+IND,India,Mizoram,Aizawl,Predominantly Urban,440913,5,40,32.841526,2.7284694,0,32.74,0,995.89,0
+IND,India,Assam,Dima Hasao,Predominantly Rural,231339,5,40,32.87056,2.7313149,0,32.78,0,996.93,0
+IND,India,Assam,Chirang,Predominantly Rural,353908,5,40,32.904041,2.7345963,0.005128365,32.82,0.06,998.13,1.87
+IND,India,Maharashtra,Kolhapur,Predominantly Rural,4178421,5,40,32.953346,2.7394278,0,32.87,0,999.89,0
+IND,India,Maharashtra,Latur,Predominantly Rural,2767018,5,40,33.001209,2.7441187,0,32.93,0,1001.6,0
+IND,India,Mizoram,Serchhip,Predominantly Urban,79262,5,40,33.017921,2.7457564,0,32.95,0,1002.2,0
+IND,India,Telangana,Kamareddy,Predominantly Rural,954741,5,40,33.087593,2.752584,0,33.03,0,1004.69,0
+IND,India,Telangana,Jayashankar Bhupalpally,Predominantly Rural,1030087,5,40,33.155212,2.7592108,4.5758416e-4,33.11,0.01,1007.11,0.17
+IND,India,Manipur,Imphal East,Predominantly Urban,439768,5,40,33.25491,2.768981,0,33.23,0,1010.68,0
+IND,India,Telangana,Nalgonda,Predominantly Rural,1758621,5,40,33.283779,2.7718103,0,33.26,0,1011.71,0
+IND,India,Odisha,Koraput,Predominantly Rural,1468127,5,40,33.288074,2.7722311,0.073286623,33.27,0.88,1011.86,26.75
+IND,India,Assam,Darrang,Predominantly Rural,1011651,5,40,33.316051,2.7749729,0.0015746224,33.3,0.02,1012.87,0.57
+IND,India,Gujarat,Bhavnagar,Predominantly Urban,2535635,5,40,33.391926,2.7824085,3.9808683e-7,33.39,0,1015.58,0
+IND,India,Maharashtra,Mumbai Suburban,Predominantly Urban,10147143,5,40,33.436073,2.7867351,0,33.44,0,1017.16,0
+IND,India,Gujarat,Navsari,Predominantly Rural,1456217,5,40,33.52557,2.795506,9.2170876e-4,33.55,0.01,1020.36,0.34
+IND,India,Himachal Pradesh,Sirmaur,Predominantly Rural,552138,5,40,33.60339,2.8031321,0.10997269,33.64,1.32,1023.14,40.14
+IND,India,Maharashtra,Mumbai,Predominantly Urban,3210613,5,40,33.636147,2.8063421,0,33.68,0,1024.31,0
+IND,India,Maharashtra,Raigad,Predominantly Rural,2862038,5,40,33.657261,2.8084116,0,33.7,0,1025.07,0
+IND,India,Assam,Bongaigaon,Predominantly Rural,838347,5,40,33.73143,2.8156803,0.0010084903,33.79,0.01,1027.72,0.37
+IND,India,Meghalaya,Ri Bhoi,Predominantly Rural,295643,5,40,33.743404,2.8168538,0.0054209344,33.8,0.07,1028.15,1.98
+IND,India,Chhattisgarh,Bijapur,Predominantly Rural,288979,5,40,33.887917,2.8310158,0,33.97,0,1033.32,0
+IND,India,Maharashtra,Satara,Predominantly Rural,3221407,5,40,33.897274,2.8319328,0.011672175,33.98,0.14,1033.66,4.26
+IND,India,Telangana,Warangal (Rural),Predominantly Rural,824542,5,40,33.903175,2.8325114,0,33.99,0,1033.87,0
+IND,India,Meghalaya,East Garo Hills,Predominantly Rural,249225,5,40,33.953861,2.8374786,0,34.05,0,1035.68,0
+IND,India,Telangana,Rangareddy,Predominantly Urban,2445326,5,40,33.954124,2.8375041,0.029944731,34.05,0.36,1035.69,10.93
+IND,India,Maharashtra,Thane,Predominantly Urban,9221283,5,40,34.029335,2.8448749,0,34.14,0,1038.38,0
+IND,India,Telangana,Suryapet,Predominantly Rural,1146378,5,40,34.146801,2.8563867,0,34.28,0,1042.58,0
+IND,India,Assam,Nagaon,Predominantly Rural,3031326,5,40,34.262096,2.8676856,0,34.41,0,1046.71,0
+IND,India,Telangana,Yadadri Bhuvanagiri,Predominantly Rural,690794,5,40,34.337284,2.8750539,0,34.5,0,1049.39,0
+IND,India,Punjab,Pathankot,Predominantly Rural,555341,5,40,34.537350000000004,2.89466,0.083053701,34.74,1,1056.55,30.31
+IND,India,Manipur,Thoubal,Predominantly Rural,481824,5,40,34.677872,2.9084315,0,34.9,0,1061.58,0
+IND,India,Maharashtra,Solapur,Predominantly Rural,4632103,5,40,34.68924,2.9095457,0,34.91,0,1061.98,0
+IND,India,Maharashtra,Nashik,Predominantly Urban,6537745,5,40,34.807785,2.9211628,0.01547657,35.05,0.19,1066.22,5.65
+IND,India,Manipur,Imphal West,Predominantly Urban,609718,5,40,34.908134,2.9309971,0,35.17,0,1069.81,0
+IND,India,Madhya Pradesh,Alirajpur,Predominantly Rural,796091,5,40,34.929707,2.933111,7.465611e-4,35.2,0.01,1070.59,0.27
+IND,India,Gujarat,Tapi,Predominantly Rural,881453,5,40,34.959248,2.9360061,0.017591527,35.23,0.21,1071.64,6.42
+IND,India,Mizoram,Saiha,Predominantly Urban,62806,5,40,35.013241,2.9412975,0.0076608043,35.3,0.09,1073.57,2.8
+IND,India,Manipur,Bishnupur,Predominantly Rural,272669,5,40,35.319538,2.9713147,0,35.66,0,1084.53,0
+IND,India,Assam,Barpeta,Predominantly Rural,1770227,5,40,35.323494,2.9717023,0.023908531,35.66,0.29,1084.67,8.73
+IND,India,Telangana,Rajanna Sircilla,Predominantly Rural,473725,5,40,35.333183,2.972652,1.9859574e-6,35.67,0,1085.02,0
+IND,India,Telangana,Warangal (Urban),Predominantly Urban,1117980,5,40,35.367516,2.9760165,2.6389517e-4,35.71,0,1086.25,0.1
+IND,India,Gujarat,Narmada,Predominantly Rural,539712,5,40,35.544827,2.9933929,0,35.92,0,1092.59,0
+IND,India,Rajasthan,Sirohi,Predominantly Rural,1145163,5,40,35.653114,3.004005,0.0060710828,36.05,0.07,1096.46,2.22
+IND,India,Assam,Nalbari,Predominantly Rural,878837,5,40,35.663948,3.0050671,0.03493505,36.06,0.42,1096.85,12.75
+IND,India,Maharashtra,Beed,Predominantly Rural,2779829,5,40,35.869385,3.0251997,0.0030595302,36.3,0.04,1104.2,1.12
+IND,India,Jammu and Kashmir,Samba,Predominantly Rural,410608,5,40,35.938271,3.0319502,0.027618458,36.38,0.33,1106.66,10.08
+IND,India,Gujarat,Banaskantha,Predominantly Rural,3401443,5,40,36.090015,3.0468214,0,36.56,0,1112.09,0
+IND,India,Meghalaya,North Garo Hills,Predominantly Rural,68042,5,40,36.224209,3.0599723,0,36.72,0,1116.89,0
+IND,India,Telangana,Medchal,Predominantly Urban,2655183,5,40,36.286732,3.0660999,0.0069761933,36.79,0.08,1119.13,2.55
+IND,India,Telangana,Kumuram Bheem,Predominantly Rural,587256,5,40,36.328484,3.0701911,0,36.84,0,1120.62,0
+IND,India,Uttarakhand,Nainital,Predominantly Rural,994836,5,40,36.377777,3.0750222,0.064307019000000007,36.9,0.77,1122.38,23.47
+IND,India,Telangana,Nirmal,Predominantly Rural,666564,5,40,36.505997,3.0875876,0,37.05,0,1126.97,0
+IND,India,Telangana,Mancherial,Predominantly Urban,928840,5,40,36.819813,3.1183417,1.5632126e-4,37.42,0,1138.19,0.06
+IND,India,Assam,Kokrajhar,Predominantly Rural,1161145,5,40,36.846783,3.1209846,0.089685097,37.45,1.08,1139.16,32.74
+IND,India,Telangana,Adilabad,Predominantly Rural,676588,5,40,36.909981,3.127178,0.014303553,37.53,0.17,1141.42,5.22
+IND,India,Telangana,Nizamabad,Predominantly Rural,1690680,5,40,37.097248,3.1455302,0,37.75,0,1148.12,0
+IND,India,Mizoram,Kolasib,Predominantly Urban,93826,5,40,37.114056,3.1471777,0,37.77,0,1148.72,0
+IND,India,Gujarat,Dahod,Predominantly Rural,2237951,5,40,37.148354,3.1505384,0,37.81,0,1149.95,0
+IND,India,Maharashtra,Nanded,Predominantly Rural,3590671,5,40,37.566456,3.1915126,0.015243658,38.3,0.18,1164.9,5.56
+IND,India,Jammu and Kashmir,Jammu,Predominantly Urban,1615353,5,40,37.772018,3.211658,0.12893181,38.54,1.55,1172.26,47.06
+IND,India,Karnataka,Bangalore,Predominantly Urban,10255608,5,40,37.781708,3.2126074,0.063086845,38.55,0.76,1172.6,23.03
+IND,India,Gujarat,Patan,Predominantly Rural,1663640,5,40,37.81852,3.2162149,0.051699929,38.59,0.62,1173.92,18.87
+IND,India,Telangana,Jagtial,Predominantly Rural,939997,5,40,37.917465,3.2259116,9.9459641e-5,38.71,0,1177.46,0.04
+IND,India,Madhya Pradesh,Dindori,Predominantly Rural,820964,5,40,38.14436,3.248147,0.026859498,38.98,0.32,1185.57,9.8
+IND,India,Assam,Morigaon,Predominantly Rural,1018959,5,40,38.176579,3.2513046,0.04806697,39.02,0.58,1186.73,17.54
+IND,India,Gujarat,Bharuch,Predominantly Rural,1716009,5,40,38.415359,3.2747052,0.010604152,39.3,0.13,1195.27,3.87
+IND,India,Gujarat,Chhota Udaipur,Predominantly Rural,906211,5,40,38.514915,3.2844617,7.5580779e-4,39.41,0.01,1198.83,0.28
+IND,India,Gujarat,Aravalli,Predominantly Rural,1222179,5,40,38.543083,3.2872224,0.020025291,39.45,0.24,1199.84,7.31
+IND,India,Gujarat,Mahisagar,Predominantly Rural,1196613,5,40,38.618153,3.2945788,0.007823226,39.53,0.09,1202.52,2.86
+IND,India,Assam,Cachar,Predominantly Rural,1849046,5,40,38.625252,3.2952747,0.018442614,39.54,0.22,1202.78,6.73
+IND,India,Telangana,Hyderabad,Predominantly Urban,4101992,5,40,38.649654,3.2976663,0.010985738,39.57,0.13,1203.65,4.01
+IND,India,Maharashtra,Parbhani,Predominantly Rural,1961950,5,40,38.677261,3.3003716,0.0087445593,39.6,0.1,1204.64,3.19
+IND,India,Gujarat,Sabar Kantha,Predominantly Rural,1437857,5,40,38.781143,3.3105519,0.04138257,39.73,0.5,1208.35,15.1
+IND,India,Gujarat,Vadodara,Predominantly Urban,3762338,5,40,38.873653,3.319618,9.7312278e-4,39.84,0.01,1211.66,0.36
+IND,India,Sikkim,West Sikkim,Predominantly Rural,134540,5,40,38.893787,3.3215911,0.14126389,39.86,1.7,1212.38,51.56
+IND,India,Odisha,Nayagarh,Predominantly Rural,1019265,5,40,38.926243,3.3247719,0.014330245,39.9,0.17,1213.54,5.23
+IND,India,Rajasthan,Udaipur,Predominantly Rural,3413412,5,40,38.938763,3.3259985,0.068295062,39.91,0.82,1213.99,24.93
+IND,India,Uttarakhand,Dehradun,Predominantly Urban,1825367,5,40,39.09296,3.3411102,0.09936808,40.09,1.19,1219.51,36.27
+IND,India,Gujarat,Surat,Predominantly Urban,6654483,5,40,39.176353,3.3492827,0.039730635,40.19,0.48,1222.49,14.5
+IND,India,Gujarat,Panch Mahals,Predominantly Rural,1476793,5,40,39.178463,3.3494895,0.028209537,40.19,0.34,1222.56,10.3
+IND,India,Madhya Pradesh,Jhabua,Predominantly Rural,1126757,5,40,39.429478,3.3740888,0.069054835,40.49,0.83,1231.54,25.21
+IND,India,Maharashtra,Ahmednagar,Predominantly Rural,4691281,5,40,39.482288,3.3792644,0.054382656,40.55,0.65,1233.43,19.85
+IND,India,Assam,Kamrup Metropolitan,Predominantly Urban,1218684,5,40,39.539764,3.384897,0.020059235,40.62,0.24,1235.49,7.32
+IND,India,Himachal Pradesh,Una,Predominantly Rural,510806,5,40,39.594181,3.3902299,0.10758158,40.68,1.29,1237.43,39.27
+IND,India,Assam,Goalpara,Predominantly Rural,1061323,5,40,39.609787,3.3917594,0.061094172,40.7,0.73,1237.99,22.3
+IND,India,Rajasthan,Dungarpur,Predominantly Rural,1530593,5,40,39.686146,3.3992422,0.070685834,40.79,0.85,1240.72,25.8
+IND,India,Madhya Pradesh,Betul,Predominantly Rural,1729556,5,40,39.776604,3.4081073,0.04617634,40.9,0.55,1243.96,16.85
+IND,India,Odisha,Puri,Predominantly Rural,1733477,5,40,39.797287,3.4101341,0.031848881,40.92,0.38,1244.7,11.62
+IND,India,Gujarat,Anand,Predominantly Rural,2278126,5,40,39.867157,3.4169815,0.022818161,41,0.27,1247.2,8.33
+IND,India,Madhya Pradesh,Chhindwara,Predominantly Rural,2300874,5,40,39.950768,3.4251754,0.18477462,41.1,2.22,1250.19,67.44
+IND,India,Maharashtra,Nandurbar,Predominantly Rural,1754118,5,40,40.165234,3.446193,0.20365688,41.35,2.44,1257.86,74.33
+IND,India,Maharashtra,Hingoli,Predominantly Rural,1262692,5,40,40.304691,3.4598596,0.046760127,41.52,0.56,1262.85,17.07
+IND,India,Rajasthan,Jalor,Predominantly Rural,2037076,5,40,40.38718,3.4679437,0.14216895,41.62,1.71,1265.8,51.89
+IND,India,Rajasthan,Rajsamand,Predominantly Rural,1233022,5,40,40.48069,3.4771078,0.13533826,41.73,1.62,1269.14,49.4
+IND,India,Chhattisgarh,Narayanpur,Predominantly Rural,135016,5,40,40.520264,3.4809856,0.15683623,41.77,1.88,1270.56,57.25
+IND,India,Maharashtra,Gadchiroli,Predominantly Rural,1147901,5,40,40.722775,3.5008321,0.27145308,42.01,3.26,1277.8,99.08
+IND,India,Chhattisgarh,Bastar,Predominantly Rural,1049655,5,40,40.723637,3.5009162,0.2261786,42.01,2.71,1277.83,82.56
+IND,India,Assam,Kamrup,Predominantly Rural,1760015,5,40,40.802849,3.5086789,0.17023577,42.1,2.04,1280.67,62.14
+IND,India,Telangana,Karimnagar,Predominantly Rural,1018104,5,40,40.816639,3.5100307,0.12682529,42.12,1.52,1281.16,46.29
+IND,India,Mizoram,Mamit,Predominantly Rural,91813,5,40,40.944859,3.5225961,0.17985371,42.27,2.16,1285.75,65.65
+IND,India,Mizoram,Lunglei,Predominantly Urban,177860,5,40,40.997334,3.5277386,0.19627438,42.33,2.36,1287.62,71.64
+IND,India,Sikkim,East Sikkim,Predominantly Urban,271828,5,40,40.997646,3.5277693,0.2351626,42.33,2.82,1287.64,85.83
+IND,India,Madhya Pradesh,Mandla,Predominantly Rural,1116929,5,40,41.000225,3.5280221,0.14372505,42.34,1.72,1287.73,52.46
+IND,India,Chhattisgarh,Balrampur,Predominantly Rural,913939,5,40,41.051884,3.5330849,0.2246349,42.4,2.7,1289.58,81.99
+IND,India,Telangana,Peddapalli,Predominantly Urban,1026599,5,40,41.140865,3.5418048,0.13807254,42.5,1.66,1292.76,50.4
+IND,India,Assam,Hailakandi,Predominantly Rural,713925,5,40,41.388977,3.5661197,0.13774188,42.79,1.65,1301.63,50.28
+IND,India,Maharashtra,Aurangabad,Predominantly Rural,3964023,5,40,41.580715,3.5849102,0.17509386,43.02,2.1,1308.49,63.91
+IND,India,Maharashtra,Washim,Predominantly Rural,1281084,5,40,41.585136,3.5853434,0.17527384,43.02,2.1,1308.65,63.97
+IND,India,Chhattisgarh,Koriya,Predominantly Rural,729296,5,40,41.666088,3.5932765,0.25529891,43.12,3.06,1311.55,93.18
+IND,India,Odisha,Khordha,Predominantly Urban,2352977,5,40,41.698833,3.5964856,0.2232845,43.16,2.68,1312.72,81.5
+IND,India,Rajasthan,Banswara,Predominantly Rural,1984353,5,40,41.730289,3.5995681,0.18213052,43.19,2.19,1313.84,66.48
+IND,India,Maharashtra,Jalna,Predominantly Rural,2095691,5,40,41.821922,3.6085482,0.18082918,43.3,2.17,1317.12,66
+IND,India,Madhya Pradesh,Shahdol,Predominantly Rural,1472809,5,40,42.046127,3.6305206,0.25932691,43.57,3.11,1325.14,94.65
+IND,India,Odisha,Nabarangpur,Predominantly Rural,1309457,5,40,42.059975,3.6318777,0.21082327,43.58,2.53,1325.64,76.95
+IND,India,Gujarat,Kheda,Predominantly Rural,2518766,5,40,42.117783,3.6375425,0.20999449,43.65,2.52,1327.7,76.65
+IND,India,Chhattisgarh,Kondagaon,Predominantly Rural,564808,5,40,42.277695,3.653214,0.23763327,43.84,2.85,1333.42,86.74
+IND,India,Rajasthan,Jaisalmer,Predominantly Rural,752100,5,40,42.312603,3.6566348,0.26016626,43.88,3.12,1334.67,94.96
+IND,India,Gujarat,Mahesana,Predominantly Rural,2206999,5,40,42.465229,3.6715925,0.27051163,44.06,3.25,1340.13,98.74
+IND,India,Maharashtra,Pune,Predominantly Urban,10124189,5,40,42.540581,3.678977,0.31609663,44.15,3.79,1342.83,115.38
+IND,India,Maharashtra,Chandrapur,Predominantly Rural,2365391,5,40,42.666698,3.6913366,0.28563577,44.3,3.43,1347.34,104.26
+IND,India,Rajasthan,Pratapgarh,Predominantly Rural,964799,5,40,42.682976,3.6929317,0.26560926,44.32,3.19,1347.92,96.95
+IND,India,Assam,Dhubri,Predominantly Rural,2018472,5,40,42.683304,3.6929636,0.33380365,44.32,4.01,1347.93,121.84
+IND,India,Maharashtra,Yavatmal,Predominantly Rural,2966841,5,40,42.776482,3.7020953,0.27595606,44.43,3.31,1351.26,100.72
+IND,India,Maharashtra,Dhule,Predominantly Rural,2197887,5,40,42.978474,3.7218904,0.37061247,44.66,4.45,1358.49,135.27
+IND,India,Madhya Pradesh,Ujjain,Predominantly Rural,2187904,5,40,42.993557,3.7233686,0.29336855,44.68,3.52,1359.03,107.08
+IND,India,Odisha,Jagatsinghapur,Predominantly Rural,1197273,5,40,43.003521,3.724345,0.29491159,44.69,3.54,1359.39,107.64
+IND,India,Mizoram,Lawangtlai,Predominantly Rural,129145,5,40,43.034801,3.7274106,0.3368783,44.73,4.04,1360.5,122.96
+IND,India,Odisha,Kalahandi,Predominantly Rural,1664452,5,40,43.041367,3.728054,0.3581464,44.74,4.3,1360.74,130.72
+IND,India,Assam,Karimganj,Predominantly Rural,1348291,5,40,43.183048,3.7419388,0.31193888,44.9,3.74,1365.81,113.86
+IND,India,Meghalaya,West Garo Hills,Predominantly Rural,660861,5,40,43.271591,3.7506158,0.42614576,45.01,5.11,1368.97,155.54
+IND,India,Haryana,Panchkula,Predominantly Urban,603097,5,40,43.322655,3.75562,0.39094499,45.07,4.69,1370.8,142.69
+IND,India,Chhattisgarh,Jashpur,Predominantly Rural,948075,5,40,43.390518,3.7622709,0.47028449,45.15,5.64,1373.23,171.65
+IND,India,Odisha,Bhadrak,Predominantly Rural,1604585,5,40,43.400883,3.7632866,0.33328658,45.16,4,1373.6,121.65
+IND,India,Sikkim,South Sikkim,Predominantly Rural,149358,5,40,43.483437,3.7713766,0.36132252,45.26,4.34,1376.55,131.88
+IND,India,Madhya Pradesh,Seoni,Predominantly Rural,1515373,5,40,43.503273,3.7733209,0.35001001,45.28,4.2,1377.26,127.75
+IND,India,Chhattisgarh,Surguja,Predominantly Rural,805428,5,40,43.533241,3.7762575,0.36622238,45.32,4.39,1378.33,133.67
+IND,India,Madhya Pradesh,Ratlam,Predominantly Rural,1597445,5,40,43.662918,3.7889659,0.3589659,45.47,4.31,1382.97,131.02
+IND,India,Madhya Pradesh,Dhar,Predominantly Rural,2394933,5,40,43.728458,3.7953887,0.37025818,45.54,4.44,1385.32,135.14
+IND,India,Madhya Pradesh,Indore,Predominantly Urban,3614161,5,40,43.823479,3.8047009,0.37470102,45.66,4.5,1388.72,136.77
+IND,India,Odisha,Kendrapara,Predominantly Rural,1525385,5,40,43.938099,3.8159337,0.3859337,45.79,4.63,1392.82,140.87
+IND,India,Odisha,Boudh,Predominantly Rural,470403,5,40,43.953289,3.8174224,0.41268739,45.81,4.95,1393.36,150.63
+IND,India,Madhya Pradesh,Umaria,Predominantly Rural,619664,5,40,44.012428,3.8232181,0.40560573,45.88,4.87,1395.47,148.05
+IND,India,Rajasthan,Pali,Predominantly Rural,2255775,5,40,44.077301,3.8295755,0.42407027,45.95,5.09,1397.8,154.79
+IND,India,Madhya Pradesh,Singrauli,Predominantly Rural,1292859,5,40,44.176392,3.8392866,0.41165933,46.07,4.94,1401.34,150.26
+IND,India,Madhya Pradesh,Barwani,Predominantly Rural,1519967,5,40,44.305748,3.8519633,0.44527596,46.22,5.34,1405.97,162.53
+IND,India,Madhya Pradesh,Anuppur,Predominantly Rural,617152,5,40,44.395367,3.8607459,0.43228698,46.33,5.19,1409.17,157.78
+IND,India,Rajasthan,Chittaurgarh,Predominantly Rural,1705032,5,40,44.464802,3.8675508,0.43809649,46.41,5.26,1411.66,159.91
+IND,India,Chhattisgarh,Surajpur,Predominantly Rural,930888,5,40,44.643684,3.8850813,0.45687824,46.62,5.48,1418.05,166.76
+IND,India,Rajasthan,Barmer,Predominantly Rural,2875855,5,40,44.829678,3.9033084,0.47534266,46.84,5.7,1424.71,173.5
+IND,India,Rajasthan,Bikaner,Predominantly Rural,2291420,5,40,44.8479,3.9050941,0.49445158,46.86,5.93,1425.36,180.47
+IND,India,Odisha,Jajapur,Predominantly Rural,1923924,5,40,44.983864,3.9184186,0.48845094,47.02,5.86,1430.22,178.28
+IND,India,Maharashtra,Buldhana,Predominantly Rural,2730333,5,40,45.397217,3.9589274,0.52893841,47.51,6.35,1445.01,193.06
+IND,India,Madhya Pradesh,Dewas,Predominantly Rural,1711076,5,40,45.446625,3.9637694,0.53376937,47.57,6.41,1446.78,194.83
+IND,India,West Bengal,Koch Bihar,Predominantly Rural,2975420,5,40,45.519283,3.9708898,0.54605716,47.65,6.55,1449.37,199.31
+IND,India,Odisha,Baleshwar,Predominantly Rural,2434394,5,40,45.648972,3.9835992,0.55359912,47.8,6.64,1454.01,202.06
+IND,India,Madhya Pradesh,Neemuch,Predominantly Rural,901727,5,40,45.675564,3.9862051,0.55620795,47.83,6.67,1454.96,203.02
+IND,India,Madhya Pradesh,Agar Malwa,Predominantly Rural,719949,5,40,45.906353,4.0088224,0.57882243,48.11,6.95,1463.22,211.27
+IND,India,Madhya Pradesh,Burhanpur,Predominantly Rural,829444,5,40,45.907818,4.008966,0.5790478,48.11,6.95,1463.27,211.35
+IND,India,Gujarat,Gandhinagar,Predominantly Urban,1290986,5,40,46.068668,4.0247293,0.59472942,48.3,7.14,1469.03,217.08
+IND,India,Rajasthan,Bhilwara,Predominantly Rural,2685042,5,40,46.081657,4.0260024,0.59647185,48.31,7.16,1469.49,217.71
+IND,India,Madhya Pradesh,Shajapur,Predominantly Rural,934983,5,40,46.253052,4.0427995,0.61279923,48.51,7.35,1475.62,223.67
+IND,India,Uttarakhand,Udham Singh Nagar,Predominantly Rural,1881383,5,40,46.25774,4.0432587,0.62397414,48.52,7.49,1475.79,227.75
+IND,India,Chandigarh,Chandigarh,Predominantly Urban,1142321,5,40,46.273506,4.0448036,0.61480361,48.54,7.38,1476.35,224.4
+IND,India,Punjab,Rupnagar,Predominantly Rural,740020,5,40,46.465416,4.063611,0.64312369,48.76,7.72,1483.22,234.74
+IND,India,Maharashtra,Amravati,Predominantly Rural,3072924,5,40,46.55682,4.0725684,0.65185916,48.87,7.82,1486.49,237.93
+IND,India,Madhya Pradesh,Sagar,Predominantly Rural,2618068,5,40,46.669743,4.0836349,0.65363491,49,7.84,1490.53,238.58
+IND,India,Uttar Pradesh,Sonbhadra,Predominantly Rural,2045515,5,40,46.710365,4.087616,0.66077632,49.05,7.93,1491.98,241.18
+IND,India,Odisha,Cuttack,Predominantly Rural,2843610,5,40,46.80357,4.0967503,0.66776103,49.16,8.01,1495.31,243.73
+IND,India,Jharkhand,Garhwa,Predominantly Rural,1470002,5,40,46.825279,4.0988774,0.66952944,49.19,8.03,1496.09,244.38
+IND,India,Madhya Pradesh,Rajgarh,Predominantly Rural,1696772,5,40,47.036079,4.1195359,0.6895358,49.43,8.27,1503.63,251.68
+IND,India,Madhya Pradesh,Bhopal,Predominantly Urban,2601241,5,40,47.317768,4.1471415,0.71714139,49.77,8.61,1513.71,261.76
+IND,India,Madhya Pradesh,Guna,Predominantly Rural,1357847,5,40,47.404282,4.1556196,0.72561967,49.87,8.71,1516.8,264.85
+IND,India,Madhya Pradesh,Raisen,Predominantly Rural,1477283,5,40,47.485321,4.1635613,0.73356152,49.96,8.8,1519.7,267.75
+IND,India,Maharashtra,Akola,Predominantly Rural,1979908,5,40,47.637604,4.1784854,0.74865037,50.14,8.98,1525.15,273.26
+IND,India,Maharashtra,Jalgaon,Predominantly Rural,4523310,5,40,47.708424,4.1854258,0.75586152,50.23,9.07,1527.68,275.89
+IND,India,Madhya Pradesh,Balaghat,Predominantly Rural,1869295,5,40,47.748974,4.1893997,0.76124364,50.27,9.13,1529.13,277.85
+IND,India,Madhya Pradesh,East Nimar,Predominantly Rural,1438286,5,40,47.781872,4.1926236,0.76287484,50.31,9.15,1530.31,278.45
+IND,India,Madhya Pradesh,Narsimhapur,Predominantly Rural,1210988,5,40,47.818924,4.1962543,0.76845139,50.36,9.22,1531.63,280.48
+IND,India,Madhya Pradesh,Vidisha,Predominantly Rural,1602535,5,40,47.867832,4.2010474,0.77104741,50.41,9.25,1533.38,281.43
+IND,India,Maharashtra,Wardha,Predominantly Rural,1406237,5,40,47.903805,4.2045732,0.77457297,50.45,9.29,1534.67,282.72
+IND,India,Madhya Pradesh,Sehore,Predominantly Rural,1422364,5,40,47.952274,4.2093229,0.7793228,50.51,9.35,1536.4,284.45
+IND,India,Rajasthan,Jodhpur,Predominantly Rural,4076912,5,40,47.956863,4.2097726,0.78007334,50.52,9.36,1536.57,284.73
+IND,India,Madhya Pradesh,Katni,Predominantly Rural,1753468,5,40,48.047718,4.2186766,0.78867632,50.62,9.46,1539.82,287.87
+IND,India,Madhya Pradesh,Damoh,Predominantly Rural,1405213,5,40,48.055252,4.2194147,0.78941458,50.63,9.47,1540.09,288.14
+IND,India,Chhattisgarh,Uttar Bastar Kanker,Predominantly Rural,847742,5,40,48.094879,4.2232981,0.79741305,50.68,9.57,1541.5,291.06
+IND,India,Meghalaya,South Garo Hills,Predominantly Rural,160324,5,40,48.163834,4.2300558,0.8417356,50.76,10.1,1543.97,307.23
+IND,India,Tripura,North Tripura,Predominantly Rural,283323,5,40,48.170383,4.2306976,0.80069774,50.77,9.61,1544.2,292.25
+IND,India,Madhya Pradesh,Jabalpur,Predominantly Urban,2376985,5,40,48.235744,4.237103,0.80961108,50.85,9.72,1546.54,295.51
+IND,India,Gujarat,Ahmadabad,Predominantly Urban,7933148,5,40,48.33511,4.246841,0.83876032,50.96,10.07,1550.1,306.15
+IND,India,Madhya Pradesh,Mandsaur,Predominantly Rural,1461758,5,40,48.425972,4.2557454,0.82574522,51.07,9.91,1553.35,301.4
+IND,India,Jharkhand,Latehar,Predominantly Rural,815387,5,40,48.527176,4.2656631,0.84988886,51.19,10.2,1556.97,310.21
+IND,India,Madhya Pradesh,Harda,Predominantly Rural,641656,5,40,48.560215,4.2689009,0.83990508,51.23,10.08,1558.15,306.57
+IND,India,Madhya Pradesh,Hoshangabad,Predominantly Rural,1381007,5,40,48.600159,4.2728157,0.86300051,51.27,10.36,1559.58,315
+IND,India,Rajasthan,Churu,Predominantly Rural,2578616,5,40,48.770123,4.2894721,0.8594721,51.47,10.31,1565.66,313.71
+IND,India,Uttar Pradesh,Bijnor,Predominantly Rural,4010217,5,40,48.810581,4.293437,0.86681181,51.52,10.4,1567.1,316.39
+IND,India,Rajasthan,Jhalawar,Predominantly Rural,1587132,5,40,48.825562,4.2949052,0.86490518,51.54,10.38,1567.64,315.69
+IND,India,Madhya Pradesh,Khargone,Predominantly Rural,2058410,5,40,48.854347,4.2977262,0.87491649,51.57,10.5,1568.67,319.34
+IND,India,Madhya Pradesh,Ashoknagar,Predominantly Rural,937932,5,40,49.422287,4.353384,0.92338407,52.24,11.08,1588.99,337.04
+IND,India,Odisha,Anugul,Predominantly Rural,1344314,5,40,49.926289,4.4027762,0.97679549,52.83,11.72,1607.01,356.53
+IND,India,Madhya Pradesh,Sidhi,Predominantly Rural,1241250,5,40,50.223267,4.43188,1.0032107,53.18,12.04,1617.64,366.17
+IND,India,Punjab,Sahibzada Ajit Singh Nagar,Predominantly Urban,1001380,5,40,50.344395,4.4437509,1.0138632,53.33,12.17,1621.97,370.06
+IND,India,Jharkhand,Gumla,Predominantly Rural,1140607,5,40,50.448948,4.4539971,1.0548774,53.45,12.66,1625.71,385.03
+IND,India,Jharkhand,Palamu,Predominantly Rural,2156116,5,40,50.532444,4.4621797,1.0321795,53.55,12.39,1628.7,376.75
+IND,India,Rajasthan,Ajmer,Predominantly Urban,2878018,5,40,50.625446,4.4712939,1.0414933,53.66,12.5,1632.02,380.15
+IND,India,Odisha,Dhenkanal,Predominantly Rural,1262629,5,40,50.625858,4.471334,1.0416495,53.66,12.5,1632.04,380.2
+IND,India,Rajasthan,Nagaur,Predominantly Rural,3663184,5,40,50.651085,4.4738064,1.0438064,53.69,12.53,1632.94,380.99
+IND,India,Jharkhand,Lohardaga,Predominantly Rural,511544,5,40,50.797104,4.4881158,1.0585276,53.86,12.7,1638.16,386.36
+IND,India,Rajasthan,Sikar,Predominantly Rural,2950205,5,40,50.804741,4.4888644,1.0588646,53.87,12.71,1638.44,386.49
+IND,India,Punjab,Hoshiarpur,Predominantly Rural,1701013,5,40,51.12706,4.520452,1.1068542,54.25,13.28,1649.96,404
+IND,India,Odisha,Deogarh,Predominantly Rural,332437,5,40,51.224735,4.5300241,1.100024,54.36,13.2,1653.46,401.51
+IND,India,Madhya Pradesh,Shivpuri,Predominantly Rural,1889619,5,40,51.473133,4.5543671,1.1243671,54.65,13.49,1662.34,410.39
+IND,India,West Bengal,Darjeeling,Predominantly Rural,1882341,5,40,51.506809,4.5576673,1.1799967,54.69,14.16,1663.55,430.7
+IND,India,Odisha,Mayurbhanj,Predominantly Rural,2667047,5,40,51.602623,4.5670571,1.1405706,54.8,13.69,1666.98,416.31
+IND,India,Madhya Pradesh,Panna,Predominantly Rural,1127010,5,40,52.01841,4.6078043,1.1778042,55.29,14.13,1681.85,429.9
+IND,India,Odisha,Nuapada,Predominantly Rural,629500,5,40,52.030216,4.6089611,1.1937667,55.31,14.33,1682.27,435.72
+IND,India,Odisha,Kendujhar,Predominantly Rural,1903529,5,40,52.343788,4.6396914,1.2193556,55.68,14.63,1693.49,445.06
+IND,India,Maharashtra,Nagpur,Predominantly Urban,4988426,5,40,52.454544,4.6505456,1.2205455,55.81,14.65,1697.45,445.5
+IND,India,Rajasthan,Ganganagar,Predominantly Rural,2342204,5,40,52.612782,4.6660523,1.236711,55.99,14.84,1703.11,451.4
+IND,India,Chhattisgarh,Gariaband,Predominantly Rural,583734,5,40,52.676514,4.6722984,1.2477261,56.07,14.97,1705.39,455.42
+IND,India,Maharashtra,Gondiya,Predominantly Rural,1174443,5,40,52.681118,4.6727495,1.2427497,56.07,14.91,1705.55,453.6
+IND,India,Chhattisgarh,Korba,Predominantly Rural,1352939,5,40,52.806633,4.68505,1.255205,56.22,15.06,1710.04,458.15
+IND,India,Uttar Pradesh,Lalitpur,Predominantly Rural,1326458,5,40,52.952793,4.6993737,1.2693738,56.39,15.23,1715.27,463.32
+IND,India,Uttarakhand,Hardwar,Predominantly Rural,2107432,5,40,53.055065,4.7093964,1.2823087,56.51,15.39,1718.93,468.04
+IND,India,Tripura,Unokoti,Predominantly Rural,462926,5,40,53.159164,4.7195983,1.2895982,56.64,15.48,1722.65,470.7
+IND,India,Odisha,Subarnapur,Predominantly Rural,648420,5,40,53.378502,4.7410932,1.3110932,56.89,15.73,1730.5,478.55
+IND,India,Rajasthan,Baran,Predominantly Rural,1372301,5,40,53.599457,4.7627468,1.3327466,57.15,15.99,1738.4,486.45
+IND,India,West Bengal,Alipurduar,Predominantly Rural,1335437,5,40,53.70406,4.7729979,1.3611845,57.28,16.33,1742.14,496.83
+IND,India,Rajasthan,Jhunjhunu,Predominantly Rural,2339285,5,40,53.766449,4.7791119,1.3491119,57.35,16.19,1744.38,492.43
+IND,India,Maharashtra,Bhandara,Predominantly Rural,1528682,5,40,53.877224,4.789968,1.3599679,57.48,16.32,1748.34,496.39
+IND,India,Jharkhand,Simdega,Predominantly Rural,668359,5,40,53.899612,4.7921619,1.362162,57.51,16.35,1749.14,497.19
+IND,India,Odisha,Sundargarh,Predominantly Rural,2217250,5,40,53.912563,4.7934313,1.3640424,57.52,16.37,1749.6,497.88
+IND,India,Odisha,Balangir,Predominantly Rural,1747175,5,40,54.09182,4.8109984,1.3809985,57.73,16.57,1756.01,504.06
+IND,India,Jharkhand,Chatra,Predominantly Rural,1146425,5,40,55.036606,4.9035873,1.4735873,58.84,17.68,1789.81,537.86
+IND,India,Rajasthan,Kota,Predominantly Urban,2201639,5,40,55.568748,4.9557371,1.5257373,59.47,18.31,1808.84,556.89
+IND,India,Tripura,Dhalai,Predominantly Rural,406984,5,40,55.852623,4.9835567,1.553557,59.8,18.64,1819,567.05
+IND,India,Madhya Pradesh,Tikamgarh,Predominantly Rural,1605588,5,40,56.701729,5.0667691,1.6367693,60.8,19.64,1849.37,597.42
+IND,India,Jharkhand,Dumka,Predominantly Rural,1495047,5,40,56.940788,5.0901971,1.6601973,61.08,19.92,1857.92,605.97
+IND,India,Rajasthan,Bundi,Predominantly Rural,1173473,5,40,57.001892,5.0961857,1.6661855,61.15,19.99,1860.11,608.16
+IND,India,Odisha,Sambalpur,Predominantly Rural,1106440,5,40,57.094334,5.1052446,1.6752448,61.26,20.1,1863.41,611.46
+IND,India,Madhya Pradesh,Sheopur,Predominantly Rural,765892,5,40,57.205811,5.1161695,1.6861694,61.39,20.23,1867.4,615.45
+IND,India,Meghalaya,South West Garo Hills,Predominantly Rural,185170,5,40,57.208412,5.1164246,1.6864245,61.4,20.24,1867.49,615.54
+IND,India,West Bengal,Jalpaiguri,Predominantly Rural,2803491,5,40,57.333012,5.1286354,1.6986352,61.54,20.38,1871.95,620
+IND,India,Haryana,Ambala,Predominantly Urban,1336681,5,40,57.738289,5.1683526,1.7383881,62.02,20.86,1886.45,634.51
+IND,India,West Bengal,Kolkata,Predominantly Urban,4419044,5,40,58.176208,5.2112684,1.7812684,62.54,21.38,1902.11,650.16
+IND,India,Jharkhand,Deoghar,Predominantly Rural,1657439,5,40,58.49519,5.2425289,1.8125287,62.91,21.75,1913.52,661.57
+IND,India,Jharkhand,Hazaribagh,Predominantly Rural,2277408,5,40,58.565113,5.2493811,1.8193811,62.99,21.83,1916.02,664.07
+IND,India,Madhya Pradesh,Satna,Predominantly Rural,2435922,5,40,58.778194,5.2702632,1.840263,63.24,22.08,1923.65,671.7
+IND,India,Uttar Pradesh,Moradabad,Predominantly Rural,3199273,5,40,58.784431,5.270874,1.8408742,63.25,22.09,1923.87,671.92
+IND,India,Odisha,Jharsuguda,Predominantly Rural,612877,5,40,58.821606,5.2745171,1.8445172,63.29,22.13,1925.2,673.25
+IND,India,Madhya Pradesh,Chhatarpur,Predominantly Rural,1948423,5,40,58.917995,5.2839637,1.8539635,63.41,22.25,1928.65,676.7
+IND,India,Punjab,Shahid Bhagat Singh Nagar,Predominantly Rural,667053,5,40,58.960922,5.2881703,1.8581705,63.46,22.3,1930.18,678.23
+IND,India,Uttar Pradesh,Amroha,Predominantly Rural,2305539,5,40,59.041721,5.2960887,1.8660887,63.55,22.39,1933.07,681.12
+IND,India,Rajasthan,Tonk,Predominantly Rural,1576570,5,40,59.132896,5.3050237,1.8750238,63.66,22.5,1936.33,684.38
+IND,India,Punjab,Gurdaspur,Predominantly Rural,1873203,5,40,59.23473,5.3150034,1.8850034,63.78,22.62,1939.98,688.03
+IND,India,Rajasthan,Jaipur,Predominantly Urban,7325172,5,40,59.294807,5.3208909,1.890891,63.85,22.69,1942.13,690.18
+IND,India,Chhattisgarh,Raigarh,Predominantly Rural,1674962,5,40,59.500351,5.3410344,1.9119954,64.09,22.94,1949.48,697.88
+IND,India,Jharkhand,Ranchi,Predominantly Urban,3206396,5,40,59.611366,5.3519139,1.9219141,64.22,23.06,1953.45,701.5
+IND,India,West Bengal,Purba Medinipur,Predominantly Rural,5437063,5,40,60.344257,5.423737,1.9937371,65.08,23.92,1979.66,727.71
+IND,India,Jharkhand,Giridih,Predominantly Rural,2702714,5,40,60.70689,5.4592752,2.0292752,65.51,24.35,1992.64,740.69
+IND,India,Punjab,Fazilka,Predominantly Rural,1041739,5,40,60.798523,5.468255,2.038255,65.62,24.46,1995.91,743.96
+IND,India,Haryana,Yamunanagar,Predominantly Rural,1050639,5,40,61.344624,5.5217733,2.091773,66.26,25.1,2015.45,763.5
+IND,India,Uttar Pradesh,Rampur,Predominantly Rural,2606046,5,40,61.410313,5.5282106,2.0982108,66.34,25.18,2017.8,765.85
+IND,India,Rajasthan,Hanumangarh,Predominantly Rural,1777659,5,40,61.461571,5.5332341,2.1032341,66.4,25.24,2019.63,767.68
+IND,India,Bihar,Kishanganj,Predominantly Rural,1945786,5,40,61.487202,5.5357456,2.1057458,66.43,25.27,2020.55,768.6
+IND,India,Jharkhand,Kodarma,Predominantly Rural,469691,5,40,61.5219,5.5391464,2.1091464,66.47,25.31,2021.79,769.84
+IND,India,Punjab,Fatehgarh Sahib,Predominantly Rural,643199,5,40,61.580238,5.5448632,2.1148632,66.54,25.38,2023.88,771.93
+IND,India,Jharkhand,Khunti,Predominantly Rural,603091,5,40,61.585125,5.545342,2.1153421,66.54,25.38,2024.05,772.1
+IND,India,Uttar Pradesh,Saharanpur,Predominantly Rural,3739323,5,40,61.875469,5.5737963,2.143796,66.89,25.73,2034.44,782.49
+IND,India,Jharkhand,Pakur,Predominantly Rural,977215,5,40,61.940647,5.5801835,2.1501832,66.96,25.8,2036.77,784.82
+IND,India,Tripura,Khowai,Predominantly Rural,468102,5,40,61.983044,5.5843382,2.1543384,67.01,25.85,2038.28,786.33
+IND,India,West Bengal,South 24 Parganas,Predominantly Rural,8592532,5,40,61.983452,5.5843782,2.1543782,67.01,25.85,2038.3,786.35
+IND,India,West Bengal,Howrah,Predominantly Urban,5071093,5,40,61.985691,5.5845981,2.1545978,67.02,25.86,2038.38,786.43
+IND,India,West Bengal,Pashchim Medinipur,Predominantly Rural,6240632,5,40,62.325668,5.6179152,2.1879153,67.41,26.25,2050.54,798.59
+IND,India,Madhya Pradesh,Rewa,Predominantly Rural,2614304,5,40,62.486271,5.6336546,2.2036545,67.6,26.44,2056.28,804.33
+IND,India,Jharkhand,Pashchimi Singhbhum,Predominantly Rural,1665694,5,40,62.608154,5.6455989,2.2155991,67.75,26.59,2060.64,808.69
+IND,India,Odisha,Bargarh,Predominantly Rural,1564707,5,40,62.66856,5.6515188,2.221519,67.82,26.66,2062.8,810.85
+IND,India,Chhattisgarh,Kabirdham,Predominantly Rural,888936,5,40,62.700554,5.654654,2.2258272,67.86,26.71,2063.95,812.43
+IND,India,Uttar Pradesh,Pilibhit,Predominantly Rural,2263855,5,40,62.981609,5.6821976,2.2521975,68.19,27.03,2074,822.05
+IND,India,Chhattisgarh,Bilaspur,Predominantly Rural,2165303,5,40,62.987354,5.6827607,2.2549367,68.19,27.06,2074.21,823.05
+IND,India,Chhattisgarh,Balod,Predominantly Rural,697561,5,40,63.092007,5.6930165,2.2630167,68.32,27.16,2077.95,826
+IND,India,Punjab,Patiala,Predominantly Urban,2002517,5,40,63.251785,5.7086749,2.2786751,68.5,27.34,2083.67,831.72
+IND,India,West Bengal,North 24 Parganas,Predominantly Urban,10918512,5,40,64.080322,5.7898717,2.3598716,69.48,28.32,2113.3,861.35
+IND,India,West Bengal,Birbhum,Predominantly Rural,3699497,5,40,64.092171,5.7910328,2.3610327,69.49,28.33,2113.73,861.78
+IND,India,West Bengal,Murshidabad,Predominantly Rural,7551664,5,40,64.118286,5.7935925,2.3635921,69.52,28.36,2114.66,862.71
+IND,India,Rajasthan,Sawai Madhopur,Predominantly Rural,1393486,5,40,64.190125,5.8006325,2.3706326,69.61,28.45,2117.23,865.28
+IND,India,Chhattisgarh,Rajnandgaon,Predominantly Rural,1699391,5,40,65.349724,5.9142733,2.4842732,70.97,29.81,2158.71,906.76
+IND,India,Jharkhand,Godda,Predominantly Rural,1459608,5,40,65.559883,5.9348683,2.5048683,71.22,30.06,2166.23,914.28
+IND,India,Jharkhand,Jamtara,Predominantly Rural,870483,5,40,65.860435,5.9643221,2.5343223,71.57,30.41,2176.98,925.03
+IND,India,Jharkhand,Saraikela-kharsawan,Predominantly Rural,1158404,5,40,65.864464,5.9647174,2.5347173,71.58,30.42,2177.12,925.17
+IND,India,Chhattisgarh,Mahasamund,Predominantly Rural,1166618,5,40,66.097305,5.9875355,2.5575356,71.85,30.69,2185.45,933.5
+IND,India,Bihar,Banka,Predominantly Rural,2303103,5,40,66.348404,6.0121436,2.5821435,72.15,30.99,2194.43,942.48
+IND,India,Rajasthan,Dausa,Predominantly Rural,1844763,5,40,66.813637,6.0577359,2.6277361,72.69,31.53,2211.07,959.12
+IND,India,Chhattisgarh,Dhamtari,Predominantly Rural,898891,5,40,66.853249,6.0616183,2.6316183,72.74,31.58,2212.49,960.54
+IND,India,Uttar Pradesh,Muzaffarnagar,Predominantly Rural,3234930,5,40,67.064316,6.082303,2.6523032,72.99,31.83,2220.04,968.09
+IND,India,Jharkhand,Purbi Singhbhum,Predominantly Urban,2580815,5,40,67.203941,6.0959864,2.6659865,73.15,31.99,2225.04,973.09
+IND,India,West Bengal,Uttar Dinajpur,Predominantly Rural,3300317,5,40,67.222107,6.0977669,2.6677668,73.17,32.01,2225.68,973.73
+IND,India,Chhattisgarh,Mungeli,Predominantly Rural,806902,5,40,67.818375,6.1562004,2.7264376,73.87,32.72,2247.01,995.15
+IND,India,Bihar,Jamui,Predominantly Rural,2011855,5,40,68.120041,6.1857643,2.7557642,74.23,33.07,2257.8,1005.85
+IND,India,Uttar Pradesh,Jhansi,Predominantly Urban,2212757,5,40,68.129921,6.1867323,2.7567322,74.24,33.08,2258.16,1006.21
+IND,India,Haryana,Kurukshetra,Predominantly Rural,1261845,5,40,68.343323,6.2076454,2.7776453,74.49,33.33,2265.79,1013.84
+IND,India,Chhattisgarh,Janjgir-Champa,Predominantly Rural,1818577,5,40,68.343773,6.2076898,2.7776899,74.49,33.33,2265.81,1013.86
+IND,India,Jharkhand,Sahibganj,Predominantly Rural,1304383,5,40,68.372337,6.2104888,2.7804887,74.53,33.37,2266.83,1014.88
+IND,India,Punjab,Jalandhar,Predominantly Urban,2315865,5,40,68.412201,6.2143955,2.7843955,74.57,33.41,2268.25,1016.3
+IND,India,Punjab,Amritsar,Predominantly Urban,2585142,5,40,68.526764,6.2256227,2.7956228,74.71,33.55,2272.35,1020.4
+IND,India,West Bengal,Nadia,Predominantly Rural,5539078,5,40,68.561821,6.2290583,2.7990582,74.75,33.59,2273.61,1021.66
+IND,India,Haryana,Mahendragarh,Predominantly Rural,1024047,5,40,68.660973,6.2387757,2.8087757,74.87,33.71,2277.15,1025.2
+IND,India,Punjab,Sri Muktsar Sahib,Predominantly Rural,924262,5,40,69.021049,6.2740626,2.8440626,75.29,34.13,2290.03,1038.08
+IND,India,Punjab,Faridkot,Predominantly Rural,645147,5,40,69.298508,6.3012538,2.8712537,75.62,34.46,2299.96,1048.01
+IND,India,Punjab,Kapurthala,Predominantly Rural,842325,5,40,69.59156,6.3299727,2.8999729,75.96,34.8,2310.44,1058.49
+IND,India,Bihar,Araria,Predominantly Rural,3218761,5,40,69.764412,6.3469124,2.9169126,76.16,35,2316.62,1064.67
+IND,India,Tripura,Gomati,Predominantly Rural,571958,5,40,69.983368,6.3683701,2.9383702,76.42,35.26,2324.46,1072.51
+IND,India,Rajasthan,Karauli,Predominantly Rural,1662416,5,40,70.335922,6.4029207,2.9729207,76.84,35.68,2337.07,1085.12
+IND,India,Haryana,Sirsa,Predominantly Rural,1418376,5,40,70.545181,6.4234276,2.9934278,77.08,35.92,2344.55,1092.6
+IND,India,Jharkhand,Ramgarh,Predominantly Urban,1046197,5,40,70.631126,6.4318504,3.0018504,77.18,36.02,2347.63,1095.68
+IND,India,Uttar Pradesh,Balrampur,Predominantly Rural,2363723,5,40,70.742661,6.4427805,3.0127804,77.31,36.15,2351.61,1099.66
+IND,India,Bihar,Gaya,Predominantly Rural,4958624,5,40,70.951942,6.4632907,3.0332906,77.56,36.4,2359.1,1107.15
+IND,India,Uttar Pradesh,Meerut,Predominantly Urban,3767875,5,40,71.182648,6.4858994,3.0558994,77.83,36.67,2367.35,1115.4
+IND,India,Punjab,Sangrur,Predominantly Rural,1723156,5,40,71.216087,6.4891768,3.0591767,77.87,36.71,2368.55,1116.6
+IND,India,Punjab,Barnala,Predominantly Rural,619269,5,40,71.274078,6.4948597,3.0648601,77.94,36.78,2370.62,1118.67
+IND,India,Uttar Pradesh,Mahoba,Predominantly Rural,952320,5,40,71.282951,6.4957294,3.0657294,77.95,36.79,2370.94,1118.99
+IND,India,Punjab,Bathinda,Predominantly Rural,1493149,5,40,71.350197,6.5023193,3.0723195,78.03,36.87,2373.35,1121.4
+IND,India,Bihar,Aurangabad,Predominantly Rural,2858183,5,40,71.487396,6.5157647,3.0857646,78.19,37.03,2378.25,1126.3
+IND,India,Punjab,Mansa,Predominantly Rural,836987,5,40,71.546028,6.5215106,3.0915105,78.26,37.1,2380.35,1128.4
+IND,India,West Bengal,Dakshin Dinajpur,Predominantly Rural,1717161,5,40,71.697281,6.5363331,3.1063333,78.44,37.28,2385.76,1133.81
+IND,India,Punjab,Firozpur,Predominantly Rural,1089267,5,40,72.039192,6.5698404,3.1398406,78.84,37.68,2397.99,1146.04
+IND,India,Haryana,Kaithal,Predominantly Rural,1207456,5,40,72.258423,6.5913253,3.1613255,79.1,37.94,2405.83,1153.88
+IND,India,Punjab,Ludhiana,Predominantly Urban,3671199,5,40,72.568626,6.6217256,3.1917255,79.46,38.3,2416.93,1164.98
+IND,India,Haryana,Bhiwani,Predominantly Rural,1255286,5,40,72.790726,6.6434913,3.2134912,79.72,38.56,2424.87,1172.92
+IND,India,Bihar,Kaimur (Bhabua),Predominantly Rural,1830494,5,40,72.915184,6.6556878,3.2373972,79.87,38.85,2429.33,1181.65
+IND,India,Uttar Pradesh,Bareilly,Predominantly Rural,4868673,5,40,73.076729,6.67151979999999,3.2415197,80.06,38.9,2435.1,1183.15
+IND,India,Chhattisgarh,Baloda Bazar,Predominantly Rural,1421663,5,40,73.219093,6.6854711,3.255471,80.23,39.07,2440.2,1188.25
+IND,India,Uttar Pradesh,Mirzapur,Predominantly Rural,2777180,5,40,73.451363,6.7082338,3.2782338,80.5,39.34,2448.51,1196.56
+IND,India,Jharkhand,Bokaro,Predominantly Urban,2345949,5,40,73.642487,6.726964,3.2969639,80.72,39.56,2455.34,1203.39
+IND,India,Punjab,Moga,Predominantly Rural,1044480,5,40,73.694618,6.7320724,3.3020723,80.78,39.62,2457.21,1205.26
+IND,India,West Bengal,Puruliya,Predominantly Rural,3112587,5,40,74.126434,6.7743907,3.3443909,81.29,40.13,2472.65,1220.7
+IND,India,Uttar Pradesh,Lakhimpur Kheri,Predominantly Rural,4415090,5,40,74.164963,6.7781668,3.3481665,81.34,40.18,2474.03,1222.08
+IND,India,Uttar Pradesh,Sambhal,Predominantly Rural,2323339,5,40,74.277382,6.7891831,3.3591831,81.47,40.31,2478.05,1226.1
+IND,India,Tripura,West Tripura,Predominantly Rural,978625,5,40,74.280197,6.7894592,3.3594592,81.47,40.31,2478.15,1226.2
+IND,India,Rajasthan,Alwar,Predominantly Rural,4077618,5,40,74.370811,6.7983394,3.3683393,81.58,40.42,2481.39,1229.44
+IND,India,Jharkhand,Dhanbad,Predominantly Urban,2969042,5,40,74.489609,6.8099818,3.3799818,81.72,40.56,2485.64,1233.69
+IND,India,Bihar,Rohtas,Predominantly Rural,3377696,5,40,74.648033,6.8255076,3.3964639,81.91,40.76,2491.31,1239.71
+IND,India,West Bengal,Maldah,Predominantly Rural,4231683,5,40,74.748604,6.8353634,3.4053633,82.02,40.86,2494.91,1242.96
+IND,India,Punjab,Tarn Taran,Predominantly Rural,1148465,5,40,74.81105,6.8414831,3.411483,82.1,40.94,2497.14,1245.19
+IND,India,West Bengal,Hooghly,Predominantly Rural,5856109,5,40,74.85495,6.8457856,3.4157853,82.15,40.99,2498.71,1246.76
+IND,India,Uttar Pradesh,Shravasti,Predominantly Rural,2266800,5,40,75.050041,6.8649039,3.4349039,82.38,41.22,2505.69,1253.74
+IND,India,Uttar Pradesh,Hapur,Predominantly Rural,1450047,5,40,75.188248,6.878448,3.4484479,82.54,41.38,2510.63,1258.68
+IND,India,West Bengal,Barddhaman,Predominantly Rural,8169994,5,40,75.219162,6.8814778,3.4514778,82.58,41.42,2511.74,1259.79
+IND,India,Haryana,Charkhi Dadri,Predominantly Rural,530326,5,40,75.261032,6.885581,3.4555812,82.63,41.47,2513.24,1261.29
+IND,India,Bihar,Supaul,Predominantly Rural,2529105,5,40,75.319366,6.8912978,3.461298,82.7,41.54,2515.32,1263.37
+IND,India,Tripura,South Tripura,Predominantly Rural,368252,5,40,75.395782,6.8987865,3.4687865,82.79,41.63,2518.06,1266.11
+IND,India,Uttar Pradesh,Chitrakoot,Predominantly Rural,1089014,5,40,75.481995,6.9072351,3.4772353,82.89,41.73,2521.14,1269.19
+IND,India,Haryana,Karnal,Predominantly Rural,1630745,5,40,76.068092,6.9646726,3.5346727,83.58,42.42,2542.11,1290.16
+IND,India,West Bengal,Bankura,Predominantly Rural,3787134,5,40,76.224174,6.9799695,3.5499692,83.76,42.6,2547.69,1295.74
+IND,India,Bihar,Nawada,Predominantly Rural,2535988,5,40,76.328606,6.9902034,3.5602033,83.88,42.72,2551.42,1299.47
+IND,India,Bihar,Munger,Predominantly Rural,1489578,5,40,76.664284,7.0230994,3.5930996,84.28,43.12,2563.43,1311.48
+IND,India,Uttar Pradesh,Shamli,Predominantly Rural,1305254,5,40,77.035095,7.0594392,3.6294394,84.71,43.55,2576.7,1324.75
+IND,India,Madhya Pradesh,Datia,Predominantly Rural,970808,5,40,77.38932,7.0941534,3.6641536,85.13,43.97,2589.37,1337.42
+IND,India,Tripura,Sepahijala,Predominantly Rural,395725,5,40,77.40757,7.0959415,3.6659417,85.15,43.99,2590.02,1338.07
+IND,India,Haryana,Hisar,Predominantly Rural,1898375,5,40,77.764305,7.1309023,3.7009022,85.57,44.41,2602.78,1350.83
+IND,India,Bihar,Lakhisarai,Predominantly Rural,1175473,5,40,78.095978,7.1634064,3.7334061,85.96,44.8,2614.64,1362.69
+IND,India,Chhattisgarh,Bemetara,Predominantly Rural,818982,5,40,78.242859,7.1778002,3.7478001,86.13,44.97,2619.9,1367.95
+IND,India,Bihar,Bhagalpur,Predominantly Rural,3467116,5,40,78.617241,7.2144895,3.7844894,86.57,45.41,2633.29,1381.34
+IND,India,Haryana,Fatehabad,Predominantly Rural,1030468,5,40,78.657524,7.2184372,3.7884374,86.62,45.46,2634.73,1382.78
+IND,India,Uttar Pradesh,Bahraich,Predominantly Rural,2783905,5,40,79.211304,7.2727079,3.8427079,87.27,46.11,2654.54,1402.59
+IND,India,Bihar,Purnia,Predominantly Rural,3687496,5,40,79.406517,7.2918391,3.8618391,87.5,46.34,2661.52,1409.57
+IND,India,Haryana,Jind,Predominantly Rural,1487940,5,40,79.457306,7.2968159,3.866816,87.56,46.4,2663.34,1411.39
+IND,India,Uttar Pradesh,Siddharth Nagar,Predominantly Rural,3414512,5,40,79.554329,7.3063245,3.8763244,87.68,46.52,2666.81,1414.86
+IND,India,Chhattisgarh,Durg,Predominantly Rural,2218874,5,40,80.220734,7.3716321,3.941632,88.46,47.3,2690.65,1438.7
+IND,India,Madhya Pradesh,Gwalior,Predominantly Urban,2105180,5,40,80.674187,7.4160705,3.9860706,88.99,47.83,2706.87,1454.92
+IND,India,Uttar Pradesh,Hamirpur,Predominantly Rural,1216871,5,40,81.080688,7.4559078,4.0259075,89.47,48.31,2721.41,1469.46
+IND,India,Bihar,Katihar,Predominantly Rural,3469979,5,40,81.291344,7.4765515,4.0465517,89.72,48.56,2728.94,1476.99
+IND,India,Uttar Pradesh,Banda,Predominantly Rural,1956242,5,40,81.341408,7.4814582,4.0514579,89.78,48.62,2730.73,1478.78
+IND,India,Bihar,Sheikhpura,Predominantly Rural,709899,5,40,81.42141,7.4892983,4.0592985,89.87,48.71,2733.59,1481.64
+IND,India,Uttar Pradesh,Maharajganj,Predominantly Rural,3210371,5,40,81.47821,7.4948649,4.0648646,89.94,48.78,2735.63,1483.68
+IND,India,Bihar,Madhubani,Predominantly Rural,5067405,5,40,81.681458,7.5147829,4.0847826,90.18,49.02,2742.9,1490.95
+IND,India,Uttar Pradesh,Budaun,Predominantly Rural,3401998,5,40,82.012939,7.5472679,4.1172681,90.57,49.41,2754.75,1502.8
+IND,India,Bihar,Jehanabad,Predominantly Rural,1270280,5,40,82.60672,7.6054587,4.1754584,91.27,50.11,2775.99,1524.04
+IND,India,Bihar,Madhepura,Predominantly Rural,2274145,5,40,82.729401,7.6174812,4.1874809,91.41,50.25,2780.38,1528.43
+IND,India,Uttar Pradesh,Bulandshahr,Predominantly Rural,3814531,5,40,82.865273,7.6307969,4.2007971,91.57,50.41,2785.24,1533.29
+IND,India,Haryana,Rewari,Predominantly Rural,878097,5,40,83.163483,7.6600208,4.230021,91.92,50.76,2795.91,1543.96
+IND,India,Bihar,Arwal,Predominantly Rural,803978,5,40,83.297813,7.6731858,4.2431855,92.08,50.92,2800.71,1548.76
+IND,India,Uttar Pradesh,Jalaun,Predominantly Rural,1857038,5,40,84.380333,7.779273,4.3492732,93.35,52.19,2839.43,1587.48
+IND,India,Bihar,Nalanda,Predominantly Rural,3258899,5,40,84.901169,7.8303142,4.4003143,93.96,52.8,2858.06,1606.11
+IND,India,Bihar,Pashchim Champaran,Predominantly Rural,4459097,5,40,85.216301,7.8611975,4.4311976,94.33,53.17,2869.34,1617.39
+IND,India,Haryana,Panipat,Predominantly Urban,1321736,5,40,85.370773,7.8763356,4.4463358,94.52,53.36,2874.86,1622.91
+IND,India,Chhattisgarh,Raipur,Predominantly Rural,2522522,5,40,85.700752,7.9086738,4.4786735,94.9,53.74,2886.67,1634.72
+IND,India,Uttar Pradesh,Shahjahanpur,Predominantly Rural,3300328,5,40,85.995148,7.9375243,4.5075245,95.25,54.09,2897.2,1645.25
+IND,India,Uttar Pradesh,Chandauli,Predominantly Rural,2210762,5,40,86.411484,7.9783254,4.5483255,95.74,54.58,2912.09,1660.14
+IND,India,Uttar Pradesh,Baghpat,Predominantly Rural,1426461,5,40,87.277176,8.0631638,4.6331635,96.76,55.6,2943.05,1691.1
+IND,India,Bihar,Saharsa,Predominantly Rural,2141490,5,40,87.283867,8.0638189,4.6338191,96.77,55.61,2943.29,1691.34
+IND,India,Bihar,Khagaria,Predominantly Rural,1882552,5,40,87.818588,8.1162214,4.6862216,97.39,56.23,2962.42,1710.47
+IND,India,Bihar,Sitamarhi,Predominantly Rural,3362183,5,40,88.304817,8.1638718,4.7338719,97.97,56.81,2979.81,1727.86
+IND,India,Bihar,Bhojpur,Predominantly Rural,3114088,5,40,89.114082,8.2431803,4.81318,98.92,57.76,3008.76,1756.81
+IND,India,Haryana,Rohtak,Predominantly Urban,1157083,5,40,89.133293,8.2450628,4.8150625,98.94,57.78,3009.45,1757.5
+IND,India,Uttar Pradesh,Kasganj,Predominantly Rural,1544202,5,40,89.901321,8.3203297,4.8903294,99.84,58.68,3036.92,1784.97
+IND,India,Uttar Pradesh,Sitapur,Predominantly Rural,4923809,5,40,90.099167,8.3397188,4.9097185,100.08,58.92,3044,1792.05
+IND,India,Bihar,Begusarai,Predominantly Rural,3392864,5,40,90.199364,8.3495378,4.9195375,100.19,59.03,3047.58,1795.63
+IND,India,Rajasthan,Bharatpur,Predominantly Rural,2822650,5,40,90.354134,8.3647051,4.9347053,100.38,59.22,3053.12,1801.17
+IND,India,Haryana,Jhajjar,Predominantly Rural,1088256,5,40,90.991272,8.427145,4.9971447,101.13,59.97,3075.91,1823.96
+IND,India,Bihar,Patna,Predominantly Urban,6579670,5,40,91.015495,8.4295187,4.9995184,101.15,59.99,3076.77,1824.82
+IND,India,Uttar Pradesh,Prayagraj,Predominantly Rural,5300685,5,40,91.709602,8.4975414,5.0675411,101.97,60.81,3101.6,1849.65
+IND,India,Bihar,Buxar,Predominantly Rural,1918179,5,40,92.047295,8.5306349,5.1006351,102.37,61.21,3113.68,1861.73
+IND,India,Madhya Pradesh,Morena,Predominantly Rural,2149962,5,40,92.067352,8.5326004,5.1026006,102.39,61.23,3114.4,1862.45
+IND,India,Haryana,Mewat,Predominantly Rural,1184542,5,40,92.726288,8.5971756,5.1671758,103.17,62.01,3137.97,1886.02
+IND,India,Haryana,Sonipat,Predominantly Rural,1596917,5,40,92.737144,8.5982399,5.1682401,103.18,62.02,3138.36,1886.41
+IND,India,Bihar,Darbhanga,Predominantly Rural,4499968,5,40,92.776848,8.6021309,5.1721306,103.23,62.07,3139.78,1887.83
+IND,India,Uttar Pradesh,Aligarh,Predominantly Rural,4066742,5,40,93.322548,8.6556101,5.2256098,103.87,62.71,3159.3,1907.35
+IND,India,Uttar Pradesh,Farrukhabad,Predominantly Rural,2069836,5,40,93.387413,8.6619673,5.231967,103.94,62.78,3161.62,1909.67
+IND,India,Uttar Pradesh,Gonda,Predominantly Rural,3731959,5,40,93.714516,8.6940222,5.2640224,104.33,63.17,3173.32,1921.37
+IND,India,Uttar Pradesh,Hardoi,Predominantly Rural,4486682,5,40,94.746506,8.7951574,5.3651581,105.54,64.38,3210.23,1958.28
+IND,India,Bihar,Sheohar,Predominantly Rural,1257103,5,40,94.820961,8.80245399999999,5.3724542,105.63,64.47,3212.9,1960.95
+IND,India,Uttar Pradesh,Kaushambi,Predominantly Rural,2927145,5,40,94.961327,8.8162107,5.3862104,105.79,64.63,3217.92,1965.97
+IND,India,Uttar Pradesh,Kanpur Dehat,Predominantly Rural,1945637,5,40,95.147285,8.8344336,5.4044337,106.01,64.85,3224.57,1972.62
+IND,India,Uttar Pradesh,Etah,Predominantly Rural,1938023,5,40,95.344864,8.8537959999999991,5.4237962,106.25,65.09,3231.64,1979.69
+IND,India,Uttar Pradesh,Ghaziabad,Predominantly Urban,3801640,5,40,95.362946,8.8555689,5.4255686,106.27,65.11,3232.28,1980.33
+IND,India,Rajasthan,Dhaulpur,Predominantly Rural,1330309,5,40,95.451309,8.8642282,5.4342284,106.37,65.21,3235.44,1983.49
+IND,India,Madhya Pradesh,Bhind,Predominantly Rural,1877254,5,40,95.646599,8.8833666,5.4533668,106.6,65.44,3242.43,1990.48
+IND,India,Uttar Pradesh,Auraiya,Predominantly Rural,1566434,5,40,95.753052,8.8937988,5.463799,106.73,65.57,3246.24,1994.29
+IND,India,Uttar Pradesh,Kannauj,Predominantly Rural,1823641,5,40,96.024719,8.9204226,5.4904227,107.05,65.89,3255.95,2004
+IND,India,Uttar Pradesh,Kushinagar,Predominantly Rural,3900413,5,40,96.46489,8.9635592,5.5335588,107.56,66.4,3271.7,2019.75
+IND,India,Bihar,Samastipur,Predominantly Rural,4809318,5,40,96.503189,8.9673128,5.5373125,107.61,66.45,3273.07,2021.12
+IND,India,Bihar,Purba Champaran,Predominantly Rural,5729187,5,40,96.591736,8.9759903,5.54599,107.71,66.55,3276.24,2024.29
+IND,India,Uttar Pradesh,Basti,Predominantly Rural,2356792,5,40,96.661041,8.9827814,5.5527821,107.79,66.63,3278.72,2026.77
+IND,India,Uttar Pradesh,Bhadohi,Predominantly Rural,1715122,5,40,97.036613,9.0195875,5.5895877,108.24,67.08,3292.15,2040.2
+IND,India,Uttar Pradesh,Fatehpur,Predominantly Rural,2907707,5,40,97.172905,9.0329447,5.6029449,108.4,67.24,3297.02,2045.07
+IND,India,Uttar Pradesh,Hathras,Predominantly Rural,1663333,5,40,97.595291,9.074338,5.6443381,108.89,67.73,3312.13,2060.18
+IND,India,Bihar,Vaishali,Predominantly Rural,3922829,5,40,97.781441,9.0925808,5.662581,109.11,67.95,3318.79,2066.84
+IND,India,Bihar,Saran,Predominantly Rural,4519484,5,40,97.788063,9.0932302,5.6632304,109.12,67.96,3319.03,2067.08
+IND,India,Uttar Pradesh,Ballia,Predominantly Rural,3575961,5,40,97.927032,9.1068487,5.6768489,109.28,68.12,3324,2072.05
+IND,India,Uttar Pradesh,Sant Kabir Nagar,Predominantly Rural,1606593,5,40,98.245209,9.138031,5.7080307,109.66,68.5,3335.38,2083.43
+IND,India,Uttar Pradesh,Barabanki,Predominantly Rural,4197191,5,40,98.37693,9.150939,5.7209396,109.81,68.65,3340.09,2088.14
+IND,India,Uttar Pradesh,Varanasi,Predominantly Urban,3968740,5,40,98.430603,9.1561995,5.7261992,109.87,68.71,3342.01,2090.06
+IND,India,Haryana,Palwal,Predominantly Rural,851751,5,40,98.714851,9.1840553,5.7540555,110.21,69.05,3352.18,2100.23
+IND,India,Uttar Pradesh,Mathura,Predominantly Rural,2803670,5,40,98.790657,9.1914845,5.7614846,110.3,69.14,3354.89,2102.94
+IND,India,Uttar Pradesh,Faizabad,Predominantly Rural,2108945,5,40,98.881493,9.200386,5.7703862,110.4,69.24,3358.14,2106.19
+IND,India,Uttar Pradesh,Mainpuri,Predominantly Rural,2061709,5,40,99.104988,9.2222891,5.7922888,110.67,69.51,3366.14,2114.19
+IND,India,Uttar Pradesh,Ghazipur,Predominantly Rural,3968634,5,40,99.38044,9.2492828,5.819283,110.99,69.83,3375.99,2124.04
+IND,India,Bihar,Muzaffarpur,Predominantly Rural,5414457,5,40,99.587181,9.2695436,5.8395438,111.23,70.07,3383.38,2131.43
+IND,India,Uttar Pradesh,Sultanpur,Predominantly Rural,2428994,5,40,99.682404,9.2788754,5.8488755,111.35,70.19,3386.79,2134.84
+IND,India,Uttar Pradesh,Gorakhpur,Predominantly Rural,4629466,5,40,99.874321,9.2976837,5.8676839,111.57,70.41,3393.65,2141.7
+IND,India,Uttar Pradesh,Ambedkar Nagar,Predominantly Rural,2637051,5,40,99.92234,9.3023891,5.8723893,111.63,70.47,3395.37,2143.42
+IND,India,Haryana,Faridabad,Predominantly Urban,2392427,5,40,99.957634,9.3058481,5.8758478,111.67,70.51,3396.63,2144.68
+IND,India,Uttar Pradesh,Kanpur Nagar,Predominantly Urban,5015159,5,40,100.36091,9.3453684,5.9153686,112.14,70.98,3411.06,2159.11
+IND,India,Uttar Pradesh,Etawah,Predominantly Rural,1722128,5,40,100.53739,9.3626642,5.9326644,112.35,71.19,3417.37,2165.42
+IND,India,Uttar Pradesh,Mau,Predominantly Rural,3081699,5,40,101.01575,9.409544,5.9795442,112.91,71.75,3434.48,2182.53
+IND,India,Uttar Pradesh,Deoria,Predominantly Rural,3422563,5,40,101.10543,9.4183321,5.9883323,113.02,71.86,3437.69,2185.74
+IND,India,Uttar Pradesh,Rae Bareli,Predominantly Rural,2704315,5,40,101.22408,9.4299603,5.9999604,113.16,72,3441.94,2189.99
+IND,India,Haryana,Gurugram,Predominantly Urban,1710435,5,40,101.42251,9.4494057,6.0194058,113.39,72.23,3449.03,2197.08
+IND,India,Uttar Pradesh,Gautam Buddha Nagar,Predominantly Urban,2550000,5,40,101.46358,9.4534311,6.0234313,113.44,72.28,3450.5,2198.55
+IND,India,Uttar Pradesh,Amethi,Predominantly Rural,2803122,5,40,101.5645,9.4633207,6.0333209,113.56,72.4,3454.11,2202.16
+IND,India,Uttar Pradesh,Firozabad,Predominantly Rural,3461926,5,40,101.77518,9.4839668,6.053967,113.81,72.65,3461.65,2209.7
+IND,India,Uttar Pradesh,Azamgarh,Predominantly Rural,4408605,5,40,101.90131,9.4963284,6.0663285,113.96,72.8,3466.16,2214.21
+IND,India,Uttar Pradesh,Lucknow,Predominantly Urban,5048642,5,40,101.976,9.5036478,6.073648,114.04,72.88,3468.83,2216.88
+IND,India,Uttar Pradesh,Unnao,Predominantly Rural,3427155,5,40,102.00343,9.5063362,6.0763359,114.08,72.92,3469.81,2217.86
+IND,India,Uttar Pradesh,Pratapgarh,Predominantly Rural,3541337,5,40,102.30995,9.536375,6.1063752,114.44,73.28,3480.78,2228.83
+IND,India,Uttar Pradesh,Agra,Predominantly Urban,4165381,5,40,102.94719,9.5988245,6.1688247,115.19,74.03,3503.57,2251.62
+IND,India,Bihar,Siwan,Predominantly Rural,3741558,5,40,103.88951,9.6911726,6.2611723,116.29,75.13,3537.28,2285.33
+IND,India,Uttar Pradesh,Jaunpur,Predominantly Rural,4981493,5,40,104.30213,9.7316084,6.3016086,116.78,75.62,3552.04,2300.09
+IND,India,Bihar,Gopalganj,Predominantly Rural,2939120,5,40,106.67434,9.9640856,6.5340853,119.57,78.41,3636.89,2384.94
+IND,India,NCT of Delhi,NCT of Delhi,Predominantly Urban,17656193,5,40,107.60463,10.055254,6.6252537,120.66,79.5,3670.17,2418.22

@@ -1417,7 +1417,7 @@ china_fs_fig3_dataset %>%
   write_csv("./june.2022/factsheets/china/graph.wise.datasets/china_fs_fig3.csv")
 
 # plot china factsheet figure 3
-china_fs_fig3 <- ggplot(ar_fig15_dataset) +
+china_fs_fig3 <- ggplot(china_fs_fig3_dataset) +
   geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.1) +
     geom_hline(mapping = aes(yintercept = 5), lwd = 0.5, linetype = "dashed") +
     geom_vline(mapping = aes(xintercept = 2014), lwd = 0.5, linetype = "dashed") +
