@@ -494,10 +494,170 @@ ggplot(data = aqli_2020_district_level_pop_buckets_summary, aes(area = prop_pop,
 ```
 
 
+# Sanity checks CSE State of India's Environment report
+```{r}
+
+# aqli lyl in rural vs urban
+summary_1 <- aqli_2020_district_level_rural_urban_subset %>%
+  group_by(region_type) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
+  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098)
+
+# state level population data
+state_wise_pop <- aqli_2020_district_level_rural_urban_subset %>%
+  group_by(state) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            pop_millions = round(tot_pop/1000000, 2))
+
+# page 3 top level stats
+aqli_india_state_wise_rural_urban <- aqli_2020_district_level_rural_urban_subset %>%
+  group_by(state, region_type) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
+  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098)
+
+
+# page 4 top level stats
+aqli_india_state_wise <- aqli_2020_district_level_rural_urban_subset %>%
+  group_by(state) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
+  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098)
+  
+
+# global aqli file grouped by pop_buckets
+  aqli_2020_district_level_pop_buckets <- aqli_2020_district_level_rural_urban_subset %>%
+  mutate(pop_bucket = ifelse(lyl_rel_to_who_2020 < 1, "<1 year", lyl_rel_to_who_2020), 
+         pop_bucket = ifelse(((pop_bucket >= 1) & (pop_bucket <= 3)), "1 - 3", pop_bucket), 
+         pop_bucket = ifelse(((pop_bucket > 3) & (pop_bucket <= 5)), ">3 - 5", pop_bucket), 
+         pop_bucket = ifelse(((pop_bucket > 5) & (pop_bucket <= 7)), ">5 - 7", pop_bucket), 
+         pop_bucket = ifelse((pop_bucket > 7), ">7", pop_bucket)) %>%
+  mutate(order_pop_buckets = ifelse(pop_bucket == "<1 year", 1, 0), 
+         order_pop_buckets = ifelse(pop_bucket == "1 - 3", 2, order_pop_buckets), 
+         order_pop_buckets = ifelse(pop_bucket == ">3 - 5", 3, order_pop_buckets), 
+         order_pop_buckets = ifelse(pop_bucket == ">5 - 7", 4, order_pop_buckets), 
+         order_pop_buckets = ifelse(pop_bucket == ">7", 5, order_pop_buckets)) 
+  
+
+  # overall summary (group(s): pop_bucket, state)
+ aqli_2020_district_level_pop_buckets %>%
+     group_by(pop_bucket, state) %>%
+     summarise(tot_pop = sum(population, na.rm = TRUE), 
+               order_var = order_pop_buckets[1]) %>%
+     arrange(state, order_var) %>%
+     ungroup() %>%
+     group_by(state) %>%
+     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
+            prop_pop = round((tot_pop/tot_fin_pop)*100)) %>%
+    ungroup()  %>% View()
+ 
+ # overall summary (group(s): pop_bucket, state, region_type): Rural
+ aqli_2020_district_level_pop_buckets %>%
+   filter(region_type == "Predominantly Rural") %>%
+     group_by(pop_bucket, state) %>%
+     summarise(tot_pop = sum(population, na.rm = TRUE), 
+               order_var = order_pop_buckets[1]) %>%
+     arrange(state, order_var) %>%
+     ungroup() %>%
+     group_by(state) %>%
+     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
+            prop_pop = round((tot_pop/tot_fin_pop)*100)) %>%
+    ungroup()  %>% 
+   select(state, pop_bucket, prop_pop) %>%
+   View()
+ 
+  # overall summary (group(s): pop_bucket, state, region_type): Urban
+ aqli_2020_district_level_pop_buckets %>%
+   filter(region_type == "Predominantly Urban") %>%
+     group_by(pop_bucket, state) %>%
+     summarise(tot_pop = sum(population, na.rm = TRUE), 
+               order_var = order_pop_buckets[1]) %>%
+     arrange(state, order_var) %>%
+     ungroup() %>%
+     group_by(state) %>%
+     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
+            prop_pop = round((tot_pop/tot_fin_pop)*100)) %>%
+    ungroup()  %>% 
+   select(state, pop_bucket, prop_pop) %>%
+   View()
+ 
+ # summary 2
+ 
+ summary_2 <- aqli_2020_district_level_rural_urban_subset %>%
+  group_by(state, region_type) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
+  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098) %>%
+   ungroup() %>%
+   mutate(months_extract_post_decimal = as.numeric(str_extract(as.character(lyl_2020_who), "\\.(.)+")), 
+          months_extract_post_decimal = round(months_extract_post_decimal*12, 1))
+  
+
+# summary 3
+ 
+  summary_3 <- aqli_2020_district_level_rural_urban_subset %>%
+  group_by(state) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
+  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098) %>%
+   ungroup() %>%
+   mutate(months_extract_post_decimal = as.numeric(str_extract(as.character(lyl_2020_who), "\\.(.)+")), 
+          months_extract_post_decimal = round(months_extract_post_decimal*12, 1)) %>%
+    select(state, lyl_2020_who, months_extract_post_decimal)
+ 
+
+# overall summary (group(s): pop_bucket)
+aqli_2020_district_level_pop_buckets_summary <- aqli_2020_district_level_pop_buckets %>%
+  group_by(pop_bucket) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            order_var = order_pop_buckets[1]) %>%
+  arrange(order_var) %>%
+  ungroup() %>%
+     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
+            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
+    ungroup() %>%
+    select(pop_bucket, prop_pop, order_var) %>%
+  mutate(order_var_2 = 1)
+
+# summary for the rural region
+aqli_2020_district_level_pop_buckets_summary_r <- aqli_2020_district_level_pop_buckets %>%
+  filter(region_type == "Predominantly Rural") %>%
+  group_by(pop_bucket) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            order_var = order_pop_buckets[1]) %>%
+  arrange(order_var) %>%
+  ungroup() %>%
+     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
+            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
+    ungroup() %>%
+    select(pop_bucket, prop_pop, order_var) %>%
+  mutate(order_var_2 = 1)
+
+# summary for the urban data
+aqli_2020_district_level_pop_buckets_summary_u <- aqli_2020_district_level_pop_buckets %>%
+  filter(region_type == "Predominantly Urban") %>%
+  group_by(pop_bucket) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            order_var = order_pop_buckets[1]) %>%
+  arrange(order_var) %>%
+  ungroup() %>%
+     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
+            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
+    ungroup() %>%
+    select(pop_bucket, prop_pop, order_var) %>%
+  mutate(order_var_2 = 1)
 
 
 
 
+
+```
 
 
 
