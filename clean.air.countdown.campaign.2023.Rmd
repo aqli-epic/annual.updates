@@ -390,6 +390,8 @@ aqli_2020_district_level_pop_buckets_summary_r <- aqli_2020_district_level_pop_b
     select(pop_bucket, prop_pop, order_var) %>%
   mutate(order_var_2 = 1)
 
+#####
+
 # summary for the urban data
 aqli_2020_district_level_pop_buckets_summary_u <- aqli_2020_district_level_pop_buckets %>%
   filter(region_type == "Predominantly Urban") %>%
