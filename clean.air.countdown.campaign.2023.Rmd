@@ -66,6 +66,13 @@ aqli_2020_district_level_rural_urban_subset <- read_csv("./june.2022/clean.air.c
 # india state
 india_state <- st_read("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/india_state.shp")
 
+# color 2020 data for those Indian states, through which the TOC passes, this contains an identifier column that tells us, whether a given district is south/north of the toc
+color_2020_india_states_toc_passes_with_toc_id <- read_csv("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/color_2020_states_tropic_of_cancer_passes.csv")
+
+color_2020_india_states_toc_passes_with_toc_id <- color_2020_india_states_toc_passes_with_toc_id %>%
+  select(-dir_rel_to_toc, dir_rel_to_toc)
+
+
 
 # global variables
 who_guideline <- 5
@@ -95,6 +102,7 @@ five_states_with_greatest_increase <- color_2020 %>%
             avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE)) %>%
   mutate(avg_pm2.5_2020_vs_2016 = avg_pm2.5_2020 - avg_pm2.5_2016, 
          avg_pm2.5_2020_vs_2016_prop_change = round((avg_pm2.5_2020_vs_2016/avg_pm2.5_2016)*100, 2)) %>%
+    filter(name_1 %notin% c("Daman and Diu", "Dadra and Nagar Haveli")) %>%
   slice_max(avg_pm2.5_2020_vs_2016, n = 5) %>%
   select(name_1) %>%
   unlist() %>%
@@ -107,49 +115,83 @@ figure_1_data <-  color_2020 %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
          pm2020_pop_weighted = pm2020*pop_weights, 
+         pm2019_pop_weighted = pm2019*pop_weights,
+         pm2018_pop_weighted = pm2018*pop_weights,
+         pm2017_pop_weighted = pm2017*pop_weights,
          pm2016_pop_weighted = pm2016*pop_weights) %>%
   summarise(avg_pm2.5_2016 = sum(pm2016_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2017 = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2018 = sum(pm2018_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2019 = sum(pm2019_pop_weighted, na.rm = TRUE),
             avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE)) %>%
   mutate(avg_pm2.5_2020_vs_2016 = avg_pm2.5_2020 - avg_pm2.5_2016, 
          avg_pm2.5_2020_vs_2016_prop_change = round((avg_pm2.5_2020_vs_2016/avg_pm2.5_2016)*100, 2)) %>%
   filter(name_1 %in% five_states_with_greatest_increase) %>%
   select(-avg_pm2.5_2020_vs_2016, -avg_pm2.5_2020_vs_2016_prop_change) %>%
   pivot_longer(avg_pm2.5_2016:avg_pm2.5_2020, names_to = "year", values_to = "pm2.5_pollution")%>% mutate(year = str_extract(str_extract(year, "_\\d+"), "\\d+")) %>%
-  mutate(order_var = ifelse(name_1 == "Daman and Diu", 1, 0), 
-         order_var = ifelse(name_1 == "Gujarat", 2, order_var), 
-         order_var = ifelse(name_1 == "Madhya Pradesh", 3, order_var), 
-         order_var = ifelse(name_1 == "Rajasthan", 4, order_var), 
-         order_var = ifelse(name_1 == "Chhattisgarh", 5, order_var)) 
+  mutate(order_var = ifelse(name_1 == "Gujarat", "a", NA), 
+         order_var = ifelse(name_1 == "Sikkim", "b", order_var), 
+         order_var = ifelse(name_1 == "Madhya Pradesh", "c", order_var), 
+         order_var = ifelse(name_1 == "Rajasthan", "d", order_var), 
+         order_var = ifelse(name_1 == "Chhattisgarh", "e", order_var)) 
+
+# coercing the "year" column to numeric
+figure_1_data$year <- as.numeric(figure_1_data$year)
+figure_1_data$name_1 <- factor(figure_1_data$name_1, levels = c("Gujarat","Sikkim", "Madhya Pradesh", 
+         "Rajasthan", "Chhattisgarh"))
+
+# creating a data frame that will contain different text for different facets 
+figure_1_facet_text <- tibble(label = c("+21.1%", "+11.0%", "+11.4%", "+9.5%", "+10.4%"), 
+                              label_2 = c(expression(paste("WHO ", PM[2.5], " ", "Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")), "", "", "", ""),
+                              name_1 = factor(c("Gujarat", "Sikkim", "Madhya Pradesh", 
+                                         "Rajasthan", "Chhattisgarh"), levels = c("Gujarat","Sikkim", "Madhya Pradesh", 
+         "Rajasthan", "Chhattisgarh")),
+                              x = c(2017.7, 2018, 2018, 2018, 2018), 
+                              y = c(36, 41.7, 51, 54, 59.7))
 
 # figure 1 plot
 figure_1_plot <- figure_1_data %>%
-  ggplot(mapping = aes(x = year, y = pm2.5_pollution, fill = name_1)) +
-  geom_col(width = 0.5, color = "white") +
-  facet_wrap(~fct_reorder(name_1, order_var), ncol = 5) +
-  labs(fill = "State", title = expression("Five Indian states with greatest increase in" ~ PM[2.5] ~ pollution ~ "over the past 5 years"), subtitle = "2016 to 2020") +
-  scale_fill_manual(values = c("Daman and Diu" = "cadetblue1", "Gujarat" = "steelblue1", "Madhya Pradesh" = "steelblue3", "Rajasthan" = "steelblue4" , "Chhattisgarh" = "navyblue")) +
-  ggthemes::theme_clean() +
-  labs(x = "Years", y = expression(Average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")")) +
+ #filter(year %in% c(2016, 2020)) %>%
+  ggplot(mapping = aes(x = year, y = pm2.5_pollution, color = name_1, group = name_1)) +
+  geom_point(size = 2.3) +
+  geom_line(lwd = 1.5) +
+  facet_grid(. ~ name_1) +
+  ggplot2::geom_text(mapping = aes(x = x, y = y, label = label), data = figure_1_facet_text, fontface = "bold") +
+  labs(color = "State", title = expression("Five Indian states with greatest increase in" ~ PM[2.5] ~ pollution ~ "from 2016 to 2020")) +
+ # viridis::scale_color_viridis(discrete = TRUE) +
+   scale_color_manual(values = c("Gujarat" = "wheat2", "Sikkim" = "gold1", "Madhya Pradesh" = "goldenrod3", "Rajasthan" = "red" , "Chhattisgarh" = "darkred")) +
+  ggthemes::theme_stata() +
+  labs(x = "Years", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")")) +
   theme(axis.line.x = element_line(), 
         axis.line.y = element_line(), 
         strip.text.x = element_text(size = 12), 
         legend.position = "bottom", 
         plot.title = element_text(size = 15), 
-        legend.box.background = element_rect(linetype = 1, size = 0.5), 
+        # legend.box.background = element_rect(linetype = 1, size = 0.5), 
         axis.title.y = element_text(size = 12), 
         axis.title.x = element_text(size = 12),
         legend.text = element_text(size = 12), 
-        plot.subtitle = element_text(size = 10)) +
-  scale_y_continuous(breaks = seq(0, 70, 10)) +
-  geom_text(mapping = aes(label = round(pm2.5_pollution, 1)), position = position_dodge(width = 1), vjust = -0.25, size = 3.8) 
+        plot.caption = element_text(hjust = 0, size = 7), 
+        plot.background = element_rect(fill = "white"), 
+        strip.background = element_rect(fill = "darkseagreen3"), 
+        axis.text.x = element_text(size = 8, margin = margin(r = 0)), 
+        axis.text.y = element_text(size = 8), 
+        legend.title = element_text(size = 15), 
+        axis.ticks.x = element_blank(),
+        axis.ticks.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 70, 5)) +
+    geom_hline(mapping = aes(yintercept = who_guideline), color = "black", linetype = 2) +
+  scale_x_continuous(breaks = seq(2016, 2020, 1), expand = c(0.3, 0)) +
+  geom_text(x = 2018.05, y = 6.5, mapping = aes(label = label_2), data = figure_1_facet_text, color = "black", size = 2.7, parse = T, fontface = "bold")
 
+ggsave(filename = "./june.2022/clean.air.countdown.india.campaign.2023/chart.1.data.graph.code/chart1[final].png", plot = figure_1_plot, height = 7, width = 14)
 
-  
+figure_1_data %>%
+  write_csv("./june.2022/clean.air.countdown.india.campaign.2023/chart.1.data.graph.code/chart1.data[final].csv")
+
+svglite::svglite("final_fig1_cleanAirIndiaCountdown2023.svg")
+ggsave("./final_fig1_cleanAirIndiaCountdown2023.svg", width = 14, height = 7)
 ```
-
-
-
-
 
 # Figure 2: Five Indian states with greatest decrease in pollution over the past five years
 
@@ -177,53 +219,87 @@ figure_2_data <-  color_2020 %>%
   filter(country == "India") %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2020*pop_weights, 
+         pm2020_pop_weighted = pm2020*pop_weights,
+         pm2019_pop_weighted = pm2019*pop_weights,
+         pm2018_pop_weighted = pm2018*pop_weights,
+         pm2017_pop_weighted = pm2017*pop_weights,
          pm2016_pop_weighted = pm2016*pop_weights) %>%
   summarise(avg_pm2.5_2016 = sum(pm2016_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2017 = sum(pm2017_pop_weighted, na.rm = TRUE),
+            avg_pm2.5_2018 = sum(pm2018_pop_weighted, na.rm = TRUE),
+            avg_pm2.5_2019 = sum(pm2019_pop_weighted, na.rm = TRUE),
             avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE)) %>%
   mutate(avg_pm2.5_2020_vs_2016 = avg_pm2.5_2020 - avg_pm2.5_2016, 
          avg_pm2.5_2020_vs_2016_prop_change = round((avg_pm2.5_2020_vs_2016/avg_pm2.5_2016)*100, 2)) %>%
   filter(name_1 %in% five_states_with_greatest_decrease) %>%
   select(-avg_pm2.5_2020_vs_2016, -avg_pm2.5_2020_vs_2016_prop_change) %>%
   pivot_longer(avg_pm2.5_2016:avg_pm2.5_2020, names_to = "year", values_to = "pm2.5_pollution")%>% mutate(year = str_extract(str_extract(year, "_\\d+"), "\\d+")) %>%
-  mutate(order_var = ifelse(name_1 == "Himachal Pradesh", 1, 0), 
-         order_var = ifelse(name_1 == "Jammu and Kashmir", 2, order_var), 
-         order_var = ifelse(name_1 == "Uttarakhand", 3, order_var), 
-         order_var = ifelse(name_1 == "Punjab", 4, order_var), 
-         order_var = ifelse(name_1 == "NCT of Delhi", 5, order_var)) 
+  mutate(order_var = ifelse(name_1 == "Himachal Pradesh", "a", NA), 
+         order_var = ifelse(name_1 == "Jammu and Kashmir", "b", order_var), 
+         order_var = ifelse(name_1 == "Uttarakhand", "c", order_var), 
+         order_var = ifelse(name_1 == "Punjab", "d", order_var), 
+         order_var = ifelse(name_1 == "NCT of Delhi", "e", order_var)) 
+
+# coercing the "year" column to numeric
+figure_2_data$year <- as.numeric(figure_2_data$year)
+figure_2_data$name_1 <- factor(figure_2_data$name_1, levels = c("Himachal Pradesh","Jammu and Kashmir", "Uttarakhand", 
+         "Punjab", "NCT of Delhi"))
+
+# creating a data frame that will contain different text for different facets 
+figure_2_facet_text <- tibble(label = c("-15.0%", "-25.7%", "-13.9%", "-9.0%", "-5.3%"), 
+                              label_2 = c(expression(paste("WHO ", PM[2.5], " ", "Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")), "", "", "", ""),
+                              name_1 = factor(c("Himachal Pradesh","Jammu and Kashmir", "Uttarakhand", 
+         "Punjab", "NCT of Delhi"), levels = c("Himachal Pradesh","Jammu and Kashmir", "Uttarakhand", 
+         "Punjab", "NCT of Delhi")),
+                              x = c(rep(2018, 5)), 
+                              y = c(34.7, 37.3, 44.7, 71.2, 116.4))
 
 
 # figure 2 plot
 figure_2_plot <- figure_2_data %>%
-  ggplot(mapping = aes(x = year, y = pm2.5_pollution, fill = name_1)) +
-  geom_col(width = 0.5) +
-  facet_wrap(~fct_reorder(name_1, order_var), ncol = 5) +
-  theme(legend.position = "bottom") +
-    scale_fill_manual(values = c("Himachal Pradesh" = "cadetblue1", "Jammu and Kashmir" = "steelblue1", "Uttarakhand" = "steelblue3", "Punjab" = "steelblue4" , "NCT of Delhi" = "navyblue")) +
-    ggthemes::theme_clean() +
-  labs(x = "Years", y = expression(Average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"), 
-       title = expression("Five Indian states with greatest decrease in" ~ PM[2.5] ~ pollution ~ "over the past 5 years"), subtitle = "2016 to 2020", 
-       fill = "State") +
-    theme(axis.line.x = element_line(), 
+ # filter(year %in% c(2016, 2020)) %>%
+  ggplot(mapping = aes(x = year, y = pm2.5_pollution, color = name_1, group = name_1)) +
+  geom_point(size = 2.3) +
+  geom_line(lwd = 1.5) +
+  facet_grid(. ~ name_1) +
+   ggplot2::geom_text(mapping = aes(x = x, y = y, label = label), data = figure_2_facet_text, fontface = "bold") +
+  labs(color = "State", title = expression("Five Indian states with greatest decrease in" ~ PM[2.5] ~ pollution ~ "from 2016 to 2020")) +
+ # viridis::scale_color_viridis(discrete = TRUE) +
+   scale_color_manual(values = c("Himachal Pradesh" = "wheat2", "Jammu and Kashmir" = "gold1", "Uttarakhand" = "goldenrod3", "Punjab" = "red" , "NCT of Delhi" = "darkred")) +
+  ggthemes::theme_stata() +
+  labs(x = "Years", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")")) +
+  theme(axis.line.x = element_line(), 
         axis.line.y = element_line(), 
         strip.text.x = element_text(size = 12), 
         legend.position = "bottom", 
         plot.title = element_text(size = 15), 
-        legend.box.background = element_rect(linetype = 1, size = 0.5), 
+        # legend.box.background = element_rect(linetype = 1, size = 0.5), 
         axis.title.y = element_text(size = 12), 
         axis.title.x = element_text(size = 12),
         legend.text = element_text(size = 12), 
-        plot.subtitle = element_text(size = 10)) +
-    geom_text(mapping = aes(label = round(pm2.5_pollution, 1)), position = position_dodge(width = 1), vjust = -0.25, size = 3.2) 
+        plot.caption = element_text(hjust = 0, size = 7), 
+        plot.background = element_rect(fill = "white"), 
+        strip.background = element_rect(fill = "darkseagreen3"),
+        axis.text.x = element_text(size = 8), 
+        axis.text.y = element_text(size = 8), 
+        legend.title = element_text(size = 15), 
+        axis.ticks.x = element_blank(), 
+        axis.ticks.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 120, 10)) +
+    geom_hline(mapping = aes(yintercept = who_guideline), color = "black", linetype = 2) +
+scale_x_continuous(breaks = seq(2016, 2020, 1), expand = c(0.3, 0)) +
+  geom_text(x = 2018.05, y = 8, mapping = aes(label = label_2), data = figure_2_facet_text, color = "black", size = 2.7, parse = T)
 
+ggsave(filename = "./june.2022/clean.air.countdown.india.campaign.2023/chart.2.data.graph.code/chart2[final].png", plot = figure_2_plot, height = 7, width = 14)
 
+figure_2_data %>%
+  write_csv("./june.2022/clean.air.countdown.india.campaign.2023/chart.2.data.graph.code/chart2.data[final].csv")
+
+svglite::svglite("final_fig2_cleanAirIndiaCountdown2023.svg")
+ggsave("./final_fig2_cleanAirIndiaCountdown2023.svg", width = 14, height = 7)
   
 
 ```
-
-
-
-
 
 
 # Figure 3: Pollution in the top 5 most populated districts not touched by NCAP
@@ -266,30 +342,50 @@ states_of_interest_bb <- st_as_sfc(st_bbox(states_of_focus_shp_file))
 figure_3_plot_part_1 <- india_state %>%
   ggplot() +
   geom_sf(fill = "snow2") +
-  geom_sf(data = states_of_focus_shp_file, fill = "white", size = 1.2) +
-  geom_sf(data = districts_of_interst_shp_file, fill = "red", size = 1) +
-  geom_sf(data = states_of_interest_bb, fill = NA, color = "red", size = 1.2) +
+  geom_sf(data = states_of_focus_shp_file, fill = "white", size = 0.6) +
+  geom_sf(data = districts_of_interst_shp_file, fill = "red", size = 0.6) +
+  geom_sf(data = states_of_interest_bb, fill = NA, color = "red", size = 0.9) +
   theme_map() 
+
+# save shape file
+ india_state %>%
+  st_write("./june.2022/clean.air.countdown.india.campaign.2023/chart.3.data.graph.code/plotdata_part_1_india_state_wise_shape_file.shp")
+
+svglite::svglite("final_fig3_part1_cleanAirIndiaCountdown2023.svg")
+ggsave("./final_fig3_part1_cleanAirIndiaCountdown2023.svg", width = 7, height = 7)
 
 figure_3_plot_part_2 <- states_of_focus_shp_file %>%
   ggplot() + 
-    geom_sf(fill = "white", size = 1.2) +
-   geom_sf(data = districts_of_interst_shp_file, fill = "red", size = 1.6) +
+    geom_sf(fill = "white", size = 0.8) +
+   geom_sf(data = districts_of_interst_shp_file, fill = "red", size = 1) +
   theme_map() +
-  labs(title = "India's top 5 most populated districts not touched by NCAP*", 
-       caption = str_wrap(expression("*NCAP is India's National Clean Air Programme. Pollution values specifically refer to" ~ PM[2.5] ~ pollution ~ "and are reported in µg/m³. Life years lost are relative to WHO" ~ PM[2.5] ~ pollution ~ "guideline"), 90), subtitle = "2016 to 2020") +
+  labs(title = "", 
+        caption = expression("*NCAP is India's National Clean Air Programme. Pollution values specifically refer to annual average" ~ PM[2.5] ~ pollution ~ "and are reported in µg/m³. Life years lost are relative to WHO" ~ PM[2.5] ~ pollution ~ "guideline"), subtitle = "2016 to 2020") +
   theme_map() +
-   ggsflabel::geom_sf_label_repel(data = districts_of_interst_shp_file, mapping = aes(label = NAME_2), force = 100, nudge_x = -2, seed = 10, size = 7) +
   theme(plot.background = element_rect(fill = "azure2"), 
-        plot.caption = element_text(hjust = 0, size = 9), plot.caption.position = "plot") 
+        plot.caption = element_text(hjust = 0, size = 9), plot.caption.position = "plot") +
+   ggsflabel::geom_sf_label_repel(data = districts_of_interst_shp_file, mapping = aes(label = NAME_2), force = 100, nudge_x = -2, seed = 10, size = 7) 
   
  
- 
+states_of_focus_shp_file %>%
+    st_write("./june.2022/clean.air.countdown.india.campaign.2023/chart.3.data.graph.code/plotdata_part_2_states_of_focus_shape_file.shp")
 
+svglite::svglite("final_fig3_part2_cleanAirIndiaCountdown2023.svg")
+ggsave("./final_fig3_part2_cleanAirIndiaCountdown2023.svg", width = 7, height = 7)
+ 
 # combined inset map
 figure_3_plot <- cowplot::ggdraw() +
   draw_plot(figure_3_plot_part_2, x = 0.1, y = 0.0001) +
   draw_plot(figure_3_plot_part_1, x = 0, y = 0.1, width = 0.4, height = 0.4)
+
+# get the total population for each district that will go inside the text boxes, alongside pollution and life years lost data
+
+non_ncap_district_top5_most_populated_data %>%
+  mutate(pop_lakhs = round(population/100000, 1)) %>%
+  select(country:name_2, population, pop_lakhs, everything()) %>%
+    write_csv("./june.2022/clean.air.countdown.india.campaign.2023/chart.3.data.graph.code/plotdata_part_3_india_state_wise_population.csv")
+
+
   
 
 ```
@@ -301,67 +397,151 @@ figure_3_plot <- cowplot::ggdraw() +
 
 ```{r}
 
-# states north of the tropic of cancer
-states_north_of_toc <- c("Jammu and Kashmir", "Punjab", "Chandigarh", "Himachal Pradesh", 
-                         "Uttarakhand", "Haryana", "NCT of Delhi", "Rajasthan", 
-                         "Uttar Pradesh", "Bihar", "Sikkim", "Assam", 
-                         "Arunachal Pradesh", "Nagaland", "Manipur", 
-                         "Mizoram", "Tripura", "West Bengal", 
-                         "Madhya Pradesh", "Jharkhand")
+# # # states north of the tropic of cancer
+# states_north_of_toc <- c("Jammu and Kashmir", "Punjab", "Chandigarh", "Himachal Pradesh",
+#                          "Uttarakhand", "Haryana", "NCT of Delhi", "Rajasthan",
+#                          "Uttar Pradesh", "Bihar", "Sikkim", "Assam",
+#                          "Arunachal Pradesh", "Nagaland", "Manipur",
+#                          "Mizoram", "Tripura", "West Bengal",
+#                          "Madhya Pradesh", "Jharkhand")
 
-# sanity check to see if all of the above states are in the color file. # yes they are
-color_2020 %>% filter(country == "India", name_1 %in% states_north_of_toc) %>% .$name_1 %>% unique()
+# states through which tropic of cancer passes
+states_toc_passes <- c("Gujarat", "Rajasthan", "Madhya Pradesh", 
+                       "Chhattisgarh", "Jharkhand", "West Bengal", 
+                       "Tripura", "Mizoram")
 
-# states south of toc
-states_south_of_toc <- color_2020 %>%
-  filter(country == "India", name_1 %notin% states_north_of_toc) %>%
+# data for states through which tropic of cancer doesn't pass
+color_2020_india_states_toc_not_passes <- color_2020 %>%
+  filter(country == "India") %>%
+  filter(name_1 %notin% states_toc_passes)
+
+#  list of states through which tropic of cancer doesn't pass 
+color_2020_india_states_toc_not_passes_list <- color_2020_india_states_toc_not_passes %>% 
   .$name_1 %>%
   unique()
 
-# color 2020 with north/south toc column
-color_2020_india_toc <- color_2020 %>%
+# Of the states that do not lie on the tropic of the cancer, which ones are clear north of toc: list
+color_2020_india_clear_north_of_toc <- c("Jammu and Kashmir", "Ladakh", 
+                                            "Himachal Pradesh", "Punjab", 
+                                            "Chandigarh", "Uttarakhand", "NCT of Delhi", 
+                                            "Haryana", "Uttar Pradesh", "Bihar", "Sikkim", 
+                                            "Arunachal Pradesh", "Assam", "Nagaland", 
+                                            "Manipur", "Meghalaya")
+
+# Of the states that do not lie on the tropic of the cancer, which ones are clear south of toc: list
+color_2020_india_clear_south_of_toc <- color_2020 %>% 
   filter(country == "India") %>%
-  mutate(toc_direction = ifelse(name_1 %in% states_north_of_toc, "north_toc", "south_toc"))
+  filter(name_1 %notin% c(states_toc_passes, color_2020_india_clear_north_of_toc)) %>%
+  .$name_1 %>% 
+  unique()
 
-# calculating the average pollution number for north toc and south toc
-india_toc_division_summary <- color_2020_india_toc %>%
-  group_by(toc_direction) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pop_weights*pm2020) %>%
-  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
-            lyl_rel_who_guideline = round((avg_pm2.5_2020 - who_guideline)*le_constant, 2), 
-            lyl_rel_who_guideline = ifelse(lyl_rel_who_guideline < 0, 0, lyl_rel_who_guideline))
+# color 2020 data with toc identifier, for those states that lie to the clear north or south of the toc
+color_2020_clear_ns_states_with_toc_id <- color_2020 %>%
+  filter(country == "India", name_1 %notin% states_toc_passes) %>%
+  mutate(dir_rel_to_toc = ifelse(name_1 %in% color_2020_india_clear_north_of_toc, "NorthTOC", "SouthTOC"))
 
-india_toc_division_summary %>% write_csv("./june.2022/clean.air.countdown.india.campaign.2023/chart.4.data.graph.code/chart4.plot.csv")
+# r binding state toc passes and state toc not passes datasets
 
-# export prettified India state level shapefile 
-india_state %>%
+final_toc_data <- rbind(color_2020_clear_ns_states_with_toc_id, color_2020_india_states_toc_passes_with_toc_id)
+
+# final dataset for the graph (part-1)
+final_toc_data %>%
+  group_by(dir_rel_to_toc) %>%
+  mutate(pop_weights = population/sum(population, na.rm =TRUE), 
+         pm2020_pop_weighted = pm2020*pop_weights) %>%
+  summarise(avg_pm2.5_2020_toc = round(sum(pm2020_pop_weighted, na.rm = TRUE), 1), 
+            lyl_rel_to_who_2020 = round((avg_pm2.5_2020_toc - 5)*0.098, 1), 
+            lyl_rel_to_who_2020 = ifelse(lyl_rel_to_who_2020 < 0, 0, lyl_rel_to_who_2020), 
+            total_pop = sum(population, na.rm = TRUE), 
+            total_pop_crores = round(total_pop/10000000, 1))
+
+final_toc_data %>%
+  write_csv("./june.2022/clean.air.countdown.india.campaign.2023/chart.4.data.graph.code/part1_chart4_data.csv")
+
+
+
+# Plotting each state's labelled shapefile  
+# state_n <- "Madhya Pradesh"
+# 
+# foo <- colormap_shp %>%
+#   filter(NAME_0 == "India", NAME_1 == state_n) %>%
+#   ggplot() +
+#   geom_sf() + 
+#   ggsflabel::geom_sf_label_repel(data = colormap_shp %>% filter(NAME_0 == "India", NAME_1 %in% c(state_n)), mapping = aes(label = NAME_2), force = 100, nudge_x = -2, seed = 10, size = 1.3) 
+
+# 
+
+# final data part 2
+final_data_part_2 <- color_2020 %>%
+  filter(country %in% c("India")) %>%
+  left_join(colormap_shp, by = c("name_1" = "NAME_1",  "name_2" = "NAME_2")) %>%
+  select(country, name_1, name_2, population, pm2020, llpp_who5_2020, geometry) %>%
+  mutate(lyl_aqli_bucket = ifelse((llpp_who5_2020 >= 0) & (llpp_who5_2020 < 0.1), "0 - < 0.1 years", NA), 
+         lyl_aqli_bucket = ifelse((llpp_who5_2020 >= 0.1) & (llpp_who5_2020 < 0.5), "0.1 - < 0.5", lyl_aqli_bucket), 
+         lyl_aqli_bucket = ifelse((llpp_who5_2020 >= 0.5) & (llpp_who5_2020 < 1), "0.5 - < 1", lyl_aqli_bucket), 
+         lyl_aqli_bucket = ifelse((llpp_who5_2020 >= 1) & (llpp_who5_2020 < 2), "1 - < 2", lyl_aqli_bucket), 
+         lyl_aqli_bucket = ifelse((llpp_who5_2020 >= 2) & (llpp_who5_2020 < 3), "2 - < 3", lyl_aqli_bucket), 
+         lyl_aqli_bucket = ifelse((llpp_who5_2020 >= 3) & (llpp_who5_2020 < 4), "3 - < 4", lyl_aqli_bucket), 
+         lyl_aqli_bucket = ifelse((llpp_who5_2020 >= 4) & (llpp_who5_2020 < 5), "4 - < 5", lyl_aqli_bucket), 
+         lyl_aqli_bucket = ifelse((llpp_who5_2020 >= 5) & (llpp_who5_2020 < 6), "5 - < 6", lyl_aqli_bucket), 
+         lyl_aqli_bucket = ifelse((llpp_who5_2020 >= 6), ">= 6 years", lyl_aqli_bucket)) %>%
+  mutate(order_var = ifelse(lyl_aqli_bucket == "0 - < 0.1 years", 1, NA), 
+         order_var = ifelse(lyl_aqli_bucket == "0.1 - < 0.5", 2, order_var), 
+         order_var = ifelse(lyl_aqli_bucket == "0.5 - < 1", 3, order_var), 
+         order_var = ifelse(lyl_aqli_bucket == "1 - < 2", 4, order_var), 
+         order_var = ifelse(lyl_aqli_bucket == "2 - < 3", 5, order_var), 
+         order_var = ifelse(lyl_aqli_bucket == "3 - < 4", 6, order_var), 
+         order_var = ifelse(lyl_aqli_bucket == "4 - < 5", 7, order_var), 
+         order_var = ifelse(lyl_aqli_bucket == "5 - < 6", 8, order_var), 
+         order_var = ifelse(lyl_aqli_bucket == ">= 6 years", 9, order_var))
+  
+final_data_part_2 %>%
+   write_sf("./june.2022/clean.air.countdown.india.campaign.2023/chart.4.data.graph.code/part2_chart4_data.shp")
+
+# plot final graph
+ final_data_part_2_plot <- final_data_part_2 %>%
+   select(-geometry, geometry) %>%
+   st_as_sf() %>%
   ggplot() +
-  geom_sf(fill = "white", color = "black", size = 1) +
-  ggthemes::theme_map()
+  geom_sf(mapping = aes(fill = lyl_aqli_bucket), color = "transparent", size = 0.01) +
+   scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", "0.1 - < 0.5" = "#FFE6B3", "0.5 - < 1" = "#FFD25D", 
+                                "1 - < 2" = "#FFBA00", "2 - < 3" = "#FF9600", "3 - < 4" = "#FF6908", 
+                                "4 - < 5" = "#E63D23", "5 - < 6" = "#BD251C", ">= 6 years" = "#8C130E")) +
+   ggthemes::theme_map() +
+  geom_hline(mapping = aes(yintercept = 23.5), lwd = 1.1) +
+  geom_sf(data = india_state, fill = "transparent", color = "black", size = 0.5) +
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 12), 
+        legend.title = element_text(size = 14)) +
+   labs(fill = "Life years lost") +
+  guides(fill = guide_legend(nrow = 1)) 
 
+svglite::svglite("test_india_lyl_toc.svg")
 
+ggsave("./test_india_lyl_toc.svg", height = 12, width = 12)
 ```
 
 
 
 
 
-# Figure 5: generate a life years lost graph grouped by population, for India as a whole, Rural India and Urban India
+# [Not included in campaign, will probably use later]: Figure 5: generate a life years lost graph grouped by population, for India as a whole, Rural India and Urban India 
 ```{r}
 
 # global aqli file grouped by pop_buckets
   aqli_2020_district_level_pop_buckets <- aqli_2020_district_level_rural_urban_subset %>%
-  mutate(pop_bucket = ifelse(lyl_rel_to_who_2020 < 1, "<1 year", lyl_rel_to_who_2020), 
-         pop_bucket = ifelse(((pop_bucket >= 1) & (pop_bucket < 3)), "1 - <3", pop_bucket), 
-         pop_bucket = ifelse(((pop_bucket >= 3) & (pop_bucket < 5)), "3 - <5", pop_bucket), 
+  mutate(pop_bucket = ifelse(lyl_rel_to_who_2020 < 1, "< 1 year", lyl_rel_to_who_2020), 
+         pop_bucket = ifelse(((pop_bucket >= 1) & (pop_bucket < 3)), "1 - < 3", pop_bucket), 
+         pop_bucket = ifelse(((pop_bucket >= 3) & (pop_bucket < 5)), "3 - < 5", pop_bucket), 
          pop_bucket = ifelse(((pop_bucket >= 5) & (pop_bucket <= 7)), "5 - 7", pop_bucket), 
-         pop_bucket = ifelse(pop_bucket > 7, ">7 years", pop_bucket)) %>%
-  mutate(order_pop_buckets = ifelse(pop_bucket == "<1 year", 1, 0), 
-         order_pop_buckets = ifelse(pop_bucket == "1 - <3", 2, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == "3 - <5", 3, order_pop_buckets), 
+         pop_bucket = ifelse(pop_bucket > 7, "> 7 years", pop_bucket)) %>%
+  mutate(order_pop_buckets = ifelse(pop_bucket == "< 1 year", 1, 0), 
+         order_pop_buckets = ifelse(pop_bucket == "1 - < 3", 2, order_pop_buckets), 
+         order_pop_buckets = ifelse(pop_bucket == "3 - < 5", 3, order_pop_buckets), 
          order_pop_buckets = ifelse(pop_bucket == "5 - 7", 4, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == ">7 years", 5, order_pop_buckets)) 
+         order_pop_buckets = ifelse(pop_bucket == "> 7 years", 5, order_pop_buckets)) 
 
 # overall summary
 aqli_2020_district_level_pop_buckets_summary <- aqli_2020_district_level_pop_buckets %>%
@@ -409,7 +589,7 @@ aqli_2020_district_level_pop_buckets_summary_u <- aqli_2020_district_level_pop_b
 aqli_2020_district_level_pop_buckets_summary %>%
   ggplot() +
   geom_col(mapping = aes(x = forcats::fct_reorder(pop_bucket, order_var), y = prop_pop, fill = pop_bucket)) +
-     scale_fill_manual(values = c(">7 years" = "black", "5 - 7" = "darkred", "3 - <5" = "red", "1 - <3" = "orange", "<1 year" = "burlywood1")) +
+     scale_fill_manual(values = c("> 7 years" = "black", "5 - 7" = "darkred", "3 - < 5" = "red", "1 - < 3" = "orange", "< 1 year" = "burlywood1")) +
   labs(x = "Life Years Lost", y = "% population", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
   theme(axis.title = element_text(size = 11) ,
         axis.text.x = element_text(size = 10), 
@@ -422,11 +602,11 @@ aqli_2020_district_level_pop_buckets_summary %>%
 foo <- aqli_2020_district_level_pop_buckets_summary %>% 
   ggplot() + 
   geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
-   scale_fill_manual(values = c("<1 year" = "burlywood1", "1 - <3" = "orange", "3 - <5" = "red", "5 - 7" = "darkred", ">7 years" = "black")) +
-  labs(x = "", y = "", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
+   scale_fill_manual(values = c("< 1 year" = "burlywood1", "1 - < 3" = "orange", "3 - < 5" = "red", "5 - 7" = "darkred", "> 7 years" = "black")) +
+  labs(x = "", y = "", title = "Proportion of Indian population in different pollution life years lost buckets*", fill = "Life Years Lost", caption = "*Rural/Urban classification of India was performed using the Center for Science and Environment's classification criteria.") +
   coord_flip() +
-  ggthemes::theme_clean() +
-  theme(plot.title = element_text(size = 15), 
+  hrbrthemes::theme_ipsum() +
+  theme(plot.title = element_text(size = 15, hjust = 0.5), 
         axis.text.y = element_blank(), 
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank(), 
@@ -435,7 +615,11 @@ foo <- aqli_2020_district_level_pop_buckets_summary %>%
         legend.background = element_rect(), 
         axis.line.x = element_blank(), 
         axis.line.y = element_blank(), 
-        axis.ticks = element_blank()) 
+        axis.ticks = element_blank(), 
+        plot.background = element_rect(fill = "white"), 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), 
+        plot.caption = element_text(hjust = 0)) 
 
 # v2.2 (stacked, rural, urban division)
 foo2 <- aqli_2020_district_level_pop_buckets_summary_r %>% 
@@ -494,166 +678,114 @@ ggplot(data = aqli_2020_district_level_pop_buckets_summary, aes(area = prop_pop,
 ```
 
 
-# Sanity checks CSE State of India's Environment report
+
+
+# Figure 5: Pollution in top 5 most polluted districts not touched by NCAP
 ```{r}
+# lyl in the top 5 most polluted districts not touched by NCAP
+top5_most_pol_dist_non_ncap_india <- color_2020 %>%
+  filter(country == "India") %>%
+  filter(name_2 %notin% ncap_regions_list$district) %>%
+  slice_max(pm2020, n = 5) %>%
+  mutate(name_2_1 = str_c(name_2, " ", "(", name_1, ")"), 
+         lyl_rel_who = round((pm2020 - 5)*0.098, 1), 
+         lyl_rel_who = ifelse(lyl_rel_who < 0, 0, lyl_rel_who)) %>% 
+  select(country:name_2, name_2_1, population, pm2020, lyl_rel_who)
 
-# aqli lyl in rural vs urban
-summary_1 <- aqli_2020_district_level_rural_urban_subset %>%
-  group_by(region_type) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
-  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
-            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098)
-
-# state level population data
-state_wise_pop <- aqli_2020_district_level_rural_urban_subset %>%
-  group_by(state) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            pop_millions = round(tot_pop/1000000, 2))
-
-# page 3 top level stats
-aqli_india_state_wise_rural_urban <- aqli_2020_district_level_rural_urban_subset %>%
-  group_by(state, region_type) %>%
-   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
-  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
-            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098)
-
-
-# page 4 top level stats
-aqli_india_state_wise <- aqli_2020_district_level_rural_urban_subset %>%
-  group_by(state) %>%
-   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
-  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
-            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098)
+top5_most_pol_dist_non_ncap_india %>%
+  write_csv("./june.2022/clean.air.countdown.india.campaign.2023/chart.6.data.graph.code/plot6_data_part1.csv")
   
-
-# global aqli file grouped by pop_buckets
-  aqli_2020_district_level_pop_buckets <- aqli_2020_district_level_rural_urban_subset %>%
-  mutate(pop_bucket = ifelse(lyl_rel_to_who_2020 < 1, "<1 year", lyl_rel_to_who_2020), 
-         pop_bucket = ifelse(((pop_bucket >= 1) & (pop_bucket <= 3)), "1 - 3", pop_bucket), 
-         pop_bucket = ifelse(((pop_bucket > 3) & (pop_bucket <= 5)), ">3 - 5", pop_bucket), 
-         pop_bucket = ifelse(((pop_bucket > 5) & (pop_bucket <= 7)), ">5 - 7", pop_bucket), 
-         pop_bucket = ifelse((pop_bucket > 7), ">7", pop_bucket)) %>%
-  mutate(order_pop_buckets = ifelse(pop_bucket == "<1 year", 1, 0), 
-         order_pop_buckets = ifelse(pop_bucket == "1 - 3", 2, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == ">3 - 5", 3, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == ">5 - 7", 4, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == ">7", 5, order_pop_buckets)) 
   
+top5_most_pol_dist_non_ncap_india_part1_plot <- top5_most_pol_dist_non_ncap_india %>%
+    ggplot(mapping = aes(x = forcats::fct_reorder(name_2_1, lyl_rel_who), y = lyl_rel_who, fill = lyl_rel_who)) +
+  geom_col(width = 0.2, fill = "darkred") +
+  labs(fill = "District (State)", title = "Life years lost to pollution in top 5 most polluted Indian districts, not touched by NCAP*", x = "District (State)", y = "Life years lost", 
+       caption = expression("*NCAP is India's National Clean Air Programme. Pollution values specifically refer to annual average" ~ PM[2.5] ~ pollution ~ "and are reported in µg/m³. Life years lost are reported relative to WHO" ~ PM[2.5] ~ pollution ~ "guideline.")) +
+    ggthemes::theme_stata() +
+      theme(axis.line.x = element_line(), 
+        axis.line.y = element_line(), 
+        legend.position = "bottom", 
+        plot.title = element_text(size = 21), 
+        legend.box.background = element_rect(linetype = 1, size = 0.5), 
+        axis.title.y = element_text(size = 16), 
+        axis.title.x = element_text(size = 16),
+        legend.text = element_text(size = 12), 
+        plot.background = element_rect(fill = "white"), 
+        plot.caption = element_text(hjust = 0, size = 14), plot.caption.position = "plot", 
+        axis.text.x = element_text(size = 14), 
+        axis.text.y = element_text(size = 13), 
+        axis.ticks.x = element_blank(), 
+        axis.ticks.y = element_blank()) +
+   geom_text(mapping = aes(label = lyl_rel_who), position = position_dodge(width = 1), vjust = -0.25, size = 5) +
+   scale_y_continuous(breaks = seq(0, 11, 1))
 
-  # overall summary (group(s): pop_bucket, state)
- aqli_2020_district_level_pop_buckets %>%
-     group_by(pop_bucket, state) %>%
-     summarise(tot_pop = sum(population, na.rm = TRUE), 
-               order_var = order_pop_buckets[1]) %>%
-     arrange(state, order_var) %>%
-     ungroup() %>%
-     group_by(state) %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100)) %>%
-    ungroup()  %>% View()
- 
- # overall summary (group(s): pop_bucket, state, region_type): Rural
- aqli_2020_district_level_pop_buckets %>%
-   filter(region_type == "Predominantly Rural") %>%
-     group_by(pop_bucket, state) %>%
-     summarise(tot_pop = sum(population, na.rm = TRUE), 
-               order_var = order_pop_buckets[1]) %>%
-     arrange(state, order_var) %>%
-     ungroup() %>%
-     group_by(state) %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100)) %>%
-    ungroup()  %>% 
-   select(state, pop_bucket, prop_pop) %>%
-   View()
- 
-  # overall summary (group(s): pop_bucket, state, region_type): Urban
- aqli_2020_district_level_pop_buckets %>%
-   filter(region_type == "Predominantly Urban") %>%
-     group_by(pop_bucket, state) %>%
-     summarise(tot_pop = sum(population, na.rm = TRUE), 
-               order_var = order_pop_buckets[1]) %>%
-     arrange(state, order_var) %>%
-     ungroup() %>%
-     group_by(state) %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100)) %>%
-    ungroup()  %>% 
-   select(state, pop_bucket, prop_pop) %>%
-   View()
- 
- # summary 2
- 
- summary_2 <- aqli_2020_district_level_rural_urban_subset %>%
-  group_by(state, region_type) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
-  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
-            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098) %>%
-   ungroup() %>%
-   mutate(months_extract_post_decimal = as.numeric(str_extract(as.character(lyl_2020_who), "\\.(.)+")), 
-          months_extract_post_decimal = round(months_extract_post_decimal*12, 1))
+
+
+svglite::svglite("final_fig6_part1_cleanAirIndiaCountdown2023.svg")
+ggsave("./final_fig6_part1_cleanAirIndiaCountdown2023.svg", width = 16, height = 7)
+
+#> creating part 2 of the graph: an inset map
+
+# states of interest
+states_of_interest_ch6 <- unique(top5_most_pol_dist_non_ncap_india$name_1)
+
+# states of interest shape file
+states_of_focus_shp_file_ch6 <- india_state %>%
+  filter(NAME_1 %in% states_of_interest_ch6)
+
+# districts of interest (within the above states of interest) shape file
+districts_of_interst_shp_file_ch6 <- colormap_shp %>%
+  filter(NAME_0 == "India", NAME_1 %in% states_of_interest_ch6, NAME_2 %in% top5_most_pol_dist_non_ncap_india$name_2) %>% 
+  left_join(color_2020 %>% filter(country == "India"), by = c("NAME_0" = "country", "NAME_1" = "name_1", "NAME_2" = "name_2")) %>%
+  select(NAME_0, NAME_1, NAME_2, population, geometry) %>% 
+  mutate(pop_lakhs = round(population/100000, 1),
+    graph_label = str_c(NAME_2, " (", NAME_1, "), ", pop_lakhs, " lakh people")) %>%
+  select(-geometry, geometry)
+
+# states of interest bounding box-
+states_of_interest_bb_ch6 <- st_as_sfc(st_bbox(states_of_focus_shp_file_ch6))
+
+# a state level India map with a bounding box on states of interest
+figure_6_plot_part_2 <- india_state %>%
+  ggplot() +
+  geom_sf(fill = "snow2") +
+  geom_sf(data = states_of_focus_shp_file_ch6, fill = "white", size = 0.9) +
+  geom_sf(data = districts_of_interst_shp_file_ch6, fill = "red", size = 0.8) +
+  geom_sf(data = states_of_interest_bb_ch6, fill = NA, color = "red", size = 0.8) +
+  theme_map() 
+
+india_state %>% st_write("./june.2022/clean.air.countdown.india.campaign.2023/chart.6.data.graph.code/plot6_data_part2.shp")
+
+svglite::svglite("final_fig6_part2_cleanAirIndiaCountdown2023.svg")
+ggsave("./final_fig6_part2_cleanAirIndiaCountdown2023.svg", width = 7, height = 7)
+
+figure_6_plot_part_3 <- states_of_focus_shp_file_ch6 %>%
+  ggplot() + 
+    geom_sf(fill = "white", size = 0.8, color = "black") +
+   geom_sf(data = districts_of_interst_shp_file_ch6, fill = "red", size = 1.2) +
+  theme_map() +
+  labs(title = "") +
+  theme_map() +
+    theme(plot.background = element_rect(fill = "azure2"), 
+        plot.caption = element_text(hjust = 0, size = 6), plot.caption.position = "plot") 
+
++
+   ggsflabel::geom_sf_label_repel(data = districts_of_interst_shp_file_ch6, mapping = aes(label = graph_label), force = 90, nudge_x = -2, seed = 10, size = 6) 
   
+states_of_focus_shp_file %>%
+  st_write("./june.2022/clean.air.countdown.india.campaign.2023/chart.6.data.graph.code/plot6_data_part3.shp")
 
-# summary 3
- 
-  summary_3 <- aqli_2020_district_level_rural_urban_subset %>%
-  group_by(state) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2.5_2020*pop_weights) %>%
-  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
-            lyl_2020_who = (avg_pm2.5_2020 - 5)*0.098) %>%
-   ungroup() %>%
-   mutate(months_extract_post_decimal = as.numeric(str_extract(as.character(lyl_2020_who), "\\.(.)+")), 
-          months_extract_post_decimal = round(months_extract_post_decimal*12, 1)) %>%
-    select(state, lyl_2020_who, months_extract_post_decimal)
+ svglite::svglite("final_fig6_part3_cleanAirIndiaCountdown2023.svg")
+ggsave("./final_fig6_part3_cleanAirIndiaCountdown2023.svg", width = 9, height = 7)
  
 
-# overall summary (group(s): pop_bucket)
-aqli_2020_district_level_pop_buckets_summary <- aqli_2020_district_level_pop_buckets %>%
-  group_by(pop_bucket) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            order_var = order_pop_buckets[1]) %>%
-  arrange(order_var) %>%
-  ungroup() %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
-    ungroup() %>%
-    select(pop_bucket, prop_pop, order_var) %>%
-  mutate(order_var_2 = 1)
+# combined inset map
+figure_3_plot <- cowplot::ggdraw() +
+  draw_plot(figure_3_plot_part_2, x = 0.1, y = 0.0001) +
+  draw_plot(figure_3_plot_part_1, x = 0, y = 0.1, width = 0.4, height = 0.4)
 
-# summary for the rural region
-aqli_2020_district_level_pop_buckets_summary_r <- aqli_2020_district_level_pop_buckets %>%
-  filter(region_type == "Predominantly Rural") %>%
-  group_by(pop_bucket) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            order_var = order_pop_buckets[1]) %>%
-  arrange(order_var) %>%
-  ungroup() %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
-    ungroup() %>%
-    select(pop_bucket, prop_pop, order_var) %>%
-  mutate(order_var_2 = 1)
-
-# summary for the urban data
-aqli_2020_district_level_pop_buckets_summary_u <- aqli_2020_district_level_pop_buckets %>%
-  filter(region_type == "Predominantly Urban") %>%
-  group_by(pop_bucket) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            order_var = order_pop_buckets[1]) %>%
-  arrange(order_var) %>%
-  ungroup() %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
-    ungroup() %>%
-    select(pop_bucket, prop_pop, order_var) %>%
-  mutate(order_var_2 = 1)
-
-
+  
+ 
 
 
 
@@ -686,16 +818,10 @@ aqli_2020_district_level_pop_buckets_summary_u <- aqli_2020_district_level_pop_b
 
 
 
-
-
-
-
-
-
-
-
-
 ############# Other graphs ##########################
+
+
+
 
 # Figure 6:  5 Indian districts with the greatest increase in pollution over the past five years
 ```{r}
@@ -1004,7 +1130,7 @@ color_2020 %>%
 # Michael graph (top 5 largest NCAP cities, pollution trend graph 2017 to 2020) and their corresponding pollution reduction targets horizontal lines.
 
 ds_trendlines <- color_2020 %>%
-  filter(name_2 %in% ncap_district_list) %>%
+  filter(name_2 %in% ncap_regions_list$district) %>%
   slice_max(population, n = 5) %>%
   select(country, name_1, name_2, population, starts_with("pm")) %>%
   pivot_longer(pm1998:pm2020, names_to = "year", values_to = "pm2.5_pollution") %>%
@@ -1092,7 +1218,7 @@ foo2 <- ds_trendlines %>%
         plot.caption = element_text(hjust = 0), 
         plot.title = element_text(size = 13), 
         plot.subtitle = element_text(size = 11)) +
-  facet_wrap(~name_2, ncol = 5)
+  facet_wrap(~name_2, ncol = 5) 
 
 +
   scale_color_manual(values = c("Bangalore" = "orange4", "Mumbai Suburban" = "blue4", "NCT of Delhi" = "darkred", "North 24 Parganas" = "navyblue", "Pune" = "mediumpurple4"))  
