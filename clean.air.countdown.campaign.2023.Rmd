@@ -302,8 +302,9 @@ ggsave("./final_fig2_cleanAirIndiaCountdown2023.svg", width = 14, height = 7)
 ```
 
 
-# Figure 3: Pollution in the top 5 most populated districts not touched by NCAP
+# Figure 4: Pollution in the top 5 most populated districts not touched by NCAP
 
+# Note:
 ```{r}
 
 # ncap regions dataset
@@ -393,7 +394,7 @@ non_ncap_district_top5_most_populated_data %>%
 
 
 
-# Figure 4: Calculating 2 average pollution and (corresponding life years lost) number for all regions north and south of the tropic of cancer respectively.
+# Figure 5: Calculating 2 average pollution and (corresponding life years lost) number for all regions north and south of the tropic of cancer respectively.
 
 ```{r}
 
@@ -527,160 +528,162 @@ ggsave("./test_india_lyl_toc.svg", height = 12, width = 12)
 
 
 
-# [Not included in campaign, will probably use later]: Figure 5: generate a life years lost graph grouped by population, for India as a whole, Rural India and Urban India 
+# [Not included in campaign, will probably use later, commented for now]: Figure 5: generate a life years lost graph grouped by population, for India as a whole, Rural India and Urban India 
 ```{r}
 
-# global aqli file grouped by pop_buckets
-  aqli_2020_district_level_pop_buckets <- aqli_2020_district_level_rural_urban_subset %>%
-  mutate(pop_bucket = ifelse(lyl_rel_to_who_2020 < 1, "< 1 year", lyl_rel_to_who_2020), 
-         pop_bucket = ifelse(((pop_bucket >= 1) & (pop_bucket < 3)), "1 - < 3", pop_bucket), 
-         pop_bucket = ifelse(((pop_bucket >= 3) & (pop_bucket < 5)), "3 - < 5", pop_bucket), 
-         pop_bucket = ifelse(((pop_bucket >= 5) & (pop_bucket <= 7)), "5 - 7", pop_bucket), 
-         pop_bucket = ifelse(pop_bucket > 7, "> 7 years", pop_bucket)) %>%
-  mutate(order_pop_buckets = ifelse(pop_bucket == "< 1 year", 1, 0), 
-         order_pop_buckets = ifelse(pop_bucket == "1 - < 3", 2, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == "3 - < 5", 3, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == "5 - 7", 4, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == "> 7 years", 5, order_pop_buckets)) 
-
-# overall summary
-aqli_2020_district_level_pop_buckets_summary <- aqli_2020_district_level_pop_buckets %>%
-  group_by(pop_bucket) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            order_var = order_pop_buckets[1]) %>%
-  arrange(order_var) %>%
-  ungroup() %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
-    ungroup() %>%
-    select(pop_bucket, prop_pop, order_var) %>%
-  mutate(order_var_2 = 1)
-
-# summary for the rural region
-aqli_2020_district_level_pop_buckets_summary_r <- aqli_2020_district_level_pop_buckets %>%
-  filter(region_type == "Predominantly Rural") %>%
-  group_by(pop_bucket) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            order_var = order_pop_buckets[1]) %>%
-  arrange(order_var) %>%
-  ungroup() %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
-    ungroup() %>%
-    select(pop_bucket, prop_pop, order_var) %>%
-  mutate(order_var_2 = 1)
-
-# summary for the urban data
-aqli_2020_district_level_pop_buckets_summary_u <- aqli_2020_district_level_pop_buckets %>%
-  filter(region_type == "Predominantly Urban") %>%
-  group_by(pop_bucket) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            order_var = order_pop_buckets[1]) %>%
-  arrange(order_var) %>%
-  ungroup() %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
-    ungroup() %>%
-    select(pop_bucket, prop_pop, order_var) %>%
-  mutate(order_var_2 = 1)
-
-
-# v1 of the graph (not stacked)
-aqli_2020_district_level_pop_buckets_summary %>%
-  ggplot() +
-  geom_col(mapping = aes(x = forcats::fct_reorder(pop_bucket, order_var), y = prop_pop, fill = pop_bucket)) +
-     scale_fill_manual(values = c("> 7 years" = "black", "5 - 7" = "darkred", "3 - < 5" = "red", "1 - < 3" = "orange", "< 1 year" = "burlywood1")) +
-  labs(x = "Life Years Lost", y = "% population", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
-  theme(axis.title = element_text(size = 11) ,
-        axis.text.x = element_text(size = 10), 
-        axis.text.y = element_text(size = 10)) +
-  coord_flip() +
-  ggthemes::theme_hc() + 
-  theme(plot.title = element_text(size = 14)) 
-
-# v2.1 of the graph (stacked)  
-foo <- aqli_2020_district_level_pop_buckets_summary %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
-   scale_fill_manual(values = c("< 1 year" = "burlywood1", "1 - < 3" = "orange", "3 - < 5" = "red", "5 - 7" = "darkred", "> 7 years" = "black")) +
-  labs(x = "", y = "", title = "Proportion of Indian population in different pollution life years lost buckets*", fill = "Life Years Lost", caption = "*Rural/Urban classification of India was performed using the Center for Science and Environment's classification criteria.") +
-  coord_flip() +
-  hrbrthemes::theme_ipsum() +
-  theme(plot.title = element_text(size = 15, hjust = 0.5), 
-        axis.text.y = element_blank(), 
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(), 
-        axis.title = element_text(size = 11), 
-        legend.position = "bottom", 
-        legend.background = element_rect(), 
-        axis.line.x = element_blank(), 
-        axis.line.y = element_blank(), 
-        axis.ticks = element_blank(), 
-        plot.background = element_rect(fill = "white"), 
-        panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank(), 
-        plot.caption = element_text(hjust = 0)) 
-
-# v2.2 (stacked, rural, urban division)
-foo2 <- aqli_2020_district_level_pop_buckets_summary_r %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
-   scale_fill_manual(values = c("<1 year" = "burlywood1", "1 - <3" = "orange", "3 - <5" = "red", "5 - 7" = "darkred", ">7 years" = "black")) +
-  labs(x = "", y = "", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
-  coord_flip() +
-  ggthemes::theme_clean() +
-  theme(plot.title = element_text(size = 15), 
-        axis.text.y = element_blank(), 
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(), 
-        axis.title = element_text(size = 11), 
-        legend.position = "bottom", 
-        legend.background = element_rect(), 
-        axis.line.x = element_blank(), 
-        axis.line.y = element_blank(), 
-        axis.ticks = element_blank()) 
-
-
-# v2.3 (stacked, rural, urban division)
-foo3 <- aqli_2020_district_level_pop_buckets_summary_u %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
-   scale_fill_manual(values = c("<1 year" = "burlywood1", "1 - <3" = "orange", "3 - <5" = "red", "5 - 7" = "darkred", ">7 years" = "black")) +
-  labs(x = "", y = "", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
-  coord_flip() +
-  ggthemes::theme_clean() +
-  theme(plot.title = element_text(size = 15), 
-        axis.text.y = element_blank(), 
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(), 
-        axis.title = element_text(size = 11), 
-        legend.position = "bottom", 
-        legend.background = element_rect(), 
-        axis.line.x = element_blank(), 
-        axis.line.y = element_blank(), 
-        axis.ticks = element_blank()) 
-
-
-
-# v3 (waffle package, waffle plot), # problem is that we have to round up to a whole number
-x <- round(c(0.87, 30, 25.7, 21.2, 22.2))
-waffle(x, rows = 10)
-
-# v4 (lessR, donut chart):this will not work
-PieChart(pop_bucket, data = aqli_2020_district_level_pop_buckets)
-
-# v5 (treemapify)
-ggplot(data = aqli_2020_district_level_pop_buckets_summary, aes(area = prop_pop, fill = prop_pop)) +
-  geom_treemap() +
-  viridis::scale_fill_viridis(direction = -1, option = "rocket")
-
+# # global aqli file grouped by pop_buckets
+#   aqli_2020_district_level_pop_buckets <- aqli_2020_district_level_rural_urban_subset %>%
+#   mutate(pop_bucket = ifelse(lyl_rel_to_who_2020 < 1, "< 1 year", lyl_rel_to_who_2020), 
+#          pop_bucket = ifelse(((pop_bucket >= 1) & (pop_bucket < 3)), "1 - < 3", pop_bucket), 
+#          pop_bucket = ifelse(((pop_bucket >= 3) & (pop_bucket < 5)), "3 - < 5", pop_bucket), 
+#          pop_bucket = ifelse(((pop_bucket >= 5) & (pop_bucket <= 7)), "5 - 7", pop_bucket), 
+#          pop_bucket = ifelse(pop_bucket > 7, "> 7 years", pop_bucket)) %>%
+#   mutate(order_pop_buckets = ifelse(pop_bucket == "< 1 year", 1, 0), 
+#          order_pop_buckets = ifelse(pop_bucket == "1 - < 3", 2, order_pop_buckets), 
+#          order_pop_buckets = ifelse(pop_bucket == "3 - < 5", 3, order_pop_buckets), 
+#          order_pop_buckets = ifelse(pop_bucket == "5 - 7", 4, order_pop_buckets), 
+#          order_pop_buckets = ifelse(pop_bucket == "> 7 years", 5, order_pop_buckets)) 
+# 
+# # overall summary
+# aqli_2020_district_level_pop_buckets_summary <- aqli_2020_district_level_pop_buckets %>%
+#   group_by(pop_bucket) %>%
+#   summarise(tot_pop = sum(population, na.rm = TRUE), 
+#             order_var = order_pop_buckets[1]) %>%
+#   arrange(order_var) %>%
+#   ungroup() %>%
+#      mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
+#             prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
+#     ungroup() %>%
+#     select(pop_bucket, prop_pop, order_var) %>%
+#   mutate(order_var_2 = 1)
+# 
+# # summary for the rural region
+# aqli_2020_district_level_pop_buckets_summary_r <- aqli_2020_district_level_pop_buckets %>%
+#   filter(region_type == "Predominantly Rural") %>%
+#   group_by(pop_bucket) %>%
+#   summarise(tot_pop = sum(population, na.rm = TRUE), 
+#             order_var = order_pop_buckets[1]) %>%
+#   arrange(order_var) %>%
+#   ungroup() %>%
+#      mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
+#             prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
+#     ungroup() %>%
+#     select(pop_bucket, prop_pop, order_var) %>%
+#   mutate(order_var_2 = 1)
+# 
+# # summary for the urban data
+# aqli_2020_district_level_pop_buckets_summary_u <- aqli_2020_district_level_pop_buckets %>%
+#   filter(region_type == "Predominantly Urban") %>%
+#   group_by(pop_bucket) %>%
+#   summarise(tot_pop = sum(population, na.rm = TRUE), 
+#             order_var = order_pop_buckets[1]) %>%
+#   arrange(order_var) %>%
+#   ungroup() %>%
+#      mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
+#             prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
+#     ungroup() %>%
+#     select(pop_bucket, prop_pop, order_var) %>%
+#   mutate(order_var_2 = 1)
+# 
+# 
+# # v1 of the graph (not stacked)
+# aqli_2020_district_level_pop_buckets_summary %>%
+#   ggplot() +
+#   geom_col(mapping = aes(x = forcats::fct_reorder(pop_bucket, order_var), y = prop_pop, fill = pop_bucket)) +
+#      scale_fill_manual(values = c("> 7 years" = "black", "5 - 7" = "darkred", "3 - < 5" = "red", "1 - < 3" = "orange", "< 1 year" = "burlywood1")) +
+#   labs(x = "Life Years Lost", y = "% population", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
+#   theme(axis.title = element_text(size = 11) ,
+#         axis.text.x = element_text(size = 10), 
+#         axis.text.y = element_text(size = 10)) +
+#   coord_flip() +
+#   ggthemes::theme_hc() + 
+#   theme(plot.title = element_text(size = 14)) 
+# 
+# # v2.1 of the graph (stacked)  
+# foo <- aqli_2020_district_level_pop_buckets_summary %>% 
+#   ggplot() + 
+#   geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
+#    scale_fill_manual(values = c("< 1 year" = "burlywood1", "1 - < 3" = "orange", "3 - < 5" = "red", "5 - 7" = "darkred", "> 7 years" = "black")) +
+#   labs(x = "", y = "", title = "Proportion of Indian population in different pollution life years lost buckets*", fill = "Life Years Lost", caption = "*Rural/Urban classification of India was performed using the Center for Science and Environment's classification criteria.") +
+#   coord_flip() +
+#   hrbrthemes::theme_ipsum() +
+#   theme(plot.title = element_text(size = 15, hjust = 0.5), 
+#         axis.text.y = element_blank(), 
+#         axis.text.x = element_blank(),
+#         axis.ticks.x = element_blank(), 
+#         axis.title = element_text(size = 11), 
+#         legend.position = "bottom", 
+#         legend.background = element_rect(), 
+#         axis.line.x = element_blank(), 
+#         axis.line.y = element_blank(), 
+#         axis.ticks = element_blank(), 
+#         plot.background = element_rect(fill = "white"), 
+#         panel.grid.major = element_blank(), 
+#         panel.grid.minor = element_blank(), 
+#         plot.caption = element_text(hjust = 0)) 
+# 
+# # v2.2 (stacked, rural, urban division)
+# foo2 <- aqli_2020_district_level_pop_buckets_summary_r %>% 
+#   ggplot() + 
+#   geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
+#    scale_fill_manual(values = c("<1 year" = "burlywood1", "1 - <3" = "orange", "3 - <5" = "red", "5 - 7" = "darkred", ">7 years" = "black")) +
+#   labs(x = "", y = "", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
+#   coord_flip() +
+#   ggthemes::theme_clean() +
+#   theme(plot.title = element_text(size = 15), 
+#         axis.text.y = element_blank(), 
+#         axis.text.x = element_blank(),
+#         axis.ticks.x = element_blank(), 
+#         axis.title = element_text(size = 11), 
+#         legend.position = "bottom", 
+#         legend.background = element_rect(), 
+#         axis.line.x = element_blank(), 
+#         axis.line.y = element_blank(), 
+#         axis.ticks = element_blank()) 
+# 
+# 
+# # v2.3 (stacked, rural, urban division)
+# foo3 <- aqli_2020_district_level_pop_buckets_summary_u %>% 
+#   ggplot() + 
+#   geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
+#    scale_fill_manual(values = c("<1 year" = "burlywood1", "1 - <3" = "orange", "3 - <5" = "red", "5 - 7" = "darkred", ">7 years" = "black")) +
+#   labs(x = "", y = "", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
+#   coord_flip() +
+#   ggthemes::theme_clean() +
+#   theme(plot.title = element_text(size = 15), 
+#         axis.text.y = element_blank(), 
+#         axis.text.x = element_blank(),
+#         axis.ticks.x = element_blank(), 
+#         axis.title = element_text(size = 11), 
+#         legend.position = "bottom", 
+#         legend.background = element_rect(), 
+#         axis.line.x = element_blank(), 
+#         axis.line.y = element_blank(), 
+#         axis.ticks = element_blank()) 
+# 
+# 
+# 
+# # v3 (waffle package, waffle plot), # problem is that we have to round up to a whole number
+# x <- round(c(0.87, 30, 25.7, 21.2, 22.2))
+# waffle(x, rows = 10)
+# 
+# # v4 (lessR, donut chart):this will not work
+# PieChart(pop_bucket, data = aqli_2020_district_level_pop_buckets)
+# 
+# # v5 (treemapify)
+# ggplot(data = aqli_2020_district_level_pop_buckets_summary, aes(area = prop_pop, fill = prop_pop)) +
+#   geom_treemap() +
+#   viridis::scale_fill_viridis(direction = -1, option = "rocket")
+# 
 
 ```
 
 
 
 
-# Figure 5: Pollution in top 5 most polluted districts not touched by NCAP
+
+
+# Figure 3: Pollution in top 5 most polluted districts not touched by NCAP
 ```{r}
 # lyl in the top 5 most polluted districts not touched by NCAP
 top5_most_pol_dist_non_ncap_india <- color_2020 %>%
@@ -790,30 +793,6 @@ figure_3_plot <- cowplot::ggdraw() +
 
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
