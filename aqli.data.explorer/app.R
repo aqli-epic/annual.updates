@@ -24,19 +24,25 @@ ui <- fluidPage(
     ),
     tabPanel("Regional Stats",
              fluidRow(
+               shiny::tags$br(),
                column(2, sliderInput("top", "Top", min = 1, max = 50, value = 10)),
                column(2, selectInput("most", "Most", choices = c("Populated", "Polluted"), selected = "Populated")),
                column(2, selectInput("region_type", "Region Type", choices = c("State(s)", "District(s)"), selected = "State(s)")),
                column(1, textOutput("inText")),
                column(2, selectizeInput("country2", "Country", choices = unique(gadm2_aqli_2021$country))),
                column(1, textOutput("inText2")),
-               column(2, selectInput("year", "Year", choices = first_year:latest_year, selected = latest_year))
+               column(2, selectInput("year_range", "Year", choices = first_year:latest_year))
              ),
              fluidRow(
-               column(6, dataTableOutput("table2")),
-               column(6, plotOutput("plot"))
+               shiny::tags$hr(),
+               column(6, plotOutput("plot")),
+               column(6, plotOutput("plot_lyl"))
              ),
-             downloadButton("downloadData2", "Download")
+             fluidRow(
+               shiny::tags$hr(),
+               column(12, dataTableOutput("table2")),
+               downloadButton("downloadData2", "Download")
+             )
     ),
     tabPanel("Trendlines",
              h2("Coming soon...")
@@ -61,12 +67,10 @@ observeEvent(input$continent, {
 
 })
 
-
 observeEvent(input$country, {
     updateSelectizeInput(session, "state", choices = c("all", gadm2_aqli_2021 %>% filter(country == input$country) %>% pull(name_1) %>% unique()))
 
   })
-
 
 observeEvent(input$state, {
   updateSelectizeInput(session, "district", choices = c("all", gadm2_aqli_2021 %>% filter(name_1 == input$state) %>% pull(name_2) %>% unique() ))
@@ -116,51 +120,104 @@ filteredData <- reactive({
 
 #> Regional Stats tab----------------------------------------------------
 
+  # reactive pollution column name
+  pol_col <- reactive({
+    str_c("pm", input$year_range)
+  })
+
+  # reactive llpp_who_col name
+  llpp_who_col <- reactive({
+    str_c("llpp_nat_", input$year_range)
+  })
+
+  # reactive llpp_nat_col name
+  llpp_nat_col <- reactive({
+    str_c("llpp_nat_", input$year_range)
+  })
+
+  # create the filtered dataset for the regional stats tab
   filteredData2 <- reactive({
-    pol_col <- str_c("pm", input$year)
-    llpp_who_col <- str_c("llpp_who_", input$year)
-    llpp_nat_col <- str_c("llpp_nat_", input$year)
+    llpp_who_col <- str_c("llpp_who_", input$year_range)
+    llpp_nat_col <- str_c("llpp_nat_", input$year_range)
     if(input$region_type == "State(s)"){
       if(input$most == "Populated"){
         gadm1_aqli_2021 %>%
           filter(country == input$country2) %>%
-            select(country, name_1, population, natstandard, !!as.symbol(pol_col), !!as.symbol(llpp_who_col), !!as.symbol(llpp_nat_col)) %>%
+            select(country, name_1, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
             slice_max(population, n = input$top)
 
       } else if (input$most == "Polluted"){
         gadm1_aqli_2021 %>%
           filter(country == input$country2) %>%
-          select(country, name_1, population, natstandard, !!as.symbol(pol_col), !!as.symbol(llpp_who_col), !!as.symbol(llpp_nat_col)) %>%
-          slice_max(!!as.symbol(pol_col), n = input$top)
+          select(country, name_1, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
+          slice_max(!!as.symbol(pol_col()), n = input$top)
       }
 
     } else if (input$region_type == "District(s)") {
         if(input$most == "Populated"){
           gadm2_aqli_2021 %>%
             filter(country == input$country2) %>%
-            select(country, name_1, name_2, population, natstandard, !!as.symbol(pol_col), !!as.symbol(llpp_who_col), !!as.symbol(llpp_nat_col)) %>%
+            select(country, name_1, name_2, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
             slice_max(population, n = input$top)
 
         } else if (input$most == "Polluted"){
           gadm2_aqli_2021 %>%
             filter(country == input$country2) %>%
-            select(country, name_1, name_2, population, natstandard !!as.symbol(pol_col), !!as.symbol(llpp_who_col), !!as.symbol(llpp_nat_col)) %>%
-            slice_max(!!as.symbol(pol_col), n = input$top)
+            select(country, name_1, name_2, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
+            slice_max(!!as.symbol(pol_col()), n = input$top)
         }
     }
   })
 
+  # intermediate text outputs
   output$inText <- renderText("in")
   output$inText2 <- renderText("in")
 
+  # output the filtered data for the regional stats tab
   output$table2 <- renderDataTable({
     filteredData2()
   })
 
+  # plot based on selected values of the dropdown columns in the regional stats tab (pollution graph)
   output$plot <- renderPlot({
-    filteredData2() %>%
-      ggplot(aes(x = !!sym(input$most), y = mpg)) +
-      geom_point()
+    if(input$region_type == "State(s)"){
+      if(input$most == "Polluted"){
+        filteredData2() %>%
+          ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
+          geom_col(fill = "darkred") +
+          coord_flip() +
+          ggthemes::theme_hc() +
+          labs(x = "State", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+               title = str_c("Pollution Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
+      } else if (input$most == "Populated"){
+        filteredData2() %>%
+          ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
+          geom_col(fill = "darkred") +
+          coord_flip() +
+          ggthemes::theme_hc() +
+          labs(x = "State", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+               title = str_c("Pollution Graph: Top ", input$top, " most Populated States in ", input$country2, " in ", input$year_range))
+      }
+    } else if (input$region_type == "District(s)"){
+      if(input$most == "Polluted"){
+        filteredData2() %>%
+          ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
+          geom_col(fill = "darkred") +
+          coord_flip() +
+          ggthemes::theme_hc() +
+          labs(x = "District", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+               title = str_c("Pollution Graph: Top ", input$top, " most Polluted Districts in ", input$country2, " in ", input$year_range))
+
+      } else if (input$most == "Populated"){
+        filteredData2() %>%
+          ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
+          geom_col(fill = "darkred") +
+          coord_flip() +
+          ggthemes::theme_hc() +
+          labs(x = "District", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+               title = str_c("Pollution Graph: Top ", input$top, " most Populated Districts in ", input$country2, " in ", input$year_range))
+      }
+    }
   })
 
   output$downloadData2 <- downloadHandler(
