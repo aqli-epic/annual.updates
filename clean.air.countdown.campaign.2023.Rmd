@@ -1249,17 +1249,6 @@ foo2 <- ggplot() +
 ```
 
 
-```{r}
-
-foo <- read_csv("./foo.csv")
-
-foo %>%
-  pivot_longer(raasman:safar, names_to = "type", values_to = "pol") %>%
-  ggplot() +
-  geom_line(mapping = aes(x = Date, y = pol, color = type, size = 0.2))
-  
-
-```
 
 
 
