@@ -341,6 +341,25 @@ observeEvent(input$state3, {
 
 })
 
+output$plot_trendlines <- renderPlot({
+
+  if(input$state3 == "all"){
+    if(input$district3 == "all"){
+      trendlines_aqli(gadm2_aqli_2021, level = "country", country_name = input$country3, start_year = 1998, end_year = 2021)
+    }
+
+  } else {
+    if(input$district3 == "all"){
+      trendlines_aqli(gadm2_aqli_2021, level = "state", country_name = input$country3, state_name = input$state3, start_year = 1998, end_year = 2021)
+    } else {
+      trendlines_aqli(gadm2_aqli_2021, level = "district", country_name = input$country3, state_name = input$state3, district_name = input$district3, start_year = 1998, end_year = 2021)
+    }
+  }
+
+
+})
+
+
 # Pollution/LYL Maps--------------------------------------------------------------
   observeEvent(input$generateMap, {
     data3 <- mtcars
