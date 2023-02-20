@@ -1,4 +1,5 @@
-
+# setting global options
+# options(shiny.maxRequestSize = 900*1024^2)
 
 # download libraries
 library(shiny)
@@ -7,7 +8,11 @@ library(tidyverse)
 library(plotly)
 
 # source data
-source("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/R/aqli.data.explorer.helper.script.R")
+#source("./R/aqli.data.explorer.helper.script.R")
+
+# loading the .RData file that contain all required data objects
+# save(list = ls(all = TRUE), file= "all.RData")
+load("all.RData", .GlobalEnv)
 
 # Define UI
 ui <- fluidPage(
@@ -76,43 +81,43 @@ server <- function(input, output, session) {
 #> Raw data exploration tab---------------------------------------------------
 
 # continent drop down observer
-observeEvent(input$continent, {
-  updateSelectizeInput(session, "country", choices = c("all", gadm2_aqli_2021 %>% filter(continent == input$continent) %>% pull(country) %>% unique() ))
+shiny::observeEvent(input$continent, {
+  shiny::updateSelectizeInput(session, "country", choices = c("all", gadm2_aqli_2021 %>% filter(continent == input$continent) %>% pull(country) %>% unique() ))
 
 })
 
 # country drop down observer
-observeEvent(input$country, {
-    updateSelectizeInput(session, "state", choices = c("all", gadm2_aqli_2021 %>% filter(country == input$country) %>% pull(name_1) %>% unique()))
+shiny::observeEvent(input$country, {
+    shiny::updateSelectizeInput(session, "state", choices = c("all", gadm2_aqli_2021 %>% filter(country == input$country) %>% pull(name_1) %>% unique()))
 
   })
 
 # state drop down observer
-observeEvent(input$state, {
-  updateSelectizeInput(session, "district", choices = c("all", gadm2_aqli_2021 %>% filter(name_1 == input$state) %>% pull(name_2) %>% unique() ))
+shiny::observeEvent(input$state, {
+  shiny::updateSelectizeInput(session, "district", choices = c("all", gadm2_aqli_2021 %>% filter(name_1 == input$state) %>% pull(name_2) %>% unique() ))
 
 })
 
 
 # filtered data, given the dropdowns
-filteredData <- reactive({
+filteredData <- shiny::reactive({
     if(input$continent == "World"){
       gadm2_aqli_2021
     } else {
       if(input$country == "all"){
         gadm2_aqli_2021 %>%
-          filter(continent == input$continent)
+          dplyr::filter(continent == input$continent)
       } else{
         if(input$state == "all"){
           gadm2_aqli_2021 %>%
-            filter(continent == input$continent, country == input$country)
+            dplyr::filter(continent == input$continent, country == input$country)
         } else{
           if(input$district == "all"){
             gadm2_aqli_2021 %>%
-              filter(continent == input$continent, country == input$country, name_1 == input$state)
+              dplyr::filter(continent == input$continent, country == input$country, name_1 == input$state)
           } else {
             gadm2_aqli_2021 %>%
-              filter(continent == input$continent, country == input$country, name_1 == input$state, name_2 == input$district)
+              dplyr::filter(continent == input$continent, country == input$country, name_1 == input$state, name_2 == input$district)
           }
 
         }
@@ -122,7 +127,7 @@ filteredData <- reactive({
   })
 
 # render the filtered dataset
-  output$table <- renderDataTable({
+  output$table <- shiny::renderDataTable({
     filteredData()
   })
 
@@ -138,48 +143,48 @@ filteredData <- reactive({
 #> Regional Stats tab----------------------------------------------------
 
   # reactive pollution column name
-  pol_col <- reactive({
-    str_c("pm", input$year_range)
+  pol_col <- shiny::reactive({
+    stringr::str_c("pm", input$year_range)
   })
 
   # reactive llpp_who_col name
-  llpp_who_col <- reactive({
-    str_c("llpp_who_", input$year_range)
+  llpp_who_col <- shiny::reactive({
+    stringr::str_c("llpp_who_", input$year_range)
   })
 
   # reactive llpp_nat_col name
-  llpp_nat_col <- reactive({
-    str_c("llpp_nat_", input$year_range)
+  llpp_nat_col <- shiny::reactive({
+    stringr::str_c("llpp_nat_", input$year_range)
   })
 
   # create the filtered dataset for the regional stats tab
-  filteredData2 <- reactive({
+  filteredData2 <- shiny::reactive({
     if(input$region_type == "State(s)"){
       if(input$most == "Populated"){
         gadm1_aqli_2021 %>%
-          filter(country == input$country2) %>%
-            select(country, name_1, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
-            slice_max(population, n = input$top)
+          dplyr::filter(country == input$country2) %>%
+          dplyr::select(country, name_1, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
+          dplyr::slice_max(population, n = input$top)
 
       } else if (input$most == "Polluted"){
         gadm1_aqli_2021 %>%
-          filter(country == input$country2) %>%
-          select(country, name_1, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
-          slice_max(!!as.symbol(pol_col()), n = input$top)
+          dplyr::filter(country == input$country2) %>%
+          dplyr::select(country, name_1, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
+          dplyr::slice_max(!!as.symbol(pol_col()), n = input$top)
       }
 
     } else if (input$region_type == "District(s)") {
         if(input$most == "Populated"){
           gadm2_aqli_2021 %>%
-            filter(country == input$country2) %>%
-            select(country, name_1, name_2, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
-            slice_max(population, n = input$top)
+            dplyr::filter(country == input$country2) %>%
+            dplyr::select(country, name_1, name_2, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
+            dplyr::slice_max(population, n = input$top)
 
         } else if (input$most == "Polluted"){
           gadm2_aqli_2021 %>%
-            filter(country == input$country2) %>%
-            select(country, name_1, name_2, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
-            slice_max(!!as.symbol(pol_col()), n = input$top)
+            dplyr::filter(country == input$country2) %>%
+            dplyr::select(country, name_1, name_2, population, natstandard, !!as.symbol(pol_col()), !!as.symbol(llpp_who_col()), !!as.symbol(llpp_nat_col())) %>%
+            dplyr::slice_max(!!as.symbol(pol_col()), n = input$top)
         }
     }
   })
@@ -189,49 +194,49 @@ filteredData <- reactive({
   output$inText2 <- renderText("in")
 
   # output the filtered data for the regional stats tab
-  output$table2 <- renderDataTable({
+  output$table2 <- shiny::renderDataTable({
     filteredData2()
   })
 
   # plot based on selected values of the dropdown columns in the regional stats tab (pollution graph)
-  output$plot <- renderPlot({
+  output$plot <- shiny::renderPlot({
     if(input$region_type == "State(s)"){
       if(input$most == "Polluted"){
         filteredData2() %>%
-          ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
-          geom_col(fill = "cornflowerblue") +
-          coord_flip() +
+          ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
+          ggplot2::geom_col(fill = "cornflowerblue") +
+          ggplot2::coord_flip() +
           ggthemes::theme_hc() +
-          labs(x = "State", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+          ggplot2::labs(x = "State", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
                title = str_c("Pollution Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
 
 
       } else if (input$most == "Populated"){
         filteredData2() %>%
-          ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
-          geom_col(fill = "cornflowerblue") +
-          coord_flip() +
+          ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
+          ggplot2::geom_col(fill = "cornflowerblue") +
+          ggplot2::coord_flip() +
           ggthemes::theme_hc() +
-          labs(x = "State", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+          ggplot2::labs(x = "State", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
                title = str_c("Pollution Graph: Top ", input$top, " most Populated States in ", input$country2, " in ", input$year_range))
       }
     } else if (input$region_type == "District(s)"){
       if(input$most == "Polluted"){
         filteredData2() %>%
-          ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
-          geom_col(fill = "cornflowerblue") +
-          coord_flip() +
+          ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
+          ggplot2::geom_col(fill = "cornflowerblue") +
+          ggplot2::coord_flip() +
           ggthemes::theme_hc() +
-          labs(x = "District", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+          ggplot2::labs(x = "District", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
                title = str_c("Pollution Graph: Top ", input$top, " most Polluted Districts in ", input$country2, " in ", input$year_range))
 
       } else if (input$most == "Populated"){
         filteredData2() %>%
-          ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
-          geom_col(fill = "cornflowerblue") +
-          coord_flip() +
+          ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
+          ggplot2::geom_col(fill = "cornflowerblue") +
+          ggplot2::coord_flip() +
           ggthemes::theme_hc() +
-          labs(x = "District", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+          ggplot2::labs(x = "District", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
                title = str_c("Pollution Graph: Top ", input$top, " most Populated Districts in ", input$country2, " in ", input$year_range))
       }
     }
@@ -243,37 +248,37 @@ filteredData <- reactive({
       if(input$most == "Polluted"){
         if(input$standard_type_1 == "WHO PM2.5 Standard"){
           filteredData2() %>%
-            ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
-            geom_col(fill = "darkred") +
-            coord_flip() +
+            ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
+            ggplot2::geom_col(fill = "darkred") +
+            ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            labs(x = "State", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "State", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
         } else if (input$standard_type_1 == "National PM2.5 Standard") {
           filteredData2() %>%
-            ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
-            geom_col(fill = "darkred") +
-            coord_flip() +
+            ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
+            ggplot2::geom_col(fill = "darkred") +
+            ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            labs(x = "State", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "State", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
         }
       } else if (input$most == "Populated"){
         if(input$standard_type_1 == "WHO PM2.5 Standard"){
           filteredData2() %>%
-            ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
-            geom_col(fill = "darkred") +
-            coord_flip() +
+            ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
+            ggplot2::geom_col(fill = "darkred") +
+            ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            labs(x = "State", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "State", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
         } else if (input$standard_type_1 == "National PM2.5 Standard") {
           filteredData2() %>%
-            ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
-            geom_col(fill = "darkred") +
-            coord_flip() +
+            ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
+            ggplot2::geom_col(fill = "darkred") +
+            ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            labs(x = "State", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "State", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
         }
       }
@@ -281,38 +286,38 @@ filteredData <- reactive({
       if(input$most == "Polluted"){
         if(input$standard_type_1 == "WHO PM2.5 Standard"){
           filteredData2() %>%
-            ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
-            geom_col(fill = "darkred") +
-            coord_flip() +
+            ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
+            ggplot2::geom_col(fill = "darkred") +
+            ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            labs(x = "District", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "District", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
         } else if (input$standard_type_1 == "National PM2.5 Standard") {
           filteredData2() %>%
-            ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
-            geom_col(fill = "darkred") +
-            coord_flip() +
+            ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
+            ggplot2::geom_col(fill = "darkred") +
+            ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            labs(x = "District", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "District", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
         }
 
       } else if (input$most == "Populated"){
         if(input$standard_type_1 == "WHO PM2.5 Standard"){
           filteredData2() %>%
-            ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
-            geom_col(fill = "darkred") +
-            coord_flip() +
+            ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
+            ggplot2::geom_col(fill = "darkred") +
+            ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            labs(x = "District", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "District", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
         } else if (input$standard_type_1 == "National PM2.5 Standard") {
           filteredData2() %>%
-            ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
-            geom_col(fill = "darkred") +
-            coord_flip() +
+            ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
+            ggplot2::geom_col(fill = "darkred") +
+            ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            labs(x = "District", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "District", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
         }
       }
@@ -330,18 +335,18 @@ output$downloadData2 <- downloadHandler(
 # Trendlines tab-----------------------------------------------------------------
 
 # continent drop down observer
-observeEvent(input$country3, {
-  updateSelectizeInput(session, "state3", choices = c("all", gadm2_aqli_2021 %>% filter(country == input$country3) %>% pull(name_1) %>% unique() ))
+shiny::observeEvent(input$country3, {
+  shiny::updateSelectizeInput(session, "state3", choices = c("all", gadm2_aqli_2021 %>% filter(country == input$country3) %>% pull(name_1) %>% unique() ))
 
 })
 
 # country drop down observer
-observeEvent(input$state3, {
-  updateSelectizeInput(session, "district3", choices = c("all", gadm2_aqli_2021 %>% filter(name_1 == input$state3) %>% pull(name_2) %>% unique()))
+shiny::observeEvent(input$state3, {
+  shiny::updateSelectizeInput(session, "district3", choices = c("all", gadm2_aqli_2021 %>% filter(name_1 == input$state3) %>% pull(name_2) %>% unique()))
 
 })
 
-output$plot_trendlines <- renderPlot({
+output$plot_trendlines <- shiny::renderPlot({
 
   if(input$state3 == "all"){
     if(input$district3 == "all"){
@@ -364,22 +369,22 @@ output$plot_trendlines <- renderPlot({
   observeEvent(input$generateMap, {
     data3 <- mtcars
     filteredData3 <- data3 %>%
-      filter(country == input$country3)
+      dplyr::filter(country == input$country3)
 
     if (input$level == "Pollution") {
       map <- ggplot(filteredData3, aes(x = wt, y = mpg, color = qsec)) +
-        geom_point() +
-        scale_color_gradient(low = "green", high = "red")
+        ggplot2::geom_point() +
+        ggplot2::scale_color_gradient(low = "green", high = "red")
     } else {
       map <- ggplot(filteredData3, aes(x = wt, y = mpg, color = disp)) +
-        geom_point() +
-        scale_color_gradient(low = "green", high = "red")
+        ggplot2::geom_point() +
+        ggplot2::scale_color_gradient(low = "green", high = "red")
     }
 
-    output$map <- renderPlot(map)
+    output$map <- shiny::renderPlot(map)
   })
 
 }
 
 
-shinyApp(ui, server)
+shiny::shinyApp(ui, server)

@@ -77,14 +77,14 @@ trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India
       geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1,
                 color = "darkred") +
       scale_x_continuous(breaks = seq(start_year, end_year, 2)) +
-      scale_y_continuous(breaks = seq(0, max(trendlines_aqli_data$pop_weighted_avg_pm2.5), 10)) +
+      # scale_y_continuous(breaks = seq(0, max(trendlines_aqli_data$pop_weighted_avg_pm2.5), 10)) +
       ggthemes::theme_clean() +
       labs(x = "Years",
            y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
       theme(legend.position = "bottom", legend.title = element_blank(),
             legend.text = element_text(size = 7),
             axis.title.y = element_text(size = 9),
-            axis.title.x = element_text(size = 9)) +  geom_text(x = 2002.8, y = 6.3, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+            axis.title.x = element_text(size = 9))
 
 
   } else if (level == "state") {
@@ -105,14 +105,14 @@ trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India
       geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1,
                 color = "darkred") +
       scale_x_continuous(breaks = seq(start_year, end_year, 2)) +
-      scale_y_continuous(breaks = seq(0, max(trendlines_aqli_data$pop_weighted_avg_pm2.5), 10)) +
+      # scale_y_continuous(breaks = seq(0, max(trendlines_aqli_data$pop_weighted_avg_pm2.5), 10)) +
       ggthemes::theme_clean() +
       labs(x = "Years",
            y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
       theme(legend.position = "bottom", legend.title = element_blank(),
             legend.text = element_text(size = 7),
             axis.title.y = element_text(size = 9),
-            axis.title.x = element_text(size = 9)) +  geom_text(x = 2002.8, y = 6.3, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+            axis.title.x = element_text(size = 9))
 
   } else if (level == "district") {
     trendlines_aqli_data <- gadm2_file %>%
@@ -132,14 +132,14 @@ trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India
       geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1,
                 color = "darkred") +
       scale_x_continuous(breaks = seq(start_year, end_year, 2)) +
-      scale_y_continuous(breaks = seq(0, max(trendlines_aqli_data$pop_weighted_avg_pm2.5), 10)) +
+      # scale_y_continuous(breaks = seq(0, max(trendlines_aqli_data$pop_weighted_avg_pm2.5), 10)) +
       ggthemes::theme_clean() +
       labs(x = "Years",
            y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
       theme(legend.position = "bottom", legend.title = element_blank(),
             legend.text = element_text(size = 7),
             axis.title.y = element_text(size = 9),
-            axis.title.x = element_text(size = 9)) +  geom_text(x = 2002.8, y = 6.3, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+            axis.title.x = element_text(size = 9))
 
   }
 
