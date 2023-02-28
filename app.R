@@ -1,61 +1,90 @@
 # setting global options
-# options(shiny.maxRequestSize = 900*1024^2)
+options(shiny.maxRequestSize = 900*1024^2)
 
 # download libraries
 library(shiny)
 library(shinyWidgets)
 library(tidyverse)
 library(plotly)
+library(tidyr)
+library(shinythemes)
+library(shinycssloaders)
+library(shinyjs)
+library(bslib)
 
 # source data
-#source("./R/aqli.data.explorer.helper.script.R")
+source("./R/aqli.data.explorer.helper.script.R")
 
 # loading the .RData file that contain all required data objects
 # save(list = ls(all = TRUE), file= "all.RData")
-load("all.RData", .GlobalEnv)
+# load("all.RData", .GlobalEnv)
 
 # Define UI
 ui <- fluidPage(
-  titlePanel("AQLI data explorer"),
+  theme = bslib::bs_theme(version = 4, bootswatch = "litera"),
+  title = "AQLI Data Explorer",
+  titlePanel(
+    fluidRow(
+      column(width = 5, img(src = "aqli-epic-data-exp-logo.png", height = "100px"))
+      # column(width = 10, h2("AQLI Data Explorer", style = "margin-top: -5px;"), offset = 1)
+    )
+  ),
+  shiny::tags$br(),
+  shiny::tags$br(),
   tabsetPanel(
     tabPanel("Raw Data Exploration",
+             shiny::tags$br(),
              fluidRow(
                column(3, selectizeInput("continent", "Continent", choices = c("World", unique(gadm2_aqli_2021$continent)))),
                column(3, selectizeInput("country", "Country", choices = NULL)),
                column(3, selectizeInput("state", "State", choices = NULL)),
                column(3, selectizeInput("district", "District", choices = NULL))
              ),
-             dataTableOutput("table"),
-             downloadButton("downloadData", "Download")
+             shiny::tags$br(),
+             shiny::tags$hr(),
+             fluidRow(
+               column(10),
+               column(2, downloadButton("downloadData", "Download CSV"))
+             ),
+             dataTableOutput("table")
     ),
     tabPanel("Regional Stats",
+             shiny::tags$br(),
              fluidRow(
-               shiny::tags$br(),
                column(2, sliderInput("top", "Top", min = 1, max = 50, value = 10)),
                column(2, selectInput("most", "Most", choices = c("Populated", "Polluted"), selected = "Populated")),
                column(2, selectInput("region_type", "Region Type", choices = c("State(s)", "District(s)"), selected = "State(s)")),
                column(1, textOutput("inText")),
                column(2, selectizeInput("country2", "Country", choices = unique(gadm2_aqli_2021$country))),
                column(1, textOutput("inText2")),
-               column(2, selectInput("year_range", "Year", choices = first_year:latest_year))
+               column(2, selectInput("year_range", "Year", choices = latest_year:first_year))
              ),
              fluidRow(
                shiny::tags$hr(),
                column(4),
                column(4),
-               column(4, selectInput("standard_type_1", "Relative to", choices = c("WHO PM2.5 Standard", "National PM2.5 Standard")))
-             ),
-             fluidRow(
-               column(6, plotOutput("plot")),
-               column(6, plotOutput("plot_lyl"))
-             ),
-             fluidRow(
+               column(4, selectInput("standard_type_1", "Relative to", choices = c("WHO PM2.5 Standard", "National PM2.5 Standard"))),
+               shiny::tags$br(),
                shiny::tags$hr(),
-               column(12, dataTableOutput("table2")),
-               downloadButton("downloadData2", "Download")
+               shiny::tags$br()
+             ),
+             fluidRow(
+               column(6, shiny::plotOutput("plot")),
+               column(6, shiny::plotOutput("plot_lyl"))
+             ),
+             shiny::tags$br(),
+             shiny::tags$br(),
+             shiny::tags$hr(),
+             fluidRow(
+               column(10),
+               column(2, downloadButton("downloadData2", "Download CSV"))
+             ),
+             fluidRow(
+               column(12, dataTableOutput("table2"))
              )
     ),
     tabPanel("Trendlines",
+             shiny::tags$br(),
              fluidRow(
                column(4, selectizeInput("country3", "Country", choices =c(unique(gadm2_aqli_2021$country)))),
                column(4, selectizeInput("state3", "State", choices = NULL)),
@@ -64,14 +93,20 @@ ui <- fluidPage(
              ),
              plotOutput("plot_trendlines")
     ),
-    tabPanel("Pollution/LYL Maps",
+    tabPanel("Pollution/LYL Maps (coming soon!)",
+             shiny::tags$br(),
              fluidRow(
                column(3, selectizeInput("country4", "Country", choices = unique(gadm2_aqli_2021$country))),
-               column(3, selectInput("level", "Level", choices = c("Pollution", "LYL"), selected = "Pollution")),
-               column(3, actionButton("generateMap", "Generate Map"))
+               column(3, selectInput("graph_type", "Type", choices = c("Pollution", "LYL"), selected = "Pollution")),
+               column(3,
+                shiny::tags$br(),
+                actionButton("generateMap", "Click to Generate Map"))
              ),
-             plotOutput("map")
-    )
+             # plotly::plotlyOutput("map"),
+             shinycssloaders::withSpinner(plotOutput("map"))
+    ),
+    tabPanel("Compare Regions (coming soon!)"),
+    tabPanel("About AQLI (coming soon!)")
   )
 )
 
@@ -207,18 +242,22 @@ filteredData <- shiny::reactive({
           ggplot2::geom_col(fill = "cornflowerblue") +
           ggplot2::coord_flip() +
           ggthemes::theme_hc() +
-          ggplot2::labs(x = "State", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+          ggplot2::labs(x = "State", y = "Annual Average PM2.5 concentration (in µg/m³)",
                title = str_c("Pollution Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
 
 
+
       } else if (input$most == "Populated"){
-        filteredData2() %>%
+      filteredData2() %>%
           ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
           ggplot2::geom_col(fill = "cornflowerblue") +
           ggplot2::coord_flip() +
           ggthemes::theme_hc() +
-          ggplot2::labs(x = "State", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+          ggplot2::labs(x = "State", y = "Annual Average PM2.5 concentration (in µg/m³)",
                title = str_c("Pollution Graph: Top ", input$top, " most Populated States in ", input$country2, " in ", input$year_range))
+
+
+
       }
     } else if (input$region_type == "District(s)"){
       if(input$most == "Polluted"){
@@ -227,17 +266,22 @@ filteredData <- shiny::reactive({
           ggplot2::geom_col(fill = "cornflowerblue") +
           ggplot2::coord_flip() +
           ggthemes::theme_hc() +
-          ggplot2::labs(x = "District", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+          ggplot2::labs(x = "District", y = "Annual Average PM2.5 concentration (in µg/m³)",
                title = str_c("Pollution Graph: Top ", input$top, " most Polluted Districts in ", input$country2, " in ", input$year_range))
 
+
+
       } else if (input$most == "Populated"){
-        filteredData2() %>%
+    filteredData2() %>%
           ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(pol_col())), y = !!as.symbol(pol_col()))) +
           ggplot2::geom_col(fill = "cornflowerblue") +
           ggplot2::coord_flip() +
           ggthemes::theme_hc() +
-          ggplot2::labs(x = "District", y = expression(Annual ~ average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"),
+          ggplot2::labs(x = "District", y = "Annual Average PM2.5 concentration (in µg/m³)" ,
                title = str_c("Pollution Graph: Top ", input$top, " most Populated Districts in ", input$country2, " in ", input$year_range))
+
+
+
       }
     }
   })
@@ -247,39 +291,50 @@ filteredData <- shiny::reactive({
     if(input$region_type == "State(s)"){
       if(input$most == "Polluted"){
         if(input$standard_type_1 == "WHO PM2.5 Standard"){
-          filteredData2() %>%
+         filteredData2() %>%
             ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
             ggplot2::geom_col(fill = "darkred") +
             ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            ggplot2::labs(x = "State", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "State", y = "LYL relative to WHO PM2.5 Standard",
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
+
+
+
         } else if (input$standard_type_1 == "National PM2.5 Standard") {
-          filteredData2() %>%
+         filteredData2() %>%
             ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
             ggplot2::geom_col(fill = "darkred") +
             ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            ggplot2::labs(x = "State", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "State", y = "LYL relative to National PM2.5 Standard",
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
+
+
         }
       } else if (input$most == "Populated"){
         if(input$standard_type_1 == "WHO PM2.5 Standard"){
-          filteredData2() %>%
+         filteredData2() %>%
             ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_who_col())), y = !!as.symbol(llpp_who_col()))) +
             ggplot2::geom_col(fill = "darkred") +
             ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            ggplot2::labs(x = "State", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "State", y = "LYL relative to WHO PM2.5 Standard",
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
-        } else if (input$standard_type_1 == "National PM2.5 Standard") {
+
+
+
+         } else if (input$standard_type_1 == "National PM2.5 Standard") {
           filteredData2() %>%
             ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_1, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
             ggplot2::geom_col(fill = "darkred") +
             ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            ggplot2::labs(x = "State", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "State", y = "LYL relative to National PM2.5 Standard",
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
+
+
+
         }
       }
     } else if (input$region_type == "District(s)"){
@@ -290,16 +345,21 @@ filteredData <- shiny::reactive({
             ggplot2::geom_col(fill = "darkred") +
             ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            ggplot2::labs(x = "District", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "District", y = "LYL relative to WHO PM2.5 Standard",
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
+
+
+
         } else if (input$standard_type_1 == "National PM2.5 Standard") {
           filteredData2() %>%
             ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
             ggplot2::geom_col(fill = "darkred") +
             ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            ggplot2::labs(x = "District", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "District", y = "LYL relative to National PM2.5 Standard",
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
+
+
         }
 
       } else if (input$most == "Populated"){
@@ -309,16 +369,22 @@ filteredData <- shiny::reactive({
             ggplot2::geom_col(fill = "darkred") +
             ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            ggplot2::labs(x = "District", y = expression("LYL relative to WHO" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "District", y = "LYL relative to WHO PM2.5 Standard",
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
+
+
+
         } else if (input$standard_type_1 == "National PM2.5 Standard") {
           filteredData2() %>%
             ggplot2::ggplot(mapping = aes(x = forcats::fct_reorder(name_2, !!as.symbol(llpp_nat_col())), y = !!as.symbol(llpp_nat_col()))) +
             ggplot2::geom_col(fill = "darkred") +
             ggplot2::coord_flip() +
             ggthemes::theme_hc() +
-            ggplot2::labs(x = "District", y = expression("LYL relative to National" ~ PM[2.5] ~ "Standard"),
+            ggplot2::labs(x = "District", y = "LYL relative to National PM2.5 Standard",
                  title = str_c("LYL Graph: Top ", input$top, " most Polluted States in ", input$country2, " in ", input$year_range))
+
+
+
         }
       }
     }
@@ -351,13 +417,17 @@ output$plot_trendlines <- shiny::renderPlot({
   if(input$state3 == "all"){
     if(input$district3 == "all"){
       trendlines_aqli(gadm2_aqli_2021, level = "country", country_name = input$country3, start_year = 1998, end_year = 2021)
+      # return(plotly::ggplotly(plt))
+
     }
 
   } else {
     if(input$district3 == "all"){
-      trendlines_aqli(gadm2_aqli_2021, level = "state", country_name = input$country3, state_name = input$state3, start_year = 1998, end_year = 2021)
-    } else {
+       trendlines_aqli(gadm2_aqli_2021, level = "state", country_name = input$country3, state_name = input$state3, start_year = 1998, end_year = 2021)
+      # return(plotly::ggplotly(plt))
+      } else {
       trendlines_aqli(gadm2_aqli_2021, level = "district", country_name = input$country3, state_name = input$state3, district_name = input$district3, start_year = 1998, end_year = 2021)
+      # return(plotly::ggplotly(plt))
     }
   }
 
@@ -366,21 +436,38 @@ output$plot_trendlines <- shiny::renderPlot({
 
 
 # Pollution/LYL Maps--------------------------------------------------------------
-  observeEvent(input$generateMap, {
-    data3 <- mtcars
-    filteredData3 <- data3 %>%
-      dplyr::filter(country == input$country3)
 
-    if (input$level == "Pollution") {
-      map <- ggplot(filteredData3, aes(x = wt, y = mpg, color = qsec)) +
-        ggplot2::geom_point() +
-        ggplot2::scale_color_gradient(low = "green", high = "red")
+output$map <- shiny::renderPlot(ggplot() + theme(plot.background = element_rect(fill = "white")))
+
+  observeEvent(input$generateMap, {
+
+    filteredData3 <- gadm2_aqli_2021_shp %>%
+      dplyr::filter(country == input$country4)
+
+    if (input$graph_type == "Pollution") {
+      map <- filteredData3 %>%
+        ggplot2::ggplot() +
+        ggplot2::geom_sf(mapping = aes(fill = pm2021)) +
+        ggthemes::theme_tufte() +
+        viridis::scale_fill_viridis(option = "blues", direction = -1) +
+        ggplot2::theme(axis.text = ggplot2::element_blank(),
+                       axis.ticks = ggplot2::element_blank()) +
+        ggplot2::ggtitle(stringr::str_c("PM2.5 pollution in ", input$country4, " in ", "2021"))
+
     } else {
-      map <- ggplot(filteredData3, aes(x = wt, y = mpg, color = disp)) +
-        ggplot2::geom_point() +
-        ggplot2::scale_color_gradient(low = "green", high = "red")
+      map <- filteredData3 %>%
+        ggplot2::ggplot() +
+        ggplot2::geom_sf(mapping = aes(fill = llw2021)) +
+        ggthemes::theme_tufte() +
+        viridis::scale_fill_viridis(option = "rocket", direction = -1) +
+        ggplot2::theme(axis.text = ggplot2::element_blank(),
+                       axis.ticks = ggplot2::element_blank()) +
+        ggplot2::ggtitle(stringr::str_c("Life Years Lost in ", input$country4, " in ", "2021"))
+
+
     }
 
+    # output$map <- plotly::renderPlotly(plotly::ggplotly(map))
     output$map <- shiny::renderPlot(map)
   })
 
