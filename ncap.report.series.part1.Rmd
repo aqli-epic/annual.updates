@@ -230,6 +230,7 @@ plot.caption = element_text(hjust = 0, margin = margin(0, 10, 0, 0), face = "ita
 
 ```{r fig3}
 
+# plot 3 data
 plot3_data <- color_2021 %>%
   filter(country == "India") %>%
   mutate(pm2017_40_perc_red = pm2017*((100 - red_perc)/100), 
@@ -249,7 +250,8 @@ plot3_data <- color_2021 %>%
          pol_bucket_order = ifelse(pol_bucket == ">(-50) to -40", 5, pol_bucket_order)) %>%
   select(-geometry, geometry) %>%
   st_as_sf()
-  
+
+# plot 3  
 plot3_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(pol_bucket, pol_bucket_order)), color = "transparent") +
@@ -275,11 +277,73 @@ plot3_data %>%
 ```
 
 
+# Figure 4, Map: Life Expectancy Gain from achieving the 40% reduction target under NCAP
+
+```{r}
+
+# plot 4 data
+plot4_data <- color_2021 %>%
+  filter(country == "India") %>%
+  mutate(pm2017_40_perc = (pm2017*(red_perc/100)),
+         le_gain_pm2017_40_perc_red = pm2017_40_perc*0.098) %>%
+  left_join(colormap_shp_2021, by = c("objectid_gadm2" = "objidgadm2")) %>%
+  mutate(lyl_bucket = ifelse((le_gain_pm2017_40_perc_red < 0.1), "0 - 0.1 years", le_gain_pm2017_40_perc_red), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 0.1) & (le_gain_pm2017_40_perc_red < 0.5), "0.1 - < 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 0.5) & (le_gain_pm2017_40_perc_red < 1), "0.5 - < 1", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 1) & (le_gain_pm2017_40_perc_red < 2), "1 - < 2", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 2) & (le_gain_pm2017_40_perc_red < 3), "2 - < 3", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 3) & (le_gain_pm2017_40_perc_red < 4), "3 - < 4", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 4), ">= 4 years", lyl_bucket)) %>%
+  mutate(lyl_bucket_order = ifelse(lyl_bucket == "0 - 0.1 years", 1, 0), 
+         lyl_bucket_order = ifelse(lyl_bucket == "0.1 - < 0.5", 2, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == "0.5 - < 1", 3, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == "1 - < 2", 4, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == "2 - < 3", 5, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == "3 - < 4", 6, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == ">= 4 years", 7, lyl_bucket_order)) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# plot 4
+plot4_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, lyl_bucket_order)), color = "transparent") +
+    geom_sf(data = india_state, color = "black", fill = "transparent") +
+  ggthemes::theme_map() + 
+scale_fill_manual(values = c("0 - 0.1 years" = "#FFFFFF", "0.1 - < 0.5" = "#FFE6B3", "0.5 - < 1" = "#FFD25D", 
+                                "1 - < 2" = "#FFBA00", "2 - < 3" = "#FF9600", "3 - < 4" = "#FF6908", 
+                                ">= 4 years" = "#E63D23")) +
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 7), 
+        legend.title = element_text(size = 7), 
+        plot.title = element_text(hjust = 0.5), 
+        legend.key = element_rect(color = "black")) +
+  labs(fill = str_wrap("Gain in Life Expectancy (in years)", 10), 
+       title = expression("Life Expectancy Gains from Achieving 40% reduction" ~ PM[2.5] ~ "reduction target under NCAP"))+
+  guides(fill = guide_legend(nrow = 1))
 
 
+```
 
 
+# Generating the appendix table for NCAP report part 1
 
+```{r}
+
+# ncap analysis data
+appendix_table <- ncap_analysis_dataset %>%
+  mutate(pm2017_red_40_perc = pm2017*((100 - red_perc)/100), 
+         pm2017_40_perc = pm2017*(red_perc/100), 
+         le_gain_pm2017_40_perc_red = pm2017_40_perc * le_constant, 
+         le_gain_pm2017_40_perc_red = round(le_gain_pm2017_40_perc_red, 1),
+         population_millions = round(population/1000000, 1)) %>%
+  select(city, name_1, population_millions, pm2017, pm2017_red_40_perc, le_gain_pm2017_40_perc_red) %>%
+  rename(City = city, State = name_1, `Population (millions)` = population_millions, `2017 PM2.5 Concentrations (µg/m³)` = pm2017, `2017 PM2.5 Concentrations (after 40% reduction)` = pm2017_red_40_perc, `Life Expectancy Gains (in years) from a 40% reduction` = le_gain_pm2017_40_perc_red)
+
+
+```
 
 
 
