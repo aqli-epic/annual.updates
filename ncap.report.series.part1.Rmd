@@ -157,16 +157,22 @@ plot1_data <- ncap_analysis_dataset %>%
   mutate(pm2017_40_perc_red = pm2017*((100 - red_perc)/100)) %>%
   select(country, name_1, name_2, city, population, pm2017, pm2017_40_perc_red) %>%
   slice_max(population, n = 10) %>%
-  pivot_longer(cols = pm2017:pm2017_40_perc_red, names_to = "pol_type", values_to = "value")
+  pivot_longer(cols = pm2017:pm2017_40_perc_red, names_to = "pol_type", values_to = "value") 
+
+plot1_data_with_empty_rows <- plot1_data %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "", population = 0, pol_type = "pm2017", value = 0) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "", population = 0, pol_type = "pm2017_40_perc_red", value = 0)
 
 # plot 1
-plot1_data %>%
+foo <- plot1_data_with_empty_rows %>%
   ggplot() + 
   geom_col(mapping = aes(x = forcats::fct_reorder(city, population, .desc = TRUE), y = value, fill = pol_type), position = "dodge", alpha = 0.7) +
   geom_hline(mapping = aes(yintercept = who_guideline), color = "red", linetype = "dashed", size = 0.8) +
    geom_hline(mapping = aes(yintercept = nat_pm2.5_stan_india), color = "red", linetype = "dashed", size = 0.8) +
   labs(x = "City", y = expression("Annual average" ~ PM[2.5] ~ "(in µg/m³)"), fill = "", 
-       title = expression("2017" ~ PM[2.5] ~ "Concentrations in 10 most populated Non-Attainment cities in India"), caption = "*[Placeholder for footnote]") +
+       title = expression("2017" ~ PM[2.5] ~ "Concentrations in top 10 most populated Non-Attainment cities in India"), caption = "*[Placeholder for footnote]") +
   scale_fill_manual(values = c("pm2017" = "darkblue", "pm2017_40_perc_red" = "cornflowerblue"), labels = c("2017", "After 40% reduction under NCAP")) +
   guides(colour = guide_legend(override.aes = list(shape = 12))) +
   scale_y_continuous(breaks = seq(0, 100, 10)) +
@@ -203,7 +209,7 @@ plot2_data <- ncap_analysis_dataset %>%
   select(country, name_1, name_2, city, population, pm2017, pm2017_40_perc, le_gain_from_40_perc_red) %>%
   slice_max(population, n = 10) 
 
-plot2_data %>%
+foo <- plot2_data %>%
   ggplot() + 
     geom_col(mapping = aes(x = forcats::fct_reorder(city, population, .desc = TRUE), y = le_gain_from_40_perc_red), fill = "darkred", width = 0.6) +
   labs(x = "City", y = "Life Expectancy Gains (in years)", title = expression("Life Expectancy Gains by reducing" ~ PM[2.5] ~ "by 40% relative to 2017"), 
@@ -230,9 +236,14 @@ plot.caption = element_text(hjust = 0, margin = margin(0, 10, 0, 0), face = "ita
 
 ```{r fig3}
 
+# separately getting Gilgit Baltistan and Azad Kashmir
+azad_kashmir_gilgit_baltistan <- color_2021 %>%
+  filter(country == "Pakistan", name_1 %in% c("Azad Kashmir", "Gilgit Baltistan"))
+
 # plot 3 data
 plot3_data <- color_2021 %>%
   filter(country == "India") %>%
+  bind_rows(azad_kashmir_gilgit_baltistan) %>%
   mutate(pm2017_40_perc_red = pm2017*((100 - red_perc)/100), 
          pm2017_40_perc = -(pm2017*(red_perc/100))) %>%
   left_join(colormap_shp_2021, by = c("objectid_gadm2" = "objidgadm2")) %>%
@@ -252,7 +263,7 @@ plot3_data <- color_2021 %>%
   st_as_sf()
 
 # plot 3  
-plot3_data %>%
+foo <- plot3_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(pol_bucket, pol_bucket_order)), color = "transparent") +
     geom_sf(data = india_state, color = "black", fill = "transparent") +
@@ -284,6 +295,7 @@ plot3_data %>%
 # plot 4 data
 plot4_data <- color_2021 %>%
   filter(country == "India") %>%
+  bind_rows(azad_kashmir_gilgit_baltistan) %>%
   mutate(pm2017_40_perc = (pm2017*(red_perc/100)),
          le_gain_pm2017_40_perc_red = pm2017_40_perc*0.098) %>%
   left_join(colormap_shp_2021, by = c("objectid_gadm2" = "objidgadm2")) %>%
@@ -305,7 +317,7 @@ plot4_data <- color_2021 %>%
   st_as_sf()
 
 # plot 4
-plot4_data %>%
+foo <- plot4_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, lyl_bucket_order)), color = "transparent") +
     geom_sf(data = india_state, color = "black", fill = "transparent") +
@@ -342,6 +354,8 @@ appendix_table <- ncap_analysis_dataset %>%
   select(city, name_1, population_millions, pm2017, pm2017_red_40_perc, le_gain_pm2017_40_perc_red) %>%
   rename(City = city, State = name_1, `Population (millions)` = population_millions, `2017 PM2.5 Concentrations (µg/m³)` = pm2017, `2017 PM2.5 Concentrations (after 40% reduction)` = pm2017_red_40_perc, `Life Expectancy Gains (in years) from a 40% reduction` = le_gain_pm2017_40_perc_red)
 
+appendix_table %>% 
+  write_csv("./ncap.2023.report.part1.appendix_table.csv")
 
 ```
 
