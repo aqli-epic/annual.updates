@@ -232,15 +232,41 @@ plot.caption = element_text(hjust = 0, margin = margin(0, 10, 0, 0), face = "ita
 
 plot3_data <- color_2021 %>%
   filter(country == "India") %>%
-  mutate(pm2017_40_perc_red = pm2017*((100 - red_perc)/100)) %>%
+  mutate(pm2017_40_perc_red = pm2017*((100 - red_perc)/100), 
+         pm2017_40_perc = -(pm2017*(red_perc/100))) %>%
   left_join(colormap_shp_2021, by = c("objectid_gadm2" = "objidgadm2")) %>%
+  mutate(pol_bucket = ifelse(((pm2017_40_perc > -5) & (pm2017_40_perc <= 0)), ">(-5) to 0", pm2017_40_perc), 
+         pol_bucket = ifelse(((pm2017_40_perc > -10) & (pm2017_40_perc <= -5)), ">(-10) to -5", pol_bucket), 
+         pol_bucket = ifelse(((pm2017_40_perc > -15) & (pm2017_40_perc <= -10)), ">(-15) to -10", pol_bucket), 
+           pol_bucket = ifelse(((pm2017_40_perc > -30) & (pm2017_40_perc <= -15)), ">(-30) to -15", pol_bucket), 
+           pol_bucket = ifelse(((pm2017_40_perc > -40) & (pm2017_40_perc <= -30)), ">(-40) to -30", pol_bucket), 
+         pol_bucket = ifelse(((pm2017_40_perc > -50) & (pm2017_40_perc <= -40)), ">(-50) to -40", pol_bucket)) %>%
+  mutate(pol_bucket_order = ifelse(pol_bucket == ">(-5) to 0", 1, 0), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-10) to -5", 2, pol_bucket_order), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-15) to -10", 3, pol_bucket_order), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-30) to -15", 4, pol_bucket_order), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-40) to -30", 5, pol_bucket_order), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-50) to -40", 5, pol_bucket_order)) %>%
+  select(-geometry, geometry) %>%
   st_as_sf()
   
 plot3_data %>%
   ggplot() +
-  geom_sf(data = india_state, color = "black", fill = "white") + 
-  geom_sf(mapping = aes(fill = pm2017_40_perc_red), color = "transparent") +
-  ggthemes::theme_map()
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(pol_bucket, pol_bucket_order)), color = "transparent") +
+    geom_sf(data = india_state, color = "black", fill = "transparent") +
+  ggthemes::theme_map() + 
+  scale_fill_manual(values = c(">(-5) to 0" = "#CBE8F3", ">(-10) to -5" = "#B4CDD9", ">(-15) to -10" = "#8FA1AD", ">(-30) to -15" = "#707F8C", ">(-40) to -30" = "#576572", ">(-50) to -40" = "#414F5D")) +
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 7), 
+        legend.title = element_text(size = 7), 
+        plot.title = element_text(hjust = 0.5)) +
+  labs(fill = expression("Reduction in" ~ PM[2.5] ~ "(µg/m³)"), 
+       title = expression("Change in" ~ PM[2.5] ~ "from achieving 40%" ~ PM[2.5] ~ "reduction target under NCAP")) +
+  guides(fill = guide_legend(nrow = 1))
+  
+  
   
 
 
