@@ -31,8 +31,8 @@ library(forcats) # for reordering bar graphs within a plot
 library(cowplot) # for inset plots
 
 # load and document to keep things updated
-devtools::load_all()
-devtools::document()
+# devtools::load_all()
+# devtools::document()
 
 # read in latest color file
 color_2021 <- read_csv("./september.2023/master.dataset/gadm2_aqli2021_vit.csv")
@@ -54,7 +54,13 @@ colormap_shp_2021 <- st_read("./september.2023/master.dataset/shapefiles/master_
 # ncap_budget_tracker <- read_csv("./june.2022/clean.air.countdown.campaign.2023/input/ncap_budget_tracker_data.csv")
 
 # NCAP city, districts, state list 
-ncap_regions_list <- read_csv("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/ncap_cities_district_state_long.csv")
+ncap_regions_list <- read_csv("./september.2023/ncap.report.series.part.1/ncap_cities_district_state_long_updated_March_2023.csv")
+
+# India city level population data (124 NCAP cities + 7 non-attainment cities) and drop other_info column
+ncap_city_level_population_census_2011 <- read_csv("./september.2023/ncap.report.series.part.1/india_city_pop_data_census_wikipedia.csv")
+
+ncap_city_level_population_census_2011 <- ncap_city_level_population_census_2011 %>%
+  select(-other_info)
 
 # AQLI district level data classified as Rural/Urban using CSE's classification
 # aqli_2020_district_level_rural_urban_subset <- read_csv("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/aqli_2020_district_level_rural_urban_subset.csv")
@@ -109,9 +115,9 @@ ncap_analysis_dataset <- ncap_regions_list %>%
 
 ```
 
-# Getting city level population data from Census 2011
+# "[NO LONGER IN USE]" Getting city level population data from Census 2011
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 census_2011 <- readxl::read_xlsx("./A-1_NO_OF_VILLAGES_TOWNS_HOUSEHOLDS_POPULATION_AND_AREA.xlsx")
 
 # cleaning column names, making them: lowercase, spaces relaced with underscores, brackets removed
@@ -136,15 +142,88 @@ colnames(census_2011)[14] <- "area_in_sq_km"
 
 # removing redundant column names
 census_2011 <- census_2011[4:nrow(census_2011), ]
+census_2011 <- as_tibble(census_2011)
+
 
 # census 2011 subset
 census_2011_subset <- census_2011 %>%
-  as_tibble() %>%
   filter(india_state_union_territory_district_subdistrict == "SUB-DISTRICT", 
          total_rural_urban == "Total")
 
+# checking how many of ncap analysis dataset city names are available in census 2011 (after converting to lower case)
+
+ncap_df_city_names <- unique(str_to_lower(ncap_analysis_dataset$city))
+census_2011_names <- unique(str_to_lower(census_2011$name))
+census_2011_subset_names <- unique(str_to_lower(census_2011_subset$name)) 
+
+sum(ncap_df_city_names %in% census_2011_names) # 85
+sum(ncap_df_city_names %in% census_2011_subset_names) # 61
+```
+
+
+
+# "[NO LONGER IN USE]" Getting city level population data from the Wikipedia article that links back to a Census 2011 data table (as the raw data from Census did not have all the NCAP cities population information in it)
+
+```{r eval=FALSE, include=FALSE}
+
+census_2011_wiki <- read_csv("./india_city_pop_data_census_wikipedia.csv")
+census_2011_wiki$city <- str_to_lower(census_2011_wiki$city)
+# 
+# census_2011_wiki_names <- unique(str_to_lower(census_2011_wiki$city))
+# 
+# indices_city_pop_not_avail <- which(ncap_df_city_names %notin% census_2011_wiki_names)
+# city_pop_not_avail_rows <- ncap_analysis_dataset[indices_city_pop_not_avail, ] 
+# 
+# sum(unique(str_to_lower(city_pop_not_avail_rows$city)) %in% census_2011_subset_names)
+
+# adding a new city pop column after converting city names to lower case
+ncap_analysis_dataset$city <- str_to_lower(ncap_analysis_dataset$city)
+
+ncap_analysis_dataset <- ncap_analysis_dataset %>%
+  left_join(census_2011_wiki %>% select(city, pop_2011), by = "city")
+
+ncap_analysis_dataset %>%
+  select(country, name_1, name_2, city, pop_2011) %>%
+  write_csv("city_wise_pop_43_missing.csv")
 
 ```
+
+
+
+
+
+
+
+
+# Reading in the city level population data, compiled partly (~80/131) using the city level Census 2011 population referred to in this article: https://en.wikipedia.org/wiki/List_of_cities_in_India_by_population and the rest using manual Google searches. It happens to be the case that a lot of cities have the same name as their district or tehsil and also the census raw data naming scheme/categorization seemed ambiguous (as in, for a lot of cases we were unsure if the population number refers to the city or the district). This is why, for a chunk of these, instead of cleaning the census 2011 data ourselves, we decided to refer to someone else's cleaned compilation who might have dug in a little bit more into this, compared to us. 
+
+```{r city_level_pop_data}
+
+# convert the city column of the ncap analysis data to lower case (to join with city level population)
+ncap_analysis_dataset$city <- str_to_lower(ncap_analysis_dataset$city)
+
+# join ncap analysis data with city level population data, using the city column
+final_analysis_dataset <- ncap_analysis_dataset %>%
+  left_join(ncap_city_level_population_census_2011, by = c("country", "name_1", "name_2", "city"))
+
+# rename the aqli population column to pop_district and rename the census 2011 pop_2011_city column to  "population"
+
+final_analysis_dataset <- final_analysis_dataset %>%
+  rename(population_district = population, 
+         population = pop_2011_city)
+
+# convert the city column to title case, reorder columns and the data is ready for plotting.
+final_analysis_dataset <- final_analysis_dataset %>%
+  mutate(city = str_to_title(city)) %>%
+  select(objectid_gadm2:city, population, population_district, everything())
+
+# Replace Nct Of Delhi in final analysis dataset with NCT of Delhi
+final_analysis_dataset <- final_analysis_dataset %>%
+  mutate(city = ifelse(city == "Nct Of Delhi", "NCT of Delhi", city))
+
+
+```
+
 
 
 # Fig 1: PM2.5 concentrations in 10 largest non-attainment cities of India
@@ -152,7 +231,7 @@ census_2011_subset <- census_2011 %>%
 ```{r fig1}
 
 # plot 1 data
-plot1_data <- ncap_analysis_dataset %>%
+plot1_data <- final_analysis_dataset %>%
   slice_max(population, n = 10) %>%
   mutate(pm2017_40_perc_red = pm2017*((100 - red_perc)/100)) %>%
   select(country, name_1, name_2, city, population, pm2017, pm2017_40_perc_red) %>%
@@ -166,7 +245,7 @@ plot1_data_with_empty_rows <- plot1_data %>%
           city = "", population = 0, pol_type = "pm2017_40_perc_red", value = 0)
 
 # plot 1
-foo <- plot1_data_with_empty_rows %>%
+plt1 <- plot1_data_with_empty_rows %>%
   ggplot() + 
   geom_col(mapping = aes(x = forcats::fct_reorder(city, population, .desc = TRUE), y = value, fill = pol_type), position = "dodge", alpha = 0.7) +
   geom_hline(mapping = aes(yintercept = who_guideline), color = "red", linetype = "dashed", size = 0.8) +
@@ -202,14 +281,14 @@ plot.caption = element_text(hjust = 0, margin = margin(0, 10, 0, 0), face = "ita
 
 # plot2 data
 
-plot2_data <- ncap_analysis_dataset %>%
+plot2_data <- final_analysis_dataset %>%
     slice_max(population, n = 10) %>%
   mutate(pm2017_40_perc = pm2017*((red_perc)/100), 
          le_gain_from_40_perc_red = pm2017_40_perc*0.098) %>%
   select(country, name_1, name_2, city, population, pm2017, pm2017_40_perc, le_gain_from_40_perc_red) %>%
   slice_max(population, n = 10) 
 
-foo <- plot2_data %>%
+plt2 <- plot2_data %>%
   ggplot() + 
     geom_col(mapping = aes(x = forcats::fct_reorder(city, population, .desc = TRUE), y = le_gain_from_40_perc_red), fill = "darkred", width = 0.6) +
   labs(x = "City", y = "Life Expectancy Gains (in years)", title = expression("Life Expectancy Gains by reducing" ~ PM[2.5] ~ "by 40% relative to 2017"), 
@@ -263,7 +342,7 @@ plot3_data <- color_2021 %>%
   st_as_sf()
 
 # plot 3  
-foo <- plot3_data %>%
+plt3 <- plot3_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(pol_bucket, pol_bucket_order)), color = "transparent") +
     geom_sf(data = india_state, color = "black", fill = "transparent") +
@@ -317,7 +396,7 @@ plot4_data <- color_2021 %>%
   st_as_sf()
 
 # plot 4
-foo <- plot4_data %>%
+plt4 <- plot4_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, lyl_bucket_order)), color = "transparent") +
     geom_sf(data = india_state, color = "black", fill = "transparent") +
@@ -345,16 +424,163 @@ scale_fill_manual(values = c("0 - 0.1 years" = "#FFFFFF", "0.1 - < 0.5" = "#FFE6
 ```{r appendix_table}
 
 # ncap analysis data
-appendix_table <- ncap_analysis_dataset %>%
+appendix_table <- final_analysis_dataset %>%
+  select(-population_district) %>%
   mutate(pm2017_red_40_perc = pm2017*((100 - red_perc)/100), 
          pm2017_40_perc = pm2017*(red_perc/100), 
          le_gain_pm2017_40_perc_red = pm2017_40_perc * le_constant, 
          le_gain_pm2017_40_perc_red = round(le_gain_pm2017_40_perc_red, 1),
          population_millions = round(population/1000000, 1)) %>%
   select(city, name_1, population_millions, pm2017, pm2017_red_40_perc, le_gain_pm2017_40_perc_red) %>%
-  rename(City = city, State = name_1, `Population (millions)` = population_millions, `2017 PM2.5 Concentrations (µg/m³)` = pm2017, `2017 PM2.5 Concentrations (after 40% reduction)` = pm2017_red_40_perc, `Life Expectancy Gains (in years) from a 40% reduction` = le_gain_pm2017_40_perc_red)
+  rename(City = city, State = name_1, `City (Census 2011) Population (in millions)` = population_millions, `2017 PM2.5 Concentrations (µg/m³)` = pm2017, `2017 PM2.5 Concentrations (after 40% reduction)` = pm2017_red_40_perc, `Life Expectancy Gains (in years) from a 40% reduction` = le_gain_pm2017_40_perc_red)
 
 appendix_table %>% 
-  write_csv("./ncap.2023.report.part1.appendix_table.csv")
+  write_csv("./september.2023/ncap.report.series.part.1/output_files/ncap.2023.report.part1.appendix_table.csv")
+
+```
+
+# other calculations
+
+```{r other_calculations}
+
+#> gains in life years that an average Indian would experience if the NCAP 40 percent reduction target by 2026 (relative to 2017)
+
+# calculate india average pollution in 2017 and then take 40% of it to calculate the life years lost for that reduction
+final_analysis_dataset %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights) %>%
+  summarise(avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(avg_pm2017_pop_40_perc = ((red_perc/100)*(avg_pm2017_pop)), 
+         lyg_40_perc_red = round((avg_pm2017_pop_40_perc*le_constant), 1))
+
+#> average gains in life expectancy by reducing pollution in top 5 most polluted non-attainment cities
+
+# top 5 most polluted non-attainment cities 
+top_5_most_pol_non_att_cities <- final_analysis_dataset %>%
+  slice_max(pm2017, n = 5) %>%
+  pull(city) 
+
+final_analysis_dataset %>%
+  filter(city %in% top_5_most_pol_non_att_cities) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pop_weights*pm2017) %>%
+  summarise(avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(avg_pm2017_pop_40_perc = ((red_perc/100)*(avg_pm2017_pop)), 
+         lyg_40_perc_red = round(avg_pm2017_pop_40_perc*le_constant, 1))
+
+#> India's average PM2.5 percentage increase since 1998
+color_2021 %>%
+  filter(country == "India") %>%
+  group_by(country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pop_weights*pm2017, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+    summarise(avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE), 
+              avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE)) %>%
+    ungroup() %>%
+  mutate(perc_inc_1998_2017 = (((avg_pm2017_pop - avg_pm1998_pop)/avg_pm1998_pop)*100))
+
+#> Delhi's annual average PM2.5 value in 2017 and how many life years are lost by not being compliant with WHO and National PM2.5 standard
+
+color_2021 %>%
+  filter(country == "India", name_1 == "NCT of Delhi", name_2 == "NCT of Delhi") %>%
+  select(pm2017) %>%
+  mutate(lyl_rel_who = (pm2017 - who_guideline)*0.098, 
+         lyl_rel_nat = (pm2017 - 40)*0.098)
+  
+#> country ranking in pollution given 2020 data
+
+color_2021 %>%
+  group_by(country) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2020_pop = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE)) %>%
+  slice_max(avg_pm2020_pop, n = 10)
+  
+
+# India's average pollution increase from 1998 to 2020
+color_2021 %>%
+  filter(country == "India") %>%
+  group_by(country) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2020_pop = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
+
+# Top 5 most polluted states in ncap
+
+final_analysis_dataset %>%
+  slice_max(pm2017, n = 15) %>%
+  pull(name_1) %>%
+  unique()
+
+# state level pm2.5
+final_analysis_dataset %>%
+  group_by(country, name_1) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2020_pop = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE)) %>%
+  ungroup() %>%
+  filter(name_1 %in% c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Haryana")) %>%
+  mutate(times = avg_pm2020_pop/avg_pm1998_pop)
+  
+# top most polluted districts in 2020
+final_analysis_dataset %>%
+  slice_max(pm2020) %>%
+  pull(pm2020)
+
+# total population of all NCAP cities
+sum(final_analysis_dataset$population, na.rm = TRUE)/1210854977
+
+#> assuming that each of the district's (that include the NCAP cities) 2017 pollution is reduced by 40 percent and then recalculating India's pollution average.
+
+ncap_districts <- final_analysis_dataset %>%
+  count(country, name_1, name_2) 
+
+# india's pollution average without any reductions in 2017. # 53.34 micrograms per cubic meter in 2017
+color_2021 %>%
+  filter(country == "India") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pop_weights*pm2017, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
+
+# india's pollution average with 40% reduction in each of NCAP's district (as a proxy for 40% reduction in each of 131 ncap cities). # 46.56 micrograms per cubic meter in 2017 if reduction is achieved. 46.56434
+
+color_2021 %>%
+  filter(country == "India") %>%
+  mutate(pm2017_red = ifelse((name_1 %in% ncap_districts$name_1) & (name_2 %in% ncap_districts$name_2), pm2017*0.6, pm2017)) %>%
+    mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted_red = pop_weights*pm2017_red, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2017_pop_red = sum(pm2017_pop_weighted_red, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
+
+# Range of gains as a result of reduction in pm2.5 by 40 percent
+final_analysis_dataset %>%
+  mutate(pm2017_40_perc = pm2017 * 0.4, 
+         lyg_40_perc = pm2017_40_perc*0.098) %>%
+  group_by(country, name_1) %>%
+  summarise(min_lyg = min(lyg_40_perc, na.rm = TRUE), 
+            max_lyg = max(lyg_40_perc, na.rm = TRUE)) %>% 
+  slice_max(max_lyg, n = 10)
+
+# india average pollution in 2020
+color_2021 %>%
+  filter(country == "India") %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2020_pop = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
+  
 
 ```
