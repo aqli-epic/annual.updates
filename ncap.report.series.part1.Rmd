@@ -583,4 +583,67 @@ color_2021 %>%
             avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
   
 
+#> hex plot
+
+# hex plot data
+hex_plt_data <- final_analysis_dataset %>%
+  mutate(pm2017_40_perc_red = pm2017*0.6) %>%
+  select(country, name_1, name_2, population, pm2017, pm2017_40_perc_red) %>%
+  pivot_longer(pm2017:pm2017_40_perc_red, values_to = "pollution_value", names_to = "pol_type") %>%
+  mutate(pol_type = ifelse(pol_type == "pm2017", "2017 PM2.5", "40% reduction in 2017 PM2.5"))
+
+# hex plot: plot
+hex_plot <- hex_plt_data %>%
+  ggplot() +
+  geom_hex(mapping = aes(x = population, y = pollution_value), color = "white", alpha = 0.7) +
+  theme_bw() +
+  scale_x_log10() + 
+  viridis::scale_fill_viridis(option = "viridis", direction = -1) + 
+geom_hline(mapping = aes(yintercept = 40)) +
+  # geom_hline(mapping = aes(yintercept = 5)) +
+  geom_vline(mapping = aes(xintercept = 50000)) + 
+  scale_y_continuous(breaks = seq(0, 120, 10)) +
+  facet_wrap(~pol_type) +
+  labs(x = "Population", y = "PM2.5 pollution (in µg/m³)", 
+       fill = "City Count", 
+       title = "Population v/s Pollution in 131 non-attainment cities",
+       subtitle = "(2017 PM2.5 levels v/s if NCAP targets are met)") +
+  theme(legend.title.align = 0.5, 
+        plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(size = 8, hjust = 0.5)) 
+
+
+#> creating a heatmap snapshot of the 131 non-attainment cities--------
+
+# snapshot heatmap data
+snapshot_map_data <- final_analysis_dataset %>%
+  select(-pm2021) %>%
+  select(country, name_1, name_2, population, city, starts_with("pm")) %>%
+  pivot_longer(cols = pm1998:pm2020, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "City Average") 
+
+
+# cities to plot in the snapshot heatmap
+city_to_plot <- final_analysis_dataset %>%
+  filter(pm2017 > 40) %>%
+  pull(city) 
+
+# snapshot heatmap
+snapshot_heatmap <- snapshot_map_data %>%
+ filter(city %in% city_to_plot, years <= 2017) %>%
+  ggplot() +
+  geom_raster(mapping = aes(x = years, y = forcats::fct_reorder(city, pop_weighted_avg_pm2.5), fill = pop_weighted_avg_pm2.5), color = "black", size = 2) +
+  scale_fill_viridis_b(option = "rocket", direction = -1) +
+  scale_x_continuous(breaks = seq(1998, 2017, 2)) +
+  labs(x = "Years", y = "City", 
+       title = "PM2.5 pollution from 1998 to 2017 (NCAP baseline)", 
+       subtitle = "(Cities in which PM2.5 pollution was above the national standard in 2017)", 
+       fill = "PM2.5 (in µg/m³)") +
+  theme(plot.title = element_text(hjust = 0.5, size = 12), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8))
+  
+  
+  
 ```
