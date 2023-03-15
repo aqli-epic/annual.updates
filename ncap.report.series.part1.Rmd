@@ -644,6 +644,33 @@ snapshot_heatmap <- snapshot_map_data %>%
   theme(plot.title = element_text(hjust = 0.5, size = 12), 
         plot.subtitle = element_text(hjust = 0.5, size = 8))
   
+
+#> creating a beeswarm plot------------------------------------------------------
+
+snapshot_map_data %>%
+  filter(years %in% c(2000, 2001, 2002)) %>%
+  ggplot(mapping = aes(x = years, y = pop_weighted_avg_pm2.5, color = "years")) +
+  geom_beeswarm()
+  
+
+beeswarm_plot_data <- color_2021 %>%
+    select(country, name_1, name_2, population, starts_with("pm")) %>%
+  pivot_longer(cols = pm1998:pm2021, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.factor(as.integer(unlist(str_extract(years, "\\d+")))), 
+         region = "City Average") 
+
+
+plt <- beeswarm_plot_data %>%
+  filter(country == "India", years %in% c(1998, 2003, 2017, 2021)) %>%
+  ggplot(mapping = aes(x = years, y = pop_weighted_avg_pm2.5, color = years)) +
+  geom_beeswarm(cex = 1.5, alpha = 0.7) +
+  labs(x = expression("Year"), y = expression("Annual Average" ~ PM[2.5] ~ "(in µg/m³)")) +
+  ggthemes::theme_tufte() + 
+  theme(axis.line = element_line()) +
+  viridis::scale_color_viridis(discrete = TRUE)
+  
+
   
   
 ```
