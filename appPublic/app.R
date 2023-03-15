@@ -123,6 +123,23 @@ ui <- fluidPage(
              shiny::tags$hr(),
              plotOutput("distribution_plot_5")
              ),
+    tabPanel("GADM level summary",
+             shiny::tags$br(),
+             fluidRow(
+               column(2, selectizeInput("summary_level6", "Summary Level (GADM)", choices = c("Continent", "Country", "State", "District"))),
+               column(2, selectizeInput("continent6", "Continent", NULL)),
+               column(2, selectizeInput("country6", "Country", choices = NULL)),
+               column(3, selectizeInput("state6", "State", choices = NULL)),
+               column(3, selectizeInput("district6", "District", choices = NULL))
+             ),
+             shiny::tags$br(),
+             shiny::tags$hr(),
+             fluidRow(
+               column(10),
+               column(2, downloadButton("downloadData6", "Download CSV"))
+             ),
+             dataTableOutput("table6")
+    ),
     tabPanel("Compare Regions (coming soon!)"),
     tabPanel("About AQLI (WIP!)",
              shiny::tags$br(),
@@ -605,7 +622,175 @@ output$distribution_plot_5 <- shiny::renderPlot({
 
 })
 
+#> GADM level summary tab--------------------------------------------------------------
 
+ # summary level drop down observer
+ shiny::observeEvent(input$summary_level6, {
+   if(input$summary_level6 == "Continent"){
+   shiny::updateSelectizeInput(session, "continent6", choices = c("all", gadm2_aqli_2021$continent %>% unique()))
+     shiny::updateSelectizeInput(session, "country6", choices = c("all"))
+   shiny::updateSelectizeInput(session, "state6", choices = c("all"))
+   shiny::updateSelectizeInput(session, "district6", choices = c("all"))
+   } else if (input$summary_level6 == "Country"){
+     shiny::updateSelectizeInput(session, "continent6", choices = c("all", unique(gadm2_aqli_2021$continent)))
+     shiny::updateSelectizeInput(session, "country6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6) %>% dplyr::pull(country) %>% unique() ))
+     shiny::updateSelectizeInput(session, "state6", choices = c("all"))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all"))
+   } else if (input$summary_level6 == "State"){
+     shiny::updateSelectizeInput(session, "continent6", choices = c("all", unique(gadm2_aqli_2021$continent)))
+   shiny::updateSelectizeInput(session, "country6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6) %>% dplyr::pull(country) %>% unique() ))
+     shiny::updateSelectizeInput(session, "state6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all"))
+   } else if (input$summary_level6 == "District"){
+   shiny::updateSelectizeInput(session, "continent6", choices = c("all", unique(gadm2_aqli_2021$continent)))
+     shiny::updateSelectizeInput(session, "country6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6) %>% dplyr::pull(country) %>% unique() ))
+     shiny::updateSelectizeInput(session, "state6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6, name_1 == input$state6) %>% dplyr::pull(name_2) %>% unique()))
+   }
+ })
+
+
+#  continent drop down observer
+ shiny::observeEvent(input$continent6, {
+   if(input$summary_level6 == "Continent"){
+     shiny::updateSelectizeInput(session, "country6", choices = c("all"))
+     shiny::updateSelectizeInput(session, "state6", choices = c("all"))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all"))
+
+   } else if (input$summary_level6 == "Country"){
+     shiny::updateSelectizeInput(session, "country6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6) %>% dplyr::pull(country) %>% unique()))
+     shiny::updateSelectizeInput(session, "state6", choices = c("all"))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all"))
+
+   } else if (input$summary_level6 == "State"){
+     shiny::updateSelectizeInput(session, "country6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6) %>% dplyr::pull(country) %>% unique()))
+     shiny::updateSelectizeInput(session, "state6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all"))
+
+   } else if (input$summary_level6 == "District"){
+     shiny::updateSelectizeInput(session, "country6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6) %>% dplyr::pull(country) %>% unique() ))
+     shiny::updateSelectizeInput(session, "state6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6, name_1 == input$state6) %>% dplyr::pull(name_2) %>% unique()))
+  }
+
+ })
+
+ # country drop down observer
+ shiny::observeEvent(input$country6, {
+
+   if(input$summary_level6 == "Country"){
+     shiny::updateSelectizeInput(session, "state6", choices = c("all"))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all"))
+
+   } else if (input$summary_level6 == "State"){
+     shiny::updateSelectizeInput(session, "state6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all"))
+
+   } else if (input$summary_level6 == "District"){
+     shiny::updateSelectizeInput(session, "state6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6, name_1 == input$state6) %>% dplyr::pull(name_2) %>% unique()))
+
+   }
+ })
+
+# state drop down observer
+ shiny::observeEvent(input$state6, {
+
+   if (input$summary_level6 == "State"){
+     shiny::updateSelectizeInput(session, "district6", choices = c("all"))
+
+   } else if (input$summary_level6 == "District"){
+     #shiny::updateSelectizeInput(session, "state6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6, name_1 == input$state6) %>% dplyr::pull(name_2) %>% unique()))
+
+   }
+ })
+
+
+# filtered data, given the dropdowns
+ filteredData6 <- shiny::reactive({
+
+   if(input$summary_level6 == "Continent"){
+     if(input$continent6 == "all"){
+      gadm2_aqli_2021 %>%
+         dplyr::group_by(continent) %>%
+         dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE),
+                       pm2021_pop_weighted = pop_weights*pm2021) %>%
+         dplyr::summarise(avg_pm2.5_2020 = sum(pm2021_pop_weighted, na.rm = TRUE)) %>%
+         return()
+     } else{
+       gadm2_aqli_2021 %>%
+         dplyr::group_by(continent) %>%
+         dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE),
+                       pm2021_pop_weighted = pop_weights*pm2021) %>%
+         dplyr::summarise(avg_pm2.5_2020 = sum(pm2021_pop_weighted, na.rm = TRUE)) %>%
+         ungroup() %>%
+         filter(continent == input$continent6) %>%
+         return()
+
+     }
+
+   } else if(input$summary_level6 == "Country"){
+     if((input$continent6 == "all") & (input$country6 == "all")){
+
+     } else if ((input$continent6 != "all") & (input$country6 == "all")){
+
+     } else if ((input$continent6 != "all") & (input$country6 != "all")) {
+
+     } else if (((input$continent6 != "all") & (input$country6 != "all"))){
+
+     }
+
+   } else if(input$summary_level6 == "State"){
+     if((input$continent6 == "all") & (input$country6 == "all") & (input$state6 == "all")){
+
+     } else if ((input$continent6 != "all") & (input$country6 == "all") & (input$state6 == "all")){
+
+     } else if ((input$continent6 != "all") & (input$country6 != "all") & (input$state6 == "all")) {
+
+     } else if ((input$continent6 != "all") & (input$country6 != "all") & (input$state6 != "all")) {
+
+     }
+
+   } else if(input$summary_level6 == "District") {
+      if((input$continent6 == "all") & (input$country6 == "all") & (input$state6 == "all") & (input$district6 == "all")){
+
+      } else if ((input$continent6 != "all") & (input$country6 == "all") & (input$state6 == "all") & (input$district6 == "all")){
+
+      } else if ((input$continent6 != "all") & (input$country6 != "all") & (input$state6 == "all") & (input$district6 == "all")) {
+
+      } else if ((input$continent6 != "all") & (input$country6 != "all") & (input$state6 != "all") & (input$district6 == "all")){
+
+
+      }
+   }
+
+
+
+
+ })
+
+ # render the filtered dataset
+ output$table6 <- shiny::renderDataTable({
+   filteredData6()
+ })
+
+ # download button of the filtered dataset
+ output$downloadData6 <- downloadHandler(
+   filename = "summary_data.csv",
+   content = function(file) {
+     write.csv(filteredData6(), file)
+   }
+ )
+
+
+
+
+
+
+
+
+#---------------------------------------------------------------------------------------
 
 
 
