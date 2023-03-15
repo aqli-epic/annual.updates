@@ -129,8 +129,9 @@ ui <- fluidPage(
                column(2, selectizeInput("summary_level6", "Summary Level (GADM)", choices = c("Continent", "Country", "State", "District"))),
                column(2, selectizeInput("continent6", "Continent", NULL)),
                column(2, selectizeInput("country6", "Country", choices = NULL)),
-               column(3, selectizeInput("state6", "State", choices = NULL)),
-               column(3, selectizeInput("district6", "District", choices = NULL))
+               column(2, selectizeInput("state6", "State", choices = NULL)),
+               column(2, selectizeInput("district6", "District", choices = NULL)),
+               column(2, selectizeInput("year6", "Year", choices = latest_year:first_year))
              ),
              shiny::tags$br(),
              shiny::tags$hr(),
@@ -706,16 +707,31 @@ output$distribution_plot_5 <- shiny::renderPlot({
    }
  })
 
+#> getting the pollution and lyl columns for the selected year---------------
+
+ # reactive pollution column name
+ pol_col_6 <- shiny::reactive({
+   stringr::str_c("pm", input$year6)
+ })
+
+ # reactive llpp_who_col name
+ llpp_who_col_6 <- shiny::reactive({
+   stringr::str_c("llpp_who_", input$year6)
+ })
+
+ # reactive llpp_nat_col name
+ llpp_nat_col_6 <- shiny::reactive({
+   stringr::str_c("llpp_nat_", input$year6)
+ })
 
 # filtered data, given the dropdowns
  filteredData6 <- shiny::reactive({
-
    if(input$summary_level6 == "Continent"){
      if(input$continent6 == "all"){
       gadm2_aqli_2021 %>%
          dplyr::group_by(continent) %>%
          dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE),
-                       pm2021_pop_weighted = pop_weights*pm2021) %>%
+                       pm2021_pop_weighted = pop_weights*(!!(as.symbol(pol_col_6())))) %>%
          dplyr::summarise(avg_pm2.5_2020 = sum(pm2021_pop_weighted, na.rm = TRUE)) %>%
          return()
      } else{

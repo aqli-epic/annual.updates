@@ -149,3 +149,21 @@ trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India
   return(trendlines_aqli_plt)
 
 }
+
+#> GADM level summary tab function---------------------------------------
+
+gadm_level_summary <- function(df, level_col_name, year){
+
+  pol_col_name <- stringr::str_c("pm", year)
+  llpp_who_col_name <- stringr::str_c("llpp_who_", year)
+  # llpp_nat_col_name <- stringr::str_c("llpp_nat_", year)
+
+  df %>%
+    group_by(!!as.symbol(level_col_name)) %>%
+    mutate(pop_weights = population/sum(population, na.rm = TRUE),
+           pm_pop_weighted = pop_weights*(!!(as.symbol(pol_col_name)))) %>%
+    summarise(avg_pm2.5 = sum(pm_pop_weighted, na.rm = TRUE),
+              lyl_who = (avg_pm2.5 - who_guideline)*0.098,
+              lyl_who = ifelse(lyl_who < 0, 0, lyl_who)) %>%
+    return()
+}
