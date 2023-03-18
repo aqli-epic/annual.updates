@@ -36,6 +36,8 @@ gadm0_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.upda
 # read in the country continent file
 country_continent <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/other.important.calculations.data/country_continent.csv")
 
+continent_for_missing_countries <- c("")
+
 # join each of the above 3 datasets with the country_continent file using the continent column
 gadm2_aqli_2021 <- gadm2_aqli_2021 %>%
   left_join(country_continent, by = "country")
@@ -45,6 +47,37 @@ gadm1_aqli_2021 <- gadm1_aqli_2021 %>%
 
 gadm0_aqli_2021 <- gadm0_aqli_2021 %>%
   left_join(country_continent, by = "country")
+
+#> Filling in missing continents-----------------------------------------------
+
+# countries for which continent is NA: for these fill in the continent manually
+countries_with_missing_continent <- gadm0_aqli_2021 %>% filter(is.na(continent)) %>% pull(country) %>% unique()
+
+# continent fill in for missing coutries
+continents_for_missing_countries <- c("Europe", "Asia", "Africa", "North America",
+                                      "Europe", "Oceania", "North America", "Asia", "Asia",
+                                      "Oceania", "Africa", "Africa", "Africa", "South America",
+                                      "Asia")
+
+# [CAUTION: perform a sanity check on the above 2 vectors and how they map countries to continents before proceeding]
+#creating a data frame using the above 2 vectors as columns
+missing_continents_df <- tibble(country = countries_with_missing_continent,
+                                continent = continents_for_missing_countries)
+
+
+# adding in the missing continent information in the gadmx_aqli_2021 datasets
+gadm2_aqli_2021 <- gadm2_aqli_2021 %>%
+  left_join(missing_continents_df, by = "country") %>%
+  mutate(continent = ifelse(is.na(continent.x), continent.y, continent.x))
+
+gadm1_aqli_2021 <- gadm1_aqli_2021 %>%
+  left_join(missing_continents_df, by = "country") %>%
+  mutate(continent = ifelse(is.na(continent.x), continent.y, continent.x))
+
+gadm0_aqli_2021 <- gadm0_aqli_2021 %>%
+  left_join(missing_continents_df, by = "country") %>%
+  mutate(continent = ifelse(is.na(continent.x), continent.y, continent.x))
+
 
 # global variables
 who_guideline <- 5
@@ -152,18 +185,66 @@ trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India
 
 #> GADM level summary tab function---------------------------------------
 
-gadm_level_summary <- function(df, level_col_name, year){
+gadm_level_summary <- function(df, level_col_name_vec, years){
 
-  pol_col_name <- stringr::str_c("pm", year)
-  llpp_who_col_name <- stringr::str_c("llpp_who_", year)
-  # llpp_nat_col_name <- stringr::str_c("llpp_nat_", year)
+  pol_col_names <- stringr::str_c("pm", years)
+  llpp_who_col_names <- stringr::str_c("llpp_who_", years)
+  llpp_nat_col_names <- stringr::str_c("llpp_nat_", years)
 
-  df %>%
-    group_by(!!as.symbol(level_col_name)) %>%
-    mutate(pop_weights = population/sum(population, na.rm = TRUE),
-           pm_pop_weighted = pop_weights*(!!(as.symbol(pol_col_name)))) %>%
-    summarise(avg_pm2.5 = sum(pm_pop_weighted, na.rm = TRUE),
-              lyl_who = (avg_pm2.5 - who_guideline)*0.098,
-              lyl_who = ifelse(lyl_who < 0, 0, lyl_who)) %>%
-    return()
+if((level_col_name_vec[1] == "continent") & (length(level_col_name_vec) == 1)){
+ aqli_wide <- df %>%
+    dplyr::group_by_at(level_col_name_vec) %>%
+    dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE)) %>%
+    dplyr::mutate(across(dplyr::starts_with("pm"), ~(.x*pop_weights), .names = "{col}_pop_weighted")) %>%
+    dplyr::summarise(across(dplyr::contains("pop_weighted"), ~(round(sum(.x, na.rm = TRUE), 2)), .names = "avg_{col}"),
+                     total_population = sum(population, na.rm = TRUE), objectid_gadm2 = objectid_gadm2[1], iso_alpha3 = iso_alpha3[1], whostandard = whostandard[1], .groups = "keep") %>%
+    select(objectid_gadm2, iso_alpha3, all_of(level_col_name_vec), total_population, whostandard, dplyr::everything()) %>%
+    dplyr::mutate(objectid_gadm2 = dplyr::row_number()) %>%
+    dplyr::rename(population = total_population,
+                  objectid_level = objectid_gadm2) %>%
+    dplyr::rename_with(~str_replace_all(.x, "(_pop_weighted)|(avg_)", ""), dplyr::contains("_pop_weighted")) %>%
+    dplyr::mutate(across(starts_with("pm"), (~(.x - whostandard)*le_constant), .names = "llpp_who_{col}")) %>%
+    dplyr::mutate(across(starts_with("llpp"), ~ifelse(.x < 0, 0, .x))) %>%
+    dplyr::select(objectid_level, iso_alpha3, all_of(level_col_name_vec), population, whostandard, dplyr::everything()) %>%
+    dplyr::rename_with(~str_replace(.x, "pm", ""), dplyr::contains("llpp")) %>%
+    dplyr::mutate(across(dplyr::matches("pm|llpp"), ~(round(.x, 1)), .names = "{col}")) %>%
+   dplyr::ungroup() %>%
+   dplyr::select(objectid_level:whostandard, all_of(c(pol_col_names, llpp_who_col_names)))
+
+ return(aqli_wide)
+
+} else if(("name_2" %in% level_col_name_vec)){
+    if((which(level_col_name_vec == "name_2") > 2)){
+      aqli_wide <- df %>%
+        dplyr::select(objectid_gadm2:natstandard, continent, all_of(c(pol_col_names, llpp_who_col_names, llpp_nat_col_names)))
+    }
+
+  return(aqli_wide)
+
+} else {
+  aqli_wide <- df %>%
+    dplyr::group_by_at(level_col_name_vec) %>%
+    dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE)) %>%
+    dplyr::mutate(across(dplyr::starts_with("pm"), ~(.x*pop_weights), .names = "{col}_pop_weighted")) %>%
+    dplyr::summarise(across(dplyr::contains("pop_weighted"), ~(round(sum(.x, na.rm = TRUE), 2)), .names = "avg_{col}"),
+                     total_population = sum(population, na.rm = TRUE), objectid_gadm2 = objectid_gadm2[1], iso_alpha3 = iso_alpha3[1], whostandard = whostandard[1], natstandard = natstandard[1], .groups = "keep") %>%
+    select(objectid_gadm2, iso_alpha3, all_of(level_col_name_vec), total_population, whostandard, natstandard, dplyr::everything()) %>%
+    dplyr::mutate(objectid_gadm2 = dplyr::row_number()) %>%
+    dplyr::rename(population = total_population,
+                  objectid_level = objectid_gadm2) %>%
+    dplyr::rename_with(~str_replace_all(.x, "(_pop_weighted)|(avg_)", ""), dplyr::contains("_pop_weighted")) %>%
+    dplyr::mutate(across(starts_with("pm"), (~(.x - whostandard)*le_constant), .names = "llpp_who_{col}")) %>%
+    dplyr::mutate(across(starts_with("pm"), (~(.x - natstandard)*le_constant), .names = "llpp_nat_{col}")) %>%
+    dplyr::mutate(across(starts_with("llpp"), ~ifelse(.x < 0, 0, .x))) %>%
+    dplyr::mutate(across(starts_with("llpp_nat"), ~ifelse(natstandard == 0, NA, .x))) %>%
+    dplyr::select(objectid_level, iso_alpha3, all_of(level_col_name_vec), population, whostandard, natstandard, dplyr::everything()) %>%
+    dplyr::rename_with(~str_replace(.x, "pm", ""), dplyr::contains("llpp")) %>%
+    dplyr::mutate(across(dplyr::matches("pm|llpp"), ~(round(.x, 1)), .names = "{col}")) %>%
+    dplyr::ungroup() %>%
+    dplyr::select(objectid_level:natstandard, all_of(c(pol_col_names, llpp_who_col_names, llpp_nat_col_names)))
+
+  return(aqli_wide)
+
+   }
 }
+

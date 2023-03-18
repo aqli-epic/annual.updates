@@ -12,17 +12,26 @@ library(shinycssloaders)
 library(shinyjs)
 library(bslib)
 library(viridis)
+library(DT)
 
 
 # source data
-# source("aqli.data.explorer.helper.script.R")
+source("aqli.data.explorer.helper.script.R")
 
 # loading the .RData file that contain all required data objects
 # save(list = ls(all = TRUE), file= "all.RData")
-load("all.RData", .GlobalEnv)
+# load("all.RData", .GlobalEnv)
 
 # Define UI
 ui <- fluidPage(
+  tags$head(
+    tags$style(HTML("
+      /* Decrease the font size of the tab text */
+      .nav-tabs > li > a {
+        font-size: 11.7px;
+      }
+    "))
+  ),
   theme = bslib::bs_theme(version = 4, bootswatch = "litera"),
   title = "AQLI Data Explorer",
   titlePanel(
@@ -47,7 +56,7 @@ ui <- fluidPage(
                column(10),
                column(2, downloadButton("downloadData", "Download CSV"))
              ),
-             dataTableOutput("table")
+             DT::dataTableOutput("table")
     ),
     tabPanel("Regional Stats",
              shiny::tags$br(),
@@ -81,7 +90,7 @@ ui <- fluidPage(
                column(2, downloadButton("downloadData2", "Download CSV"))
              ),
              fluidRow(
-               column(12, dataTableOutput("table2"))
+               column(12, DT::dataTableOutput("table2"))
              )
     ),
     tabPanel("Trendlines",
@@ -131,7 +140,7 @@ ui <- fluidPage(
                column(2, selectizeInput("country6", "Country", choices = NULL)),
                column(2, selectizeInput("state6", "State", choices = NULL)),
                column(2, selectizeInput("district6", "District", choices = NULL)),
-               column(2, selectizeInput("year6", "Year", choices = latest_year:first_year))
+               column(2, selectizeInput("years6", "Year", choices = latest_year:first_year))
              ),
              shiny::tags$br(),
              shiny::tags$hr(),
@@ -139,7 +148,7 @@ ui <- fluidPage(
                column(10),
                column(2, downloadButton("downloadData6", "Download CSV"))
              ),
-             dataTableOutput("table6")
+             DT::dataTableOutput("table6")
     ),
     tabPanel("Compare Regions (coming soon!)"),
     tabPanel("About AQLI (WIP!)",
@@ -222,9 +231,9 @@ filteredData <- shiny::reactive({
   })
 
 # render the filtered dataset
-  output$table <- shiny::renderDataTable({
+  output$table <- DT::renderDataTable(
     filteredData()
-  })
+  )
 
 # download button of the filtered dataset
   output$downloadData <- downloadHandler(
@@ -289,9 +298,9 @@ filteredData <- shiny::reactive({
   output$inText2 <- renderText("in")
 
   # output the filtered data for the regional stats tab
-  output$table2 <- shiny::renderDataTable({
+  output$table2 <- DT::renderDataTable(
     filteredData2()
-  })
+  )
 
   # plot based on selected values of the dropdown columns in the regional stats tab (pollution graph)
   output$plot <- shiny::renderPlot({
@@ -707,79 +716,83 @@ output$distribution_plot_5 <- shiny::renderPlot({
    }
  })
 
-#> getting the pollution and lyl columns for the selected year---------------
-
- # reactive pollution column name
- pol_col_6 <- shiny::reactive({
-   stringr::str_c("pm", input$year6)
- })
-
- # reactive llpp_who_col name
- llpp_who_col_6 <- shiny::reactive({
-   stringr::str_c("llpp_who_", input$year6)
- })
-
- # reactive llpp_nat_col name
- llpp_nat_col_6 <- shiny::reactive({
-   stringr::str_c("llpp_nat_", input$year6)
- })
 
 # filtered data, given the dropdowns
  filteredData6 <- shiny::reactive({
+
    if(input$summary_level6 == "Continent"){
+     serve_summary_data <- gadm_level_summary(gadm2_aqli_2021, c("continent"), input$years6)
      if(input$continent6 == "all"){
-      gadm2_aqli_2021 %>%
-         dplyr::group_by(continent) %>%
-         dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE),
-                       pm2021_pop_weighted = pop_weights*(!!(as.symbol(pol_col_6())))) %>%
-         dplyr::summarise(avg_pm2.5_2020 = sum(pm2021_pop_weighted, na.rm = TRUE)) %>%
-         return()
+       serve_summary_data
      } else{
-       gadm2_aqli_2021 %>%
-         dplyr::group_by(continent) %>%
-         dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE),
-                       pm2021_pop_weighted = pop_weights*pm2021) %>%
-         dplyr::summarise(avg_pm2.5_2020 = sum(pm2021_pop_weighted, na.rm = TRUE)) %>%
-         ungroup() %>%
-         filter(continent == input$continent6) %>%
-         return()
+       serve_summary_data %>%
+         dplyr::filter(continent == input$continent6)
 
      }
 
    } else if(input$summary_level6 == "Country"){
+     serve_summary_data <- gadm_level_summary(gadm2_aqli_2021, c("continent", "country"), input$years6)
      if((input$continent6 == "all") & (input$country6 == "all")){
-
+        serve_summary_data
      } else if ((input$continent6 != "all") & (input$country6 == "all")){
+       serve_summary_data %>%
+         dplyr::filter(continent == input$continent6)
 
      } else if ((input$continent6 != "all") & (input$country6 != "all")) {
-
-     } else if (((input$continent6 != "all") & (input$country6 != "all"))){
+       serve_summary_data %>%
+         dplyr::filter(continent == input$continent6, country == input$country6)
 
      }
 
    } else if(input$summary_level6 == "State"){
+
+     serve_summary_data <-  gadm_level_summary(gadm2_aqli_2021, c("continent", "country", "name_1"), input$years6)
      if((input$continent6 == "all") & (input$country6 == "all") & (input$state6 == "all")){
 
+      serve_summary_data
      } else if ((input$continent6 != "all") & (input$country6 == "all") & (input$state6 == "all")){
+
+       serve_summary_data %>%
+         dplyr::filter(continent == input$continent6)
 
      } else if ((input$continent6 != "all") & (input$country6 != "all") & (input$state6 == "all")) {
 
+       serve_summary_data %>%
+         dplyr::filter(continent == input$continent6, country == input$country6)
+
      } else if ((input$continent6 != "all") & (input$country6 != "all") & (input$state6 != "all")) {
+
+       serve_summary_data %>%
+         dplyr::filter(continent == input$continent6, country == input$country6, name_1 == input$state6)
 
      }
 
    } else if(input$summary_level6 == "District") {
+
+      serve_summary_data <- gadm_level_summary(gadm2_aqli_2021, c("continent", "country", "name_1", "name_2"), input$years6)
+
       if((input$continent6 == "all") & (input$country6 == "all") & (input$state6 == "all") & (input$district6 == "all")){
+
+      serve_summary_data
 
       } else if ((input$continent6 != "all") & (input$country6 == "all") & (input$state6 == "all") & (input$district6 == "all")){
 
+        serve_summary_data %>%
+          dplyr::filter(continent == input$continent6)
+
       } else if ((input$continent6 != "all") & (input$country6 != "all") & (input$state6 == "all") & (input$district6 == "all")) {
+        serve_summary_data %>%
+          dplyr::filter(continent == input$continent6, country == input$country6)
 
       } else if ((input$continent6 != "all") & (input$country6 != "all") & (input$state6 != "all") & (input$district6 == "all")){
+        serve_summary_data %>%
+          dplyr::filter(continent == input$continent6, country == input$country6, name_1 == input$state6)
 
+      } else if ((input$continent6 != "all") & (input$country6 != "all") & (input$state6 != "all") & (input$district6 != "all"))
+        serve_summary_data %>%
+        dplyr::filter(continent == input$continent6, country == input$country6, name_1 == input$state6, name_2 == input$district6)
 
-      }
-   }
+    }
 
 
 
@@ -787,9 +800,10 @@ output$distribution_plot_5 <- shiny::renderPlot({
  })
 
  # render the filtered dataset
- output$table6 <- shiny::renderDataTable({
+ output$table6 <- DT::renderDataTable(
+   options = list(extensions = "Buttons"),
    filteredData6()
- })
+ )
 
  # download button of the filtered dataset
  output$downloadData6 <- downloadHandler(
