@@ -28,7 +28,9 @@ ui <- fluidPage(
     tags$style(HTML("
       /* Decrease the font size of the tab text */
       .nav-tabs > li > a {
-        font-size: 11.7px;
+        font-size: 16px;
+        width: 135px;
+        text-align: center;
       }
     "))
   ),
@@ -56,6 +58,7 @@ ui <- fluidPage(
                column(10),
                column(2, downloadButton("downloadData", "Download CSV"))
              ),
+             shiny::tags$br(),
              DT::dataTableOutput("table")
     ),
     tabPanel("Regional Stats",
@@ -89,6 +92,7 @@ ui <- fluidPage(
                column(10),
                column(2, downloadButton("downloadData2", "Download CSV"))
              ),
+             shiny::tags$br(),
              fluidRow(
                column(12, DT::dataTableOutput("table2"))
              )
@@ -123,9 +127,9 @@ ui <- fluidPage(
                column(2, selectizeInput("country5", "Country", choices = NULL)),
                column(2, selectizeInput("state5", "State", choices = NULL)),
                column(2, selectizeInput("district5", "District", choices = NULL)),
-               column(3, selectInput("dist_type5", "Distribution Type", choices = c("PM2.5 Pollution", "LYL rel to WHO standard",
+               column(2, selectInput("dist_type5", "Distribution Type", choices = c("PM2.5 Pollution", "LYL rel to WHO standard",
                                                                                     "LYL rel to National standard"))),
-               column(1, selectInput("year5", "Year", choices = c(latest_year:first_year)))
+               column(2, selectInput("year5", "Year", choices = c(latest_year:first_year)))
 
              ),
              shiny::tags$br(),
@@ -140,7 +144,7 @@ ui <- fluidPage(
                column(2, selectizeInput("country6", "Country", choices = NULL)),
                column(2, selectizeInput("state6", "State", choices = NULL)),
                column(2, selectizeInput("district6", "District", choices = NULL)),
-               column(2, selectizeInput("years6", "Year", choices = latest_year:first_year))
+               column(2, selectizeInput("years6", "Year", choices = latest_year:first_year, multiple = TRUE, selected = latest_year))
              ),
              shiny::tags$br(),
              shiny::tags$hr(),
@@ -148,51 +152,29 @@ ui <- fluidPage(
                column(10),
                column(2, downloadButton("downloadData6", "Download CSV"))
              ),
+             shiny::tags$br(),
              DT::dataTableOutput("table6")
     ),
-    tabPanel("Compare Regions (coming soon!)",
+    tabPanel("Compare Regions",
              shiny::tags$br(),
              fluidRow(
-               column(3, selectizeInput("cr_level7", "Compare Regions at level", choices = c("Continent", "Country", "State", "District"), width = "250px")),
-               column(9,
-                conditionalPanel(
-                  condition = "input.cr_level7 == 'Continent'",
-                  selectizeInput("continent7", "Continent", choices = gadm2_aqli_2021 %>% dplyr::pull(continent) %>% unique(), width = "180px")
-                ),
-                conditionalPanel(
-                  condition = "input.cr_level7 == 'Country'",
-                  fluidRow(
-                    selectizeInput("continent7", "Continent", choices = gadm2_aqli_2021 %>% dplyr::pull(continent) %>% unique(), width = "180px"),
-                    div(style = "width: 20px;"),
-                    selectizeInput("country7", "Country", choices = NULL, width = "180px")
-                  )
-                ),
-                conditionalPanel(
-                  condition = "input.cr_level7 == 'State'",
-                  fluidRow(
-                    selectizeInput("continent7", "Continent", choices = gadm2_aqli_2021 %>% dplyr::pull(continent) %>% unique(), width = "180px"),
-                    div(style = "width: 20px;"),
-                    selectizeInput("country7", "Country", choices = NULL, width = "180px"),
-                    div(style = "width: 20px;"),
-                    selectizeInput("state7", "State", choices = NULL, width = "180px")
-                  )
-                ),
-                conditionalPanel(
-                  condition = "input.cr_level7 == 'District'",
-                  fluidRow(
-                    selectizeInput("continent7", "Continent", choices = gadm2_aqli_2021 %>% dplyr::pull(continent) %>% unique(), width = "180px"),
-                    div(style = "width: 20px;"),
-                    selectizeInput("country7", "Country", choices = NULL, width = "180px"),
-                    div(style = "width: 20px;"),
-                    selectizeInput("state7", "State", choices = NULL, width = "180px"),
-                    div(style = "width: 20px;"),
-                    selectizeInput("district7", "District", choices = NULL, width = "180px")
-                  )
-                )
-              )
-             )
+               column(2, selectizeInput("comparison_level7", "Comparison Level", choices = c("Continent", "Country", "State", "District"))),
+               column(2, selectizeInput("continent7", "Continent", NULL)),
+               column(2, selectizeInput("country7", "Country", choices = NULL)),
+               column(2, selectizeInput("state7", "State", choices = NULL)),
+               column(2, selectizeInput("district7", "District", choices = NULL)),
+               column(2, selectizeInput("years7", "Year", choices = latest_year:first_year, multiple = TRUE, selected = latest_year))
              ),
-    tabPanel("About AQLI (WIP!)",
+             shiny::tags$br(),
+             shiny::tags$hr(),
+             fluidRow(
+               column(10),
+               column(2, downloadButton("downloadData7", "Download CSV"))
+             ),
+             shiny::tags$br(),
+             DT::dataTableOutput("table7")
+             ),
+    tabPanel("About AQLI",
              shiny::tags$br(),
              shiny::tags$h6("The Air Quality Life Index, or AQLI, converts air pollution concentrations into their impact on life expectancy. From this, the public and policymakers alike can determine the benefits of air pollution policies in
              perhaps the most important measure that exists: longer lives."),
@@ -654,21 +636,24 @@ output$distribution_plot_5 <- shiny::renderPlot({
     filteredData5() %>%
       ggplot2::ggplot() +
       ggplot2::geom_histogram(mapping = aes(x = !!as.symbol(pol_col_5())), color = "white", fill = "cornflowerblue") +
-      ggthemes::theme_hc()
+      ggthemes::theme_hc() +
+      ggplot2::scale_y_log10()
 
 
   } else if (input$dist_type5 == "LYL rel to WHO standard") {
     filteredData5() %>%
       ggplot2::ggplot() +
       ggplot2::geom_histogram(mapping = aes(x = !!as.symbol(llpp_who_col_5())), color = "white", fill = "darkred") +
-      ggthemes::theme_hc()
+      ggthemes::theme_hc() +
+      ggplot2::scale_y_log10()
 
 
   } else if (input$dist_type5 == "LYL rel to National standard"){
     filteredData5() %>%
       ggplot2::ggplot() +
       ggplot2::geom_histogram(mapping = aes(x = !!as.symbol(llpp_nat_col_5())), color = "white", fill = "darkred") +
-      ggthemes::theme_hc()
+      ggthemes::theme_hc() +
+      ggplot2::scale_y_log10()
   }
 
 })
@@ -856,9 +841,87 @@ output$distribution_plot_5 <- shiny::renderPlot({
 
 #> Compare Regions tab-----------------------------------------------------------------
 
+ # summary level drop down observer
+ shiny::observeEvent(input$comparison_level7, {
+   if(input$comparison_level7 == "Continent"){
+     shiny::updateSelectizeInput(session, "continent7", choices = c("all", gadm2_aqli_2021$continent %>% unique()))
+     shiny::updateSelectizeInput(session, "country7", choices = c("all"))
+     shiny::updateSelectizeInput(session, "state7", choices = c("all"))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all"))
+   } else if (input$comparison_level7 == "Country"){
+     shiny::updateSelectizeInput(session, "continent7", choices = c("all", unique(gadm2_aqli_2021$continent)))
+     shiny::updateSelectizeInput(session, "country7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7) %>% dplyr::pull(country) %>% unique() ))
+     shiny::updateSelectizeInput(session, "state7", choices = c("all"))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all"))
+   } else if (input$comparison_level7 == "State"){
+     shiny::updateSelectizeInput(session, "continent7", choices = c("all", unique(gadm2_aqli_2021$continent)))
+     shiny::updateSelectizeInput(session, "country7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7) %>% dplyr::pull(country) %>% unique() ))
+     shiny::updateSelectizeInput(session, "state7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all"))
+   } else if (input$comparison_level7 == "District"){
+     shiny::updateSelectizeInput(session, "continent7", choices = c("all", unique(gadm2_aqli_2021$continent)))
+     shiny::updateSelectizeInput(session, "country7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7) %>% dplyr::pull(country) %>% unique() ))
+     shiny::updateSelectizeInput(session, "state7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7, name_1 == input$state7) %>% dplyr::pull(name_2) %>% unique()))
+   }
+ })
 
 
+ #  continent drop down observer
+ shiny::observeEvent(input$continent7, {
+   if(input$comparison_level7 == "Continent"){
+     shiny::updateSelectizeInput(session, "country7", choices = c("all"))
+     shiny::updateSelectizeInput(session, "state7", choices = c("all"))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all"))
 
+   } else if (input$comparison_level7 == "Country"){
+     shiny::updateSelectizeInput(session, "country7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7) %>% dplyr::pull(country) %>% unique()))
+     shiny::updateSelectizeInput(session, "state7", choices = c("all"))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all"))
+
+   } else if (input$comparison_level7 == "State"){
+     shiny::updateSelectizeInput(session, "country7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7) %>% dplyr::pull(country) %>% unique()))
+     shiny::updateSelectizeInput(session, "state7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all"))
+
+   } else if (input$comparison_level7 == "District"){
+     shiny::updateSelectizeInput(session, "country7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7) %>% dplyr::pull(country) %>% unique() ))
+     shiny::updateSelectizeInput(session, "state7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7, name_1 == input$state7) %>% dplyr::pull(name_2) %>% unique()))
+   }
+
+ })
+
+ # country drop down observer
+ shiny::observeEvent(input$country7, {
+
+   if(input$comparison_level7 == "Country"){
+     shiny::updateSelectizeInput(session, "state7", choices = c("all"))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all"))
+
+   } else if (input$comparison_level7 == "State"){
+     shiny::updateSelectizeInput(session, "state7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all"))
+
+   } else if (input$comparison_level7 == "District"){
+     shiny::updateSelectizeInput(session, "state7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7, name_1 == input$state7) %>% dplyr::pull(name_2) %>% unique()))
+
+   }
+ })
+
+ # state drop down observer
+ shiny::observeEvent(input$state7, {
+
+   if (input$comparison_level7 == "State"){
+     shiny::updateSelectizeInput(session, "district7", choices = c("all"))
+
+   } else if (input$comparison_level7 == "District"){
+     #shiny::updateSelectizeInput(session, "state6", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent6, country == input$country6) %>% dplyr::pull(name_1) %>% unique()))
+     shiny::updateSelectizeInput(session, "district7", choices = c("all", gadm2_aqli_2021 %>% dplyr::filter(continent == input$continent7, country == input$country7, name_1 == input$state7) %>% dplyr::pull(name_2) %>% unique()))
+
+   }
+ })
 
 
 #---------------------------------------------------------------------------------------
