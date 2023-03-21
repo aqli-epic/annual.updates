@@ -23,6 +23,9 @@ library(data.table)
 # devtools::load_all()
 # devtools::document()
 
+# global variables
+`%notin%` <- Negate(`%in%`)
+
 # read in latest color file
 gadm2_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/gadm2_aqli2021_vit.csv")
 gadm1_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/gadm1_aqli2021_vit.csv")
