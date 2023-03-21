@@ -5,10 +5,10 @@ account: aarsh
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 8465043
-bundleId: 6976423
+bundleId: 6987330
 url: https://aarsh.shinyapps.io/aqli-epic-data-explorer/
-when: 1679166020.7746
-lastSyncTime: 1679166020.77464
+when: 1679407089.02661
+lastSyncTime: 1679407089.02663
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: aqli-epic-logo.png|aqli.data.explorer.helper.script.R
+ignoredFiles: aqli-epic-logo.png

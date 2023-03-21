@@ -186,7 +186,7 @@ trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India
 
 }
 
-#> GADM level summary tab function---------------------------------------
+#> GADM level summary and Compare Regions tabs function---------------------------------------
 
 gadm_level_summary <- function(df, level_col_name_vec, years){
 
@@ -250,4 +250,7 @@ if((level_col_name_vec[1] == "continent") & (length(level_col_name_vec) == 1)){
 
    }
 }
+
+
+
 

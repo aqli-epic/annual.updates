@@ -169,15 +169,32 @@ ui <- fluidPage(
                column(2, selectizeInput("years7", "Year", choices = latest_year:first_year, multiple = TRUE, selected = latest_year))
              ),
              shiny::tags$br(),
+             fluidRow(
+               column(5),
+               column(4,
+                      actionButton("compare_regions_button7", "Click to Compare Regions")),
+               column(3)
+             ),
              shiny::tags$hr(),
              fluidRow(
-               column(3,
-                      actionButton("compare_regions_button7", "Click to Compare Regions")),
-               column(7),
+               column(6,
+                      shiny::tags$br(),
+                      shinycssloaders::withSpinner(shiny::plotOutput("plot_7_1"))),
+               column(6,
+                      shiny::tags$br(),
+                      shinycssloaders::withSpinner(shiny::plotOutput("plot_7_2")))
+             ),
+             shiny::tags$br(),
+             shiny::tags$br(),
+             shiny::tags$hr(),
+             fluidRow(
+               column(10),
                column(2, downloadButton("downloadData7", "Download CSV"))
              ),
              shiny::tags$br(),
-             shinycssloaders::withSpinner(DT::dataTableOutput("table7"))
+             fluidRow(
+               column(12,  shinycssloaders::withSpinner(DT::dataTableOutput("table7")))
+             )
              ),
     tabPanel("About AQLI",
              shiny::tags$br(),
@@ -958,7 +975,7 @@ output$distribution_plot_5 <- shiny::renderPlot({
    }
  })
 
-
+# filtered data given the dropdown values
  filteredData7 <- eventReactive(input$compare_regions_button7, {
 
    if(input$comparison_level7 == "Continent"){
@@ -976,7 +993,7 @@ output$distribution_plot_5 <- shiny::renderPlot({
         serve_summary_data7
      } else if ((sum(input$continent7 != "all")) == (length(input$continent7))) {
        serve_summary_data7  %>%
-         filter(continent %in% input$continent7)
+         dplyr::filter(continent %in% input$continent7)
      }
 
 
@@ -1000,11 +1017,11 @@ output$distribution_plot_5 <- shiny::renderPlot({
         serve_summary_data7
       } else if ((sum(input$continent7 != "all") == length(input$continent7)) & (sum(input$country7 == "all") == 1)){
         serve_summary_data7 %>%
-          filter(continent %in% input$continent7)
+          dplyr::filter(continent %in% input$continent7)
       } else if ((sum(input$continent7 != "all") == length(input$continent7)) & (sum(input$country7 != "all") == length(input$country7))){
         serve_summary_data7 %>%
-          filter(continent %in% input$continent7) %>%
-          filter(country %in% input$country7)
+          dplyr::filter(continent %in% input$continent7) %>%
+          dplyr::filter(country %in% input$country7)
       }
 
 
@@ -1032,16 +1049,16 @@ output$distribution_plot_5 <- shiny::renderPlot({
        serve_summary_data7
      } else if ((sum(input$continent7 != "all") == length(input$continent7)) & (sum(input$country7 == "all") == 1) & (sum(input$state7 == "all") == 1)){
        serve_summary_data7 %>%
-         filter(continent %in% input$continent7)
+         dplyr::filter(continent %in% input$continent7)
      } else if ((sum(input$continent7 != "all") == length(input$continent7)) & (sum(input$country7 != "all") == length(input$country7)) & (sum(input$state7 == "all") == 1)){
        serve_summary_data7 %>%
-         filter(continent %in% input$continent7) %>%
-         filter(country %in% input$country7)
+         dplyr::filter(continent %in% input$continent7) %>%
+         dplyr::filter(country %in% input$country7)
      } else if ((sum(input$continent7 != "all") == length(input$continent7)) & (sum(input$country7 != "all") == length(input$country7)) & (sum(input$state7 != "all") == length(input$state7))){
        serve_summary_data7 %>%
-         filter(continent %in% input$continent7) %>%
-         filter(country %in% input$country7) %>%
-         filter(name_1 %in% input$state7)
+         dplyr::filter(continent %in% input$continent7) %>%
+         dplyr::filter(country %in% input$country7) %>%
+         dplyr::filter(name_1 %in% input$state7)
      }
 
 
@@ -1072,22 +1089,22 @@ output$distribution_plot_5 <- shiny::renderPlot({
        serve_summary_data7
      } else if ((sum(input$continent7 != "all") == length(input$continent7)) & (sum(input$country7 == "all") == 1) & (sum(input$state7 == "all") == 1) & (sum(input$district7 == "all") == 1)){
        serve_summary_data7 %>%
-         filter(continent %in% input$continent7)
+         dplyr::filter(continent %in% input$continent7)
      } else if ((sum(input$continent7 != "all") == length(input$continent7)) & (sum(input$country7 != "all") == length(input$country7)) & (sum(input$state7 == "all") == 1) & (sum(input$district7 == "all") == 1)){
        serve_summary_data7 %>%
-         filter(continent %in% input$continent7) %>%
-         filter(country %in% input$country7)
+         dplyr::filter(continent %in% input$continent7) %>%
+         dplyr::filter(country %in% input$country7)
      } else if ((sum(input$continent7 != "all") == length(input$continent7)) & (sum(input$country7 != "all") == length(input$country7)) & (sum(input$state7 != "all") == length(input$state7)) & (sum(input$district7 == "all") == 1)){
        serve_summary_data7 %>%
-         filter(continent %in% input$continent7) %>%
-         filter(country %in% input$country7) %>%
-         filter(name_1 %in% input$state7)
+         dplyr::filter(continent %in% input$continent7) %>%
+         dplyr::filter(country %in% input$country7) %>%
+         dplyr::filter(name_1 %in% input$state7)
      } else if ((sum(input$continent7 != "all") == length(input$continent7)) & (sum(input$country7 != "all") == length(input$country7)) & (sum(input$state7 != "all") == length(input$state7)) & (sum(input$district7 != "all") == length(input$district7))){
        serve_summary_data7 %>%
-         filter(continent %in% input$continent7) %>%
-         filter(country %in% input$country7) %>%
-         filter(name_1 %in% input$state7) %>%
-         filter(name_2 %in% input$district7)
+         dplyr::filter(continent %in% input$continent7) %>%
+         dplyr::filter(country %in% input$country7) %>%
+         dplyr::filter(name_1 %in% input$state7) %>%
+         dplyr::filter(name_2 %in% input$district7)
      }
 
 
@@ -1114,6 +1131,199 @@ output$distribution_plot_5 <- shiny::renderPlot({
      write.csv(filteredData7(), file)
    }
  )
+
+# plot 1 from the filtered data
+output$plot_7_1 <-
+
+  shiny::renderPlot({
+    if(input$comparison_level7 == "Continent"){
+
+      filteredData7() %>%
+        tidyr::pivot_longer(dplyr::starts_with("pm"), names_to = "year", values_to = "pm2.5_pollution") %>%
+        dplyr::mutate(year = as.numeric(str_remove(year, "pm"))) %>%
+        dplyr::select(objectid_level:whostandard, year, pm2.5_pollution) %>%
+        dplyr::mutate(year = as.factor(year)) %>%
+        ggplot2::ggplot() +
+        ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(continent, pm2.5_pollution), y = pm2.5_pollution, fill = year)) +
+        ggplot2::coord_flip() +
+        ggplot2::facet_wrap(.~year) +
+        ggplot2::labs(x = "Continent", y = expression("Annual Average" ~ PM[2.5] ~ "(in µg/m³)"), title = expression(PM[2.5] ~ "Pollution"),
+             fill = "Year") +
+        viridis::scale_fill_viridis(discrete = TRUE) +
+        ggthemes::theme_clean() +
+        ggplot2::theme(plot.title = element_text(hjust = 0.5),
+              axis.line = element_line(),
+              legend.title = element_text(hjust = 0.5),
+              legend.position = "bottom") %>%
+        return()
+
+
+
+    } else if (input$comparison_level7 == "Country"){
+
+      filteredData7() %>%
+        tidyr::pivot_longer(dplyr::starts_with("pm"), names_to = "year", values_to = "pm2.5_pollution") %>%
+        dplyr::mutate(year = as.numeric(str_remove(year, "pm"))) %>%
+        dplyr::select(objectid_level:natstandard, year, pm2.5_pollution) %>%
+        dplyr::mutate(year = as.factor(year)) %>%
+        ggplot2::ggplot() +
+        ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(country, pm2.5_pollution), y = pm2.5_pollution, fill = year)) +
+        ggplot2::coord_flip() +
+        ggplot2::facet_wrap(.~year) +
+        ggplot2::labs(x = "Country", y = expression("Annual Average" ~ PM[2.5] ~ "(in µg/m³)"), title = expression(PM[2.5] ~ "Pollution"),
+             fill = "Year") +
+        viridis::scale_fill_viridis(discrete = TRUE) +
+        ggthemes::theme_clean() +
+        ggplot2::theme(plot.title = element_text(hjust = 0.5),
+              axis.line = element_line(),
+              legend.title = element_text(hjust = 0.5),
+              legend.position = "bottom") %>%
+        return()
+
+    } else if (input$comparison_level7 == "State"){
+
+      filteredData7() %>%
+        tidyr::pivot_longer(dplyr::starts_with("pm"), names_to = "year", values_to = "pm2.5_pollution") %>%
+        dplyr::mutate(year = as.numeric(str_remove(year, "pm"))) %>%
+        dplyr::select(objectid_level:natstandard, year, pm2.5_pollution) %>%
+        dplyr::mutate(year = as.factor(year)) %>%
+        ggplot2::ggplot() +
+        ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(name_1, pm2.5_pollution), y = pm2.5_pollution, fill = year)) +
+        ggplot2::coord_flip() +
+        ggplot2::facet_wrap(.~year) +
+        ggplot2::labs(x = "State", y = expression("Annual Average" ~ PM[2.5] ~ "(in µg/m³)"), title = expression(PM[2.5] ~ "Pollution"),
+             fill = "Year") +
+        viridis::scale_fill_viridis(discrete = TRUE) +
+        ggthemes::theme_clean() +
+        ggplot2::theme(plot.title = element_text(hjust = 0.5),
+              axis.line = element_line(),
+              legend.title = element_text(hjust = 0.5),
+              legend.position = "bottom") %>%
+        return()
+
+    } else if (input$comparison_level7 == "District"){
+      filteredData7() %>%
+        tidyr::pivot_longer(dplyr::starts_with("pm"), names_to = "year", values_to = "pm2.5_pollution") %>%
+        dplyr::mutate(year = as.numeric(str_remove(year, "pm"))) %>%
+        dplyr::select(objectid_gadm2:natstandard, year, pm2.5_pollution) %>%
+        dplyr::mutate(year = as.factor(year)) %>%
+        ggplot2::ggplot() +
+        ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(name_2, pm2.5_pollution), y = pm2.5_pollution, fill = year)) +
+        ggplot2::coord_flip() +
+        ggplot2::facet_wrap(.~year) +
+        ggplot2::labs(x = "District/County/Prefecture", y = expression("Annual Average" ~ PM[2.5] ~ "(in µg/m³)"), title = expression(PM[2.5] ~ "Pollution"),
+             fill = "Year") +
+        viridis::scale_fill_viridis(discrete = TRUE) +
+        ggthemes::theme_clean() +
+        ggplot2::theme(plot.title = element_text(hjust = 0.5),
+              axis.line = element_line(),
+              legend.title = element_text(hjust = 0.5),
+              legend.position = "bottom") %>%
+        return()
+    }
+  })
+
+
+# plot 2 from the filtered data
+
+output$plot_7_2 <-
+
+  shiny::renderPlot({
+  if(input$comparison_level7 == "Continent"){
+
+    filteredData7() %>%
+      tidyr::pivot_longer(dplyr::starts_with("llpp_who"), names_to = "year", values_to = "lyl_who") %>%
+      dplyr::mutate(year = as.numeric(str_remove(year, "llpp_who_"))) %>%
+      dplyr::select(objectid_level:whostandard, year, lyl_who) %>%
+      dplyr::mutate(year = as.factor(year)) %>%
+      ggplot2::ggplot() +
+      ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(continent, lyl_who), y = lyl_who, fill = year)) +
+      ggplot2::coord_flip() +
+      ggplot2::facet_wrap(.~year) +
+      ggplot2::labs(x = "Continent", y = "Life Years Lost (rel to WHO guideline)", title = "Life Years Lost",
+           fill = "Year") +
+      viridis::scale_fill_viridis(discrete = TRUE) +
+      ggthemes::theme_clean() +
+      ggplot2::theme(plot.title = element_text(hjust = 0.5),
+            axis.line = element_line(),
+            legend.title = element_text(hjust = 0.5),
+            legend.position = "bottom") %>%
+      return()
+
+
+
+  } else if (input$comparison_level7 == "Country"){
+
+    filteredData7() %>%
+      tidyr::pivot_longer(dplyr::starts_with("llpp_who"), names_to = "year", values_to = "lyl_who") %>%
+      dplyr::mutate(year = as.numeric(str_remove(year, "llpp_who_"))) %>%
+      dplyr::select(objectid_level:natstandard, year, lyl_who) %>%
+      dplyr::mutate(year = as.factor(year)) %>%
+      ggplot2::ggplot() +
+      ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(country, lyl_who), y = lyl_who, fill = year)) +
+      ggplot2::coord_flip() +
+      ggplot2::facet_wrap(.~year) +
+      ggplot2::labs(x = "Country", y = "Life Years Lost (rel to WHO guideline)", title = "Life Years Lost",
+           fill = "Year") +
+      viridis::scale_fill_viridis(discrete = TRUE) +
+      ggthemes::theme_clean() +
+      ggplot2::theme(plot.title = element_text(hjust = 0.5),
+            axis.line = element_line(),
+            legend.title = element_text(hjust = 0.5),
+            legend.position = "bottom") %>%
+      return()
+
+
+  } else if (input$comparison_level7 == "State"){
+
+    filteredData7() %>%
+      tidyr::pivot_longer(dplyr::starts_with("llpp_who"), names_to = "year", values_to = "lyl_who") %>%
+      dplyr::mutate(year = as.numeric(str_remove(year, "llpp_who_"))) %>%
+      dplyr::select(objectid_level:natstandard, year, lyl_who) %>%
+      dplyr::mutate(year = as.factor(year)) %>%
+      ggplot2::ggplot() +
+      ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(name_1, lyl_who), y = lyl_who, fill = year)) +
+      ggplot2::coord_flip() +
+      ggplot2::facet_wrap(.~year) +
+      ggplot2::labs(x = "State", y = "Life Years Lost (rel to WHO guideline)", title = "Life Years Lost",
+           fill = "Year") +
+      viridis::scale_fill_viridis(discrete = TRUE) +
+      ggthemes::theme_clean() +
+      ggplot2::theme(plot.title = element_text(hjust = 0.5),
+            axis.line = element_line(),
+            legend.title = element_text(hjust = 0.5),
+            legend.position = "bottom") %>%
+      return()
+
+  } else if (input$comparison_level7 == "District"){
+
+    filteredData7() %>%
+      tidyr::pivot_longer(dplyr::starts_with("llpp_who"), names_to = "year", values_to = "lyl_who") %>%
+      dplyr::mutate(year = as.numeric(str_remove(year, "llpp_who_"))) %>%
+      dplyr::select(objectid_gadm2:natstandard, year, lyl_who) %>%
+      dplyr::mutate(year = as.factor(year)) %>%
+      ggplot2::ggplot() +
+      ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(name_2, lyl_who), y = lyl_who, fill = year)) +
+      ggplot2::coord_flip() +
+      ggplot2::facet_wrap(.~year) +
+      ggplot2::labs(x = "District/County/Prefecture", y = "Life Years Lost (rel to WHO guideline)", title = "Life Years Lost",
+           fill = "Year") +
+      viridis::scale_fill_viridis(discrete = TRUE) +
+      ggthemes::theme_clean() +
+      ggplot2::theme(plot.title = element_text(hjust = 0.5),
+            axis.line = element_line(),
+            legend.title = element_text(hjust = 0.5),
+            legend.position = "bottom") %>%
+      return()
+
+  }
+})
+
+
+
+
+
+
 
 
 #---------------------------------------------------------------------------------------
