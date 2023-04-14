@@ -25,11 +25,31 @@ library(data.table)
 
 # global variables
 `%notin%` <- Negate(`%in%`)
+who_guideline <- 5
 
 # read in latest color file
-gadm2_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/gadm2_aqli2021_vit.csv")
-gadm1_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/gadm1_aqli2021_vit.csv")
-gadm0_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/gadm0_aqli2021_vit.csv")
+gadm2_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/[missingAndNAPopRegionsIncorpButViTcolNameChangesPartiallyIncorp]master_global_allyears_gadm2_non_geom.csv")
+gadm1_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/[missingAndNAPopRegionsIncorpButViTcolNameChangesPartiallyIncorp]master_global_allyears_gadm1_non_geom.csv")
+gadm0_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/[missingAndNAPopRegionsIncorpButViTcolNameChangesPartiallyIncorp]master_global_allyears_gadm0_non_geom.csv")
+
+# bringing the colnames back into the format in which our internal dashboard expects it (the above files are in a format in which ViT expects the colnames)
+gadm2_aqli_2021 <- gadm2_aqli_2021 %>%
+  dplyr::rename_with(~str_replace(.x, "who", "llpp_who_"), dplyr::contains("who")) %>%
+  dplyr::rename_with(~str_replace(.x, "nat", "llpp_nat_"), dplyr::contains("nat")) %>%
+  rename(whostandard = llpp_who_standard,
+         natstandard = llpp_nat_standard)
+
+gadm1_aqli_2021 <- gadm1_aqli_2021 %>%
+  dplyr::rename_with(~str_replace(.x, "who", "llpp_who_"), dplyr::contains("who")) %>%
+  dplyr::rename_with(~str_replace(.x, "nat", "llpp_nat_"), dplyr::contains("nat")) %>%
+  rename(whostandard = llpp_who_standard,
+         natstandard = llpp_nat_standard)
+
+gadm0_aqli_2021 <- gadm0_aqli_2021 %>%
+  dplyr::rename_with(~str_replace(.x, "who", "llpp_who_"), dplyr::contains("who")) %>%
+  dplyr::rename_with(~str_replace(.x, "nat", "llpp_nat_"), dplyr::contains("nat")) %>%
+  rename(whostandard = llpp_who_standard,
+         natstandard = llpp_nat_standard)
 
 # read in the shapefile with pollution and lyl data
 # gadm2_aqli_2021_shp <- sf::st_read("./september.2023/master.dataset/shapefiles/master_global_allyears_gadm2_with_geom_Jan192023.shp")
@@ -57,10 +77,8 @@ gadm0_aqli_2021 <- gadm0_aqli_2021 %>%
 countries_with_missing_continent <- gadm0_aqli_2021 %>% filter(is.na(continent)) %>% pull(country) %>% unique()
 
 # continent fill in for missing coutries
-continents_for_missing_countries <- c("Europe", "Asia", "Africa", "North America",
-                                      "Europe", "Oceania", "North America", "Asia", "Asia",
-                                      "Oceania", "Africa", "Africa", "Africa", "South America",
-                                      "Asia")
+continents_for_missing_countries <- c("Africa", "Europe", "North America", "Asia", "Asia",
+                                      "Europe", "Africa", "Africa", "Africa", "Asia")
 
 # [CAUTION: perform a sanity check on the above 2 vectors and how they map countries to continents before proceeding]
 #creating a data frame using the above 2 vectors as columns

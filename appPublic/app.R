@@ -19,7 +19,7 @@ library(DT)
 # source("aqli.data.explorer.helper.script.R")
 
 # loading the .RData file that contain all required data objects
-# save(list = ls(all = TRUE), file= "all.RData")
+# save(list = ls(all = TRUE), file= "./appPublic/all.RData")
 load("all.RData", .GlobalEnv)
 
 # Define UI
