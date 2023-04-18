@@ -36,11 +36,13 @@ knitr::opts_chunk$set(
     
     * Besides this, the root contains the `README` Rmd and md files, **NAMESPACE** file, **DESCRIPTION** file, the **.RProj** (R project           file), **.Rbuildignore** file (things that R ignores while building an R package), **.gitignore** file (things ignored by Git while R        package is  being pushed to Git). 
 
-* Old annual updates can be found in the archive folder. There is one folder for each older annual update and within that folder the repository structure is the same as mentioned above for the latest annual update. As of now, there is nothing in the archive folder. But in the coming years, that is the place where all old annual updates content can be found.
+* Old annual updates can be found in their respective **month.year** folder. There is one folder for each older annual update and within that folder the repository structure is the same as mentioned above for the latest annual update. As of now, the latest report was published in June 2022, that is the first year for which we have data and processes documented on GitHub. But in the coming years, that is the place where all old annual updates content can be found.
 
 * In general, the repository follows the standard R package structure to organize code. At some point, we may convert this into a R package for ease of use.
 
-## Latest Report (Released in June, 2022) Contents
+## Reports published using June 2022, Annual Report data:
+
+* Similar structure as below will be followed in all other annual reports. For each report, the corresponding RMDs can be found in the root of the repo (switch to the apprpriate branch to get the latest version of the RMDs).
 
 * This year we have published our content in types of formats: 
     
@@ -48,17 +50,21 @@ knitr::opts_chunk$set(
     * Factsheets (region specific factsheets)
     * Top 10 charts campaign (special focus on the top charts of the report)
     
-* All of the above content (graph wise) can be found in the **june.2022** folder, which is present at the root of the `annual.updates` repository. Apart from this, all in one report wise content can be accesed in the individual report wise .Rmds which are also present at the root of the `annal.updates` repository.  
+* All of the above content (graph wise) can be found in the **june.2022** folder, which is present at the root of the `annual.updates` repository. Apart from this, all in one report wise content can be accesed in the individual report wise .Rmds which are also present at the root of the `annual.updates` repository.  
 
 * In the **june.2022** folder, there are two other folders that are important. These are:
 
     *  **master.dataset**: this contains the master color files for different years, especially the latest year. This color file is the             output of the AQLI backend process and is used to make "almost" all calculation in the AQLI reports.
       
     *  **other.important.calculations.data**: This folder contains some other "side" (differentiating them from the main color dataset)             dataset that are used to make certain calculations for the annual report.
+    
+    
+## Reports published using September, 2023, annual report data (coming soon!)
+
       
 ## Important Note
 
-* Some of the AQLI backend processes (i.e. the processes that output the color file master dataset) and also some side processes (e.g. GBD calculations that go into some figures) are not yet documented in this repository. But, we plan to add this to the repository in the coming months.
+* Some of the AQLI backend processes (i.e. the processes that output the color file master dataset) and also some side processes (e.g. GBD calculations that go into some figures) are not yet documented in this repository. But, we plan to add this to the repository in the future.
 
 
 
