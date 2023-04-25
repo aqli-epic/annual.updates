@@ -387,7 +387,6 @@ ar_fig7 <- ar_fig7_dataset %>%
   ggthemes::theme_clean() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5), legend.position = "none") 
 
-
 # Save AR figure 7
 ggsave("./june.2022/annual.report/figure7.data.graph.code/ar_fig7.png", ar_fig7)
 ```

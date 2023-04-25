@@ -59,7 +59,7 @@ knitr::opts_chunk$set(
     *  **other.important.calculations.data**: This folder contains some other "side" (differentiating them from the main color dataset)             dataset that are used to make certain calculations for the annual report.
     
     
-## Reports published using September, 2023, annual report data (coming soon!)
+## Reports published using September, 2023, annual report data (coming soon!)   
 
       
 ## Important Note

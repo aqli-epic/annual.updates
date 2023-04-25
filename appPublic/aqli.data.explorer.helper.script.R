@@ -32,6 +32,17 @@ gadm2_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.upda
 gadm1_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/[missingAndNAPopRegionsIncorpButViTcolNameChangesPartiallyIncorp]master_global_allyears_gadm1_non_geom.csv")
 gadm0_aqli_2021 <- readr::read_csv("C:/Users/Aarsh/Desktop/aqli-epic/annual.updates/september.2023/master.dataset/[missingAndNAPopRegionsIncorpButViTcolNameChangesPartiallyIncorp]master_global_allyears_gadm0_non_geom.csv")
 
+# updating the natstandard column (replacing 0's with NAs, corresponding llpp_nat columns already have NAs whereever natstandard is not available)
+gadm2_aqli_2021 <- gadm2_aqli_2021 %>%
+  dplyr::mutate(natstandard = ifelse(natstandard == 0, NA, natstandard))
+
+gadm1_aqli_2021 <- gadm1_aqli_2021 %>%
+  dplyr::mutate(natstandard = ifelse(natstandard == 0, NA, natstandard))
+
+gadm0_aqli_2021 <- gadm0_aqli_2021 %>%
+  dplyr::mutate(natstandard = ifelse(natstandard == 0, NA, natstandard))
+
+
 # bringing the colnames back into the format in which our internal dashboard expects it (the above files are in a format in which ViT expects the colnames)
 gadm2_aqli_2021 <- gadm2_aqli_2021 %>%
   dplyr::rename_with(~str_replace(.x, "who", "llpp_who_"), dplyr::contains("who")) %>%
@@ -206,12 +217,18 @@ trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India
 
 #> GADM level summary and Compare Regions tabs function---------------------------------------
 
-gadm_level_summary <- function(df, level_col_name_vec, years){
+gadm_level_summary <- function(df, level_col_name_vec, years, perc_red_by){
 
   pol_col_names <- stringr::str_c("pm", years)
+  pol_col_names_red_to <- stringr::str_c("pm", years, "_reduced_to")
   llpp_who_col_names <- stringr::str_c("llpp_who_", years)
   llpp_nat_col_names <- stringr::str_c("llpp_nat_", years)
+  llpp_pol_red_names <- stringr::str_c("llpp_pol_red_", years)
+  total_lyl_who_columns <- stringr::str_c("total_lyl_who_", years, "_millions")
+  total_lyl_nat_columns <- stringr::str_c("total_lyl_nat_", years, "_millions")
+  total_lyl_pol_red_to_columns <- stringr::str_c("total_lyl_pol_red_", years, "_millions")
 
+# when level  just equal to continent, deal separately, as in this case natstandard column should not be included
 if((level_col_name_vec[1] == "continent") & (length(level_col_name_vec) == 1)){
  aqli_wide <- df %>%
     dplyr::group_by_at(level_col_name_vec) %>%
@@ -225,19 +242,34 @@ if((level_col_name_vec[1] == "continent") & (length(level_col_name_vec) == 1)){
                   objectid_level = objectid_gadm2) %>%
     dplyr::rename_with(~str_replace_all(.x, "(_pop_weighted)|(avg_)", ""), dplyr::contains("_pop_weighted")) %>%
     dplyr::mutate(across(starts_with("pm"), (~(.x - whostandard)*le_constant), .names = "llpp_who_{col}")) %>%
+   dplyr::mutate(across(starts_with("pm"), (~round((.x*((perc_red_by)/100)), 1)*le_constant), .names = "llpp_pol_red_{col}")) %>%
     dplyr::mutate(across(starts_with("llpp"), ~ifelse(.x < 0, 0, .x))) %>%
     dplyr::select(objectid_level, iso_alpha3, all_of(level_col_name_vec), population, whostandard, dplyr::everything()) %>%
     dplyr::rename_with(~str_replace(.x, "pm", ""), dplyr::contains("llpp")) %>%
     dplyr::mutate(across(dplyr::matches("pm|llpp"), ~(round(.x, 1)), .names = "{col}")) %>%
    dplyr::ungroup() %>%
-   dplyr::select(objectid_level:whostandard, all_of(c(pol_col_names, llpp_who_col_names)))
+   dplyr::mutate(across(dplyr::matches("llpp_who"), ~round((population*.x)/1000000, 1), .names = "total_{col}_millions")) %>%
+   dplyr::mutate(across(dplyr::matches("llpp_pol_red"), ~round((population*.x)/1000000, 1), .names = "total_{col}_millions")) %>%
+   dplyr::rename_with(~str_replace_all(.x, "llpp", "lyl"), dplyr::contains("total_llpp")) %>%
+   dplyr::mutate(across(dplyr::matches("pm"), ~.x - (round((.x)*(perc_red_by/100), 1)), .names = "{col}_reduced_to")) %>%
+   dplyr::select(objectid_level:whostandard, all_of(c(pol_col_names, pol_col_names_red_to, llpp_who_col_names, llpp_pol_red_names, total_lyl_who_columns, total_lyl_pol_red_to_columns)))
 
  return(aqli_wide)
 
 } else if(("name_2" %in% level_col_name_vec)){
     if((which(level_col_name_vec == "name_2") > 2)){
       aqli_wide <- df %>%
-        dplyr::select(objectid_gadm2:natstandard, continent, all_of(c(pol_col_names, llpp_who_col_names, llpp_nat_col_names)))
+        dplyr::mutate(across(starts_with("pm"), (~round((.x*((perc_red_by)/100)), 1)*le_constant), .names = "llpp_pol_red_{col}")) %>%
+        dplyr::mutate(across(starts_with("llpp"), ~ifelse(.x < 0, 0, .x))) %>%
+        dplyr::rename_with(~str_replace(.x, "pm", ""), dplyr::contains("llpp")) %>%
+        dplyr::mutate(across(dplyr::matches("pm|llpp"), ~(round(.x, 1)), .names = "{col}")) %>%
+        dplyr::mutate(across(dplyr::matches("llpp_who"), ~round((population*.x)/1000000, 1), .names = "total_{col}_millions")) %>%
+        dplyr::mutate(across(dplyr::matches("llpp_nat"), ~round((population*.x)/1000000, 1), .names = "total_{col}_millions")) %>%
+        dplyr::mutate(across(dplyr::matches("llpp_pol_red"), ~round((population*.x)/1000000, 1), .names = "total_{col}_millions")) %>%
+        dplyr::rename_with(~str_replace_all(.x, "llpp", "lyl"), dplyr::contains("total_llpp")) %>%
+        dplyr::mutate(across(dplyr::matches("pm"), ~.x - (round((.x)*(perc_red_by/100), 1)), .names = "{col}_reduced_to")) %>%
+        dplyr::select(objectid_gadm2:natstandard, continent, all_of(c(pol_col_names, pol_col_names_red_to, llpp_who_col_names, llpp_nat_col_names, llpp_pol_red_names, total_lyl_who_columns,
+                                                                      total_lyl_nat_columns, total_lyl_pol_red_to_columns)))
     }
 
   return(aqli_wide)
@@ -255,6 +287,7 @@ if((level_col_name_vec[1] == "continent") & (length(level_col_name_vec) == 1)){
                   objectid_level = objectid_gadm2) %>%
     dplyr::rename_with(~str_replace_all(.x, "(_pop_weighted)|(avg_)", ""), dplyr::contains("_pop_weighted")) %>%
     dplyr::mutate(across(starts_with("pm"), (~(.x - whostandard)*le_constant), .names = "llpp_who_{col}")) %>%
+    dplyr::mutate(across(starts_with("pm"), (~round((.x*((perc_red_by)/100)), 1)*le_constant), .names = "llpp_pol_red_{col}")) %>%
     dplyr::mutate(across(starts_with("pm"), (~(.x - natstandard)*le_constant), .names = "llpp_nat_{col}")) %>%
     dplyr::mutate(across(starts_with("llpp"), ~ifelse(.x < 0, 0, .x))) %>%
     dplyr::mutate(across(starts_with("llpp_nat"), ~ifelse(natstandard == 0, NA, .x))) %>%
@@ -262,13 +295,159 @@ if((level_col_name_vec[1] == "continent") & (length(level_col_name_vec) == 1)){
     dplyr::rename_with(~str_replace(.x, "pm", ""), dplyr::contains("llpp")) %>%
     dplyr::mutate(across(dplyr::matches("pm|llpp"), ~(round(.x, 1)), .names = "{col}")) %>%
     dplyr::ungroup() %>%
-    dplyr::select(objectid_level:natstandard, all_of(c(pol_col_names, llpp_who_col_names, llpp_nat_col_names)))
+    dplyr::mutate(across(dplyr::matches("llpp_who"), ~round((population*.x)/1000000, 1), .names = "total_{col}_millions")) %>%
+    dplyr::mutate(across(dplyr::matches("llpp_nat"), ~round((population*.x)/1000000, 1), .names = "total_{col}_millions")) %>%
+    dplyr::mutate(across(dplyr::matches("llpp_pol_red"), ~round((population*.x)/1000000, 1), .names = "total_{col}_millions")) %>%
+    dplyr::rename_with(~str_replace_all(.x, "llpp", "lyl"), dplyr::contains("total_llpp")) %>%
+    dplyr::mutate(across(dplyr::matches("pm"), ~.x - (round((.x)*(perc_red_by/100), 1)), .names = "{col}_reduced_to")) %>%
+    dplyr::select(objectid_level:natstandard, all_of(c(pol_col_names, pol_col_names_red_to, llpp_who_col_names, llpp_nat_col_names, llpp_pol_red_names, total_lyl_who_columns,
+                                                       total_lyl_nat_columns, total_lyl_pol_red_to_columns)))
 
   return(aqli_wide)
 
    }
 }
 
+# CH China data request----
+
+china_pm2.5_data <- gadm_level_summary(gadm2_aqli_2021, c("continent", "country", "name_1", "name_2"), c(1998:2021), 10) %>%
+  filter(country == "China")
+
+# pol 2020
+china_pm2.5_data %>%
+  filter(name_1 == "Hebei") %>%
+  select(objectid_gadm2:pm2021) %>%
+  tidyr::pivot_longer(dplyr::starts_with("pm"), names_to = "year", values_to = "pm2.5_pollution") %>%
+  dplyr::mutate(year = as.numeric(str_remove(year, "pm"))) %>%
+  dplyr::select(objectid_gadm2:natstandard, year, pm2.5_pollution) %>%
+  dplyr::mutate(year = as.factor(year)) %>%
+  filter(year == 2020) %>%
+  ggplot2::ggplot() +
+  ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(name_2, pm2.5_pollution), y = pm2.5_pollution, fill = pm2.5_pollution), width = 0.7) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(x = "City", y = expression(paste("2020 Annual Average PM"[2.5], " (in ", mu, "g/m"^"3", ")")),
+                title = expression("2020" ~ PM[2.5] ~ "Pollution comparion"),
+                subtitle = "(All cities of Hebei Province, China)",
+                fill = expression(paste("Annual Average PM"[2.5], " (in ", mu, "g/m"^"3", ")"))) +
+  ggthemes::theme_hc() +
+  ggplot2::theme(plot.title = element_text(hjust = 0.5),
+                 axis.line = element_line(),
+                 legend.title = element_text(hjust = 0.5),
+                 legend.position = "none") +
+  scale_fill_gradient2(
+    low = "#CBE8F3",
+    mid = "#8FA1AD",
+    high = "#1C2B39",
+    midpoint = .5
+  ) +
+  theme(plot.title = element_text(size = 13),
+        plot.subtitle = element_text(size = 8, hjust = 0.5)) +
+  scale_y_continuous(breaks = seq(0, 60, 10))
+
+# lyl who 2020
+china_pm2.5_data %>%
+  filter(name_1 == "Hebei") %>%
+  select(objectid_gadm2:natstandard, starts_with("llpp_who_")) %>%
+  tidyr::pivot_longer(dplyr::starts_with("llpp_who_"), names_to = "year", values_to = "lyl_who") %>%
+  dplyr::mutate(year = as.numeric(str_remove(year, "llpp_who_"))) %>%
+  dplyr::select(objectid_gadm2:natstandard, year, lyl_who) %>%
+  dplyr::mutate(year = as.factor(year)) %>%
+  filter(year == 2020) %>%
+  ggplot2::ggplot() +
+  ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(name_2, lyl_who), y = lyl_who, fill = lyl_who), width = 0.7) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(x = "City", y = expression(paste("Life Years Lost relative to WHO PM"[2.5], " guideline (5 ", mu, "g/m"^"3", ")")),
+                title = "Life Years Lost to air pollution in 2020",
+                subtitle = "(All cities of Hebei Province, China)",
+                fill = "Life Years Lost",
+                caption = expression("*Note that the WHO" ~ PM[2.5] ~ "guideline is an annual average.")) +
+  ggthemes::theme_hc() +
+  ggplot2::theme(plot.title = element_text(hjust = 0.5),
+                 axis.line = element_line(),
+                 legend.title = element_text(hjust = 0.5),
+                 legend.position = "none") +
+  scale_fill_gradient2(
+    low = "#FFE6B3",
+    mid = "#FF9600",
+    high = "#8C130E",
+    midpoint = .5
+  ) +
+  theme(plot.title = element_text(size = 13),
+        plot.subtitle = element_text(size = 8, hjust = 0.5),
+        axis.title = element_text(size = 9),
+        plot.caption = element_text(hjust = 0, size = 6)) +
+  scale_y_continuous(breaks = seq(0, 6, 1))
 
 
+# lyl nat 2020
+
+china_pm2.5_data %>%
+  filter(name_1 == "Hebei") %>%
+  select(objectid_gadm2:natstandard, starts_with("llpp_nat_")) %>%
+  tidyr::pivot_longer(dplyr::starts_with("llpp_nat_"), names_to = "year", values_to = "lyl_nat") %>%
+  dplyr::mutate(year = as.numeric(str_remove(year, "llpp_nat_"))) %>%
+  dplyr::select(objectid_gadm2:natstandard, year, lyl_nat) %>%
+  dplyr::mutate(year = as.factor(year)) %>%
+  filter(year == 2020) %>%
+  ggplot2::ggplot() +
+  ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(name_2, lyl_nat), y = lyl_nat, fill = lyl_nat), width = 0.7) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(x = "City", y = expression(paste("Life Years Lost relative to National PM"[2.5], " guideline (35 ", mu, "g/m"^"3", ")")),
+                title = "Life Years Lost to air pollution in 2020",
+                subtitle = "(All cities of Hebei Province, China)",
+                fill = "Life Years Lost",
+                caption = str_wrap("*Note that the China PM2.5 guideline specified above is an annual average. All, but 3 cities of Hebei province
+                have pollution levels above national standards.", 50)) +
+  ggthemes::theme_hc() +
+  ggplot2::theme(plot.title = element_text(hjust = 0.5),
+                 axis.line = element_line(),
+                 legend.title = element_text(hjust = 0.5),
+                 legend.position = "none") +
+  scale_fill_gradient2(
+    low = "#FFE6B3",
+    mid = "#FF9600",
+    high = "#8C130E",
+    midpoint = .5
+  ) +
+  theme(plot.title = element_text(size = 13),
+        plot.subtitle = element_text(size = 8, hjust = 0.5),
+        axis.title = element_text(size = 9),
+        plot.caption = element_text(hjust = 0, size = 6)) +
+  scale_y_continuous(breaks = seq(0, 3, 0.5))
+
+
+# trendlines
+
+foo <- gadm2_aqli_2021 %>%
+  dplyr::filter(country == "China", name_1 == "Hebei", name_2 == "Shijiazhuang") %>%
+  dplyr::group_by(country, name_1, name_2) %>%
+  dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE),
+                mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  dplyr::summarise(across(ends_with("weighted"), sum)) %>%
+  tidyr::pivot_longer(cols = pm1998_weighted:pm2021_weighted , names_to = "years",
+                      values_to = "pop_weighted_avg_pm2.5") %>%
+  dplyr::mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+                region = "District Average") %>%
+  dplyr::select(years, region, pop_weighted_avg_pm2.5) %>%
+  filter(years < 2021)
+
+foo %>%
+  ggplot2::ggplot() +
+  ggplot2::geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1,
+                     color = "darkred") +
+  ggplot2::scale_x_continuous(breaks = seq(1998, 2021, 2)) +
+  # scale_y_continuous(breaks = seq(0, max(trendlines_aqli_data$pop_weighted_avg_pm2.5), 10)) +
+  ggthemes::theme_clean() +
+  ggplot2::labs(x = "Years",
+                y = expression(paste("Annual Average PM"[2.5], " (in ", mu, "g/m"^"3", ")")),
+                title = expression("Annual average" ~ PM[2.5] ~ "in Shijiazhuang from 1998 to 2020")) +
+  ggplot2::theme(legend.position = "bottom", legend.title = element_blank(),
+                 legend.text = element_text(size = 7),
+                 axis.title.y = element_text(size = 9),
+                 axis.title.x = element_text(size = 9)) +
+  scale_y_continuous(breaks = seq(0, 110, 10), limits = c(0, 110)) +
+  theme(plot.title = element_text(size = 11, hjust = 0.5),
+        plot.subtitle = element_text(size = 8, hjust = 0.5),
+        axis.title = element_text(size = 9),
+        plot.caption = element_text(hjust = 0, size = 6))
 
