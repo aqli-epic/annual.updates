@@ -120,6 +120,31 @@ first_year <- 1998
 # global operations
 `%notin%` <- Negate(`%in%`)
 
+#> other region wise defintions
+
+# central africa definition
+central_african_countries <- c("Angola", "Burundi", "Cameroon",
+                               "Central African Republic", "Chad",
+                               "Republic of Congo",
+                               "Democratic Republic of the Congo",
+                               "Equatorial Guinea", "Gabon",
+                               "São Tomé and Príncipe",
+                               "Rwanda")
+# west africa definition
+west_african_countries <- c("Benin", "Burkina Faso", "Cape Verde",
+                            "Gambia", "Ghana", "Guinea", "Guinea-Bissau",
+                            "Côte d'Ivoire", "Liberia", "Mali", "Mauritania",
+                            "Niger", "Nigeria", "Senegal", "Sierra Leone",
+                            "Togo")
+
+# central and west africa countries definition, combine in a single vector
+central_and_west_african_countries <- c(central_african_countries, west_african_countries)
+
+# South East Asia definition
+se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia", "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", "Vietnam")
+
+
+
 # trendlines tab graph function-----------------------------------
 
 trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India", state_name = "NCT of Delhi", district_name = "NCT of Delhi", start_year, end_year){
