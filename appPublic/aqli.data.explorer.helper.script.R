@@ -18,6 +18,7 @@ library(sf)
 library(usethis)
 library(devtools)
 library(data.table)
+library(svglite)
 
 # load and document to keep things updated
 # devtools::load_all()
@@ -63,7 +64,10 @@ gadm0_aqli_2021 <- gadm0_aqli_2021 %>%
          natstandard = llpp_nat_standard)
 
 # read in the shapefile with pollution and lyl data
-# gadm2_aqli_2021_shp <- sf::st_read("./september.2023/master.dataset/shapefiles/master_global_allyears_gadm2_with_geom_Jan192023.shp")
+gadm2_aqli_2021_shp <- sf::st_read("./september.2023/master.dataset/shapefiles/master_global_allyears_gadm2_with_geom_Jan192023.shp")
+
+# india state
+india_state <- st_read("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/india_state.shp")
 
 #> join each one of these with the country continent file, so that each one of these has a continent column
 
@@ -119,6 +123,42 @@ first_year <- 1998
 
 # global operations
 `%notin%` <- Negate(`%in%`)
+
+#> gbd results-----------
+
+# gbd results india
+gbd_results_india <- readxl::read_excel("./september.2023/gbd.calculation/GBDComparisons/results/estimated_life_expectancy_differences_India.xlsx")
+
+
+
+#> other region wise defintions
+
+# central africa definition
+central_african_countries <- c("Angola", "Burundi", "Cameroon",
+                               "Central African Republic", "Chad",
+                               "Republic of Congo",
+                               "Democratic Republic of the Congo",
+                               "Equatorial Guinea", "Gabon",
+                               "São Tomé and Príncipe",
+                               "Rwanda")
+# west africa definition
+west_african_countries <- c("Benin", "Burkina Faso", "Cape Verde",
+                            "Gambia", "Ghana", "Guinea", "Guinea-Bissau",
+                            "Côte d'Ivoire", "Liberia", "Mali", "Mauritania",
+                            "Niger", "Nigeria", "Senegal", "Sierra Leone",
+                            "Togo")
+
+# central and west africa countries definition, combine in a single vector
+central_and_west_african_countries <- c(central_african_countries, west_african_countries)
+
+# South East Asia definition
+se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia", "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", "Vietnam")
+
+# indo gangetic plains states
+
+indo_gangetic_plains_states <- c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Haryana",
+                                 "Punjab", "Chandigarh", "West Bengal")
+
 
 # trendlines tab graph function-----------------------------------
 

@@ -29,13 +29,26 @@ library(devtools)
 library(stringr)
 library(forcats) # for reordering bar graphs within a plot
 library(cowplot) # for inset plots
+library(ggbeeswarm)
 
 # load and document to keep things updated
-devtools::load_all()
-devtools::document()
+# devtools::load_all()
+# devtools::document()
 
 # read in latest color file
-color_2021 <- read_csv("./september.2023/master.dataset/gadm2_aqli2021_vit.csv")
+color_2021 <- read_csv("./september.2023/master.dataset/[missingAndNAPopRegionsIncorpButViTcolNameChangesPartiallyIncorp]master_global_allyears_gadm2_non_geom.csv")
+
+# updating the natstandard column (replacing 0's with NAs, corresponding llpp_nat columns already have NAs whereever natstandard is not available)
+color_2021 <- color_2021 %>%
+  dplyr::mutate(natstandard = ifelse(natstandard == 0, NA, natstandard))
+
+# bringing the colnames back into the format in which our internal dashboard expects it (the above files are in a format in which ViT expects the colnames)
+color_2021 <- color_2021 %>%
+  dplyr::rename_with(~str_replace(.x, "who", "llpp_who_"), dplyr::contains("who")) %>%
+  dplyr::rename_with(~str_replace(.x, "nat", "llpp_nat_"), dplyr::contains("nat")) %>%
+  rename(whostandard = llpp_who_standard,
+         natstandard = llpp_nat_standard)
+
 
 #> read in color map shape file for 2021
 colormap_shp_2021 <- st_read("./september.2023/master.dataset/shapefiles/master_global_allyears_gadm2_with_geom_Jan192023.shp")
@@ -54,7 +67,17 @@ colormap_shp_2021 <- st_read("./september.2023/master.dataset/shapefiles/master_
 # ncap_budget_tracker <- read_csv("./june.2022/clean.air.countdown.campaign.2023/input/ncap_budget_tracker_data.csv")
 
 # NCAP city, districts, state list 
-ncap_regions_list <- read_csv("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/ncap_cities_district_state_long.csv")
+ncap_regions_list <- read_csv("./september.2023/ncap.report.series.part.1/ncap_cities_district_state_long_updated_March_2023.csv")
+
+# Also loading in the NCAP 102 cities old list that I recently (March, 2023) recompiled to calculate some stats in the report
+ncap_102_cities_old_list <- read_csv("./september.2023/ncap.report.series.part.1/ncap_cities_district_state_102_cities_list.csv")
+
+
+# India city level population data (124 NCAP cities + 7 non-attainment cities) and drop other_info column
+ncap_city_level_population_census_2011 <- read_csv("./september.2023/ncap.report.series.part.1/india_city_pop_data_census_wikipedia.csv")
+
+ncap_city_level_population_census_2011 <- ncap_city_level_population_census_2011 %>%
+  select(-other_info)
 
 # AQLI district level data classified as Rural/Urban using CSE's classification
 # aqli_2020_district_level_rural_urban_subset <- read_csv("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/aqli_2020_district_level_rural_urban_subset.csv")
@@ -69,6 +92,13 @@ le_constant <- 0.098
 
 # global operations
 `%notin%` <- Negate(`%in%`)
+
+# NCAP target (as of March 05, 2023): 40 percent reduction by 2026 relative to 2017
+rel_to_year <- 2017
+red_perc <- 40
+
+# India national annual average PM2.5 standard (as in March, 2023)
+nat_pm2.5_stan_india <- 40
 
 
 ```
@@ -102,6 +132,78 @@ ncap_analysis_dataset <- ncap_regions_list %>%
 
 ```
 
+# "[NO LONGER IN USE]" Getting city level population data from Census 2011
+
+```{r eval=FALSE, include=FALSE}
+census_2011 <- readxl::read_xlsx("./A-1_NO_OF_VILLAGES_TOWNS_HOUSEHOLDS_POPULATION_AND_AREA.xlsx")
+
+# cleaning column names, making them: lowercase, spaces relaced with underscores, brackets removed
+colnames(census_2011) <- census_2011[1, ]
+colnames(census_2011) <- str_to_lower(colnames(census_2011))
+colnames(census_2011) <- str_replace_all(colnames(census_2011), "/", "")
+colnames(census_2011) <- str_replace_all(colnames(census_2011), "\\(", "") 
+colnames(census_2011) <- str_replace_all(colnames(census_2011), "\\)", "") 
+colnames(census_2011) <- str_replace_all(colnames(census_2011), "-", "") 
+colnames(census_2011) <- str_replace_all(colnames(census_2011), "\\.", "")
+colnames(census_2011) <- str_replace_all(colnames(census_2011),  " ", "_") 
+
+
+# adding subcolumn names
+colnames(census_2011)[7] <- "number_of_villages_inhabited" 
+colnames(census_2011)[8] <- "number_of_villages_uninhabited"
+colnames(census_2011)[11] <- "population_persons"
+colnames(census_2011)[12] <- "population_males"
+colnames(census_2011)[13] <- "population_females"
+colnames(census_2011)[6] <- "total_rural_urban"
+colnames(census_2011)[14] <- "area_in_sq_km"
+
+# removing redundant column names
+census_2011 <- census_2011[4:nrow(census_2011), ]
+census_2011 <- as_tibble(census_2011)
+
+
+# census 2011 subset
+census_2011_subset <- census_2011 %>%
+  filter(india_state_union_territory_district_subdistrict == "SUB-DISTRICT", 
+         total_rural_urban == "Total")
+
+# checking how many of ncap analysis dataset city names are available in census 2011 (after converting to lower case)
+
+ncap_df_city_names <- unique(str_to_lower(ncap_analysis_dataset$city))
+census_2011_names <- unique(str_to_lower(census_2011$name))
+census_2011_subset_names <- unique(str_to_lower(census_2011_subset$name)) 
+
+sum(ncap_df_city_names %in% census_2011_names) # 85
+sum(ncap_df_city_names %in% census_2011_subset_names) # 61
+```
+
+
+
+# "[NO LONGER IN USE]" Getting city level population data from the Wikipedia article that links back to a Census 2011 data table (as the raw data from Census did not have all the NCAP cities population information in it)
+
+```{r eval=FALSE, include=FALSE}
+
+census_2011_wiki <- read_csv("./india_city_pop_data_census_wikipedia.csv")
+census_2011_wiki$city <- str_to_lower(census_2011_wiki$city)
+# 
+# census_2011_wiki_names <- unique(str_to_lower(census_2011_wiki$city))
+# 
+# indices_city_pop_not_avail <- which(ncap_df_city_names %notin% census_2011_wiki_names)
+# city_pop_not_avail_rows <- ncap_analysis_dataset[indices_city_pop_not_avail, ] 
+# 
+# sum(unique(str_to_lower(city_pop_not_avail_rows$city)) %in% census_2011_subset_names)
+
+# adding a new city pop column after converting city names to lower case
+ncap_analysis_dataset$city <- str_to_lower(ncap_analysis_dataset$city)
+
+ncap_analysis_dataset <- ncap_analysis_dataset %>%
+  left_join(census_2011_wiki %>% select(city, pop_2011), by = "city")
+
+ncap_analysis_dataset %>%
+  select(country, name_1, name_2, city, pop_2011) %>%
+  write_csv("city_wise_pop_43_missing.csv")
+
+```
 
 
 
@@ -112,1006 +214,982 @@ ncap_analysis_dataset <- ncap_regions_list %>%
 
 
 
+# Reading in the city level population data, compiled partly (~80/131) using the city level Census 2011 population referred to in this article: https://en.wikipedia.org/wiki/List_of_cities_in_India_by_population and the rest using manual Google searches. It happens to be the case that a lot of cities have the same name as their district or tehsil and also the census raw data naming scheme/categorization seemed ambiguous (as in, for a lot of cases we were unsure if the population number refers to the city or the district). This is why, for a chunk of these, instead of cleaning the census 2011 data ourselves, we decided to refer to someone else's cleaned compilation who might have dug in a little bit more into this, compared to us. 
+
+```{r city_level_pop_data}
+
+# convert the city column of the ncap analysis data to lower case (to join with city level population)
+ncap_analysis_dataset$city <- str_to_lower(ncap_analysis_dataset$city)
+
+# join ncap analysis data with city level population data, using the city column
+final_analysis_dataset <- ncap_analysis_dataset %>%
+  left_join(ncap_city_level_population_census_2011, by = c("country", "name_1", "name_2", "city"))
+
+# rename the aqli population column to pop_district and rename the census 2011 pop_2011_city column to  "population"
+
+final_analysis_dataset <- final_analysis_dataset %>%
+  rename(population_district = population, 
+         population = pop_2011_city)
+
+# convert the city column to title case, reorder columns and the data is ready for plotting.
+final_analysis_dataset <- final_analysis_dataset %>%
+  mutate(city = str_to_title(city)) %>%
+  select(objectid_gadm2:city, population, population_district, everything())
+
+# Replace Nct Of Delhi in final analysis dataset with NCT of Delhi
+final_analysis_dataset <- final_analysis_dataset %>%
+  mutate(city = ifelse(city == "Nct Of Delhi", "NCT of Delhi", city))
+
+#-------------------------------------
+
+#> getting the old NCAP cities list ready (similar to the above final analysis dataset)
+ncap_102_cities_old_list <- ncap_102_cities_old_list %>%
+    mutate(state_ut = ifelse(state_ut == "Jammu & Kashmir", "Jammu and Kashmir", state_ut), 
+         state_ut = ifelse((state_ut == "Punjab") & (district == "Chandigarh"), "Chandigarh", state_ut)) 
+
+# joiing the 102 cities data with the color file
+ncap_102_cities_old_list <- ncap_102_cities_old_list %>%
+  left_join(color_2021_ncap_states, by = c("state_ut" = "name_1", "district" = "name_2")) %>%
+  select(state_ut, district, city, everything()) %>%
+  rename(name_1 = state_ut, name_2 = district) %>%
+  select(-c(district_option2, other_1, comments)) %>%
+  select(objectid_gadm2, iso_alpha3, country, name_1, name_2, everything()) 
+
+# convert city column to lower case
+ncap_102_cities_old_list$city <- str_to_lower(ncap_102_cities_old_list$city)
+
+# add population
+final_analysis_dataset_102_cities <- ncap_102_cities_old_list %>%
+  left_join(ncap_city_level_population_census_2011, by = c("country", "name_1", "name_2", "city"))
+
+# rename the aqli population column to pop_district and rename the census 2011 pop_2011_city column to  "population"
+
+final_analysis_dataset_102_cities <- final_analysis_dataset_102_cities %>%
+  rename(population_district = population, 
+         population = pop_2011_city)
+
+# convert the city column to title case, reorder columns and the data is ready for plotting.
+final_analysis_dataset_102_cities <- final_analysis_dataset_102_cities %>%
+  mutate(city = str_to_title(city)) %>%
+  select(objectid_gadm2:city, population, population_district, everything())
+
+# Replace Nct Of Delhi in final analysis dataset with NCT of Delhi
+final_analysis_dataset_102_cities <- final_analysis_dataset_102_cities %>%
+  mutate(city = ifelse(city == "Nct Of Delhi", "NCT of Delhi", city))
+
+# assign Dera Bassi to Punjab and remove Sangareddy from Telangana (then total count = 102).
+
+final_analysis_dataset_102_cities <- final_analysis_dataset_102_cities %>%
+  mutate(name_1 = ifelse(city == "Dera Bassi", "Punjab", name_1)) %>%
+  filter(city != "Sangareddy")
+
+# Adding the population for Tuticorin (to both 131 and 102 cities dataset) separately, which apparently is missing
+final_analysis_dataset <- final_analysis_dataset %>%
+  mutate(population = ifelse((name_1 == "Tamil Nadu" & name_2 == "Thoothukudi" & city == "Tuticorin"), 237830, population))
+
+final_analysis_dataset_102_cities <- final_analysis_dataset_102_cities %>%
+  mutate(population = ifelse((name_1 == "Tamil Nadu" & name_2 == "Thoothukudi" & city == "Tuticorin"), 237830, population))
 
 
 
+#--------------------------------------
+  
+
+```
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Figure 1: Five Indian states with greatest increase in pollution over the past five years
+# Fig 1: PM2.5 concentrations in 10 largest non-attainment cities of India
 
 ```{r fig1}
 
-# five states with greatest increase in pollution over the past five years
-five_states_with_greatest_increase <- color_2020 %>%
-  filter(country == "India") %>%
-  group_by(name_1) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2020*pop_weights, 
-         pm2016_pop_weighted = pm2016*pop_weights) %>%
-  summarise(avg_pm2.5_2016 = sum(pm2016_pop_weighted, na.rm = TRUE), 
-            avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE)) %>%
-  mutate(avg_pm2.5_2020_vs_2016 = avg_pm2.5_2020 - avg_pm2.5_2016, 
-         avg_pm2.5_2020_vs_2016_prop_change = round((avg_pm2.5_2020_vs_2016/avg_pm2.5_2016)*100, 2)) %>%
-  slice_max(avg_pm2.5_2020_vs_2016, n = 5) %>%
-  select(name_1) %>%
-  unlist() %>%
-  as.vector()
+# v1-----------------------------------------------------------------------------------------
 
-
-# figure 1 data
-figure_1_data <-  color_2020 %>%
-  filter(country == "India") %>%
-  group_by(name_1) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2020*pop_weights, 
-         pm2016_pop_weighted = pm2016*pop_weights) %>%
-  summarise(avg_pm2.5_2016 = sum(pm2016_pop_weighted, na.rm = TRUE), 
-            avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE)) %>%
-  mutate(avg_pm2.5_2020_vs_2016 = avg_pm2.5_2020 - avg_pm2.5_2016, 
-         avg_pm2.5_2020_vs_2016_prop_change = round((avg_pm2.5_2020_vs_2016/avg_pm2.5_2016)*100, 2)) %>%
-  filter(name_1 %in% five_states_with_greatest_increase) %>%
-  select(-avg_pm2.5_2020_vs_2016, -avg_pm2.5_2020_vs_2016_prop_change) %>%
-  pivot_longer(avg_pm2.5_2016:avg_pm2.5_2020, names_to = "year", values_to = "pm2.5_pollution")%>% mutate(year = str_extract(str_extract(year, "_\\d+"), "\\d+")) %>%
-  mutate(order_var = ifelse(name_1 == "Daman and Diu", 1, 0), 
-         order_var = ifelse(name_1 == "Gujarat", 2, order_var), 
-         order_var = ifelse(name_1 == "Madhya Pradesh", 3, order_var), 
-         order_var = ifelse(name_1 == "Rajasthan", 4, order_var), 
-         order_var = ifelse(name_1 == "Chhattisgarh", 5, order_var)) 
-
-# figure 1 plot
-figure_1_plot <- figure_1_data %>%
-  ggplot(mapping = aes(x = year, y = pm2.5_pollution, fill = name_1)) +
-  geom_col(width = 0.5, color = "white") +
-  facet_wrap(~fct_reorder(name_1, order_var), ncol = 5) +
-  labs(fill = "State", title = expression("Five Indian states with greatest increase in" ~ PM[2.5] ~ pollution ~ "over the past 5 years"), subtitle = "2016 to 2020") +
-  scale_fill_manual(values = c("Daman and Diu" = "cadetblue1", "Gujarat" = "steelblue1", "Madhya Pradesh" = "steelblue3", "Rajasthan" = "steelblue4" , "Chhattisgarh" = "navyblue")) +
-  ggthemes::theme_clean() +
-  labs(x = "Years", y = expression(Average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")")) +
-  theme(axis.line.x = element_line(), 
-        axis.line.y = element_line(), 
-        strip.text.x = element_text(size = 12), 
-        legend.position = "bottom", 
-        plot.title = element_text(size = 15), 
-        legend.box.background = element_rect(linetype = 1, size = 0.5), 
-        axis.title.y = element_text(size = 12), 
-        axis.title.x = element_text(size = 12),
-        legend.text = element_text(size = 12), 
-        plot.subtitle = element_text(size = 10)) +
-  scale_y_continuous(breaks = seq(0, 70, 10)) +
-  geom_text(mapping = aes(label = round(pm2.5_pollution, 1)), position = position_dodge(width = 1), vjust = -0.25, size = 3.8) 
-
-
-  
-```
+# plot 1 data
+plot1_data <- final_analysis_dataset %>%
+  slice_max(population, n = 10) %>%
+  mutate(pm2017_40_perc_red = pm2017*((100 - red_perc)/100)) %>%
+  mutate(pm2017_25_perc_red = ifelse(city %in% final_analysis_dataset_102_cities$city, pm2017*0.75, NA)) %>%
+  select(country, name_1, name_2, city, population, pm2017, pm2021, pm2017_40_perc_red, pm2017_25_perc_red) %>%
+  slice_max(population, n = 10) %>%
+  pivot_longer(cols = pm2017:pm2017_25_perc_red, names_to = "pol_type", values_to = "value") %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "India", population = 2, pol_type = "pm2017", value = 53.3) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "India", population = 2, pol_type = "pm2017_40_perc_red", value = 46.6) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "India", population = 2, pol_type = "pm2017_25_perc_red", value = 49.1) %>%
+    add_row(country = "", name_1 = "", name_2 = "", 
+          city = "India", population = 2, pol_type = "pm2021", value = 58.7)
 
 
 
 
-
-# Figure 2: Five Indian states with greatest decrease in pollution over the past five years
-
-```{r}
-
-# five states with greatest decrease in pollution over the past five years
-five_states_with_greatest_decrease <- color_2020 %>%
-  filter(country == "India") %>%
-  group_by(name_1) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2020*pop_weights, 
-         pm2016_pop_weighted = pm2016*pop_weights) %>%
-  summarise(avg_pm2.5_2016 = sum(pm2016_pop_weighted, na.rm = TRUE), 
-            avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE)) %>%
-  mutate(avg_pm2.5_2020_vs_2016 = avg_pm2.5_2020 - avg_pm2.5_2016, 
-         avg_pm2.5_2020_vs_2016_prop_change = round((avg_pm2.5_2020_vs_2016/avg_pm2.5_2016)*100, 2)) %>%
-  slice_min(avg_pm2.5_2020_vs_2016, n = 5) %>%
-  select(name_1) %>%
-  unlist() %>%
-  as.vector()
+plot1_data_with_empty_rows <- plot1_data %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = " ", population = 1, pol_type = "pm2017", value = 0) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = " ", population = 1, pol_type = "pm2017_40_perc_red", value = 0) %>%
+    add_row(country = "", name_1 = "", name_2 = "", 
+          city = " ", population = 1, pol_type = "pm2017_25_perc_red", value = 0)  %>%
+   add_row(country = "", name_1 = "", name_2 = "", 
+          city = " ", population = 1, pol_type = "pm2021", value = 0) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "  ", population = 0, pol_type = "pm2017", value = 0) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "  ", population = 0, pol_type = "pm2017_40_perc_red", value = 0) %>%
+    add_row(country = "", name_1 = "", name_2 = "", 
+          city = "  ", population = 0, pol_type = "pm2017_25_perc_red", value = 0) %>%
+   add_row(country = "", name_1 = "", name_2 = "", 
+          city = " ", population = 0, pol_type = "pm2021", value = 0) 
 
 
-# figure 2 data
-figure_2_data <-  color_2020 %>%
-  filter(country == "India") %>%
-  group_by(name_1) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2020*pop_weights, 
-         pm2016_pop_weighted = pm2016*pop_weights) %>%
-  summarise(avg_pm2.5_2016 = sum(pm2016_pop_weighted, na.rm = TRUE), 
-            avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE)) %>%
-  mutate(avg_pm2.5_2020_vs_2016 = avg_pm2.5_2020 - avg_pm2.5_2016, 
-         avg_pm2.5_2020_vs_2016_prop_change = round((avg_pm2.5_2020_vs_2016/avg_pm2.5_2016)*100, 2)) %>%
-  filter(name_1 %in% five_states_with_greatest_decrease) %>%
-  select(-avg_pm2.5_2020_vs_2016, -avg_pm2.5_2020_vs_2016_prop_change) %>%
-  pivot_longer(avg_pm2.5_2016:avg_pm2.5_2020, names_to = "year", values_to = "pm2.5_pollution")%>% mutate(year = str_extract(str_extract(year, "_\\d+"), "\\d+")) %>%
-  mutate(order_var = ifelse(name_1 == "Himachal Pradesh", 1, 0), 
-         order_var = ifelse(name_1 == "Jammu and Kashmir", 2, order_var), 
-         order_var = ifelse(name_1 == "Uttarakhand", 3, order_var), 
-         order_var = ifelse(name_1 == "Punjab", 4, order_var), 
-         order_var = ifelse(name_1 == "NCT of Delhi", 5, order_var)) 
-
-
-# figure 2 plot
-figure_2_plot <- figure_2_data %>%
-  ggplot(mapping = aes(x = year, y = pm2.5_pollution, fill = name_1)) +
-  geom_col(width = 0.5) +
-  facet_wrap(~fct_reorder(name_1, order_var), ncol = 5) +
-  theme(legend.position = "bottom") +
-    scale_fill_manual(values = c("Himachal Pradesh" = "cadetblue1", "Jammu and Kashmir" = "steelblue1", "Uttarakhand" = "steelblue3", "Punjab" = "steelblue4" , "NCT of Delhi" = "navyblue")) +
-    ggthemes::theme_clean() +
-  labs(x = "Years", y = expression(Average ~ PM[2.5] ~ concentration ~ "("*"in"*~mu*g*"/"*m^3*")"), 
-       title = expression("Five Indian states with greatest decrease in" ~ PM[2.5] ~ pollution ~ "over the past 5 years"), subtitle = "2016 to 2020", 
-       fill = "State") +
-    theme(axis.line.x = element_line(), 
-        axis.line.y = element_line(), 
-        strip.text.x = element_text(size = 12), 
-        legend.position = "bottom", 
-        plot.title = element_text(size = 15), 
-        legend.box.background = element_rect(linetype = 1, size = 0.5), 
-        axis.title.y = element_text(size = 12), 
-        axis.title.x = element_text(size = 12),
-        legend.text = element_text(size = 12), 
-        plot.subtitle = element_text(size = 10)) +
-    geom_text(mapping = aes(label = round(pm2.5_pollution, 1)), position = position_dodge(width = 1), vjust = -0.25, size = 3.2) 
-
-
-  
-
-```
-
-
-
-
-
-
-# Figure 3: Pollution in the top 5 most populated districts not touched by NCAP
-
-```{r}
-
-# ncap regions dataset
-ncap_regions_list <- ncap_regions_list %>%
-  dplyr::select(state_ut, city, district) %>%
-  dplyr::filter(!is.na(district))
-
-# ncap state and district list
-ncap_state_list <- unique(ncap_regions_list$state_ut)
-ncap_district_list <- unique(ncap_regions_list$district)
-
-# pollution levels in the top 5 most populated districts not touched by NCAP
-non_ncap_district_top5_most_populated_data <- color_2020 %>%
-  filter(country == "India") %>%
-  filter(name_2 %notin% ncap_district_list) %>%
-  slice_max(population, n = 5) 
-
-# top 5 most populated districts not touched by NCAP list 
-non_ncap_district_top5_most_populated_list <- non_ncap_district_top5_most_populated_data %>% .$name_2
-
-# states in which the top 5 most populated districts lie
-states_of_interest <- non_ncap_district_top5_most_populated_data %>% .$name_1 %>% unique()
-
-# states of interest shape file
-states_of_focus_shp_file <- india_state %>%
-  filter(NAME_1 %in% states_of_interest)
-
-# districts of interest (within the above states of interest) shape file
-districts_of_interst_shp_file <- colormap_shp %>%
-  filter(NAME_0 == "India", NAME_1 %in% states_of_interest, NAME_2 %in% non_ncap_district_top5_most_populated_list)
-
-# states of interest bounding box
-states_of_interest_bb <- st_as_sfc(st_bbox(states_of_focus_shp_file))
-
-# a state level India map with a bounding box on states of interest
-figure_3_plot_part_1 <- india_state %>%
-  ggplot() +
-  geom_sf(fill = "snow2") +
-  geom_sf(data = states_of_focus_shp_file, fill = "white", size = 1.2) +
-  geom_sf(data = districts_of_interst_shp_file, fill = "red", size = 1) +
-  geom_sf(data = states_of_interest_bb, fill = NA, color = "red", size = 1.2) +
-  theme_map() 
-
-figure_3_plot_part_2 <- states_of_focus_shp_file %>%
+# plot 1
+plt1 <- plot1_data_with_empty_rows %>%
   ggplot() + 
-    geom_sf(fill = "white", size = 1.2) +
-   geom_sf(data = districts_of_interst_shp_file, fill = "red", size = 1.6) +
-  theme_map() +
-  labs(title = "India's top 5 most populated districts not touched by NCAP*", 
-       caption = str_wrap(expression("*NCAP is India's National Clean Air Programme. Pollution values specifically refer to" ~ PM[2.5] ~ pollution ~ "and are reported in µg/m³. Life years lost are relative to WHO" ~ PM[2.5] ~ pollution ~ "guideline"), 90), subtitle = "2016 to 2020") +
-  theme_map() +
-   ggsflabel::geom_sf_label_repel(data = districts_of_interst_shp_file, mapping = aes(label = NAME_2), force = 100, nudge_x = -2, seed = 10, size = 7) +
-  theme(plot.background = element_rect(fill = "azure2"), 
-        plot.caption = element_text(hjust = 0, size = 9), plot.caption.position = "plot") 
-  
- 
- 
+  geom_col(mapping = aes(x = forcats::fct_reorder(city, population, .desc = TRUE), y = value, fill = pol_type), position = "dodge", width = 0.5) +
+  geom_hline(mapping = aes(yintercept = who_guideline), color = "black", linetype = "dashed", size = 0.5) +
+   geom_hline(mapping = aes(yintercept = nat_pm2.5_stan_india), color = "black", linetype = "dashed", size = 0.5) +
+  scale_y_continuous(breaks = seq(0, 130, 20)) +
+  labs(x = "City", y = expression("Annual average   " ~ PM[2.5] ~ "(in µg/m³)"), fill = "", 
+       title = expression("Reduction in 2017" ~ PM[2.5] ~ "Concentrations in top 10 most populated Non-Attainment cities in India, and India as a whole."), subtitle = "(Comparing reductions under NCAP old and new goals, with status as in 2021)", caption = str_wrap("*Under NCAP's recently updated goals, a 40% reduction (in PM2.5) is targeted by 2026 (relative to 2017 levels). The cities in this graph are the 10 largest by population (2011 Census) of the 131 non-attainment cities singled out by NCAP. The cities are ordered from most populated to least populated and reductions from 2017 level are plotted both for a 25% reduction (under old goals, when only 102 cities were under NCAP) and 40% reduction (under new goals, with 29 newly added cities, taking the count to 131). This is further compared with the latest AQLI 2021 data. In the right end, India level annual average PM2.5 for 2017 is plotted and corresponding bars for 25% reduction (under old goals, 102 cities), 40% reduction (under new goals, 131 cities) and AQLI 2021 India level annual average PM2.5 are also plotted. Since AQLI produces results at the district-level, the statistics shown are for districts containing these cities. The dotted black lines represent the Annual Average PM2.5 guideline both as per WHO and as per India's National Ambient Air Quality Standard (NAAQS). Middle bars for Chennai and Vadodra are missing, because these cities were not part of the old list of original 102 non-attainment cities.", width = 180)) +
+  scale_fill_manual(values = c("pm2017" = "#1B2B3A", "pm2017_40_perc_red" = "#808A94", 
+                               "pm2017_25_perc_red" = "#495764", "pm2021" = "#D7ECF5"), labels = c("2017", "After 25% reduction under NCAP's old goals", "After 40% reduction under NCAP's new goals", "2021")) +
+  guides(colour = guide_legend(override.aes = list(shape = 12))) +
+   ggthemes::theme_tufte() +
+   theme(axis.text.x = element_text(size = 13),
+         axis.text.y = element_text(size = 13),
+         axis.title.y = element_text(size = 13, margin = margin(r = 0.3, unit = "cm")),
+         axis.title.x = element_text(size = 13, margin = margin(t = 0.3, unit = "cm")),
+        legend.position = "bottom", 
+        legend.text = element_text(size = 12), 
+        plot.subtitle = element_text(size = 11, hjust = 0.5),
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+legend.box.margin = margin(b = 2, t = 1, unit="cm"),
+plot.title = element_text(hjust = 0.5, size = 17), 
+legend.background = element_rect(fill = "white", colour = "black"), 
+axis.ticks = element_blank(), 
+plot.caption = element_text(hjust = 0, margin = margin(0, 10, 0, 0), face = "italic")) +
+  annotate("text", x = 11.5, y = 44.5, label = expression("National" ~ PM[2.5] ~ "Guideline (40 µg/m³)"), hjust = 0, size = 3.5) +
+  annotate("text", x = 11.5, y = 9.5, label = expression("WHO" ~ PM[2.5] ~ "Guideline (5 µg/m³)"), hjust = 0, size = 3.5) 
 
-# combined inset map
-figure_3_plot <- cowplot::ggdraw() +
-  draw_plot(figure_3_plot_part_2, x = 0.1, y = 0.0001) +
-  draw_plot(figure_3_plot_part_1, x = 0, y = 0.1, width = 0.4, height = 0.4)
+
+
+# plot 1 data v2
+plot1_data_v2 <- final_analysis_dataset %>%
+  slice_max(population, n = 10) %>%
+  mutate(pm2017_40_perc_red = pm2017*((100 - red_perc)/100)) %>%
+  mutate(pm2017_25_perc_red = ifelse(city %in% final_analysis_dataset_102_cities$city, pm2017*0.75, NA)) %>%
+  select(country, name_1, name_2, city, population, pm2017, pm2017_40_perc_red, pm2017_25_perc_red) %>%
+  slice_max(population, n = 10) %>%
+  pivot_longer(cols = pm2017:pm2017_25_perc_red, names_to = "pol_type", values_to = "value") %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "India", population = 2, pol_type = "pm2017", value = 53.4) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "India", population = 2, pol_type = "pm2017_40_perc_red", value = 46.6) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "India", population = 2, pol_type = "pm2017_25_perc_red", value = 49.1) 
+
+
+
+
+plot1_data_with_empty_rows_v2 <- plot1_data_v2 %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = " ", population = 1, pol_type = "pm2017", value = 0) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = " ", population = 1, pol_type = "pm2017_40_perc_red", value = 0) %>%
+    add_row(country = "", name_1 = "", name_2 = "", 
+          city = " ", population = 1, pol_type = "pm2017_25_perc_red", value = 0)  %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "  ", population = 0, pol_type = "pm2017", value = 0) %>%
+  add_row(country = "", name_1 = "", name_2 = "", 
+          city = "  ", population = 0, pol_type = "pm2017_40_perc_red", value = 0) %>%
+    add_row(country = "", name_1 = "", name_2 = "", 
+          city = "  ", population = 0, pol_type = "pm2017_25_perc_red", value = 0)
+
+
+# plot 1 v2
+plt1_v2 <- plot1_data_with_empty_rows_v2 %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(city, population, .desc = TRUE), y = value, fill = pol_type), position = "dodge", width = 0.5) +
+  geom_hline(mapping = aes(yintercept = who_guideline), color = "black", linetype = "dashed", size = 0.5) +
+   geom_hline(mapping = aes(yintercept = nat_pm2.5_stan_india), color = "black", linetype = "dashed", size = 0.5) +
+  scale_y_continuous(breaks = seq(0, 130, 20)) +
+  labs(x = "City", y = expression("Annual average   " ~ PM[2.5] ~ "(in µg/m³)"), fill = "", 
+       title = expression("Reduction in 2017" ~ PM[2.5] ~ "Concentrations in top 10 most populated Non-Attainment cities in India, and India as a whole."), subtitle = "(Comparing reductions under NCAP old and new goals)", caption = str_wrap("*Under NCAP's recently updated goals, a 40% reduction (in PM2.5) is targeted by 2026 (relative to 2017 levels). The cities in this graph are the 10 largest by population (2011 Census) of the 131 non-attainment cities singled out by NCAP. The cities are ordered from most populated to least populated and reductions from 2017 level are plotted both for a 25% reduction (under old goals, when only 102 cities were under NCAP) and 40% reduction (under new goals, with 29 newly added cities, taking the count to 131). In the right end, India level annual average PM2.5 for 2017 is plotted and corresponding bars for 25% reduction (under old goals, 102 cities) and 40% reduction (under new goals, 131 cities) are also plotted. Since AQLI produces results at the district-level, the statistics shown are for districts containing these cities. The dotted black lines represent the Annual Average PM2.5 guideline both as per WHO and as per India's National Ambient Air Quality Standard (NAAQS). Middle bars for Chennai and Vadodra are missing, because these cities were not part of the old list of original 102 non-attainment cities.", width = 180)) +
+  scale_fill_manual(values = c("pm2017" = "#1B2B3A", "pm2017_40_perc_red" = "#808A94", 
+                               "pm2017_25_perc_red" = "#495764"), labels = c("2017", "After 25% reduction under NCAP's old goals", "After 40% reduction under NCAP's new goals")) +
+  guides(colour = guide_legend(override.aes = list(shape = 12))) +
+   ggthemes::theme_tufte() +
+   theme(axis.text.x = element_text(size = 13),
+         axis.text.y = element_text(size = 13),
+         axis.title.y = element_text(size = 13, margin = margin(r = 0.3, unit = "cm")),
+         axis.title.x = element_text(size = 13, margin = margin(t = 0.3, unit = "cm")),
+        legend.position = "bottom", 
+        legend.text = element_text(size = 12), 
+        plot.subtitle = element_text(size = 11, hjust = 0.5),
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+legend.box.margin = margin(b = 2, t = 1, unit="cm"),
+plot.title = element_text(hjust = 0.5, size = 17), 
+legend.background = element_rect(fill = "white", colour = "black"), 
+axis.ticks = element_blank(), 
+plot.caption = element_text(hjust = 0, margin = margin(0, 10, 0, 0), face = "italic")) +
+  annotate("text", x = 11.5, y = 44.5, label = expression("National" ~ PM[2.5] ~ "Guideline (40 µg/m³)"), hjust = 0, size = 3.5) +
+  annotate("text", x = 11.5, y = 9.5, label = expression("WHO" ~ PM[2.5] ~ "Guideline (5 µg/m³)"), hjust = 0, size = 3.5) 
+
+```
+
+# Fig 2: Life Expectancy Gain from achieving 40% reduction, under NCAP in 10 largest non-attainment cities of India
+
+```{r fig2}
+
+# plot2 data v1
+
+plot2_data_v1 <- final_analysis_dataset %>%
+    slice_max(population, n = 10) %>%
+  mutate(pm2017_40_perc = pm2017*((red_perc)/100), 
+         pm2017_25_perc = ifelse(city %in% final_analysis_dataset_102_cities$city, pm2017*0.25, NA),
+         le_gain_from_40_perc_red = pm2017_40_perc*0.098, 
+         le_gain_from_25_perc_red = pm2017_25_perc*0.098) %>%
+  select(country, name_1, name_2, city, population, pm2017, pm2017_40_perc, le_gain_from_40_perc_red) %>%
+    mutate(lyl_bucket = ifelse((le_gain_from_40_perc_red < 0.1), "0 - 0.1 years", le_gain_from_40_perc_red), 
+         lyl_bucket = ifelse((le_gain_from_40_perc_red >= 0.1) & (le_gain_from_40_perc_red < 0.5), "0.1 - < 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_from_40_perc_red >= 0.5) & (le_gain_from_40_perc_red < 1), "0.5 - < 1", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_from_40_perc_red >= 1) & (le_gain_from_40_perc_red < 2), "1 - < 2", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_from_40_perc_red >= 2) & (le_gain_from_40_perc_red < 3), "2 - < 3", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_from_40_perc_red >= 3) & (le_gain_from_40_perc_red < 4), "3 - < 4", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_from_40_perc_red >= 4), ">= 4 years", lyl_bucket)) 
+
+plot2_data$lyl_bucket <- factor(plot2_data$lyl_bucket, levels = c("1 - < 2", "2 - < 3", ">= 4 years"))
+
+plt2 <- plot2_data_v1 %>%
+  ggplot() + 
+    geom_col(mapping = aes(x = forcats::fct_reorder(city, population, .desc = TRUE), y = le_gain_from_40_perc_red, ), fill = "darkred", width = 0.5) +
+  labs(x = "City", y = "Life Expectancy Gains (in years)", title = expression("Life Expectancy Gains by reducing" ~ PM[2.5] ~ "by 40% relative to 2017"), fill = "Life Years Lost", 
+       subtitle = "(Top 10 most populated non-attainment cities in India)", 
+       caption = str_wrap("*Under NCAP's recently updated goals, a 40% reduction (in PM2.5) is targeted by 2026 (relative to 2017 levels). The cities in this graph are the 10 largest by population (2011 Census) of the 131 non-attainment cities singled out by NCAP. The cities are ordered from most populated to least populated and life expectancy gains from reductions from 2017 level are plotted both for a 25% reduction (under old goals, when only 102 cities were under NCAP) and 40% reduction (under new goals, with 29 newly added cities, taking the count to 131). In the right end, India level average life expectancy gains are plotted for a 25% reduction (under old goals, 102 cities) and 40% reduction (under new goals. 131 cities). Since AQLI produces results at the district-level, the statistics shown are for districts containing these cities. The dotted black lines represent the Annual Average PM2.5 guideline both as per WHO and as per India's National Ambient Air Quality Standard (NAAQS). Middle bars for Chennai and Vadodra are missing, because these cities were not part of the old list of original 102 non-attainment cities.", width = 70)) +
+  ggthemes::theme_hc() +
+  theme(axis.text.x = element_text(size = 10),
+         axis.text.y = element_text(size = 10),
+         axis.title = element_text(size = 12),
+        legend.position = "bottom", 
+        legend.text = element_text(size = 9), 
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), 
+plot.title = element_text(hjust = 0.5, size = 14), 
+plot.subtitle = element_text(hjust = 0.5, size = 9), 
+legend.background = element_rect(fill = "white", colour = "black"),
+axis.ticks = element_blank(), 
+plot.caption = element_text(hjust = 0, margin = margin(0, 10, 0, 0), face = "italic")) +
+  scale_fill_manual(values = c("0 - 0.1 years" = "#FFFFFF", "0.1 - < 0.5" = "#FFE6B3", "0.5 - < 1" = "#FFD25D", 
+                                "1 - < 2" = "#FFBA00", "2 - < 3" = "#FF9600", "3 - < 4" = "#FF6908", 
+                                ">= 4 years" = "#E63D23")) 
+
+#--------------
+
+# plot2 data v2
+
+plot2_data_v2 <- final_analysis_dataset %>%
+    slice_max(population, n = 10) %>%
+  mutate(pm2017_40_perc = pm2017*((red_perc)/100), 
+         pm2017_25_perc = ifelse(city %in% final_analysis_dataset_102_cities$city, pm2017*0.25, NA),
+         le_gain_from_40_perc_red = pm2017_40_perc*0.098, 
+         le_gain_from_25_perc_red = pm2017_25_perc*0.098) %>%
+  select(country, name_1, name_2, city, population, pm2017_40_perc, pm2017_25_perc, pm2017, le_gain_from_40_perc_red, 
+         le_gain_from_25_perc_red) %>%
+  pivot_longer(cols = le_gain_from_40_perc_red : le_gain_from_25_perc_red, names_to = "lyl_type", values_to = "value") %>%
+  add_row(country = "", name_1 = "", name_2 = "", city = "India", population = 1, pm2017_40_perc = NA, pm2017_25_perc = NA, pm2017 = NA, lyl_type = "le_gain_from_40_perc_red", value = 0.66) %>%
+    add_row(country = "", name_1 = "", name_2 = "", city = "India", population = 1, pm2017_40_perc = NA, pm2017_25_perc = NA, pm2017 = NA, lyl_type = "le_gain_from_25_perc_red", value = 0.33)
   
+
+plt2 <- plot2_data_v2 %>%
+  ggplot() + 
+    geom_col(mapping = aes(x = forcats::fct_reorder(city, population, .desc = TRUE), y = value, fill = lyl_type), position = "dodge", width = 0.5) +
+  labs(x = "City", y = "Life Expectancy Gains (in years)", title = expression("Life Expectancy Gains by reducing" ~ PM[2.5] ~ "by 40% (under new NCAP goals) and 25% (under old NCAP goals) relative to 2017"), fill = "Life Years Gained", 
+       subtitle = "(Top 10 most populated non-attainment cities in India)", 
+       caption = str_wrap("*Under NCAP's recently updated goals, a 40% reduction (in PM2.5) is targeted by 2026 (relative to 2017 levels). The cities in this graph are the 10 largest by population (2011 Census) of the 131 non-attainment cities singled out by NCAP. The cities are ordered from most populated to least populated and life expectancy gains from reductions from 2017 level are plotted both for a 25% reduction (under old goals, when only 102 cities were under NCAP) and 40% reduction (under new goals, with 29 newly added cities, taking the count to 131). In the right end, India level average life expectancy gains are plotted for a 25% reduction (under old goals, 102 cities) and 40% reduction (under new goals, 131 cities). Since AQLI produces results at the district-level, the statistics shown are for districts containing these cities. 25% reduction bars for Chennai and Vadodra are missing, because these cities were not part of the old list of original 102 non-attainment cities.", width = 180)) +
+  scale_fill_manual(values = c("le_gain_from_40_perc_red" = "#8C130E", "le_gain_from_25_perc_red" = "#FF6908"), labels = c("Life Expectancy Gain from 25 percent reduction under NCAP old goals", "Life Expectancy Gain from 40 percent reduction under NCAP new goals")) +
+  guides(colour = guide_legend(override.aes = list(shape = 12))) +
+  ggthemes::theme_tufte() +
+  theme(axis.text.x = element_text(size = 13),
+         axis.text.y = element_text(size = 13),
+         axis.title.x = element_text(size = 14, margin = margin(t = 0.5, b = 0.5, unit = "cm")),
+        axis.title.y = element_text(size = 14, margin = margin(r = 0.5, unit = "cm")),
+        legend.box.background = element_rect(colour = "black"),
+        legend.position = "bottom", 
+        legend.text = element_text(size = 11),
+        legend.title = element_text(size = 12),
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), 
+plot.title = element_text(hjust = 0.5, size = 14), 
+plot.subtitle = element_text(hjust = 0.5, size = 10),
+axis.ticks = element_blank(), 
+plot.caption = element_text(hjust = 0, margin = margin(1.5, unit = "cm"), face = "italic")) 
+  
+```
+
+
+# Figure 3, Map: Change in PM2.5 from achieving the 40% reduction target under NCAP
+
+```{r fig3}
+
+# separately getting Gilgit Baltistan and Azad Kashmir
+azad_kashmir_gilgit_baltistan <- color_2021 %>%
+  filter(country == "Pakistan", name_1 %in% c("Azad Kashmir", "Gilgit Baltistan"))
+
+# plot 3 data
+plot3_data <- color_2021 %>%
+  filter(country == "India") %>%
+  bind_rows(azad_kashmir_gilgit_baltistan) %>%
+  mutate(pm2017_40_perc_red = pm2017*((100 - red_perc)/100), 
+         pm2017_40_perc = -(pm2017*(red_perc/100))) %>%
+  left_join(colormap_shp_2021, by = c("objectid_gadm2" = "objidgadm2")) %>%
+  mutate(pol_bucket = ifelse(((pm2017_40_perc > -5) & (pm2017_40_perc <= 0)), ">(-5) to 0", pm2017_40_perc), 
+         pol_bucket = ifelse(((pm2017_40_perc > -10) & (pm2017_40_perc <= -5)), ">(-10) to -5", pol_bucket), 
+         pol_bucket = ifelse(((pm2017_40_perc > -15) & (pm2017_40_perc <= -10)), ">(-15) to -10", pol_bucket), 
+           pol_bucket = ifelse(((pm2017_40_perc > -30) & (pm2017_40_perc <= -15)), ">(-30) to -15", pol_bucket), 
+           pol_bucket = ifelse(((pm2017_40_perc > -40) & (pm2017_40_perc <= -30)), ">(-40) to -30", pol_bucket), 
+         pol_bucket = ifelse(((pm2017_40_perc > -50) & (pm2017_40_perc <= -40)), ">(-50) to -40", pol_bucket)) %>%
+  mutate(pol_bucket_order = ifelse(pol_bucket == ">(-5) to 0", 1, 0), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-10) to -5", 2, pol_bucket_order), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-15) to -10", 3, pol_bucket_order), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-30) to -15", 4, pol_bucket_order), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-40) to -30", 5, pol_bucket_order), 
+         pol_bucket_order = ifelse(pol_bucket == ">(-50) to -40", 5, pol_bucket_order)) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# plot 3  
+plt3 <- plot3_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(pol_bucket, pol_bucket_order)), color = "transparent") +
+  geom_sf(data = india_state, color = "black", fill = "transparent", lwd = 0.7) +
+  geom_sf(data = plot3_data %>% filter(name_2 %in% final_analysis_dataset$name_2), color = "black", fill = "transparent", lwd = 0.1) +
+  ggthemes::theme_map() + 
+  scale_fill_manual(values = c(">(-5) to 0" = "#CBE8F3", ">(-10) to -5" = "#B4CDD9", ">(-15) to -10" = "#8FA1AD", ">(-30) to -15" = "#707F8C", ">(-40) to -30" = "#576572", ">(-50) to -40" = "#414F5D")) +
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 12), 
+        legend.title = element_text(size = 15), 
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.title = element_text(hjust = 0.5, size = 20), 
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.caption = element_text(hjust = 0.5, size = 9, face = "italic")) +
+  labs(fill = expression("Reduction in" ~ PM[2.5] ~ "(µg/m³)"), 
+       title = expression("Change in" ~ PM[2.5] ~ "from achieving 40%" ~ PM[2.5] ~ "reduction target under NCAP's new goals"), caption = "*All districts containing atleast 1 of the 131 NCAP non-attainment cities are highlighted within each state (thin black borders). The state borders are relatively thicker, compared to district borders.") +
+  guides(fill = guide_legend(nrow = 1))
+  
+  
+  
+
+
+
 
 ```
 
 
-
-
-# Figure 4: Calculating 2 average pollution and (corresponding life years lost) number for all regions north and south of the tropic of cancer respectively.
+# Figure 4, Map: Life Expectancy Gain from achieving the 40% reduction target under NCAP
 
 ```{r}
 
-# states north of the tropic of cancer
-states_north_of_toc <- c("Jammu and Kashmir", "Punjab", "Chandigarh", "Himachal Pradesh", 
-                         "Uttarakhand", "Haryana", "NCT of Delhi", "Rajasthan", 
-                         "Uttar Pradesh", "Bihar", "Sikkim", "Assam", 
-                         "Arunachal Pradesh", "Nagaland", "Manipur", 
-                         "Mizoram", "Tripura", "West Bengal", 
-                         "Madhya Pradesh", "Jharkhand")
+# plot 4 data
+plot4_data <- color_2021 %>%
+  filter(country == "India") %>%
+  bind_rows(azad_kashmir_gilgit_baltistan) %>%
+  mutate(pm2017_40_perc = (pm2017*(red_perc/100)),
+         le_gain_pm2017_40_perc_red = pm2017_40_perc*0.098) %>%
+  left_join(colormap_shp_2021, by = c("objectid_gadm2" = "objidgadm2")) %>%
+  mutate(lyl_bucket = ifelse((le_gain_pm2017_40_perc_red < 0.1), "0 - 0.1 years", le_gain_pm2017_40_perc_red), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 0.1) & (le_gain_pm2017_40_perc_red < 0.5), "0.1 - < 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 0.5) & (le_gain_pm2017_40_perc_red < 1), "0.5 - < 1", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 1) & (le_gain_pm2017_40_perc_red < 2), "1 - < 2", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 2) & (le_gain_pm2017_40_perc_red < 3), "2 - < 3", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 3) & (le_gain_pm2017_40_perc_red < 4), "3 - < 4", lyl_bucket), 
+         lyl_bucket = ifelse((le_gain_pm2017_40_perc_red >= 4), ">= 4 years", lyl_bucket)) %>%
+  mutate(lyl_bucket_order = ifelse(lyl_bucket == "0 - 0.1 years", 1, 0), 
+         lyl_bucket_order = ifelse(lyl_bucket == "0.1 - < 0.5", 2, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == "0.5 - < 1", 3, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == "1 - < 2", 4, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == "2 - < 3", 5, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == "3 - < 4", 6, lyl_bucket_order), 
+         lyl_bucket_order = ifelse(lyl_bucket == ">= 4 years", 7, lyl_bucket_order)) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
 
-# sanity check to see if all of the above states are in the color file. # yes they are
-color_2020 %>% filter(country == "India", name_1 %in% states_north_of_toc) %>% .$name_1 %>% unique()
+# plot 4
+plt4 <- plot4_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, lyl_bucket_order)), color = "transparent") +
+    geom_sf(data = india_state, color = "black", fill = "transparent", lwd = 0.7) +
+ geom_sf(data = plot3_data %>% filter(name_2 %in% final_analysis_dataset$name_2), color = "black", fill = "transparent", lwd = 0.1) +
+  ggthemes::theme_map() + 
+scale_fill_manual(values = c("0 - 0.1 years" = "#FFFFFF", "0.1 - < 0.5" = "#FFE6B3", "0.5 - < 1" = "#FFD25D", 
+                                "1 - < 2" = "#FFBA00", "2 - < 3" = "#FF9600", "3 - < 4" = "#FF6908", 
+                                ">= 4 years" = "#E63D23")) +
+  labs(fill = str_wrap("Gain in Life Expectancy (in years)", 10), 
+       title = expression("Life Expectancy Gains from Achieving 40%" ~ PM[2.5] ~ "reduction target under NCAP's new goals"), 
+caption = "*All districts containing atleast 1 NCAP non-attainment city are highlighted within each state (thin black borders). The state borders are relatively thicker, comapared to the district borders.") +
+  guides(fill = guide_legend(nrow = 1)) +
+    theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14), 
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 20), 
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic")) 
 
-# states south of toc
-states_south_of_toc <- color_2020 %>%
-  filter(country == "India", name_1 %notin% states_north_of_toc) %>%
-  .$name_1 %>%
+
+```
+
+
+# Generating the appendix table for NCAP report part 1
+
+```{r appendix_table}
+
+# ncap analysis data
+appendix_table <- final_analysis_dataset %>%
+  select(-population_district) %>%
+  mutate( pm2017 = round(pm2017, 1),
+    pm2017_red_40_perc = round(pm2017*((100 - red_perc)/100), 1), 
+         pm2017_40_perc = pm2017*(red_perc/100), 
+         le_gain_pm2017_40_perc_red = pm2017_40_perc * le_constant, 
+         le_gain_pm2017_40_perc_red = round(le_gain_pm2017_40_perc_red, 1)) %>%
+  select(city, name_1, population, pm2017, pm2017_red_40_perc, le_gain_pm2017_40_perc_red) %>%
+  rename(City = city, State = name_1, `City (Census 2011) Population` = population, `2017 PM2.5 Concentrations (µg/m³)` = pm2017, `2017 PM2.5 Concentrations (after 40% reduction)` = pm2017_red_40_perc, `Life Expectancy Gains (in years) from a 40% reduction` = le_gain_pm2017_40_perc_red) %>%
+  mutate(City = ifelse(City %notin% final_analysis_dataset_102_cities$city, str_c("*", City), City)) %>%
+  arrange(desc(`City (Census 2011) Population`))
+
+appendix_table %>% 
+  write_csv("./september.2023/ncap.report.series.part.1/output_files/[updated_April252023]ncap.2023.report.part1.appendix_table.csv")
+
+```
+
+# other calculations
+
+```{r other_calculations}
+
+#> gains in life years that an average Indian would experience if the NCAP 40 percent reduction target by 2026 (relative to 2017)
+#>
+red_perc <- 40
+
+# calculate india average pollution in 2017 and then take 40% of it to calculate the life years lost for that reduction
+foo <- final_analysis_dataset %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights, 
+         pm2021_pop_weighted = pm2021*pop_weights) %>%
+  summarise(avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            avg_pm2021_pop = sum(pm2021_pop_weighted, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(avg_pm2017_pop_40_perc = ((red_perc/100)*(avg_pm2017_pop)), 
+         lyg_40_perc_red = round((avg_pm2017_pop_40_perc*le_constant), 1))
+
+#> average gains in life expectancy by reducing pollution in top 5 most polluted non-attainment cities
+
+# top 5 most polluted non-attainment cities 
+top_5_most_pol_non_att_cities <- final_analysis_dataset %>%
+  slice_max(pm2017, n = 5) %>%
+  pull(city) 
+
+final_analysis_dataset %>%
+  filter(city %in% top_5_most_pol_non_att_cities) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pop_weights*pm2017) %>%
+  summarise(avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(avg_pm2017_pop_40_perc = ((red_perc/100)*(avg_pm2017_pop)), 
+         lyg_40_perc_red = round(avg_pm2017_pop_40_perc*le_constant, 1))
+
+#> India's average PM2.5 percentage increase since 1998
+color_2021 %>%
+  filter(country == "India") %>%
+  group_by(country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pop_weights*pm2017, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+    summarise(avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE), 
+              avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE)) %>%
+    ungroup() %>%
+  mutate(perc_inc_1998_2017 = (((avg_pm2017_pop - avg_pm1998_pop)/avg_pm1998_pop)*100))
+
+#> Delhi's annual average PM2.5 value in 2017 and how many life years are lost by not being compliant with WHO and National PM2.5 standard
+
+color_2021 %>%
+  filter(country == "India", name_1 == "NCT of Delhi", name_2 == "NCT of Delhi") %>%
+  select(pm2017) %>%
+  mutate(lyl_rel_who = (pm2017 - who_guideline)*0.098, 
+         lyl_rel_nat = (pm2017 - 40)*0.098)
+  
+#> country ranking in pollution given 2020 data
+
+color_2021 %>%
+  group_by(country) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2020_pop = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE)) %>%
+  slice_max(avg_pm2020_pop, n = 10)
+  
+
+# India's average pollution increase from 1998 to 2020
+color_2021 %>%
+  filter(country == "India") %>%
+  group_by(country) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2020_pop = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
+
+# Top 5 most polluted states in ncap
+
+final_analysis_dataset %>%
+  slice_max(pm2017, n = 15) %>%
+  pull(name_1) %>%
   unique()
 
-# color 2020 with north/south toc column
-color_2020_india_toc <- color_2020 %>%
-  filter(country == "India") %>%
-  mutate(toc_direction = ifelse(name_1 %in% states_north_of_toc, "north_toc", "south_toc"))
+# state level pm2.5
+final_analysis_dataset %>%
+  group_by(country, name_1) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm1998_pop_weighted = pop_weights*pm1998, 
+         pm2017_pop_weighted = pop_weights*pm2017) %>%
+  summarise(avg_pm2020_pop = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE), 
+            avg_pm2017_pol = sum(pm2017_pop_weighted, na.rm = TRUE)) %>%
+  ungroup() %>%
+  filter(name_1 %in% c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Haryana")) %>%
+  mutate(times = avg_pm2020_pop/avg_pm1998_pop)
+  
+# top most polluted districts in 2020
+final_analysis_dataset %>%
+  slice_max(pm2020) %>%
+  pull(pm2020)
 
-# calculating the average pollution number for north toc and south toc
-india_toc_division_summary <- color_2020_india_toc %>%
-  group_by(toc_direction) %>%
+# total population of all NCAP cities
+sum(final_analysis_dataset$population, na.rm = TRUE)/1210854977
+
+#> assuming that each of the district's (that include the NCAP cities) 2017 pollution is reduced by 40 percent and then recalculating India's pollution average.
+
+ncap_districts <- final_analysis_dataset %>%
+  count(country, name_1, name_2) 
+
+
+# india's pollution average without any reductions in 2017. # 53.34 micrograms per cubic meter in 2017
+foo <- color_2021 %>%
+  filter(country == "India") %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pop_weights*pm2020) %>%
-  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
-            lyl_rel_who_guideline = round((avg_pm2.5_2020 - who_guideline)*le_constant, 2), 
-            lyl_rel_who_guideline = ifelse(lyl_rel_who_guideline < 0, 0, lyl_rel_who_guideline))
+         pm2017_pop_weighted = pop_weights*pm2017, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
 
-india_toc_division_summary %>% write_csv("./june.2022/clean.air.countdown.india.campaign.2023/chart.4.data.graph.code/chart4.plot.csv")
+# india's pollution average with 40% reduction in each of NCAP's district (as a proxy for 40% reduction in each of 131 ncap cities). # 46.56 micrograms per cubic meter in 2017 if reduction is achieved. 46.56434
 
-# export prettified India state level shapefile 
-india_state %>%
-  ggplot() +
-  geom_sf(fill = "white", color = "black", size = 1) +
-  ggthemes::theme_map()
-
-
-```
-
-
-
-
-
-# Figure 5: generate a life years lost graph grouped by population, for India as a whole, Rural India and Urban India
-```{r}
-
-# global aqli file grouped by pop_buckets
-  aqli_2020_district_level_pop_buckets <- aqli_2020_district_level_rural_urban_subset %>%
-  mutate(pop_bucket = ifelse(lyl_rel_to_who_2020 < 1, "<1 year", lyl_rel_to_who_2020), 
-         pop_bucket = ifelse(((pop_bucket >= 1) & (pop_bucket < 3)), "1 - <3", pop_bucket), 
-         pop_bucket = ifelse(((pop_bucket >= 3) & (pop_bucket < 5)), "3 - <5", pop_bucket), 
-         pop_bucket = ifelse(((pop_bucket >= 5) & (pop_bucket <= 7)), "5 - 7", pop_bucket), 
-         pop_bucket = ifelse(pop_bucket > 7, ">7 years", pop_bucket)) %>%
-  mutate(order_pop_buckets = ifelse(pop_bucket == "<1 year", 1, 0), 
-         order_pop_buckets = ifelse(pop_bucket == "1 - <3", 2, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == "3 - <5", 3, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == "5 - 7", 4, order_pop_buckets), 
-         order_pop_buckets = ifelse(pop_bucket == ">7 years", 5, order_pop_buckets)) 
-
-# overall summary
-aqli_2020_district_level_pop_buckets_summary <- aqli_2020_district_level_pop_buckets %>%
-  group_by(pop_bucket) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            order_var = order_pop_buckets[1]) %>%
-  arrange(order_var) %>%
-  ungroup() %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
-    ungroup() %>%
-    select(pop_bucket, prop_pop, order_var) %>%
-  mutate(order_var_2 = 1)
-
-# summary for the rural region
-aqli_2020_district_level_pop_buckets_summary_r <- aqli_2020_district_level_pop_buckets %>%
-  filter(region_type == "Predominantly Rural") %>%
-  group_by(pop_bucket) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            order_var = order_pop_buckets[1]) %>%
-  arrange(order_var) %>%
-  ungroup() %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
-    ungroup() %>%
-    select(pop_bucket, prop_pop, order_var) %>%
-  mutate(order_var_2 = 1)
-
-#####
-
-# summary for the urban data
-aqli_2020_district_level_pop_buckets_summary_u <- aqli_2020_district_level_pop_buckets %>%
-  filter(region_type == "Predominantly Urban") %>%
-  group_by(pop_bucket) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
-            order_var = order_pop_buckets[1]) %>%
-  arrange(order_var) %>%
-  ungroup() %>%
-     mutate(tot_fin_pop = sum(tot_pop, na.rm = TRUE), 
-            prop_pop = round((tot_pop/tot_fin_pop)*100, 2)) %>%
-    ungroup() %>%
-    select(pop_bucket, prop_pop, order_var) %>%
-  mutate(order_var_2 = 1)
-
-
-# v1 of the graph (not stacked)
-aqli_2020_district_level_pop_buckets_summary %>%
-  ggplot() +
-  geom_col(mapping = aes(x = forcats::fct_reorder(pop_bucket, order_var), y = prop_pop, fill = pop_bucket)) +
-     scale_fill_manual(values = c(">7 years" = "black", "5 - 7" = "darkred", "3 - <5" = "red", "1 - <3" = "orange", "<1 year" = "burlywood1")) +
-  labs(x = "Life Years Lost", y = "% population", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
-  theme(axis.title = element_text(size = 11) ,
-        axis.text.x = element_text(size = 10), 
-        axis.text.y = element_text(size = 10)) +
-  coord_flip() +
-  ggthemes::theme_hc() + 
-  theme(plot.title = element_text(size = 14)) 
-
-# v2.1 of the graph (stacked)  
-foo <- aqli_2020_district_level_pop_buckets_summary %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
-   scale_fill_manual(values = c("<1 year" = "burlywood1", "1 - <3" = "orange", "3 - <5" = "red", "5 - 7" = "darkred", ">7 years" = "black")) +
-  labs(x = "", y = "", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
-  coord_flip() +
-  ggthemes::theme_clean() +
-  theme(plot.title = element_text(size = 15), 
-        axis.text.y = element_blank(), 
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(), 
-        axis.title = element_text(size = 11), 
-        legend.position = "bottom", 
-        legend.background = element_rect(), 
-        axis.line.x = element_blank(), 
-        axis.line.y = element_blank(), 
-        axis.ticks = element_blank()) 
-
-# v2.2 (stacked, rural, urban division)
-foo2 <- aqli_2020_district_level_pop_buckets_summary_r %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
-   scale_fill_manual(values = c("<1 year" = "burlywood1", "1 - <3" = "orange", "3 - <5" = "red", "5 - 7" = "darkred", ">7 years" = "black")) +
-  labs(x = "", y = "", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
-  coord_flip() +
-  ggthemes::theme_clean() +
-  theme(plot.title = element_text(size = 15), 
-        axis.text.y = element_blank(), 
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(), 
-        axis.title = element_text(size = 11), 
-        legend.position = "bottom", 
-        legend.background = element_rect(), 
-        axis.line.x = element_blank(), 
-        axis.line.y = element_blank(), 
-        axis.ticks = element_blank()) 
-
-
-# v2.3 (stacked, rural, urban division)
-foo3 <- aqli_2020_district_level_pop_buckets_summary_u %>% 
-  ggplot() + 
-  geom_bar(mapping = aes(x = order_var_2, y = prop_pop, fill = forcats::fct_reorder(pop_bucket, order_var, .desc = TRUE)), position = "stack", stat = "identity", height = 1, color = "black", size = 1) +
-   scale_fill_manual(values = c("<1 year" = "burlywood1", "1 - <3" = "orange", "3 - <5" = "red", "5 - 7" = "darkred", ">7 years" = "black")) +
-  labs(x = "", y = "", title = "Proportion population in different life years lost buckets", fill = "Life Years Lost") +
-  coord_flip() +
-  ggthemes::theme_clean() +
-  theme(plot.title = element_text(size = 15), 
-        axis.text.y = element_blank(), 
-        axis.text.x = element_blank(),
-        axis.ticks.x = element_blank(), 
-        axis.title = element_text(size = 11), 
-        legend.position = "bottom", 
-        legend.background = element_rect(), 
-        axis.line.x = element_blank(), 
-        axis.line.y = element_blank(), 
-        axis.ticks = element_blank()) 
-
-
-
-# v3 (waffle package, waffle plot), # problem is that we have to round up to a whole number
-x <- round(c(0.87, 30, 25.7, 21.2, 22.2))
-waffle(x, rows = 10)
-
-# v4 (lessR, donut chart):this will not work
-PieChart(pop_bucket, data = aqli_2020_district_level_pop_buckets)
-
-# v5 (treemapify)
-ggplot(data = aqli_2020_district_level_pop_buckets_summary, aes(area = prop_pop, fill = prop_pop)) +
-  geom_treemap() +
-  viridis::scale_fill_viridis(direction = -1, option = "rocket")
-
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-############# Other graphs ##########################
-
-# Figure 6:  5 Indian districts with the greatest increase in pollution over the past five years
-```{r}
-
-# five datasets with greatest increase
-five_districts_with_greatest_increase <- color_2020 %>%
+foo1 <- color_2021 %>%
   filter(country == "India") %>%
-  select(country, name_1, name_2, pm2016, pm2020) %>%
-  mutate(district_state = str_c(name_2, " ", "(", name_1, ")"), 
-         pol_2020_vs_2016  = pm2020 - pm2016) %>%
-  select(country, name_1, name_2, district_state, everything()) %>%
-   slice_max(pol_2020_vs_2016, n = 5) %>%
-  select(district_state) %>%
-  unlist() %>%
-  as.vector()
+  mutate(pm2017_red = ifelse((name_1 %in% ncap_districts$name_1) & (name_2 %in% ncap_districts$name_2), pm2017*0.75, pm2017)) %>%
+    mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted_red = pop_weights*pm2017_red, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2017_pop_red = sum(pm2017_pop_weighted_red, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
 
-# figure 1 data
-figure_1_data <- color_2020 %>%
+
+########################### doing what's done in the above chunk, but with 102 cities
+
+ncap_districts_old <- final_analysis_dataset_102_cities %>%
+  count(country, name_1, name_2) 
+
+
+# india's pollution average without any reductions in 2017. # 53.34 micrograms per cubic meter in 2017
+foo <- color_2021 %>%
   filter(country == "India") %>%
-  select(country, name_1, name_2, pm2016, pm2020) %>%
-  mutate(district_state = str_c(name_2, " ", "(", name_1, ")"), 
-         pol_2020_vs_2016  = pm2020 - pm2016) %>%
-  select(country, name_1, name_2, district_state, everything()) %>%
-  filter(district_state %in% five_districts_with_greatest_increase) %>%
-  select(-pol_2020_vs_2016) %>%
-  pivot_longer(pm2016:pm2020, names_to = "year", values_to = "pm2.5_pollution") %>%
-  mutate(year = str_extract(year, "\\d+"))
-  
-# figure 1 plot  
-figure_1_plot <- figure_1_data %>%
-  ggplot() +
-  geom_col(mapping = aes(x = year, y = pm2.5_pollution, fill = district_state), width = 0.5) +
-  facet_wrap(~district_state, ncol = 5) +
-  theme(legend.position = "bottom") +
-  labs(fill = "District (State)", title = "5 Indian districts with the greatest increase in pollution over the past five years") +
-   scale_fill_brewer(palette = "Accent") +
-  ggthemes::theme_hc()
- 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pop_weights*pm2017, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
 
-figure_1_plot
+# india's pollution average with 40% reduction in each of NCAP's district (as a proxy for 40% reduction in each of 131 ncap cities). # 46.56 micrograms per cubic meter in 2017 if reduction is achieved. 46.56434
 
-
-```
-
-# Figure 7: 5 Indian cities with the greatest reduction in pollution over the past five years
-
-```{r}
-
-# five districts with greatest decrease in pollution
-five_districts_with_greatest_decrease <- color_2020 %>%
+foo1 <- color_2021 %>%
   filter(country == "India") %>%
-  select(country, name_1, name_2, pm2016, pm2020) %>%
-  mutate(district_state = str_c(name_2, " ", "(", name_1, ")"), 
-         pol_2020_vs_2016  = pm2020 - pm2016) %>%
-  select(country, name_1, name_2, district_state, everything()) %>%
-   slice_min(pol_2020_vs_2016, n = 5) %>%
-  select(district_state) %>%
-  unlist() %>%
-  as.vector()
+  mutate(pm2017_red = ifelse((name_1 %in% ncap_districts_old$name_1) & (name_2 %in% ncap_districts_old$name_2), pm2017*0.75, pm2017)) %>%
+    mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted_red = pop_weights*pm2017_red, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2017_pop_red = sum(pm2017_pop_weighted_red, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
 
 
-figure_2_data <- color_2020 %>%
+
+
+
+
+
+
+
+###########################
+
+# Range of gains as a result of reduction in pm2.5 by 40 percent
+final_analysis_dataset %>%
+  mutate(pm2017_40_perc = pm2017 * 0.4, 
+         lyg_40_perc = pm2017_40_perc*0.098) %>%
+  group_by(country, name_1) %>%
+  summarise(min_lyg = min(lyg_40_perc, na.rm = TRUE), 
+            max_lyg = max(lyg_40_perc, na.rm = TRUE)) %>% 
+  slice_max(max_lyg, n = 10)
+
+# india average pollution in 2020
+foo <- color_2021 %>%
   filter(country == "India") %>%
-  select(country, name_1, name_2, pm2016, pm2020) %>%
-  mutate(district_state = str_c(name_2, " ", "(", name_1, ")"), 
-         pol_2020_vs_2016  = pm2020 - pm2016) %>%
-  select(country, name_1, name_2, district_state, everything()) %>%
-  filter(district_state %in% five_districts_with_greatest_decrease) %>%
-  select(-pol_2020_vs_2016) %>%
-  pivot_longer(pm2016:pm2020, names_to = "year", values_to = "pm2.5_pollution") %>%
-  mutate(year = str_extract(year, "\\d+"))
-  
-  
-figure_2_plot <- figure_2_data %>%
-  ggplot() +
-  geom_col(mapping = aes(x = year, y = pm2.5_pollution, fill = district_state), width = 0.5) +
-  facet_wrap(~district_state, ncol = 5) +
-  theme(legend.position = "bottom") +
-  labs(fill = "District (State)", title = "5 Indian districts with the greatest reduction in pollution over the past five years") +
-   scale_fill_brewer(palette = "Accent") +
-  ggthemes::theme_hc()
- 
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm1998_pop_weighted = pop_weights*pm1998) %>%
+  summarise(avg_pm2020_pop = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
+
+# life expectancy gains for an average Indian if NCAP meets the old 25% reduction target (49.1 micrograms per cubic meter v/s 53.4 micrograms per cubic meter)
+
+foo1 <- color_2021 %>%
+  filter(country == "India") %>%
+   mutate(pm2017 = ifelse((name_1 %in% unique(final_analysis_dataset$name_1)) & (name_2 %in% unique(final_analysis_dataset$name_2)), pm2017*0.60, pm2017)) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights) %>%
+  summarise(avg_pm2.5_2017_40_perc_red = sum(pm2017_pop_weighted, na.rm = TRUE))
 
 
-```
+# average pollution percentage reduction in 131 NCAP cities
+foo <- final_analysis_dataset %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights, 
+         pm2019_pop_weighted = pm2019*pop_weights,
+         pm2020_pop_weighted = pm2020*pop_weights) %>%
+  summarise(avg_pm2.5_2017 = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2019 = sum(pm2019_pop_weighted, na.rm = TRUE))
 
+# NCAP cities annual average PM2.5 in 2017
+foo <- final_analysis_dataset %>%
+ mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights, 
+        pm2021_pop_weighted = pm2021*pop_weights) %>%
+  summarise(avg_pm2.5_2017 = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE))
 
-
-# Figure 8: Pollution levels in the top 5 most polluted districts in India not touched by NCAP (bar graph)
-
-```{r}
-
-
-# figure 8 plot
-figure_5_plot <- non_ncap_district_top5_most_populated_data  %>% # data from figure 3
-  ggplot() +
-  geom_col(mapping = aes(x = fct_reorder(name_2, pm2020), y = pm2020, fill = name_2), width = 0.3) +
-  labs(x = "District", y = "PM2.5 pollution", fill = "District", 
-       title = "Pollution levels in the top 5 most 'polluted' districts in India not touched by NCAP") +
-  scale_fill_brewer(palette = "Accent") +
-  scale_y_continuous(breaks = seq(0, 110, 15)) +
-  ggthemes::theme_hc()
+# city count by state
+foo <- final_analysis_dataset %>%
+  count(name_1)
   
 
-```
-
-# Figure 9: Pollution levels in the top 5 most populated districts in India not touched by NCAP
-
-```{r}
-
-# figure 5 data
-figure_6_data <- color_2020 %>%
-  filter(country == "India") %>%
-  filter(name_2 %notin% ncap_district_list) %>%
-  slice_max(population, n = 5) 
-
-# figure 5 plot
-figure_6_plot <- figure_6_data %>%
-  ggplot() +
-  geom_col(mapping = aes(x = fct_reorder(name_2, pm2020), y = pm2020, fill = name_2), width = 0.3) +
-  labs(x = "District", y = "PM2.5 pollution", fill = "District", 
-       title = "Pollution levels in the top 5 most 'populated' districts in India not touched by NCAP") +
-  scale_fill_brewer(palette = "Accent") +
-  scale_y_continuous(breaks = seq(0, 110, 15)) +
-  ggthemes::theme_hc()
-```
-
-
-# Figure 10: Top 5 NCAP districts that have seen a rise in pollution from 2019 to 2020
-
-```{r}
-
-districts_2019_2020_top5 <- color_2020 %>%
-  filter(country == "India") %>%
-  select(country, name_1, name_2, pm2019, pm2020) %>%
-  mutate(district_state = str_c(name_2, " ", "(", name_1, ")"), 
-         pol_2020_vs_2019  = pm2020 - pm2019) %>%
-  select(country, name_1, name_2, district_state, everything()) %>%
-  filter(name_2 %in% ncap_district_list) %>%
-   slice_max(pol_2020_vs_2019, n = 5) %>%
-  select(district_state) %>%
-  unlist() %>%
-  as.vector()
-  
-# figure 7 data
-figure_7_data <- color_2020 %>%
-  filter(country == "India") %>%
-  select(country, name_1, name_2, pm2019, pm2020) %>%
-  mutate(district_state = str_c(name_2, " ", "(", name_1, ")"), 
-         pol_2020_vs_2019  = pm2020 - pm2019) %>%
-  select(country, name_1, name_2, district_state, everything()) %>%
-  filter(district_state %in% districts_2019_2020_top5) %>%
-  select(-pol_2020_vs_2019) %>%
-  pivot_longer(pm2019:pm2020, names_to = "year", values_to = "pm2.5_pollution") %>%
-  mutate(year = str_extract(year, "\\d+"))
-  
-# figure 7 plot  
-figure_7_plot <- figure_7_data %>%
-  ggplot() +
-  geom_col(mapping = aes(x = year, y = pm2.5_pollution, fill = district_state), size = 0.3) +
-  facet_wrap(~district_state, ncol = 5) +
-  theme(legend.position = "bottom") +
-  labs(fill = "District (State)", title = "Top 5 NCAP districts that have seen a rise in pollution from 2019 to 2020") +
-   scale_fill_brewer(palette = "Accent") +
-  ggthemes::theme_hc()
+foo <- color_2021 %>% group_by(country) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), pop_weighted_pm2.5_2021 = pop_weights*pm2021, pop_weighted_pm2.5_2017 = pop_weights*pm2017, pop_weighted_pm2.5_1998 = pop_weights*pm1998) %>% 
+  summarise(avg_pm2.5_2021 = sum(pop_weighted_pm2.5_2021, na.rm = TRUE), avg_pm2.5_2017 = sum(pop_weighted_pm2.5_2017, na.rm = TRUE), avg_pm2.5_1998 = sum(pop_weighted_pm2.5_1998, na.rm = TRUE))
 
 
 
-```
 
-# Figure 11: Top 5 NCAP districts that have seen a decline in pollution from 2019 to 2020
-
-```{r}
-
-districts_2019_2020_top5_dec <- color_2020 %>%
-  filter(country == "India") %>%
-  select(country, name_1, name_2, pm2019, pm2020) %>%
-  mutate(district_state = str_c(name_2, " ", "(", name_1, ")"), 
-         pol_2020_vs_2019  = pm2020 - pm2019) %>%
-  select(country, name_1, name_2, district_state, everything()) %>%
-  filter(name_2 %in% ncap_district_list) %>%
-   slice_min(pol_2020_vs_2019, n = 5) %>%
-  select(district_state) %>%
-  unlist() %>%
-  as.vector()
-  
-# figure 8 data
-figure_8_data <- color_2020 %>%
-  filter(country == "India") %>%
-  select(country, name_1, name_2, pm2019, pm2020) %>%
-  mutate(district_state = str_c(name_2, " ", "(", name_1, ")"), 
-         pol_2020_vs_2019  = pm2020 - pm2019) %>%
-  select(country, name_1, name_2, district_state, everything()) %>%
-  filter(district_state %in% districts_2019_2020_top5_dec) %>%
-  select(-pol_2020_vs_2019) %>%
-  pivot_longer(pm2019:pm2020, names_to = "year", values_to = "pm2.5_pollution") %>%
-  mutate(year = str_extract(year, "\\d+"))
-  
-# figure 8 plot  
-figure_8_plot <- figure_8_data %>%
-  ggplot() +
-  geom_col(mapping = aes(x = year, y = pm2.5_pollution, fill = district_state), size = 0.3) +
-  facet_wrap(~district_state, ncol = 5) +
-  theme(legend.position = "bottom") +
-  labs(fill = "District (State)", title = "Top 5 NCAP districts that have seen a decline in pollution from 2019 to 2020") +
-   scale_fill_brewer(palette = "Accent") +
-  ggthemes::theme_hc()
-
-
-
-```
-
-
-# Figure 12: Gujarat, trenlines pollution last 20 years.
-
-```{r}
-figure_9_data <- color_2020 %>%
-  filter(country == "India") %>%
+#> state level summary of the final analysis dataset
+foo <- final_analysis_dataset %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+         pm2017_pop_weighted = pm2017*pop_weights) %>%
+  summarise(avg_pm2.5_2017 = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            lyg_40_perc_red = round(avg_pm2.5_2017*0.4*0.098, 1))
+
+
+# old 102 cities list average 2017 pollution and gains by a 25% reduction target, i.e. the old target
+foo <- ncap_102_cities_old_list %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights, 
+         pm2019_pop_weighted = pm2019*pop_weights,
+         pm2020_pop_weighted = pm2020*pop_weights) %>%
+  summarise(avg_pm2.5_2017 = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2019 = sum(pm2019_pop_weighted, na.rm = TRUE))
+
+# How much an average person living in the NCAP cities stands to gain on average if NCAP target are met.
+foo <- final_analysis_dataset %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights, 
+         pm2019_pop_weighted = pm2019*pop_weights,
+         pm2020_pop_weighted = pm2020*pop_weights) %>%
+  summarise(avg_pm2.5_2017 = sum(pm2017_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            avg_pm2.5_2019 = sum(pm2019_pop_weighted, na.rm = TRUE))
+
+  
+  
+### current dataset (131 city focus stats)
+
+foo <- final_analysis_dataset %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights) %>%
+  summarise(avg_pm2.5_2017_40_perc_red = sum(pm2017_pop_weighted, na.rm = TRUE))
+
+
+foo1 <- final_analysis_dataset %>%
+  mutate(pm2017 = pm2017*0.75) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights) %>%
+  summarise(avg_pm2.5_2017_40_perc_red = sum(pm2017_pop_weighted, na.rm = TRUE))
+
+
+### old dataset (131 city focus stats)
+
+foo <- final_analysis_dataset_102_cities %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights) %>%
+  summarise(avg_pm2.5_2017_40_perc_red = sum(pm2017_pop_weighted, na.rm = TRUE))
+
+
+foo1 <- final_analysis_dataset_102_cities %>%
+  mutate(pm2017 = pm2017*0.75) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2017_pop_weighted = pm2017*pop_weights) %>%
+  summarise(avg_pm2.5_2017_40_perc_red = sum(pm2017_pop_weighted, na.rm = TRUE))
+
+###########------------------
+
+#> hex plot
+
+# hex plot data
+hex_plt_data <- final_analysis_dataset %>%
+  mutate(pm2017_40_perc_red = pm2017*0.6) %>%
+  select(country, name_1, name_2, population, pm2017, pm2017_40_perc_red) %>%
+  pivot_longer(pm2017:pm2017_40_perc_red, values_to = "pollution_value", names_to = "pol_type") %>%
+  mutate(pol_type = ifelse(pol_type == "pm2017", "2017 PM2.5", "40% reduction in 2017 PM2.5"))
+
+# hex plot: plot
+hex_plot <- hex_plt_data %>%
+  ggplot() +
+  geom_hex(mapping = aes(x = population, y = pollution_value), color = "white", alpha = 0.7) +
+  theme_bw() +
+  scale_x_log10() + 
+  viridis::scale_fill_viridis(option = "viridis", direction = -1) + 
+geom_hline(mapping = aes(yintercept = 40)) +
+  # geom_hline(mapping = aes(yintercept = 5)) +
+  geom_vline(mapping = aes(xintercept = 50000)) + 
+  scale_y_continuous(breaks = seq(0, 120, 10)) +
+  facet_wrap(~pol_type) +
+  labs(x = "Population", y = "PM2.5 pollution (in µg/m³)", 
+       fill = "City Count", 
+       title = "Population v/s Pollution in 131 non-attainment cities",
+       subtitle = "(2017 PM2.5 levels v/s if NCAP targets are met)") +
+  theme(legend.title.align = 0.5, 
+        plot.title = element_text(hjust = 0.5), 
+        plot.subtitle = element_text(size = 8, hjust = 0.5)) 
+
+
+#> creating a heatmap snapshot of the 131 non-attainment cities--------
+
+# snapshot heatmap data
+snapshot_map_data <- final_analysis_dataset %>%
+  select(country, name_1, name_2, population, city, starts_with("pm")) %>%
+  pivot_longer(cols = pm1998:pm2021, names_to = "years", 
                values_to = "pop_weighted_avg_pm2.5") %>%
-  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
-  select(years, name_1, pop_weighted_avg_pm2.5)
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "City Average") 
 
+# cities to plot in the snapshot heatmap
+city_to_plot <- final_analysis_dataset %>%
+  slice_max(pm2020, n = 10) %>%
+  pull(city) 
 
-  plt <- figure_9_data %>% 
-    filter(name_1 == "Gujarat") %>%
-    ggplot() +
-  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1, 
-            color = "darkred") +
-    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
-  scale_y_continuous(breaks = seq(0, 40, 5), limits = c(0, 40)) +
-  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
-  ggthemes::theme_clean() +
-  labs(x = "Years", 
-       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )")), 
-       title = "Average PM2.5 pollution in the state of Gujarat, India", 
-       subtitle = "1998 to 2020") +
-  theme(legend.position = "bottom", legend.title = element_blank(), 
-        legend.text = element_text(size = 7), 
-        axis.title.y = element_text(size = 9), 
-        axis.title.x = element_text(size = 9)) + 
-     geom_text(x = 2002.5, y = 7.2, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
-
-```
-
-# Figure 13, Surat pollution 1998 to 2020
-
-```{r}
-figure_10_data <- color_2020 %>%
-  filter(country == "India", name_1 == "Gujarat", name_2 == "Surat") %>%
-  select(country, name_1, name_2, starts_with("pm")) %>%
-  pivot_longer(cols = pm1998:pm2020, names_to = "years", 
-               values_to = "avg_pm2.5") %>%
-  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) 
-
-
-  figure_10_plot <- figure_10_data %>% 
-    ggplot() +
-  geom_line(mapping = ggplot2::aes(x = years, y = avg_pm2.5), lwd = 1.1, 
-            color = "darkred") +
-    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
-  scale_y_continuous(breaks = seq(0, 40, 5), limits = c(0, 40)) +
-  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
-  ggthemes::theme_clean() +
-  labs(x = "Years", 
-       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )")), 
-       title = "Average PM2.5 pollution in Surat district of Gujarat, India", 
-       subtitle = "1998 to 2020") +
-  theme(legend.position = "bottom", legend.title = element_blank(), 
-        legend.text = element_text(size = 7), 
-        axis.title.y = element_text(size = 9), 
-        axis.title.x = element_text(size = 9)) + 
-     geom_text(x = 2002.5, y = 7.2, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
-
-```
-
-
-# Random
-```{r}
-# 
- color_2020 %>%
-  filter(country == "India") %>%
-  group_by(name_1) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2020_pop_weighted = pm2020*pop_weights, 
-         pm2016_pop_weighted = pm2016*pop_weights) %>%
-  summarise(avg_pm2.5_2016 = sum(pm2016_pop_weighted, na.rm = TRUE), 
-            avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE)) %>%
-  mutate(avg_pm2.5_2020_vs_2016 = avg_pm2.5_2020 - avg_pm2.5_2016, 
-         avg_pm2.5_2020_vs_2016_prop_change = round((avg_pm2.5_2020_vs_2016/avg_pm2.5_2016)*100, 2)) %>%
-  filter(avg_pm2.5_2020_vs_2016_prop_change <= -10) %>%
-  nrow()
-
-
-color_2020 %>%
-  filter(country == "India") %>%
-  mutate(pol_change = pm2020 - pm2016, 
-         prop_change = (pol_change/pm2016)*100) %>%
-  filter(prop_change < -10) %>%
-  nrow()
-
-# Michael graph (top 5 largest NCAP cities, pollution trend graph 2017 to 2020) and their corresponding pollution reduction targets horizontal lines.
-
-ds_trendlines <- color_2020 %>%
-  filter(name_2 %in% ncap_district_list) %>%
-  slice_max(population, n = 5) %>%
-  select(country, name_1, name_2, population, starts_with("pm")) %>%
-  pivot_longer(pm1998:pm2020, names_to = "year", values_to = "pm2.5_pollution") %>%
-  mutate(year = as.numeric(str_extract(year, "\\d+"))) %>%
-  filter(year >= 2017) 
-
-city_wise_reduction_target <- color_2020 %>%
-  filter(country == "India", name_2 %in% c("Bangalore", "Mumbai Suburban", "NCT of Delhi", "North 24 Parganas", "Pune")) %>%
-  select(country, name_1, name_2, pm2017) %>%
-  mutate(pm2026_target = round(pm2017*0.6, 2))
-
-foo <- ds_trendlines %>%
+# snapshot heatmap
+snapshot_heatmap <- snapshot_map_data %>%
+ filter(city %in% city_to_plot, years <= 2017) %>%
   ggplot() +
-  geom_line(mapping = ggplot2::aes(x = year, y = pm2.5_pollution, color = name_2), lwd = 1.2) +
-    geom_hline(mapping = aes(yintercept = 23.6), lwd = 1.1, linetype = "dashed", color = "olivedrab1") +
-  geom_hline(mapping = aes(yintercept = 22.2), lwd = 1.1, linetype = "dashed", color = "darkslateblue") +
-  geom_hline(mapping = aes(yintercept = 24.9), lwd = 1.1, linetype = "dashed", color = "orangered4") +
-  geom_hline(mapping = aes(yintercept = 65.6), lwd = 1.1, linetype = "dashed", color = "magenta1") +
-  geom_hline(mapping = aes(yintercept = 34.3), lwd = 1.1, linetype = "dashed", color = "lightsteelblue4") +
-  geom_vline(mapping = aes(xintercept = 2019), lwd = 0.8) +
-  scale_y_continuous(breaks = seq(0, 130, 20), limits = c(0, 130)) +
-  scale_x_continuous(breaks = seq(2017, 2020, 1)) +
-  labs(x = "Years", 
-       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, ")")), 
-       title = "Average PM2.5 pollution in 5 largest districts touched by NCAP, with 2026 reduction targets", 
-       subtitle = "2017 to 2020", caption = "* 'largest NCAP districts' means, largest in terms of population and dashed lines show city wise reduction targets", 
-       color = "District") +
-    theme_classic() +
-  theme(legend.position = "bottom", legend.title = element_blank(), 
-        legend.text = element_text(size = 10), 
-        axis.title.y = element_text(size = 11), 
-        axis.title.x = element_text(size = 11),
-        axis.text.x = element_text(size = 13), 
-        axis.text.y = element_text(size = 13), 
-        plot.caption = element_text(hjust = 0)) +
-  scale_color_manual(values = c("Bangalore" = "olivedrab1", "Mumbai Suburban" = "darkslateblue", "NCT of Delhi" = "magenta1", "North 24 Parganas" = "lightsteelblue4", "Pune" = "orangered4"))
-
-
-foo1 <- ds_trendlines %>%
-  ggplot() +
-  geom_line(mapping = ggplot2::aes(x = year, y = pm2.5_pollution, color = name_2), lwd = 1.1) +
-    geom_hline(mapping = aes(yintercept = 23.6), lwd = 0.3, color = "orange4") +
-  geom_hline(mapping = aes(yintercept = 22.2), lwd = 0.3,  color = "lightblue4") +
-  geom_hline(mapping = aes(yintercept = 24.9), lwd = 0.3,  color = "mediumpurple4") +
-  geom_hline(mapping = aes(yintercept = 65.6), lwd = 0.3, color = "darkred") +
-  geom_hline(mapping = aes(yintercept = 34.3), lwd = 0.3, color = "navyblue") +
-  geom_vline(mapping = aes(xintercept = 2019), lwd = 0.8) +
-  scale_y_continuous(breaks = seq(0, 130, 20), limits = c(0, 130)) +
-  scale_x_continuous(breaks = seq(2017, 2020, 1)) +
-  labs(x = "Years", 
-       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, ")")), 
-       title = "Average PM2.5 pollution in 5 largest districts touched by NCAP", 
-       subtitle = "2017 to 2020", caption = "* 'largest NCAP districts' means, largest in terms of population", 
-       color = "District") +
-    theme_classic() +
-  theme(legend.position = "bottom", legend.title = element_blank(), 
-        legend.text = element_text(size = 10), 
-        axis.title.y = element_text(size = 11), 
-        axis.title.x = element_text(size = 11),
-        axis.text.x = element_text(size = 13), 
-        axis.text.y = element_text(size = 13), 
-        plot.caption = element_text(hjust = 0)) +
-  scale_color_manual(values = c("Bangalore" = "orange4", "Mumbai Suburban" = "blue4", "NCT of Delhi" = "darkred", "North 24 Parganas" = "navyblue", "Pune" = "mediumpurple4"))  
-
-
-foo2 <- ds_trendlines %>%
-  ggplot() +
-  geom_line(mapping = ggplot2::aes(x = year, y = pm2.5_pollution, color = name_2), lwd = 1.5) +
-  geom_hline(data = city_wise_reduction_target, mapping = aes(yintercept = pm2026_target, color = name_2), lwd = 0.8, linetype = "dashed",  color = "lightblue4") +
-  geom_vline(mapping = aes(xintercept = 2019), lwd = 0.8) +
-  scale_y_continuous(breaks = seq(0, 130, 20), limits = c(0, 130)) +
-  scale_x_continuous(breaks = seq(2017, 2020, 1)) +
-  labs(x = "Years", 
-       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, ")")), 
-       title = "Average PM2.5 pollution in 5 largest districts touched by NCAP, with 2026 reduction targets", 
-       subtitle = "2017 to 2020, NCAP begins in 2019 (vertical line)", caption = "* 'largest NCAP districts' means, largest in terms of population and dashed lines show city wise reduction targets", 
-       color = "District") +
-    ggthemes::theme_clean() +
-  theme(legend.position = "bottom", legend.title = element_blank(), 
-        legend.text = element_text(size = 10), 
-        axis.title.y = element_text(size = 11), 
-        axis.title.x = element_text(size = 11),
-        axis.text.x = element_text(size = 9), 
-        axis.text.y = element_text(size = 9), 
-        plot.caption = element_text(hjust = 0), 
-        plot.title = element_text(size = 13), 
-        plot.subtitle = element_text(size = 11)) +
-  facet_wrap(~name_2, ncol = 5)
-
-+
-  scale_color_manual(values = c("Bangalore" = "orange4", "Mumbai Suburban" = "blue4", "NCT of Delhi" = "darkred", "North 24 Parganas" = "navyblue", "Pune" = "mediumpurple4"))  
-
-```
-
-
-```{r}
-
-bbox_state_of_interest <- st_as_sfc(st_bbox(colormap_shp %>% filter(NAME_0 == "India", NAME_1 %in% c("Uttar Pradesh", "Haryana", "NCT of Delhi"))))
-
-india_state %>%
-  filter(NAME_1 %notin% c("Andaman and Nicobar")) %>%
-  ggplot() +
-  geom_sf(fill = "white", color = "black", size = 1)  +
-  ggthemes::theme_map() +
-  geom_sf(data = india_state %>% filter(NAME_1 %in% c("Uttar Pradesh", "Haryana", "NCT of Delhi")), size = 1.5, fill = "white", color = "black") +
-  geom_sf(data = bbox_state_of_interest, fill = NA, color = "red", size = 1)
-
-
-districts_of_interest <- ggplot() +
-  geom_sf(data = colormap_shp %>% filter(NAME_0 == "India", NAME_1 %in% c("Uttar Pradesh", "Haryana", "NCT of Delhi"), NAME_2 %in% c("Ghaziabad", "Gautam Buddha Nagar", "Muzaffarnagar", "Gurugram", "Panipat", "Faridabad")), color = "orange")
-
-
-
-
-foo1 <- ggplot() + 
-   geom_sf(data = india_state, fill = "white", color = "black", size = 1.2) +
-  geom_sf(data = india_state %>% filter(NAME_1 %in% c("Uttar Pradesh", "NCT of Delhi", "Haryana")), color = "black", size = 1, fill = "white") +
-  geom_sf(data = colormap_shp %>% filter(NAME_0 == "India", NAME_1 %in% c("Uttar Pradesh", "Haryana", "NCT of Delhi"), NAME_2 %in% c("Ghaziabad", "Gautam Buddha Nagar", "Muzaffarnagar", "Gurugram", "Panipat", "Faridabad", "NCT of Delhi")), color = "orange") +
-   geom_sf(data = bbox_state_of_interest, fill = "NA", color = "red", size = 1.2) +
-  theme_map()
-
- 
-
-foo2 <- ggplot() +
-  geom_sf(data = india_state %>% filter(NAME_1 %in% c("Uttar Pradesh", "NCT of Delhi", "Haryana")), color = "black", size = 1, fill = "white") +
-   geom_sf(data = colormap_shp %>% filter(NAME_0 == "India", NAME_1 %in% c("Uttar Pradesh", "Haryana", "NCT of Delhi"), NAME_2 %in% c("Ghaziabad", "Gautam Buddha Nagar", "Muzaffarnagar", "Gurugram", "Panipat", "Faridabad", "NCT of Delhi")), color = "black", fill = "orange", size = 1.2) +
-  ggsflabel::geom_sf_label_repel(data = colormap_shp %>% filter(NAME_0 == "India", NAME_1 %in% c("Uttar Pradesh", "Haryana", "NCT of Delhi"), NAME_2 %in% c("Ghaziabad", "Gautam Buddha Nagar", "Muzaffarnagar", "Gurugram", "Panipat", "Faridabad", "NCT of Delhi")), mapping = aes(label = NAME_2), force = 100, nudge_x = -2, seed = 10, size = 7) +
-  theme_map()
- 
- 
- 
- inset_map_wb_with_5_most_pop_non_ncap_districts <- cowplot::ggdraw() +
-  draw_plot(foo2) +
-  draw_plot(foo1, x = 0, y = 0.1, width = 0.4, height = 0.4)
- 
- 
-```
-
-
-```{r}
-
-foo <- read_csv("./foo.csv")
-
-foo %>%
-  pivot_longer(raasman:safar, names_to = "type", values_to = "pol") %>%
-  ggplot() +
-  geom_line(mapping = aes(x = Date, y = pol, color = type, size = 0.2))
+  geom_raster(mapping = aes(x = years, y = forcats::fct_reorder(city, pop_weighted_avg_pm2.5), fill = pop_weighted_avg_pm2.5), color = "black", size = 2) +
+  scale_fill_viridis_b(option = "rocket", direction = -1) +
+  scale_x_continuous(breaks = seq(1998, 2017, 2)) +
+  labs(x = "Years", y = "City", 
+       title = "PM2.5 pollution from 1998 to 2017 (NCAP baseline)", 
+       subtitle = "(Cities in which PM2.5 pollution was above the national standard in 2017)", 
+       fill = "PM2.5 (in µg/m³)") +
+  theme(plot.title = element_text(hjust = 0.5, size = 12), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8))
   
 
+#> creating a beeswarm plot------------------------------------------------------
+
+snapshot_map_data$years <- as.character(snapshot_map_data$years)
+
+snapshot_map_data <- snapshot_map_data %>%
+  add_row(country = "", name_1 = "", name_2 = "", population = 0, city = "", years = NA, pop_weighted_avg_pm2.5 = 0, region = "")
+
+years_vec <- c(1998, 2009, 2017, 2019, 2020, 2021, NA)
+
+plt <- snapshot_map_data %>%
+  mutate(years = as.factor(years), 
+         population_lakhs = round(population/100000, 1)) %>%
+  filter(years %in% years_vec) %>%
+  ggplot(mapping = aes(x = years, y = pop_weighted_avg_pm2.5, color = years)) +
+  geom_beeswarm(mapping = aes(size = population_lakhs)) +
+   viridis::scale_color_viridis(discrete = TRUE) + 
+  labs(x = "Year", y = expression("Annual Average   " ~ PM[2.5] ~ " in (µg/m³)"), title = expression(PM[2.5] ~ "Pollution in 131 NCAP cities from 1998 to 2021"), 
+       color = "Years", 
+       caption = str_wrap("*Within each year there are 131 dots, one corresponding to each of the 131 non-attainment cities. Each dot shows the annual average PM2.5 concentration (in µg/m³) of a given non-attainment city in the year in question. The size of the dot is scaled to the population (census 2011) of the underlying city.", width = 70)) +
+  ggthemes::theme_tufte() +
+    ggplot2::scale_size(breaks = c(1, 5, 10, 20, 50, 100), range = c(1, 6)) +
+   theme(plot.title = element_text(hjust = 0.5, margin = margin(b = 0.5, unit = "cm"), size = 17), 
+         axis.line = element_line(), 
+         axis.text = element_text(size = 13),
+         legend.title = element_text(hjust = 0.5, size = 13), 
+         axis.title.x = element_text(size = 13, margin = margin(t = 0.5, b = 0.5,  unit = "cm")),
+          axis.title.y = element_text(size = 13, margin = margin(r = 0.5, unit = "cm")),
+         legend.text = element_text(size = 12),
+         legend.position = "bottom", 
+         plot.caption = element_text(hjust = 0, size = 10, margin = margin(t = 1, unit = "cm")),
+         legend.background = element_rect(color = "black"), 
+         legend.direction = "horizontal") +
+  geom_hline(mapping = aes(yintercept = who_guideline), linetype = "dashed") +
+  geom_hline(mapping = aes(yintercept = 40), linetype = "dashed") +
+    annotate("text", x = 6.4, y = 43, label = expression("National" ~ PM[2.5] ~ "Guideline (40 µg/m³)"), hjust = 0, size = 4) +
+  annotate("text", x = 6.3, y = 8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (5 µg/m³)"), hjust = 0, size = 4) +
+  scale_color_manual(values = c("1998" = "#FFE6B3", "2009" = "#FFD25D", 
+                                "2017" = "#FFBA00", "2019" = "#FF6908", "2020" = "#FF9600", 
+                                "2021" = "#E63D23")) +
+  scale_y_continuous(breaks = seq(0, 130, 20)) +
+  guides(colour = guide_legend(nrow = 1, 
+                               override.aes = list(size = 5)), 
+         size = guide_legend(title = "Population (in Lakhs)", 
+                             nrow = 1, override.aes = list(shape = 21))) 
+  
+
+beeswarm_plot_data <- color_2021 %>%
+    select(country, name_1, name_2, population, starts_with("pm")) %>%
+  pivot_longer(cols = pm1998:pm2021, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.factor(as.integer(unlist(str_extract(years, "\\d+")))), 
+         region = "City Average") 
+
+
+plt <- beeswarm_plot_data %>%
+  filter(country == "India", years %in% c(1998, 2003, 2017, 2021)) %>%
+  ggplot(mapping = aes(x = years, y = pop_weighted_avg_pm2.5, color = years)) +
+  geom_beeswarm(cex = 1.5, alpha = 0.7) +
+  labs(x = expression("Year"), y = expression("Annual Average" ~ PM[2.5] ~ "(in µg/m³)")) +
+  ggthemes::theme_tufte() + 
+  theme(axis.line = element_line()) +
+  viridis::scale_color_viridis(discrete = TRUE)
+  
+plot2_data <- final_analysis_dataset %>%
+    slice_max(population, n = 10) %>%
+  mutate(pm2017_40_perc = pm2017*((red_perc)/100), 
+         le_gain_from_40_perc_red = pm2017_40_perc*0.098) %>%
+  select(country, name_1, name_2, city, population, pm2017, pm2017_40_perc, le_gain_from_40_perc_red) %>%
+  slice_max(population, n = 10) 
+
+
+
+# plot 1.2 (lollipop plot)
+
+plt1.2 <- plot1_data_with_empty_rows %>%
+  ggplot(mapping = aes(x = city, y = value, color = factor(pol_type))) + 
+  geom_segment(mapping = aes(x = forcats::fct_reorder(city, population, .desc = TRUE), y = 0, xend = city, yend = value), position = "dodge") +
+  geom_hline(mapping = aes(yintercept = who_guideline), color = "black", linetype = "dashed", size = 0.5) +
+   geom_hline(mapping = aes(yintercept = nat_pm2.5_stan_india), color = "black", linetype = "dashed", size = 0.5) +
+  labs(x = "City", y = expression("Annual average" ~ PM[2.5] ~ "(in µg/m³)"), fill = "", 
+       title = expression("2017" ~ PM[2.5] ~ "Concentrations in top 10 most populated Non-Attainment cities in India"), caption = str_wrap("*Under NCAP's recently updated goals, a 40% reduction (in PM2.5) is targeted by 2026 (relative to 2017 levels). The cities in this graph are the 10 largest by population (2011 Census) of the 131 non-attainment cities singled out by NCAP. The cities are ordered from most populated to least populated. Since AQLI produces results at the district-level, the statistics shown are for districts containing these cities. The dotted black lines represent the Annual Average PM2.5 guideline both as per WHO and as per India's National Ambient Air Quality Standard (NAAQS).", width = 100)) +
+  scale_fill_manual(values = c("pm2017" = "#1C2B39", "pm2017_40_perc_red" = "#576572"), labels = c("2017", "After 40% reduction under NCAP")) +
+  guides(colour = guide_legend(override.aes = list(shape = 12))) +
+  scale_y_continuous(breaks = seq(0, 130, 10)) +
+   ggthemes::theme_tufte() +
+   theme(axis.text.x = element_text(size = 10),
+         axis.text.y = element_text(size = 10),
+         axis.title = element_text(size = 12),
+        legend.position = "bottom", 
+        legend.text = element_text(size = 7), 
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), 
+plot.title = element_text(hjust = 0.5, size = 14), 
+legend.background = element_rect(fill = "white", colour = "black"), 
+axis.ticks = element_blank(), 
+plot.caption = element_text(hjust = 0, margin = margin(0, 10, 0, 0), face = "italic")) +
+  annotate("text", x = 10.1, y = 43, label = expression("National" ~ PM[2.5] ~ "Guideline (40 µg/m³)"), hjust = 0, size = 3) +
+  annotate("text", x = 10.37, y = 8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (5 µg/m³)"), hjust = 0, size = 2.7)
+  
+
+
+
+# plot 2.2 (lollipop plot)
+plt2.2 <- plot2_data %>%
+  ggplot(mapping = aes(x = city, y = le_gain_from_40_perc_red)) + 
+  geom_segment(aes(x = forcats::fct_reorder(city, population ,.desc = TRUE), y = 0, xend = city, yend = le_gain_from_40_perc_red), color = "darkred", size = 1) +
+  geom_point(size=5, color="red", fill=alpha("orange", 0.3), alpha=0.7, shape=21, stroke=2) +
+  labs(x = "City", y = "Life Expectancy Gains (in years)", title = expression("Life Expectancy Gains by reducing" ~ PM[2.5] ~ "by 40% relative to 2017"), 
+       subtitle = "(Top 10 most populated non-attainment cities in India)", 
+       caption = str_wrap("*Under NCAP's recently updated goals, a 40% reduction (in PM2.5) is targeted by 2026 (relative to 2017 levels). The cities in this graph are the 10 largest by population (2011 Census) of the 131 non-attainment cities singled out by NCAP. The cities are ordered from most populated to least populated. Since AQLI produces results at the district-level, the statistics shown are for districts containing these cities.", width = 100)) +
+  ggthemes::theme_clean() +
+  theme(axis.text.x = element_text(size = 10),
+         axis.text.y = element_text(size = 10),
+         axis.title = element_text(size = 12),
+        legend.position = "bottom", 
+        legend.text = element_text(size = 7), 
+        panel.border = element_blank(), panel.grid.major = element_blank(),
+panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), 
+plot.title = element_text(hjust = 0.5, size = 14), 
+plot.subtitle = element_text(hjust = 0.5, size = 9), 
+legend.background = element_rect(fill = "white", colour = "black"), 
+axis.ticks = element_blank(), 
+plot.caption = element_text(hjust = 0, margin = margin(0, 10, 0, 0), face = "italic"))
+
+
+# ridgeline plot (same dataset as used in the above snapshot map, run that before and then run this)
+
+# cities to plot in the snapshot heatmap
+city_to_plot <- final_analysis_dataset %>%
+  slice_max(pm2020, n = 10) %>%
+  pull(city) 
+
+# ridgeline plot
+snapshot_map_data %>% filter(city %in% city_to_plot, years <= 2017)  %>% ggplot(mapping = aes(x = pop_weighted_avg_pm2.5, y = city, fill = city)) + geom_density_ridges() + theme_ridges() + theme(legend.position = "none") + labs(x = expression("Annual Average" ~ PM[2.5] ~ ("in µg/m³")), y = "City", subtitle = "Top 10 most polluted NCAP cities in 2020") + ggtitle(expression(PM[2.5] ~ "Distribution (1998 to 2021)")) + theme(plot.title = element_text(hjust = 0.5, size = 10),
+                                        plot.subtitle = element_text(hjust = 0.5, size = 7)                                            )
+
 ```
 
+```{r}
+foo <- color_2021 %>%
+  group_by(country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2021_pop_weighted = pm2021*pop_weights) %>%
+  summarise(avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE))
+
+color_2021 %>%
+  filter(country == "India", pm2021 > 40) %>%
+  pull(population) %>%
+  sum()
+
+foo_risks <- read_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_Global_risks.csv")
+foo_causes <- read_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_Global_causes.csv")
+
+foo_causes %>%
+  mutate(age = str_remove(age, " years"), 
+         age = str_replace(age, "\\+", " plus"), 
+         age = str_replace(age, "-", " to "))  %>%
+  write_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_Global_causes.csv")
+
+foo_risks %>%
+  filter(rei %in%  c("Drug use", "Drug use disorders")) %>%
+  mutate(age = str_remove(age, "years"), 
+         age = str_replace(age, "\\+", " plus"), 
+         age = str_replace(age, "-", " to ")) %>%
+  write_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_Global_risks.csv")
 
 
+color_2021 %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2021_pop_weighted = pm2021*pop_weights) %>%
+  summarise(avg_pm2.5 = sum(pm2021_pop_weighted, na.rm = TRUE))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```
 

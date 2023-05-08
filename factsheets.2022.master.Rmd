@@ -1466,3 +1466,40 @@ china_fs_appendix_table %>%
 
 ```
 
+
+```{r}
+
+foo <- color_2020 %>% group_by(country) %>% summarise(min_lyl = min(llpp_who5_2020, na.rm = TRUE), max_lyl = max(llpp_who5_2020, na.rm = TRUE), range_lyl = max_lyl - min_lyl, total_population = sum(population, na.rm = TRUE))
+
+foo1 <- color_2020 %>% 
+  filter(country == "India") %>%
+  group_by(name_1) %>% 
+  summarise(min_lyl = min(llpp_who5_2020, na.rm = TRUE), max_lyl = max(llpp_who5_2020, na.rm = TRUE), range_lyl = max_lyl - min_lyl, total_population = sum(population, na.rm = TRUE))
+
+ 
+  plt <- foo1  %>% 
+    slice_max(total_population, n = 10) %>%
+     ggplot(aes(x = forcats::fct_reorder(name_1, total_population), y = min_lyl)) +
+     geom_point(aes(color = "Minimum life years lost"), size = 5) +
+     geom_point(aes(y = max_lyl, color = "Maximum life years lost"), size = 5) +
+     geom_segment(aes(xend = name_1, yend = max_lyl), 
+                  linetype = "dashed", color = "black") +
+     scale_color_manual(name = "", values = c("Minimum life years lost" = "cornflowerblue", "Maximum life years lost" = "darkred")) +
+     labs(title = "State Wise Life Years Lost to air pollution in India (range)", 
+          x = "State", y = "Life years lost", 
+          subtitle = "(Top 10 most populated states)",
+          caption = str_wrap("* Life years lost are calculated using AQLI methodology and latest (2020) AQLI data, relative to the WHO annual average PM2.5 guideline of 5 µg/m³. AQLI uses satellite derived Annual Average PM2.5 data. States are ordered from most populated to least populated."), width = 120) +
+  coord_flip() +
+    theme_classic() +
+  theme(legend.position = "bottom", 
+        legend.box.background = element_rect(color = "black"), 
+        plot.title = element_text(hjust = 0.5, size = 21), 
+        plot.caption = element_text(hjust = 0, size = 10, margin = margin(t = 1.5, unit = "cm")), 
+        plot.subtitle = element_text(size = 12, hjust = 0.5, margin = margin(b = 1, unit = "cm")), 
+        axis.text = element_text(size = 14), 
+        axis.title = element_text(size = 16, margin = margin(b = 1, unit = "cm")), 
+        legend.text = element_text(size = 16)) + 
+  scale_y_continuous(breaks = seq(0, 13, 1))
+
+
+```

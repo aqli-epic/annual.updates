@@ -1,0 +1,158 @@
+---
+title: "Factsheets 2022"
+author: "Aarsh"
+date: '2022-07-26'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# get packages, global variables and datasets
+```{r load-lib-helper-files-data-global-var}
+
+# libraries
+library(readr)
+library(dplyr)
+library(stringr)
+library(magrittr)
+library(ggplot2)
+library(readr)
+library(tidytext)
+library(tidyr)
+library(tidyverse)
+library(sf)
+library(usethis)
+library(devtools)
+library(data.table)
+
+# read in latest color file
+color_2021 <-
+
+# global variables
+who_guideline <- 5
+le_constant <- 0.098
+
+
+```
+
+
+# set paths
+
+```{r}
+
+# set path for where risks and causes master files are stored
+gbd_risks_causes_path <- "./september.2023/gbd.calculation/GBDComparisons/GBD/"
+
+# WHO raw life tables path
+who_raw_life_tables_path <- "./september.2023/gbd.calculation/GBDComparisons/WHO life tables/"
+
+# WHO clean life tables path
+who_cleaned_life_tables_path <- "./september.2023/gbd.calculation/GBDComparisons/WHO life tables/"
+
+
+```
+
+
+# GBD master files cleaning
+
+```{r}
+
+
+# risks and causes master files specific paths
+gbd_risks_master_path <- str_c(gbd_risks_causes_path, "gbdrates_master_risks_raw.csv")
+gbd_causes_master_path <- str_c(gbd_risks_causes_path, "gbdrates_master_causes_raw.csv")
+
+# read in master risks and causes files
+gbd_risks_master <- read_csv(gbd_risks_master_path)
+gbd_causes_master <- read_csv(gbd_causes_master_path)
+
+# clean causes master file and write as csv
+gbd_causes_master_region_cleaned <- gbd_causes_master %>%
+  mutate(age = str_remove(age, " years"), 
+         age = str_replace(age, "\\+", " plus"), 
+         age = str_replace(age, "-", " to "))  
+
+gbd_causes_master_region_cleaned %>%
+write_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_master_causes_cleaned.csv")
+
+# clean risks master file and write as csv
+gbd_risks_master_region_cleaned <- gbd_risks_master %>%
+  mutate(age = str_remove(age, "years"), 
+         age = str_replace(age, "\\+", " plus"), 
+         age = str_replace(age, "-", " to ")) 
+
+gbd_risks_master_region_cleaned %>%
+ write_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_master_risks_cleaned.csv")
+
+
+```
+
+# creating region wise causes and risks file from master files and writing it to the GBD folder
+
+```{r}
+
+# split the master risks dataset by location
+gbd_risks_master_region_cleaned_region_wise <- gbd_risks_master_region_cleaned %>%
+  group_split(location)
+
+# write location wise CSVs
+for (i in 1 : length(gbd_risks_master_region_cleaned_region_wise)){
+  risks_data_tmp <- gbd_risks_master_region_cleaned_region_wise[[i]]
+  location_tmp <- risks_data_tmp$location[i]
+  risks_data_tmp %>%
+    write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "risks.csv"))
+}
+
+
+# split the master causes dataset by loaction
+gbd_causes_master_region_cleaned_region_wise <- gbd_causes_master_region_cleaned %>%
+  group_split(location)
+
+
+# write location wise CSVs
+for (i in 1 : length(gbd_causes_master_region_cleaned_region_wise)){
+  causes_data_tmp <- gbd_causes_master_region_cleaned_region_wise[[i]]
+  location_tmp <- causes_data_tmp$location[i]
+  causes_data_tmp %>%
+    write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "causes.csv"))
+}
+
+```
+
+# Writing the cleaned version of the WHO raw life tables
+
+```{r}
+# read in WHO raw life tables 1 by 1 in a loop, clean and write the cleaned versions
+
+who_life_tables_list <- list.files(who_raw_life_tables_path)
+
+for (i in 138:length(who_life_tables_list)){
+  
+  who_raw_life_table_tmp <- read_csv(str_c(who_raw_life_tables_path, who_life_tables_list[i]))
+
+  location_tmp <- str_remove(who_life_tables_list[i], "_raw.csv")
+  
+  who_raw_life_table_tmp <- who_raw_life_table_tmp[, 1:5]
+  
+  colnames(who_raw_life_table_tmp) <- who_raw_life_table_tmp[1, ]
+  
+  who_raw_life_table_tmp <- who_raw_life_table_tmp[2:nrow(who_raw_life_table_tmp), c(1, 2, 4, 5)]
+  
+  colnames(who_raw_life_table_tmp) <- c("indicator", "agegroup", "male", "female")
+  
+  cleaned_life_table_tmp <- who_raw_life_table_tmp  %>%
+  mutate(lt_var = str_extract(indicator, ".+ (\\-)"), 
+         lt_var = str_remove(lt_var, " -"),
+    agegroup = str_replace(agegroup, "&lt;", "<"))
+    
+
+  cleaned_life_table_tmp %>%
+    write_csv(str_c(who_cleaned_life_tables_path, location_tmp, ".csv"))
+  
+  print(str_c("Iteration # ", i, "/", length(who_life_tables_list), " complete"))
+
+}
+
+```
