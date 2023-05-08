@@ -462,7 +462,7 @@ plot2_data_v1 <- final_analysis_dataset %>%
          lyl_bucket = ifelse((le_gain_from_40_perc_red >= 3) & (le_gain_from_40_perc_red < 4), "3 - < 4", lyl_bucket), 
          lyl_bucket = ifelse((le_gain_from_40_perc_red >= 4), ">= 4 years", lyl_bucket)) 
 
-plot2_data$lyl_bucket <- factor(plot2_data$lyl_bucket, levels = c("1 - < 2", "2 - < 3", ">= 4 years"))
+plot2_data_v1$lyl_bucket <- factor(plot2_data_v1$lyl_bucket, levels = c("1 - < 2", "2 - < 3", ">= 4 years"))
 
 plt2 <- plot2_data_v1 %>%
   ggplot() + 
