@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # get packages, global variables and datasets
 ```{r load-lib-helper-files-data-global-var}
-
+  
 # libraries
 library(readr)
 library(dplyr)
@@ -128,7 +128,7 @@ for (i in 1 : length(gbd_causes_master_region_cleaned_region_wise)){
 
 who_life_tables_list <- list.files(who_raw_life_tables_path)
 
-for (i in 138:length(who_life_tables_list)){
+for (i in 1:length(who_life_tables_list)){
   
   who_raw_life_table_tmp <- read_csv(str_c(who_raw_life_tables_path, who_life_tables_list[i]))
 
