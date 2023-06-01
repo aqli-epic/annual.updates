@@ -63,11 +63,14 @@ gadm0_aqli_2021 <- gadm0_aqli_2021 %>%
   rename(whostandard = llpp_who_standard,
          natstandard = llpp_nat_standard)
 
+
 # read in the shapefile with pollution and lyl data
-# gadm2_aqli_2021_shp <- sf::st_read("./september.2023/master.dataset/shapefiles/master_global_allyears_gadm2_with_geom_Jan192023.shp")
+gadm2_aqli_2021_shp <- sf::st_read("./september.2023/master.dataset/shapefiles/master_global_allyears_gadm2_with_geom_Jan192023.shp")
+gadm1_aqli_2021_shp <- sf::st_read("./september.2023/master.dataset/shapefiles/aqli_gadm1_final_vit.shp")
+
 
 # india state
-# india_state <- st_read("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/india_state.shp")
+india_state <- st_read("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/india_state.shp")
 
 #> join each one of these with the country continent file, so that each one of these has a continent column
 
@@ -354,11 +357,11 @@ themes_aqli_base <- ggthemes::theme_tufte() +
         plot.subtitle = element_text(size = 14, hjust = 0.5, margin = margin(b = 0.7, unit = "cm")),
         axis.title.x = element_text(size = 14, margin = margin(t = 0.3, b = 0.5, unit = "cm")),
         axis.title.y = element_text(size = 14, margin = margin(r = 0.3, unit = "cm")),
-        axis.text = element_text(size = 11),
-        plot.caption = element_text(size = 9, hjust = 0, margin = margin(t = 0.7, unit = "cm"), face = "italic"),
+        axis.text = element_text(size = 13),
+        plot.caption = element_text(size = 10, hjust = 0, margin = margin(t = 0.7, unit = "cm"), face = "italic"),
         legend.box.background = element_rect(color = "black"),
-        legend.title = element_text(size = 13),
-        legend.text = element_text(size = 11),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 13),
         legend.position = "bottom")
 
 # function that adds AQLI colors and axis titles

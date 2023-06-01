@@ -497,3 +497,151 @@ filter(country == "India") %>%
 
 ```
 
+
+# South Korea factsheet
+
+```{r}
+
+#> quick stats
+
+# South Korea ranking amongst other countries in terms of pollution
+gadm_level_summary(gadm2_aqli_2021, c("country"), c(2021), 10) %>%
+  slice_max(pm2021, n = 50) %>%
+  View()
+
+# most populated region
+gadm_level_summary(gadm2_aqli_2021, c("country", "name_1"), c(2021), 10) %>%
+  filter(country == "South Korea") %>%
+  slice_max(population, n = 10)
+
+#> plot 1: map screenshot for South Korea
+
+# south korea figure1 dataset
+south_korea_fs_fig1_data <- gadm2_aqli_2021 %>%
+  filter(country == "South Korea") %>%
+  left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "objidgadm2")) %>%
+  mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1", NA), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 1) & (llpp_who_2021 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 2) & (llpp_who_2021 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 3) & (llpp_who_2021 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 4) & (llpp_who_2021 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 5) & (llpp_who_2021 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - < 6", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket)) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+
+
+# south korea figure 1
+south_korea_fs_fig1 <- south_korea_fs_fig1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "transparent") +
+  geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "South Korea"), color = "black", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+ scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) +
+  ggthemes::theme_map() +
+  labs(fill = "Life years lost  ", title = expression("Potential Gains in Life Expectancy through Permanently Reducing" ~ PM[2.5] ~ "from 2021 concentrations to the WHO guideline")) + 
+ theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+       legend.key = element_rect(color = "black"), 
+       legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+#> plot 2: Gain in LE in reducing 2021 pollution to WHO guideline in top 10 most populous regions
+
+# fig2 dataset
+southkorea_fs_fig2_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "South Korea") %>%
+  add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "llpp_who_2021") %>%
+  slice_max(population, n = 10)
+
+# fig 2
+
+plt <- southkorea_fs_fig2_dataset %>%
+  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = expression("Potential Gain in Life Expectancy from Reducing 2021 " ~ PM[2.5] ~ "concentrations to the WHO Guideline"), subtitle = "(Top 10 most populous regions of South Korea)", x_label = "Region", y_label = "Average Life Expectancy Gains (years)", legend_title = "LE gains (years)", caption = "")
+ 
+# plot 3: Trendlines: 1998 to 2021
+
+# southkorea factsheet figure 3 dataset
+southkorea_fs_fig3_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "South Korea") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+
+
+  southkorea_fs_fig3 <- southkorea_fs_fig3_dataset %>%
+    ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dashed") +
+    geom_hline(mapping = aes(yintercept = 15), lwd = 0.8, linetype = "dashed") + 
+  scale_y_continuous(breaks = seq(0, 35, 5), limits = c(0, 35)) +
+  scale_x_continuous(breaks = c(seq(1998, 2020, 2), 2021)) +
+    scale_color_manual(values = c("National Average" = "darkgrey")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression("Annual average " ~ PM[2.5] ~ "concentrations (in µg/m³)")) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +  
+    geom_text(x = 2001.8, y = 6.1, label =  expression("WHO " ~ PM[2.5] ~ "Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
+    geom_text(x = 2001.8, y = 16.1, label = expression("South Korea National" ~ PM[2.5] ~ "Guideline: 15 µg/m³"), size = 5) +
+    themes_aqli_base
+
+
+  # appendix table (gadm level 2)
+  gadm2_aqli_2021 %>%
+    filter(country == "South Korea") %>%
+    select(name_2, population, pm2021, llpp_who_2021, llpp_nat_2021) %>%
+    mutate(pop_millions = round(population/1000000, 1), 
+           pm2021 = round(pm2021, 1), 
+           llpp_who_2021 = round(llpp_who_2021, 1), 
+           llpp_nat_2021 = round(llpp_nat_2021, 1)) %>%
+    slice_max(population, n = 25) %>% 
+    select(name_2, pop_millions, pm2021, llpp_who_2021, llpp_nat_2021) %>%
+    rename(`Population (Millions)` = pop_millions, 
+           "Region" = name_2, 
+           "PM 2.5 concentration 2021 (in µg/m³)" = pm2021, 
+           "From 2021 Concentration to the National Guideline of 15 µg/m³" = llpp_nat_2021, 
+           "From 2021 Concentration to the WHO Guideline of 5 µg/m³" = llpp_who_2021) %>%
+    write_csv("./[updatedOnJune012023]South Korea Factsheet 2023 appendix table.csv")
+    
+
+```
+
