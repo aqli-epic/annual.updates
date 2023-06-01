@@ -335,9 +335,10 @@ ggsave("./september.2023/factsheets/india/india_fs_fig2.svg", width = 12, height
 #> GBD India graph--------------------------------------------
 
 # top 5 most deadly diseases
-india_fs_fig3_dataset <- readxl::read_xlsx("./september.2023/gbd.calculation/GBDComparisons/results/estimated_life_expectancy_differences_India.xlsx")
+india_fs_fig3_dataset <- gbd_results_master_2021 %>%
+  filter(country == "India")
 
-colnames(india_fs_fig3_dataset) <- c("cause_of_death", "lyl_women", "lyl_men", "llpp_who_2021")
+colnames(india_fs_fig3_dataset)[3] <- c("llpp_who_2021")
 
 india_fs_fig3_dataset <- india_fs_fig3_dataset %>%
     mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1 years", NA), 
@@ -359,9 +360,6 @@ india_fs_fig3_dataset <- india_fs_fig3_dataset %>%
          order_lyl_bucket = ifelse(lyl_bucket == "> 5 - 6 years", 8, order_lyl_bucket), 
          order_lyl_bucket = ifelse(lyl_bucket == ">= 6 years", 9, order_lyl_bucket))
 
-# replace PM2.5 relative to WHO category with the subscript version of PM2.5
-india_fs_fig3_dataset <- india_fs_fig3_dataset %>%
-  mutate(cause_of_death = ifelse(cause_of_death == "PM2.5 relative to WHO guideline", expression(PM[2.5] ~ "relative to WHO Guideline"), cause_of_death))
 
 # getting disease (ordered from most deadly to least deadly) in a vector (to be used later in the
 # scale_x_discrete function).

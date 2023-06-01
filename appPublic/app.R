@@ -19,7 +19,7 @@ library(DT)
 # source("aqli.data.explorer.helper.script.R")
 
 # loading the .RData file that contain all required data objects
-# save(list = ls(all = TRUE), file= "./all.RData")
+# save(list = ls(all = TRUE), file= "./appPublic/all.RData")
 load("all.RData", .GlobalEnv)
 
 # Define UI
@@ -28,8 +28,8 @@ ui <- fluidPage(
     tags$style(HTML("
       /* Decrease the font size of the tab text */
       .nav-tabs > li > a {
-        font-size: 13px;
-        width: 120px;
+        font-size: 11px;
+        width: 100px;
         text-align: center;
       }
     "))
@@ -161,6 +161,36 @@ ui <- fluidPage(
              ),
              shiny::tags$br(),
             shinycssloaders::withSpinner(DT::dataTableOutput("table6"))
+    ),
+    tabPanel("GBD Results",
+             shiny::tags$br(),
+             shiny::tags$br(),
+             shiny::tags$br(),
+             fluidRow(
+               column(2, sliderInput("top9", "Top", min = 1, max = 100, value = 10)),
+               column(2, selectInput("deadlyDegree9", "Diseases (select degree)", choices = c("Most Deadly", "Least Deadly"), selected = "Most")),
+               column(1, textOutput("inText9")),
+               column(2, selectizeInput("country9", "Country/Region (single/multiple to compare)", choices = unique(gbd_results_master_2021$country), selected = "Global", multiple = TRUE)),
+               column(1, textOutput("inText9_2")),
+              column(2, numericInput("lyl_ll9", "LYL (min)", 0, min = 0)),
+              column(2, numericInput("lyl_ul9", "LYL (max)", 10, min = 0))
+             ),
+             fluidRow(
+               shiny::tags$br(),
+               shiny::tags$br(),
+               column(12, shinycssloaders::withSpinner(shiny::plotOutput("plot_gbd9"))),
+               shiny::tags$br(),
+               shiny::tags$br()
+             ),
+             shiny::tags$br(),
+             fluidRow(
+               column(10),
+               column(2, downloadButton("downloadData9", "Download CSV"))
+             ),
+             shiny::tags$br(),
+             fluidRow(
+               column(12,  shinycssloaders::withSpinner(DT::dataTableOutput("table9")))
+             )
     ),
     tabPanel("Compare Regions",
              shiny::tags$br(),
@@ -932,6 +962,165 @@ output$distribution_plot_5 <- shiny::renderPlot({
      }
    )
 
+#> GBD Results tab---------------------------------------------------------------------------------------------
+
+output$inText9 <- shiny::renderText("in")
+
+output$inText9_2 <- shiny::renderText("in LYL range: ")
+
+
+filteredData9 <- reactive({
+
+if(length(input$country9) == 0){
+  stop("Please select atleast one country/region to proceed")
+} else {
+  if(input$deadlyDegree9 == "Most Deadly"){
+    gbd_results_master_2021 %>%
+      dplyr::filter(country %in% input$country9) %>%
+      dplyr::group_by(country) %>%
+    dplyr::slice_max(lyl, n = input$top9) %>%
+      dplyr::filter(lyl >= input$lyl_ll9, lyl <= input$lyl_ul9)
+  } else if(input$deadlyDegree9 == "Least Deadly"){
+    gbd_results_master_2021 %>%
+      dplyr::filter(country %in% input$country9) %>%
+      dplyr::group_by(country) %>%
+      dplyr::slice_min(lyl, n = input$top9) %>%
+      dplyr::filter(lyl >= input$lyl_ll9, lyl <= input$lyl_ul9)
+  }
+
+}
+
+})
+
+
+# output the filtered data for the regional stats tab
+output$table9 <- DT::renderDataTable(
+  filteredData9()
+)
+
+# plot the lyl comparison graph
+
+output$plot_gbd9 <- renderPlot({
+  if(input$top9 > 20){
+    filteredData9() %>%
+      dplyr::mutate(lyl_bucket = ifelse((lyl >= 0) & (lyl < 0.1), "0 - < 0.1 years", NA),
+             lyl_bucket = ifelse((lyl >= 0.1) & (lyl <= 0.5), "0.1 - 0.5", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 0.5) & (lyl <= 1), "> 0.5 - 1", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 1) & (lyl <= 2), "> 1 - 2", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 2) & (lyl <= 3), "> 2 - 3", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 3) & (lyl <= 4), "> 3 - 4", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 4) & (lyl <= 5), "> 4 - 5", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 5) & (lyl < 6), "> 5 - < 6 years", lyl_bucket),
+             lyl_bucket = ifelse((lyl >= 6), ">= 6 years", lyl_bucket)) %>%
+      dplyr::mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1 years", 1, NA),
+             order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 5 - 6 years", 8, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == ">= 6 years", 9, order_lyl_bucket)) %>%
+     ggplot2::ggplot() +
+      ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, lyl), y = lyl, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+      ggplot2::labs(x = "Cause of Death", y = "Life Years Lost", fill = "Life years lost",
+           title = expression("Life Expectancy Impact of" ~ PM[2.5] ~ "and Unassociated Causes/Risks of Deaths")) +
+      ggplot2::coord_flip() +
+      ggthemes::theme_tufte() +
+      ggplot2::theme(legend.position = "none",
+            axis.text = element_text(size = 8),
+            axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+            axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+            plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+            plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+            plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+            legend.box.background = element_rect(color = "black"),
+            plot.background = element_rect(color = "white"),
+            axis.line = element_line(),
+            legend.text = element_text(size = 11),
+            legend.title = element_text(size = 14),
+            panel.grid.major.y = element_blank(),
+            strip.text = element_text(size = 13)) +
+      ggplot2::scale_y_continuous(breaks = seq(0, 8, 2)) +
+      # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+      ggplot2::scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF",
+                                   "0.1 - 0.5" = "#FFE6B3",
+                                   "> 0.5 - 1" = "#FFD25D",
+                                   "> 1 - 2" = "#FFBA00",
+                                   "> 2 - 3" = "#FF9600",
+                                   "> 3 - 4" = "#FF6908",
+                                   "> 4 - 5" = "#E63D23",
+                                   "> 5 - < 6 years" = "#BD251C",
+                                   ">= 6 years" = "#8C130E")) +
+    ggplot2::guides(fill = guide_legend(nrow = 1)) +
+      ggplot2::facet_wrap(.~country, nrow = 1, ncol = 10)
+
+  } else if (input$top9 <= 20){
+    filteredData9() %>%
+      dplyr::mutate(lyl_bucket = ifelse((lyl >= 0) & (lyl < 0.1), "0 - < 0.1 years", NA),
+             lyl_bucket = ifelse((lyl >= 0.1) & (lyl <= 0.5), "0.1 - 0.5", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 0.5) & (lyl <= 1), "> 0.5 - 1", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 1) & (lyl <= 2), "> 1 - 2", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 2) & (lyl <= 3), "> 2 - 3", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 3) & (lyl <= 4), "> 3 - 4", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 4) & (lyl <= 5), "> 4 - 5", lyl_bucket),
+             lyl_bucket = ifelse((lyl > 5) & (lyl < 6), "> 5 - < 6 years", lyl_bucket),
+             lyl_bucket = ifelse((lyl >= 6), ">= 6 years", lyl_bucket)) %>%
+      dplyr::mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1 years", 1, NA),
+             order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 5 - 6 years", 8, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == ">= 6 years", 9, order_lyl_bucket)) %>%
+     ggplot2::ggplot() +
+     ggplot2::geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, lyl), y = lyl, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+     ggplot2::labs(x = "Cause of Death", y = "Life Years Lost", fill = "Life years lost",
+           title = expression("Life Expectancy Impact of" ~ PM[2.5] ~ "and Unassociated Causes/Risks of Deaths")) +
+      ggplot2::coord_flip() +
+      ggthemes::theme_tufte() +
+      ggplot2::theme(legend.position = "none",
+            axis.text = element_text(size = 12),
+            axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+            axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+            plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+            plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+            plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+            legend.box.background = element_rect(color = "black"),
+            plot.background = element_rect(color = "white"),
+            axis.line = element_line(),
+            legend.text = element_text(size = 11),
+            legend.title = element_text(size = 14),
+            panel.grid.major.y = element_blank(),
+            strip.text = element_text(size = 13)) +
+      ggplot2::scale_y_continuous(breaks = seq(0, 8, 2)) +
+      # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+      ggplot2::scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF",
+                                   "0.1 - 0.5" = "#FFE6B3",
+                                   "> 0.5 - 1" = "#FFD25D",
+                                   "> 1 - 2" = "#FFBA00",
+                                   "> 2 - 3" = "#FF9600",
+                                   "> 3 - 4" = "#FF6908",
+                                   "> 4 - 5" = "#E63D23",
+                                   "> 5 - < 6 years" = "#BD251C",
+                                   ">= 6 years" = "#8C130E")) +
+     ggplot2::guides(fill = guide_legend(nrow = 1)) +
+      ggplot2::facet_wrap(.~country, nrow = 1, ncol = 10)
+  }
+
+
+})
+
+
+# download button in regional stats tab
+output$downloadData9 <- downloadHandler(
+  filename = "filtered_data9.csv",
+  content = function(file) {
+    write.csv(filteredData9(), file)
+  }
+)
 
 
 

@@ -64,10 +64,10 @@ gadm0_aqli_2021 <- gadm0_aqli_2021 %>%
          natstandard = llpp_nat_standard)
 
 # read in the shapefile with pollution and lyl data
-gadm2_aqli_2021_shp <- sf::st_read("./september.2023/master.dataset/shapefiles/master_global_allyears_gadm2_with_geom_Jan192023.shp")
+# gadm2_aqli_2021_shp <- sf::st_read("./september.2023/master.dataset/shapefiles/master_global_allyears_gadm2_with_geom_Jan192023.shp")
 
 # india state
-india_state <- st_read("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/india_state.shp")
+# india_state <- st_read("./june.2022/clean.air.countdown.india.campaign.2023/input.data.shared.between.graphs/india_state.shp")
 
 #> join each one of these with the country continent file, so that each one of these has a continent column
 
@@ -126,8 +126,8 @@ first_year <- 1998
 
 #> gbd results-----------
 
-# gbd results india
-gbd_results_india <- readxl::read_excel("./september.2023/gbd.calculation/GBDComparisons/results/estimated_life_expectancy_differences_India.xlsx")
+# gbd results master
+gbd_results_master_2021 <- read_csv("./september.2023/gbd.calculation/GBDComparisons/results_used_in_dashboard/gbd_results_master.csv")
 
 
 
@@ -347,3 +347,155 @@ if((level_col_name_vec[1] == "continent") & (length(level_col_name_vec) == 1)){
 
    }
 }
+
+# aqli base theme function---------------------------------------------------------------------------
+themes_aqli_base <- ggthemes::theme_tufte() +
+  theme(plot.title = element_text(size = 18, hjust = 0.5, margin = margin(b = 0.2, unit = "cm")),
+        plot.subtitle = element_text(size = 14, hjust = 0.5, margin = margin(b = 0.7, unit = "cm")),
+        axis.title.x = element_text(size = 14, margin = margin(t = 0.3, b = 0.5, unit = "cm")),
+        axis.title.y = element_text(size = 14, margin = margin(r = 0.3, unit = "cm")),
+        axis.text = element_text(size = 11),
+        plot.caption = element_text(size = 9, hjust = 0, margin = margin(t = 0.7, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        legend.title = element_text(size = 13),
+        legend.text = element_text(size = 11),
+        legend.position = "bottom")
+
+# function that adds AQLI colors and axis titles
+add_aqli_color_scale_buckets <- function(df, scale_type = "pollution", col_name){
+  if(scale_type == "lyl"){
+    df %>%
+      mutate(lyl_bucket = ifelse((!!as.symbol(col_name) >= 0) & (!!as.symbol(col_name) < 0.1), "0 - < 0.1", NA),
+             lyl_bucket = ifelse((!!as.symbol(col_name) >= 0.1) & (!!as.symbol(col_name) <= 0.5), "0.1 - 0.5", lyl_bucket),
+             lyl_bucket = ifelse((!!as.symbol(col_name) > 0.5) & (!!as.symbol(col_name) <= 1), "> 0.5 - 1", lyl_bucket),
+             lyl_bucket = ifelse((!!as.symbol(col_name) > 1) & (!!as.symbol(col_name) <= 2), "> 1 - 2", lyl_bucket),
+             lyl_bucket = ifelse((!!as.symbol(col_name) > 2) & (!!as.symbol(col_name) <= 3), "> 2 - 3", lyl_bucket),
+             lyl_bucket = ifelse((!!as.symbol(col_name) > 3) & (!!as.symbol(col_name) <= 4), "> 3 - 4", lyl_bucket),
+             lyl_bucket = ifelse((!!as.symbol(col_name) > 4) & (!!as.symbol(col_name) <= 5), "> 4 - 5", lyl_bucket),
+             lyl_bucket = ifelse((!!as.symbol(col_name) > 5) & (!!as.symbol(col_name) < 6), "> 5 - < 6", lyl_bucket),
+             lyl_bucket = ifelse((!!as.symbol(col_name) >= 6), ">= 6", lyl_bucket)) %>%
+      mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1", 1, NA),
+             order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == "> 5 - < 6", 8, order_lyl_bucket),
+             order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket))
+
+  } else if (scale_type == "pollution") {
+    df %>%
+      mutate(pol_bucket = ifelse((!!as.symbol(col_name) >= 0) & (!!as.symbol(col_name) <= 5), "0 - 5", NA),
+             pol_bucket = ifelse((!!as.symbol(col_name) > 5) & (!!as.symbol(col_name) <= 10), "> 5 - 10", pol_bucket),
+             pol_bucket = ifelse((!!as.symbol(col_name) > 10) & (!!as.symbol(col_name) <= 20), "> 10 - 20", pol_bucket),
+             pol_bucket = ifelse((!!as.symbol(col_name) > 20) & (!!as.symbol(col_name) <= 30), "> 20 - 30", pol_bucket),
+             pol_bucket = ifelse((!!as.symbol(col_name) > 30) & (!!as.symbol(col_name) <= 40), "> 30 - 40", pol_bucket),
+             pol_bucket = ifelse((!!as.symbol(col_name) > 40) & (!!as.symbol(col_name) <= 50), "> 40 - 50", pol_bucket),
+             pol_bucket = ifelse((!!as.symbol(col_name) > 50) & (!!as.symbol(col_name) <= 60), "> 50 - 60", pol_bucket),
+             pol_bucket = ifelse((!!as.symbol(col_name) > 60) & (!!as.symbol(col_name) < 70), "> 60 - < 70", pol_bucket),
+             pol_bucket = ifelse((!!as.symbol(col_name) >= 70), ">= 70", pol_bucket)) %>%
+      mutate(order_pol_bucket = ifelse(pol_bucket == "0 - 5", 1, NA),
+             order_pol_bucket = ifelse(pol_bucket == "> 5 - 10", 2, order_pol_bucket),
+             order_pol_bucket = ifelse(pol_bucket == "> 10 - 20", 3, order_pol_bucket),
+             order_pol_bucket = ifelse(pol_bucket == "> 20 - 30", 4, order_pol_bucket),
+             order_pol_bucket = ifelse(pol_bucket == "> 30 - 40", 5, order_pol_bucket),
+             order_pol_bucket = ifelse(pol_bucket == "> 40 - 50", 6, order_pol_bucket),
+             order_pol_bucket = ifelse(pol_bucket == "> 50 - 60", 7, order_pol_bucket),
+             order_pol_bucket = ifelse(pol_bucket == "> 60 - < 70", 8, order_pol_bucket),
+             order_pol_bucket = ifelse(pol_bucket == ">= 70", 9, order_pol_bucket))
+  }
+
+}
+
+# aqli histogram function-----------------------------------------
+aqli_hist <- function(df, scale_type = "pollution", col_name = "pm2021", region_name = "enter region name"){
+  if(scale_type == "pollution"){
+    pol_year <- as.numeric(str_remove(col_name, "pm"))
+    x_axis_title <- str_c("Annual average PM2.5 in ", pol_year, "(µg/m³)")
+    y_axis_title <- "Number of people"
+    plot_title <- str_c("Distribution of Annual Average PM2.5 pollution in", pol_year)
+    plot_subtitle <- region_name
+    plot_caption <- "*AQLI only reports satellite derived annual average PM2.5 data"
+    legend_title <- "PM2.5 (in µg/m³)"
+    plt <- df %>%
+      add_aqli_color_scale_buckets(scale_type = "pollution", col_name = col_name) %>%
+      ggplot() +
+      geom_histogram(mapping = aes(x = !!as.symbol(col_name), weight = population, fill = !!as.symbol(col_name), group = !!as.symbol(col_name))) +
+      scale_fill_gradient(low = "#CBE8F3",
+                          high = "#1C2B39") +
+      labs(x = x_axis_title, y = y_axis_title, title = plot_title, subtitle = plot_subtitle, caption = plot_caption,
+           fill = legend_title) +
+      themes_aqli_base
+    return(plt)
+
+  } else if(scale_type == "lyl"){
+    lyl_year <- as.numeric(str_remove(col_name, "llpp_who_"))
+    x_axis_title <- str_c("Life years lost to PM2.5 pollution in ", lyl_year)
+    y_axis_title <- "Number of people"
+    plot_title <- str_c("Distribution of life years lost to PM2.5 pollution in ", lyl_year)
+    plot_subtitle <- region_name
+    plot_caption <- "*AQLI only reports satellite derived annual average PM2.5 data."
+    legend_title <- "Life years lost"
+    plt <- df %>%
+      add_aqli_color_scale_buckets(scale_type = "pollution", col_name = col_name) %>%
+      ggplot() +
+      geom_histogram(mapping = aes(x = !!as.symbol(col_name), weight = population, fill = !!as.symbol(col_name), group = !!as.symbol(col_name))) +
+      labs(x = x_axis_title, y = y_axis_title, title = plot_title, subtitle = plot_subtitle, caption = plot_caption,
+           fill = legend_title) +
+      scale_fill_gradient(low = "#FFE6B3",
+                          high = "#8C130E") +
+      themes_aqli_base
+
+
+
+
+    return(plt)
+
+  }
+}
+
+
+# aqli bar plot function---------------------------------------------------------
+aqli_bar <- function(df, scale_type = "pollution", x_var, y_var, title, subtitle, x_label, y_label, legend_title, caption){
+  if(scale_type == "pollution"){
+    plt <- df %>%
+      add_aqli_color_scale_buckets(scale_type = "pollution", col_name = y_var) %>%
+      ggplot() +
+      geom_col(mapping = aes(x = forcats::fct_reorder(!!as.symbol(x_var), !!as.symbol(y_var)), y = !!as.symbol(y_var), fill = forcats::fct_reorder(!!as.symbol("pol_bucket"), !!as.symbol("order_pol_bucket")))) +
+      scale_fill_manual(values = c("0 - 5" = "#FFFFFF",
+                                   "> 5 - 10" = "#CBE8F3",
+                                   "> 10 - 20" = "#B4CDD9",
+                                   "> 20 - 30" = "#8FA1AD",
+                                   "> 30 - 40" = "#707F8C",
+                                   "> 40 - 50" = "#576572",
+                                   "> 50 - 60" = "#414F5D",
+                                   "> 60 - < 70" = "#2A3947",
+                                   ">= 70" = "#1C2B39")) +
+      labs(x = x_label, y = y_label, title = title, subtitle = subtitle, caption = caption, fill = legend_title) +
+      themes_aqli_base +
+      coord_flip()
+    return(plt)
+
+  } else if(scale_type == "lyl"){
+    plt <- df %>%
+      add_aqli_color_scale_buckets(scale_type = "lyl", col_name = y_var) %>%
+      ggplot() +
+      geom_col(mapping = aes(x = forcats::fct_reorder(!!as.symbol(x_var), !!as.symbol(y_var)), y = !!as.symbol(y_var), fill = forcats::fct_reorder(!!as.symbol("lyl_bucket"), !!as.symbol("order_lyl_bucket")))) +
+      scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF",
+                                   "0.1 - 0.5" = "#FFE6B3",
+                                   "> 0.5 - 1" = "#FFD25D",
+                                   "> 1 - 2" = "#FFBA00",
+                                   "> 2 - 3" = "#FF9600",
+                                   "> 3 - 4" = "#FF6908",
+                                   "> 4 - 5" = "#E63D23",
+                                   "> 5 - < 6" = "#BD251C",
+                                   ">= 6" = "#8C130E")) +
+      labs(x = x_label, y = y_label, title = title, subtitle = subtitle, caption = caption, fill = legend_title) +
+      themes_aqli_base +
+      coord_flip()
+    return(plt)
+
+  }
+}
+

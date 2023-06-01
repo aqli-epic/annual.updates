@@ -1,0 +1,590 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' width='864.00pt' height='648.00pt' viewBox='0 0 864.00 648.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw4NjQuMDB8MC4wMHw2NDguMDA='>
+    <rect x='0.00' y='0.00' width='864.00' height='648.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw4NjQuMDB8MC4wMHw2NDguMDA=)'>
+<rect x='0.00' y='0.00' width='864.00' height='648.00' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNjAuMDZ8ODU4LjUyfDQzLjM0fDQ5OC40OA=='>
+    <rect x='60.06' y='43.34' width='798.46' height='455.13' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNjAuMDZ8ODU4LjUyfDQzLjM0fDQ5OC40OA==)'>
+<polyline points='96.36,382.03 127.92,379.13 159.48,374.35 191.04,361.73 222.60,360.47 254.15,352.01 285.71,352.20 317.27,345.87 348.83,339.98 380.39,335.25 411.95,331.02 443.51,329.86 475.07,328.94 506.63,321.93 538.19,333.09 569.75,326.63 601.31,325.05 632.87,327.97 664.43,324.66 695.99,323.43 727.55,324.66 759.11,320.04 790.67,316.28 822.23,307.71 ' style='stroke-width: 2.77; stroke: #FFA500; stroke-linecap: butt;' />
+<polyline points='96.36,332.93 127.92,333.13 159.48,320.83 191.04,304.51 222.60,304.10 254.15,290.30 285.71,292.10 317.27,287.75 348.83,280.04 380.39,272.82 411.95,258.89 443.51,260.80 475.07,260.28 506.63,244.47 538.19,265.27 569.75,256.12 601.31,262.09 632.87,262.92 664.43,249.42 695.99,257.06 727.55,255.35 759.11,246.33 790.67,245.08 822.23,234.91 ' style='stroke-width: 2.77; stroke: #A9A9A9; stroke-linecap: butt;' />
+<polyline points='96.36,255.95 127.92,261.02 159.48,236.94 191.04,214.79 222.60,215.72 254.15,193.57 285.71,197.88 317.27,196.65 348.83,186.08 380.39,174.96 411.95,145.81 443.51,152.53 475.07,152.64 506.63,123.04 538.19,158.95 569.75,145.58 601.31,163.39 632.87,160.95 664.43,131.47 695.99,153.01 727.55,146.68 759.11,130.79 790.67,133.45 822.23,120.78 ' style='stroke-width: 2.77; stroke: #8B0000; stroke-linecap: butt;' />
+<line x1='60.06' y1='457.10' x2='858.52' y2='457.10' style='stroke-width: 1.71; stroke-dasharray: 2.28,6.83; stroke-linecap: butt;' />
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+<text x='67.48' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='27.80px' lengthAdjust='spacingAndGlyphs'>WHO</text>
+<text x='95.28' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='98.40' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='7.59px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='105.99' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='9.48px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='115.47' y='451.36' style='font-size: 7.97px; font-family: "Arial";' textLength='11.07px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='126.53' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='3.12px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='129.65' y='449.29' style='font-size: 11.38px; font-family: "Arial";' textLength='197.56px' lengthAdjust='spacingAndGlyphs'>Guideline (last updated: 2021): 5 µg/m³</text>
+</g>
+<g clip-path='url(#cpMC4wMHw4NjQuMDB8MC4wMHw2NDguMDA=)'>
+<polyline points='60.06,498.48 60.06,43.34 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<text x='55.13' y='481.76' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='6.00px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text x='55.13' y='440.39' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>10</text>
+<text x='55.13' y='399.01' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>20</text>
+<text x='55.13' y='357.64' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>30</text>
+<text x='55.13' y='316.26' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>40</text>
+<text x='55.13' y='274.88' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>50</text>
+<text x='55.13' y='233.51' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>60</text>
+<text x='55.13' y='192.13' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>70</text>
+<text x='55.13' y='150.76' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>80</text>
+<text x='55.13' y='109.38' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>90</text>
+<text x='55.13' y='68.01' text-anchor='end' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='18.01px' lengthAdjust='spacingAndGlyphs'>100</text>
+<polyline points='60.06,498.48 858.52,498.48 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<text x='96.36' y='511.36' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>1998</text>
+<text x='191.04' y='511.36' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>2001</text>
+<text x='285.71' y='511.36' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>2004</text>
+<text x='380.39' y='511.36' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>2007</text>
+<text x='475.07' y='511.36' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>2010</text>
+<text x='569.75' y='511.36' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>2013</text>
+<text x='664.43' y='511.36' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>2016</text>
+<text x='759.11' y='511.36' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>2019</text>
+<text x='822.23' y='511.36' text-anchor='middle' style='font-size: 12.00px;fill: #4D4D4D; font-family: "Times New Roman";' textLength='24.02px' lengthAdjust='spacingAndGlyphs'>2021</text>
+<text x='459.29' y='539.57' text-anchor='middle' style='font-size: 13.00px; font-family: "Times New Roman";' textLength='29.02px' lengthAdjust='spacingAndGlyphs'>Years</text>
+<text transform='translate(14.51,358.33) rotate(-90)' style='font-size: 13.00px; font-family: "Times New Roman";' textLength='83.89px' lengthAdjust='spacingAndGlyphs'>Annual Average</text>
+<text transform='translate(14.51,274.43) rotate(-90)' style='font-size: 13.00px; font-family: "Arial";' textLength='3.56px' lengthAdjust='spacingAndGlyphs'> </text>
+<text transform='translate(14.51,270.87) rotate(-90)' style='font-size: 13.00px; font-family: "Times New Roman";' textLength='7.23px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text transform='translate(14.51,263.64) rotate(-90)' style='font-size: 13.00px; font-family: "Times New Roman";' textLength='11.56px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text transform='translate(16.54,252.08) rotate(-90)' style='font-size: 9.10px; font-family: "Times New Roman";' textLength='11.38px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text transform='translate(14.51,240.70) rotate(-90)' style='font-size: 13.00px; font-family: "Arial";' textLength='3.56px' lengthAdjust='spacingAndGlyphs'> </text>
+<text transform='translate(14.51,237.14) rotate(-90)' style='font-size: 13.00px; font-family: "Times New Roman";' textLength='53.65px' lengthAdjust='spacingAndGlyphs'>(in µg/m³)</text>
+<rect x='256.80' y='570.34' width='404.98' height='28.24' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<line x1='269.49' y1='584.46' x2='283.31' y2='584.46' style='stroke-width: 2.77; stroke: #FFA500; stroke-linecap: butt;' />
+<line x1='479.53' y1='584.46' x2='493.36' y2='584.46' style='stroke-width: 2.77; stroke: #A9A9A9; stroke-linecap: butt;' />
+<line x1='584.24' y1='584.46' x2='598.07' y2='584.46' style='stroke-width: 2.77; stroke: #8B0000; stroke-linecap: butt;' />
+<text x='290.52' y='588.10' style='font-size: 11.00px; font-family: "Times New Roman";' textLength='181.81px' lengthAdjust='spacingAndGlyphs'>All other regions (excluding North India)</text>
+<text x='500.57' y='588.10' style='font-size: 11.00px; font-family: "Times New Roman";' textLength='76.47px' lengthAdjust='spacingAndGlyphs'>National Average</text>
+<text x='605.28' y='588.10' style='font-size: 11.00px; font-family: "Times New Roman";' textLength='51.03px' lengthAdjust='spacingAndGlyphs'>North India</text>
+<text x='265.23' y='16.59' style='font-size: 16.00px; font-family: "Times New Roman";' textLength='103.20px' lengthAdjust='spacingAndGlyphs'>Annual Average</text>
+<text x='368.43' y='16.59' style='font-size: 16.00px; font-family: "Arial";' textLength='4.38px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='372.82' y='16.59' style='font-size: 16.00px; font-family: "Times New Roman";' textLength='8.90px' lengthAdjust='spacingAndGlyphs'>P</text>
+<text x='381.72' y='16.59' style='font-size: 16.00px; font-family: "Times New Roman";' textLength='14.23px' lengthAdjust='spacingAndGlyphs'>M</text>
+<text x='395.94' y='19.09' style='font-size: 11.20px; font-family: "Times New Roman";' textLength='13.99px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='409.93' y='16.59' style='font-size: 16.00px; font-family: "Arial";' textLength='4.38px' lengthAdjust='spacingAndGlyphs'> </text>
+<text x='414.32' y='16.59' style='font-size: 16.00px; font-family: "Times New Roman";' textLength='239.04px' lengthAdjust='spacingAndGlyphs'>concentrations in India, 1998 to 2021</text>
+<text x='60.06' y='625.89' style='font-size: 7.00px; font-style: italic; font-family: "Times New Roman";' textLength='246.48px' lengthAdjust='spacingAndGlyphs'>* We define the Indo-Gangetic plain region as containing the following seven states and</text>
+<text x='60.06' y='633.45' style='font-size: 7.00px; font-style: italic; font-family: "Times New Roman";' textLength='253.40px' lengthAdjust='spacingAndGlyphs'>union territories: Bihar, Chandigarh, NCT of Delhi, Haryana, Punjab, Uttar Pradesh, and</text>
+<text x='60.06' y='641.01' style='font-size: 7.00px; font-style: italic; font-family: "Times New Roman";' textLength='36.28px' lengthAdjust='spacingAndGlyphs'>West Bengal.</text>
+</g>
+</svg>
