@@ -146,7 +146,7 @@ india_fs_fig1 <- india_fs_fig1_data %>%
 svglite("india_fs_fig1")
 ggsave("./september.2023/factsheets/india/india_fs_fig1.svg", width = 15, height = 10)
 
-
+india_fs_fig1_data %>% write_sf("./september.2023/factsheets/india/india_fs_fig1.shp")
 
 
 
@@ -330,6 +330,8 @@ india_fs_fig2_plt <- india_fs_fig2_data %>%
 svglite("india_fs_fig2")
 ggsave("./september.2023/factsheets/india/india_fs_fig2.svg", width = 12, height = 9)
 
+india_fs_fig2_data %>%
+  write_csv("./september.2023/factsheets/india/fig2/india_fs_fig2_data.csv")
 
 
 #> GBD India graph--------------------------------------------
@@ -364,10 +366,10 @@ india_fs_fig3_dataset <- india_fs_fig3_dataset %>%
 # getting disease (ordered from most deadly to least deadly) in a vector (to be used later in the
 # scale_x_discrete function).
 
-cause_of_death_ordered <- india_fs_fig3_dataset %>%
-  arrange(llpp_who_2021) %>%
-  pull(cause_of_death) %>%
-  unlist()
+# cause_of_death_ordered <- india_fs_fig3_dataset %>%
+#   arrange(llpp_who_2021) %>%
+#   pull(cause_of_death) %>%
+#   unlist()
 
 
 # figure 3 plot
@@ -405,8 +407,10 @@ india_fs_fig3 <- india_fs_fig3_dataset %>%
   guides(fill = guide_legend(nrow = 1))
 
 svglite("india_fs_fig3")
-ggsave("./september.2023/factsheets/india/india_fs_fig3.svg", width = 15, height = 10)
+ggsave("./september.2023/factsheets/india/fig3/india_fs_fig3.svg", width = 15, height = 12)
 
+india_fs_fig3_dataset %>%
+   write_csv("./september.2023/factsheets/india/fig3/india_fs_fig3_data.csv")
 
 
 #> Figure 4: Average PM2.5 concentration in India from 1998 to 2021------------------------
@@ -446,6 +450,8 @@ india_fs_fig4_data_part2 <- gadm2_aqli_2021 %>%
 # India factsheet figure 4 dataset
 india_fs_fig4_data <- rbind(india_fs_fig4_data_part1, india_fs_fig4_data_part2)
 
+india_fs_fig4_data %>%
+   write_csv("./september.2023/factsheets/india/fig4/india_fs_fig4_data.csv")
 
 # India factsheet figure 4
 india_fs_fig4 <- ggplot(india_fs_fig4_data) +
@@ -541,6 +547,8 @@ south_korea_fs_fig1_data <- gadm2_aqli_2021 %>%
   select(-geometry, geometry) %>%
   st_as_sf()
 
+south_korea_fs_fig1_data %>%
+  sf::write_sf("./september.2023/factsheets/southkorea/fig1/sk_fs_fig1.shp")
 
 
 # south korea figure 1
@@ -575,6 +583,8 @@ south_korea_fs_fig1 <- south_korea_fs_fig1_data %>%
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
+ggsave("./september.2023/factsheets/southkorea/sk_fs_fig1.svg", width = 15, height = 10)
+
 #> plot 2: Gain in LE in reducing 2021 pollution to WHO guideline in top 10 most populous regions
 
 # fig2 dataset
@@ -582,6 +592,10 @@ southkorea_fs_fig2_dataset <- gadm2_aqli_2021 %>%
   filter(country == "South Korea") %>%
   add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "llpp_who_2021") %>%
   slice_max(population, n = 10)
+
+southkorea_fs_fig2_dataset %>%
+   write_csv("./september.2023/factsheets/southkorea/fig2/sk_fs_fig2_data.csv")
+
 
 # fig 2
 
@@ -603,6 +617,9 @@ southkorea_fs_fig3_dataset <- gadm2_aqli_2021 %>%
   select(years, region, pop_weighted_avg_pm2.5)
 
 
+southkorea_fs_fig3_dataset %>%
+   write_csv("./september.2023/factsheets/southkorea/fig3/sk_fs_fig3_data.csv")
+
 
   southkorea_fs_fig3 <- southkorea_fs_fig3_dataset %>%
     ggplot() +
@@ -623,6 +640,10 @@ southkorea_fs_fig3_dataset <- gadm2_aqli_2021 %>%
     geom_text(x = 2001.8, y = 6.1, label =  expression("WHO " ~ PM[2.5] ~ "Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
     geom_text(x = 2001.8, y = 16.1, label = expression("South Korea National" ~ PM[2.5] ~ "Guideline: 15 µg/m³"), size = 5) +
     themes_aqli_base
+  
+  
+  ggsave("./september.2023/factsheets/southkorea/fig3/sk_fs_fig3.svg", width = 15, height = 10)
+
 
 
   # appendix table (gadm level 2)
