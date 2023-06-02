@@ -372,12 +372,18 @@ india_fs_fig3_dataset <- india_fs_fig3_dataset %>%
 #   unlist()
 
 
-# figure 3 plot
+
+
+
+#> figure 3 plot
+
+# figure 3 caption removed: Source: Global Burden of Disease (https://vizhub.healthdata.org/gbd-results/) causes and risks data and WHO Life Tables (https://apps.who.int/gho/data/node.main.LIFECOUNTRY?lang=en) were used combined with the Life table method to arrive at these results. 'PM2.5 relative to WHO Guideline' bar displays life years lost relative to the WHO guideline as calculated by latest AQLI (2021) data, which will be published in September 2023.
+
 india_fs_fig3 <- india_fs_fig3_dataset %>%
   ggplot() + 
   geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
   labs(x = "Cause of Death", y = "Life Years Lost", fill = "Life years lost", 
-       caption = str_wrap("* Source: Global Burden of Disease (https://vizhub.healthdata.org/gbd-results/) causes and risks data and WHO Life Tables (https://apps.who.int/gho/data/node.main.LIFECOUNTRY?lang=en) were used combined with the Life table method to arrive at these results. 'PM2.5 relative to WHO Guideline' bar displays life years lost relative to the WHO guideline as calculated by latest AQLI (2021) data, which will be published in September 2023.", width = 130), title = expression("Life Expectancy Impact of" ~ PM[2.5] ~ "and Unassociated Causes/Risks of Deaths in India")) +
+       title = expression("Life Expectancy Impact of" ~ PM[2.5] ~ "and Unassociated Causes/Risks of Deaths in India")) +
   coord_flip() + 
   ggthemes::theme_tufte() +
   theme(legend.position = "bottom",
@@ -454,6 +460,8 @@ india_fs_fig4_data %>%
    write_csv("./september.2023/factsheets/india/fig4/india_fs_fig4_data.csv")
 
 # India factsheet figure 4
+# fig4 caption removed: "* We define the Indo-Gangetic plain region as containing the following seven states and union territories: Bihar, Chandigarh, NCT of Delhi, Haryana, Punjab, Uttar Pradesh, and West Bengal."
+
 india_fs_fig4 <- ggplot(india_fs_fig4_data) +
   geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.3) +
     geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
@@ -461,9 +469,8 @@ india_fs_fig4 <- ggplot(india_fs_fig4_data) +
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
     scale_color_manual(values = c("National Average" = "darkgrey", "North India" = "darkred", "All other regions (excluding North India)" = "orange")) +
   ggthemes::theme_tufte() +
-  labs(x = "Years", 
+  labs(x = "Year", 
        y = expression("Annual Average   " ~ PM[2.5] ~ "(in µg/m³)"), 
-       caption = str_wrap("* We define the Indo-Gangetic plain region as containing the following seven states and union territories: Bihar, Chandigarh, NCT of Delhi, Haryana, Punjab, Uttar Pradesh, and West Bengal.", width = 90), 
        title = expression("Annual Average" ~ PM[2.5] ~ "concentrations in India, 1998 to 2021")) +
   theme(legend.position = "bottom",
         legend.text = element_text(size = 11),
@@ -494,8 +501,8 @@ filter(country == "India") %>%
   rename("State/UT" = name_1, 
          "Population (Lakhs)" = population_lakhs, 
          "Annual Average 2021 PM2.5 Concentration (µg/m³)" = pm2021, 
-         "From 2021 concentration to WHO PM2.5 guideline of 5 µg/m³" = llpp_who_2021, 
-         "From 2021 concentration to National PM2.5 guideline of 40 µg/m³" = llpp_nat_2021)
+         "Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m³" = llpp_who_2021, 
+         "Life Expectancy Gains from reducing PM2.5 from 2021 concentration to National PM2.5 guideline of 40 µg/m³" = llpp_nat_2021)
 
 # Experimental figure
 
@@ -599,7 +606,7 @@ southkorea_fs_fig2_dataset %>%
 
 # fig 2
 
-plt <- southkorea_fs_fig2_dataset %>%
+south_korea_fs_fig2 <- southkorea_fs_fig2_dataset %>%
   aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = expression("Potential Gain in Life Expectancy from Reducing 2021 " ~ PM[2.5] ~ "concentrations to the WHO Guideline"), subtitle = "(Top 10 most populous regions of South Korea)", x_label = "Region", y_label = "Average Life Expectancy Gains (years)", legend_title = "LE gains (years)", caption = "")
  
 # plot 3: Trendlines: 1998 to 2021
@@ -666,3 +673,427 @@ southkorea_fs_fig3_dataset %>%
 
 ```
 
+# China factsheet
+
+```{r}
+
+# sanity checks
+
+# total life years lost for regions out of compliance with China's national standard
+tmp_data <- gadm_level_summary(gadm2_aqli_2021, c("country", "name_1", "name_2"), c(2021), 10) %>%
+  filter(country == "China") %>%
+  filter(pm2021 > 35) 
+
+tmp_data %>%
+  gadm_level_summary(c("country"), c(2021), 10) %>%
+  View()
+
+#> plot 1: map screenshot--------------------
+
+# south korea figure1 dataset
+china_fs_fig1_data <- gadm2_aqli_2021 %>%
+  filter(country == "China") %>%
+  left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "objidgadm2")) %>%
+  mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1", NA), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 1) & (llpp_who_2021 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 2) & (llpp_who_2021 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 3) & (llpp_who_2021 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 4) & (llpp_who_2021 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 5) & (llpp_who_2021 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - < 6", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket)) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# china_fs_fig1_data %>%
+#   sf::write_sf("./september.2023/factsheets/southkorea/fig1/sk_fs_fig1.shp")
+
+
+# south korea figure 1
+china_fs_fig1 <- china_fs_fig1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "transparent") +
+ geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "China"), color = "black", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+ scale_fill_manual(values = c("0 - < 0.1" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) +
+  ggthemes::theme_map() +
+  labs(fill = "Life years lost  ", title = expression("Potential Gains in Life Expectancy through Permanently Reducing" ~ PM[2.5] ~ "from 2021 concentrations to the WHO guideline")) + 
+ theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+       legend.key = element_rect(color = "black"), 
+       legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+
+
+
+
+
+#> plot 2: Potential Gain in Life Expectancy from Reducing PM2.5 from 2021 to the WHO Guideline in 10 most populous regions of China -----------------------------------------
+
+china_fs_fig2_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "China") %>%
+  add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "llpp_who_2021") %>%
+  slice_max(population, n = 10)
+
+china_fs_fig2 <- china_fs_fig2_dataset %>%
+  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = expression("Potential Gain in Life Expectancy from Reducing 2021 " ~ PM[2.5] ~ "concentrations to the WHO Guideline"), subtitle = "(Top 10 most populous prefectures of China)", x_label = "Prefecture", y_label = "Average Life Expectancy Gains (years)", legend_title = "LE gains (years)", caption = "")
+
+
+#> plot 3: PM2.5 Concentrations in Major Regions in Mainland China Over Time (1998 to 2021)-----------------
+
+# filtering the color file for China
+color_2021_china <- gadm2_aqli_2021 %>%
+  filter(country == "China")
+
+# BTH region (name_1)
+bth_region <- c("Beijing", "Tianjin", "Hebei")
+
+# YRD (name_1)
+yrd_region <- c("Shanghai", "Jiangsu", "Zhejiang")
+
+# PRD (name_1, name_2)
+
+prd_region_name_2_guandong_regions <- c("Dongguan", "Foshan", "Guangzhou", 
+                                        "Huizhou", "Jiangmen", "Shenzhen", 
+                                        "Zhaoqing", "Zhongshan", "Zhuhai")
+
+prd_region_name_1 <- c("Hong Kong", "Macau")
+
+prd <- c(prd_region_name_2_guandong_regions, prd_region_name_1)
+
+
+# add region column
+color_2021_china  <- color_2021_china %>%
+  mutate(region = ifelse(name_1 %in% bth_region, "BTH", "others"), 
+         region = ifelse(name_1 %in% yrd_region,  "YRD", region), 
+         region = ifelse(name_1 %in% prd_region_name_1, "PRD", region), 
+         region = ifelse(name_2 %in% prd_region_name_2_guandong_regions, "PRD", region)) 
+
+
+# China factsheet figure 3 (part-1): trend lines figure region wise (BTH, YRD, PRD) dataset
+trendlines_china_region_wise_df <- color_2021_china %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5) %>%
+  filter(region %in% c("YRD", "BTH", "PRD"))
+
+# China factsheet figure 3 (part-2): trend line national average dataset
+trendline_national_avg_df <- color_2021_china %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "China") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# China factsheet figure 3 dataset final
+china_fs_fig3_dataset <- rbind(trendlines_china_region_wise_df, trendline_national_avg_df)
+
+china_fs_fig3_dataset <-  china_fs_fig3_dataset %>%
+    mutate(region_order = ifelse(region == "China", 1, NA), 
+         region_order = ifelse(region == "PRD", 2, region_order), 
+         region_order = ifelse(region == "YRD", 3, region_order), 
+         region_order = ifelse(region == "BTH", 4, NA))
+
+# save China factsheet figure 3 dataset
+# china_fs_fig3_dataset %>%
+#   write_csv("./june.2022/factsheets/china/graph.wise.datasets/china_fs_fig3.csv")
+
+# plot china factsheet figure 3
+china_fs_fig3 <- china_fs_fig3_dataset %>%
+  ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = forcats::fct_reorder(region, region_order)), lwd = 1.1) +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.5, linetype = "dashed") +
+    geom_vline(mapping = aes(xintercept = 2014), lwd = 0.5, linetype = "dashed") +
+  scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100)) +
+  scale_x_continuous(breaks = c(seq(1998, 2020, 2), 2021)) +
+    scale_color_manual(values = c("PRD" = "burlywood1", "China" = "darkgrey", "BTH" = "darkred", "YRD" = "darkorange")) +
+  ggthemes::theme_clean() +
+  labs(x = "Year", 
+       y = expression("Annual average " ~ PM[2.5] ~ "concentrations (in µg/m³)"), 
+       title = expression("Annual average" ~ PM[2.5] ~ "Concentrations in Major Regions in Mainland China Over Time"), 
+    subtitle = "(1998 to 2021)", 
+    color = "Region") +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 6.5), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) + 
+    geom_text(x = 2001, y = 10, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, ""))) + 
+    geom_text(x = 2015.3, y = 93, label = str_wrap("China announces war on pollution", width = 18)) +
+  themes_aqli_base
+  
+
+
+
+
+
+#> plot 4: GBD----------------------------------------- 
+
+# china GBD
+china_fs_fig4_dataset <- gbd_results_master_2021 %>%
+  filter(country == "China")
+
+colnames(china_fs_fig4_dataset)[3] <- c("llpp_who_2021")
+
+china_fs_fig4_dataset <- china_fs_fig4_dataset %>%
+    mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1 years", NA), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 1) & (llpp_who_2021 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 2) & (llpp_who_2021 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 3) & (llpp_who_2021 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 4) & (llpp_who_2021 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 5) & (llpp_who_2021 < 6), "> 5 - < 6 years", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 6), ">= 6 years", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1 years", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - 6 years", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6 years", 9, order_lyl_bucket))
+
+
+#> figure 4 plot
+
+# figure 4 caption removed: Source: Global Burden of Disease (https://vizhub.healthdata.org/gbd-results/) causes and risks data and WHO Life Tables (https://apps.who.int/gho/data/node.main.LIFECOUNTRY?lang=en) were used combined with the Life table method to arrive at these results. 'PM2.5 relative to WHO Guideline' bar displays life years lost relative to the WHO guideline as calculated by latest AQLI (2021) data, which will be published in September 2023.
+
+china_fs_fig4 <- china_fs_fig4_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Cause of Death", y = "Life Years Lost", fill = "Life years lost", 
+       title = expression("Life Expectancy Impact of" ~ PM[2.5] ~ "and Unassociated Causes/Risks of Deaths in China")) +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 7, 0.5)) +
+ # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6 years" = "#BD251C", 
+                               ">= 6 years" = "#8C130E")) + 
+  guides(fill = guide_legend(nrow = 1))
+
+
+
+#> appendix table-------------------------------
+
+china_fs_appendix_table <- gadm2_aqli_2021 %>%
+gadm_level_summary(c("country", "name_1", "name_2"), c(2014, 2021), 10) %>%
+  filter(country == "China") %>%
+  slice_max(population, n = 25) %>%
+  mutate(pop_millions = round(population/1000000, 1), 
+         le_gain_2014_to_2021 = round((pm2014 - pm2021)*0.098, 1)) %>%
+  select(name_2, pop_millions, pm2021, le_gain_2014_to_2021,
+         llpp_who_2021, llpp_nat_2021) %>%
+  rename(Prefecture = name_2, `Population (Millions)` = pop_millions, 
+         `PM 2.5 concentration 2021 (µg/m³)` = pm2021, 
+         `Life Expectancy Gains From reducing PM2.5 from 2014 concentrations to 2021 concentrations` = le_gain_2014_to_2021,
+         `Life Expectancy gain from reducing PM2.5 concentrations from 2021 Concentration to WHO Guideline of 5 µg/m³` = llpp_who_2021, 
+         `Life Expectancy gains from reducing PM2.5 concentrations from 2021 Concentration to the National Standard of 35 µg/m³` = llpp_nat_2021)
+
+china_fs_appendix_table %>% 
+  write_csv("[June022023]china_fs_appendix_table.csv")
+
+
+```
+
+
+
+
+# sanity checks
+
+```{r}
+
+# Nepal
+
+nepal_fs_fig1_data <- gadm2_aqli_2021 %>%
+  filter(country == "Nepal") %>%
+  left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "objidgadm2")) %>%
+  mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1", NA), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 1) & (llpp_who_2021 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 2) & (llpp_who_2021 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 3) & (llpp_who_2021 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 4) & (llpp_who_2021 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 5) & (llpp_who_2021 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - < 6", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket)) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+south_korea_fs_fig1_data %>%
+  sf::write_sf("./september.2023/factsheets/southkorea/fig1/sk_fs_fig1.shp")
+
+
+# south korea figure 1
+nepal_fs_fig1 <- nepal_fs_fig1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "transparent") +
+  geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "Nepal"), color = "black", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+ scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) +
+  ggthemes::theme_map() +
+  labs(fill = "Life years lost  ", title = expression("Potential Gains in Life Expectancy through Permanently Reducing" ~ PM[2.5] ~ "from 2021 concentrations to the WHO guideline")) + 
+ theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+       legend.key = element_rect(color = "black"), 
+       legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+
+# nepal fs figure 3
+
+# top 5 most deadly diseases
+nepal_fs_fig3_dataset <- gbd_results_master_2021 %>%
+  filter(country == "Nepal")
+
+colnames(nepal_fs_fig3_dataset)[3] <- c("llpp_who_2021")
+
+nepal_fs_fig3_dataset <- nepal_fs_fig3_dataset %>%
+    mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1 years", NA), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 1) & (llpp_who_2021 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 2) & (llpp_who_2021 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 3) & (llpp_who_2021 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 4) & (llpp_who_2021 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 5) & (llpp_who_2021 < 6), "> 5 - < 6 years", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 6), ">= 6 years", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1 years", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - 6 years", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6 years", 9, order_lyl_bucket))
+
+
+# getting disease (ordered from most deadly to least deadly) in a vector (to be used later in the
+# scale_x_discrete function).
+
+# cause_of_death_ordered <- india_fs_fig3_dataset %>%
+#   arrange(llpp_who_2021) %>%
+#   pull(cause_of_death) %>%
+#   unlist()
+
+
+# figure 3 plot
+nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Cause of Death", y = "Life Years Lost", fill = "Life years lost", 
+       caption = str_wrap("* Source: Global Burden of Disease (https://vizhub.healthdata.org/gbd-results/) causes and risks data and WHO Life Tables (https://apps.who.int/gho/data/node.main.LIFECOUNTRY?lang=en) were used combined with the Life table method to arrive at these results. 'PM2.5 relative to WHO Guideline' bar displays life years lost relative to the WHO guideline as calculated by latest AQLI (2021) data, which will be published in September 2023.", width = 130), title = expression("Life Expectancy Impact of" ~ PM[2.5] ~ "and Unassociated Causes/Risks of Deaths in India")) +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+ # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6 years" = "#BD251C", 
+                               ">= 6 years" = "#8C130E")) + 
+  guides(fill = guide_legend(nrow = 1))
+
+
+
+```
