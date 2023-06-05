@@ -462,12 +462,14 @@ india_fs_fig4_data %>%
 # India factsheet figure 4
 # fig4 caption removed: "* We define the Indo-Gangetic plain region as containing the following seven states and union territories: Bihar, Chandigarh, NCT of Delhi, Haryana, Punjab, Uttar Pradesh, and West Bengal."
 
+india_fs_fig4_data$region <- factor(india_fs_fig4_data$region, levels = c("North India", "National Average", "All other regions (excluding North India)"))
+
 india_fs_fig4 <- ggplot(india_fs_fig4_data) +
   geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.3) +
     geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
   scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100)) +
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
-    scale_color_manual(values = c("National Average" = "darkgrey", "North India" = "darkred", "All other regions (excluding North India)" = "orange")) +
+    scale_color_manual(values = c("North India" = "darkred", "National Average" = "darkgrey", "All other regions (excluding North India)" = "orange")) +
   ggthemes::theme_tufte() +
   labs(x = "Year", 
        y = expression("Annual Average   " ~ PM[2.5] ~ "(in µg/m³)"), 
@@ -485,7 +487,7 @@ india_fs_fig4 <- ggplot(india_fs_fig4_data) +
         axis.text = element_text(size = 12), 
         plot.background = element_rect(color = "white"), 
         axis.ticks = element_blank()) +
-     geom_text(x = 2000.5, y = 7.9, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
+     geom_text(x = 2000.5, y = 7.9, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5) 
 
 
 svglite("india_fs_fig4")
@@ -574,7 +576,7 @@ south_korea_fs_fig1 <- south_korea_fs_fig1_data %>%
                                "> 5 - < 6" = "#BD251C", 
                                ">= 6" = "#8C130E")) +
   ggthemes::theme_map() +
-  labs(fill = "Life years lost  ", title = expression("Potential Gains in Life Expectancy through Permanently Reducing" ~ PM[2.5] ~ "from 2021 concentrations to the WHO guideline")) + 
+  labs(fill = "Gain in years of life expectancy ", title = expression("Potential Gains in Life Expectancy (South Korea) through Permanently Reducing" ~ PM[2.5] ~ "from 2021 concentrations to the WHO guideline")) + 
  theme(legend.position = "bottom", 
         legend.justification = c(0.5, 3), 
         legend.background = element_rect(color = "black"), 
@@ -690,7 +692,7 @@ tmp_data %>%
 
 #> plot 1: map screenshot--------------------
 
-# south korea figure1 dataset
+# china figure1 dataset
 china_fs_fig1_data <- gadm2_aqli_2021 %>%
   filter(country == "China") %>%
   left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "objidgadm2")) %>%
@@ -719,7 +721,7 @@ china_fs_fig1_data <- gadm2_aqli_2021 %>%
 #   sf::write_sf("./september.2023/factsheets/southkorea/fig1/sk_fs_fig1.shp")
 
 
-# south korea figure 1
+# china figure 1
 china_fs_fig1 <- china_fs_fig1_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "transparent") +
@@ -735,7 +737,7 @@ china_fs_fig1 <- china_fs_fig1_data %>%
                                "> 5 - < 6" = "#BD251C", 
                                ">= 6" = "#8C130E")) +
   ggthemes::theme_map() +
-  labs(fill = "Life years lost  ", title = expression("Potential Gains in Life Expectancy through Permanently Reducing" ~ PM[2.5] ~ "from 2021 concentrations to the WHO guideline")) + 
+  labs(fill = "Gain in years of life expectancy  ", title = expression("Potential Gains in Life Expectancy (China) through Permanently Reducing" ~ PM[2.5] ~ "from 2021 concentrations to the WHO guideline")) + 
  theme(legend.position = "bottom", 
         legend.justification = c(0.5, 3), 
         legend.background = element_rect(color = "black"), 
@@ -834,6 +836,8 @@ china_fs_fig3_dataset <-  china_fs_fig3_dataset %>%
 # china_fs_fig3_dataset %>%
 #   write_csv("./june.2022/factsheets/china/graph.wise.datasets/china_fs_fig3.csv")
 
+china_fs_fig3_dataset$region <- factor(china_fs_fig3_dataset$region, levels = c("BTH", "China", "YRD", "PRD"))
+
 # plot china factsheet figure 3
 china_fs_fig3 <- china_fs_fig3_dataset %>%
   ggplot() +
@@ -853,7 +857,7 @@ china_fs_fig3 <- china_fs_fig3_dataset %>%
         legend.text = element_text(size = 6.5), 
         axis.title.y = element_text(size = 9), 
         axis.title.x = element_text(size = 9)) + 
-    geom_text(x = 2001, y = 10, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, ""))) + 
+    geom_text(x = 2001, y = 8.5, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, ""))) + 
     geom_text(x = 2015.3, y = 93, label = str_wrap("China announces war on pollution", width = 18)) +
   themes_aqli_base
   
@@ -972,15 +976,199 @@ color_2021_india <- color_2021_india %>%
 # quick stats
 color_2021_india %>%
   filter(region == "North India") %>%
-  gadm_level_summary(c("country"), c(2021), 10)
+  gadm_level_summary(c("country"), c(2021, 1998), 10)
 
-
-foo <- color_2021_india %>%
+# north india
+gadm2_aqli_2021 %>%
+  slice_max(pm2021, n = 90)
   filter(region == "North India") %>%
+  slice_max(pm2021, n = 10)
+
+
+
+#> plot 1: 2 regions graph, Indo-Gangetic plain and rest of India----------------------------------
+
+plt <- india_state %>%
+    mutate(region = ifelse(NAME_1 %in% north_india, "Indo-Gangetic Plain", "Other States and UTs")) %>%
+    select(-geometry, geometry) %>%
+    st_as_sf() %>%
+    ggplot() +
+    geom_sf(mapping = aes(fill = region), lwd = 0.8) +
+    scale_fill_manual(values = c("Indo-Gangetic Plain" = "slategray2", "Other States and UTs" = "lightgrey")) +
+    theme_map() +
+    labs(fill = "") + 
+    theme(legend.position = "bottom")
+  
+  
+  
+   
+p#> plot 2: AQLI map screenshot (I have limited this to the Indo-Gangetic plain as opposed to the current screenshot that shows it for all of India)------------------
+
+
+#> plot 1: map screenshot--------------------
+
+# north india figure1 dataset
+north_india_fs_fig1_data <- gadm2_aqli_2021 %>%
+  filter(country == "India", name_1 %in% north_india) %>%
+  left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "objidgadm2")) %>%
+  mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1", NA), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 1) & (llpp_who_2021 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 2) & (llpp_who_2021 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 3) & (llpp_who_2021 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 4) & (llpp_who_2021 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 5) & (llpp_who_2021 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - < 6", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket)) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+
+
+# north india figure 1
+north_india_fs_fig1 <- north_india_fs_fig1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "transparent") +
+ geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "India", name1 %in% north_india), color = "black", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+ scale_fill_manual(values = c("0 - < 0.1" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) +
+  ggthemes::theme_map() +
+  labs(fill = "Gain in years of life expectancy  ", title = expression("Potential Gains in Life Expectancy (North India) through Permanently Reducing" ~ PM[2.5] ~ "from 2021 concentrations to the WHO guideline")) + 
+ theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+       legend.key = element_rect(color = "black"), 
+       legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1)) +
+   ggsflabel::geom_sf_label_repel(data = gadm1_aqli_2021_shp %>% filter(name0 == "India", name1 %in% north_india), mapping = aes(label = name1), force = 50, nudge_x = 3, seed = 10, size = 4)
+
+  
+  
+  
+  
+#> plot 3: potential gain in life expectancy in 10 most populous districts of the Indo-Gangetic plains----------------
+
+# fig3 dataset
+north_india_fs_fig3_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "India", name_1 %in% north_india) %>%
+  add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "llpp_who_2021") %>%
+  slice_max(population, n = 10)
+
+
+# fig 3
+
+north_india_fs_fig2 <- north_india_fs_fig3_dataset %>%
+  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = expression("Potential Gain in Life Expectancy from Reducing 2021 " ~ PM[2.5] ~ "concentrations to the WHO Guideline"), subtitle = "(Top 10 most populous districts of North India)", x_label = "District", y_label = "Average Life Expectancy Gains (years)", legend_title = "LE gains (years)", caption = "") +
+  scale_y_continuous(breaks = seq(0, 12, 2))
+ 
+
+  
+  
+
+#> plot 4: Trend lines graph comparing Indo-Gangetic plains and all other regions in India-------------
+
+# adding a north India/rest of india region column (specifically Indo gangetic plain)
+north_india <- c("West Bengal", "Uttar Pradesh", "Punjab", "Haryana", 
+                 "Chandigarh", "Bihar", "NCT of Delhi")
+
+north_india_fs_fig4_data_part1 <- gadm2_aqli_2021 %>%
+  filter(country == "India") %>%
+  mutate(region = ifelse(name_1 %in% north_india, "Indo-Gangetic Plain", "All other regions (excluding Indo-Gangetic Plain)"))
+
+
+# creating India's region wise average PM2.5 data from 1998 to 2021 
+north_india_fs_fig4_data_part1 <- north_india_fs_fig4_data_part1 %>%
+  group_by(region) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2021_pop_weighted = pop_weights*pm2021) %>%
-  summarise(avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE), 
-            tot_pop = sum(population, na.rm = TRUE))
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# creating a national average PM2.5 trendlines data from 1998 to 2021
+north_india_fs_fig4_data_part2 <- gadm2_aqli_2021 %>%
+  filter(country == "India") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# India factsheet figure 4 dataset
+north_india_fs_fig4_data <- rbind(north_india_fs_fig4_data_part1, north_india_fs_fig4_data_part2)
+
+
+# India factsheet figure 4
+# fig4 caption removed: "* We define the Indo-Gangetic plain region as containing the following seven states and union territories: Bihar, Chandigarh, NCT of Delhi, Haryana, Punjab, Uttar Pradesh, and West Bengal."
+
+north_india_fs_fig4_data$region <- factor(north_india_fs_fig4_data$region, levels = c("Indo-Gangetic Plain", "National Average", "All other regions (excluding Indo-Gangetic Plain)"))
+
+north_india_fs_fig4 <- ggplot(north_india_fs_fig4_data) +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.3) +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
+    scale_color_manual(values = c("Indo-Gangetic Plain" = "darkred", "National Average" = "darkgrey", "All other regions (excluding Indo-Gangetic Plain)" = "orange")) +
+  ggthemes::theme_tufte() +
+  labs(x = "Year", 
+       y = expression("Annual Average   " ~ PM[2.5] ~ "(in µg/m³)"), 
+       title = expression("Annual Average" ~ PM[2.5] ~ "concentrations in the Indo-Gangetic Plain and other regions of India, 1998 to 2021")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 11),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
+        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.line = element_line(), 
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 12), 
+        plot.background = element_rect(color = "white"), 
+        axis.ticks = element_blank()) +
+     geom_text(x = 2000.5, y = 7.9, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5) 
+
+# appendix table
+
+gadm2_aqli_2021 %>%
+  filter(country == "India", name_1 %in% north_india) %>%
+  gadm_level_summary(c("country", "name_1"), c(2021), perc_red_by = 10) %>%
+  mutate(pop_millions = round(population/1000000, 1)) %>%
+  select(name_1, pop_millions, pm2021, llpp_who_2021, llpp_nat_2021) %>%
+  rename(State = name_1, `Population (in millions)` = pop_millions, 
+         "Annual Average PM2.5 in 2021 (in µg/m³)" = pm2021, 
+         "Life Expectancy Gains from reducing PM2.5 concentrations from 2021 Concentration to WHO Guideline of 5 µg/m³" = llpp_who_2021, 
+         "Life Expectancy Gains from reducing PM2.5 concentrations from 2021 Concentration to National Guideline of 40 µg/m³" = llpp_nat_2021)
 
 
 
