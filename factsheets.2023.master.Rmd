@@ -953,6 +953,38 @@ china_fs_appendix_table %>%
 ```
 
 
+# North India Fact Sheet 2023
+
+```{r}
+
+# Filtering color dataset for India
+color_2021_india <- gadm2_aqli_2021 %>%
+  filter(country == "India") 
+
+# adding a north India/rest of india region column (specifically Indo gangetic plain)
+north_india <- c("West Bengal", "Uttar Pradesh", "Punjab", "Haryana", 
+                 "Chandigarh", "Bihar", "NCT of Delhi")
+
+# adding North India column
+color_2021_india <- color_2021_india %>%
+  mutate(region = ifelse(name_1 %in% north_india, "North India", "All other regions (excluding North India)"))
+
+# quick stats
+color_2021_india %>%
+  filter(region == "North India") %>%
+  gadm_level_summary(c("country"), c(2021), 10)
+
+
+foo <- color_2021_india %>%
+  filter(region == "North India") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2021_pop_weighted = pop_weights*pm2021) %>%
+  summarise(avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE), 
+            tot_pop = sum(population, na.rm = TRUE))
+
+
+
+```
 
 
 # sanity checks

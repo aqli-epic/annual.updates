@@ -163,7 +163,17 @@ indo_gangetic_plains_states <- c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Hary
                                  "Punjab", "Chandigarh", "West Bengal")
 
 
-# trendlines tab graph function-----------------------------------
+#> trendlines tab graph function-----------------------------------
+
+## arguments info (a Roxygen file is upcoming):
+# gadm2_file: gadm2 aqli finalized file
+# level: one of, "country", "state", "district"
+# country_name: if applicable (given the level argument)
+# state_name: if applicable (given the level argument)
+# district_name: if applicable (given the level argument)
+# start_year: start year of trendline
+# end_year: end year of trendline
+
 
 trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India", state_name = "NCT of Delhi", district_name = "NCT of Delhi", start_year, end_year){
 
@@ -260,6 +270,19 @@ trendlines_aqli <- function(gadm2_file, level = "country", country_name = "India
 
 #> GADM level summary and Compare Regions tabs function---------------------------------------
 
+
+## arguments (Roxygen file upcoming):
+# df: AQLI datasets (either gadm2, 1, 0, given the use in question)
+
+# level_col_name_vec: specify complete vector of the level of summary. There are 2 cases:
+#  (a) if you need a continent level summary, just enter: c("continent").
+#  (b) For any other level summary,  you'll have to add the entire vector, starting from country, For example, to get a
+#      state level summary, enter: c("country", "name_1"). Similarly, for district level summary,
+#      enter, c("country", "name_1", "name_2").
+
+# years: a vector of years for which you need the data, example: c(2021, 2020)
+
+# perc_red_by: a custom percent reduction, which will create custom reduction columns, e.g. 10 for 10% reduction.
 gadm_level_summary <- function(df, level_col_name_vec, years, perc_red_by){
 
   pol_col_names <- stringr::str_c("pm", years)
@@ -351,7 +374,10 @@ if((level_col_name_vec[1] == "continent") & (length(level_col_name_vec) == 1)){
    }
 }
 
-# aqli base theme function---------------------------------------------------------------------------
+#> aqli base theme function---------------------------------------------------------------------------
+# add this to your graphs to standardize them, example: plt1 %>% theme_aqli_base
+
+
 themes_aqli_base <- ggthemes::theme_tufte() +
   theme(plot.title = element_text(size = 18, hjust = 0.5, margin = margin(b = 0.2, unit = "cm")),
         plot.subtitle = element_text(size = 14, hjust = 0.5, margin = margin(b = 0.7, unit = "cm")),
@@ -364,7 +390,13 @@ themes_aqli_base <- ggthemes::theme_tufte() +
         legend.text = element_text(size = 13),
         legend.position = "bottom")
 
-# function that adds AQLI colors and axis titles
+#> function that adds AQLI colors and axis titles
+
+## arguments:
+# df: AQLI dataset in question.
+# scale_type: can be either one of "pollution" or "lyl"
+# col_name: (in quotes), based on which the color buckets are to be assigned, the one being plotted.
+
 add_aqli_color_scale_buckets <- function(df, scale_type = "pollution", col_name){
   if(scale_type == "lyl"){
     df %>%
@@ -411,7 +443,13 @@ add_aqli_color_scale_buckets <- function(df, scale_type = "pollution", col_name)
 
 }
 
-# aqli histogram function-----------------------------------------
+#> aqli histogram function-----------------------------------------
+
+# df: AQLI datasets
+# scale_type: one of "pollution" or "lyl"
+# col_name: col_name for which the histogram needs to be plotted.
+# region_name: this will go in the subtitle of the figure.
+
 aqli_hist <- function(df, scale_type = "pollution", col_name = "pm2021", region_name = "enter region name"){
   if(scale_type == "pollution"){
     pol_year <- as.numeric(str_remove(col_name, "pm"))
@@ -459,7 +497,20 @@ aqli_hist <- function(df, scale_type = "pollution", col_name = "pm2021", region_
 }
 
 
-# aqli bar plot function---------------------------------------------------------
+#> aqli bar plot function---------------------------------------------------------
+
+## arguments:
+
+# df: AQLI dataset in question
+# scale_type: "pollution" or "lyl"
+# x_var: col name (in quotes) to be plotted on the x-axis.
+# y_var: col name (in quotes) to be plotted on the y-axis.
+# subtitle: subtitle for the figure
+# x_label: x axis label for the figure
+# y_label: y axis label for the figure
+# legend_title: legend title
+# caption: figure caption
+
 aqli_bar <- function(df, scale_type = "pollution", x_var, y_var, title, subtitle, x_label, y_label, legend_title, caption){
   if(scale_type == "pollution"){
     plt <- df %>%
