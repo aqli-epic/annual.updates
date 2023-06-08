@@ -564,7 +564,7 @@ plot3_data <- color_2021 %>%
 # plot 3  
 plt3 <- plot3_data %>%
   ggplot() +
-  geom_sf(mapping = aes(fill = forcats::fct_reorder(pol_bucket, pol_bucket_order)), color = "transparent") +
+  rm(geom_sf(mapping = aes(fill = forcats::fct_reorder(pol_bucket, pol_bucket_order)), color = "transparent") +
   geom_sf(data = india_state, color = "black", fill = "transparent", lwd = 0.7) +
   geom_sf(data = plot3_data %>% filter(name_2 %in% final_analysis_dataset$name_2), color = "black", fill = "transparent", lwd = 0.1) +
   ggthemes::theme_map() + 
