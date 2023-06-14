@@ -161,6 +161,14 @@ indo_gangetic_plains_states <- c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Hary
                                  "Punjab", "Chandigarh", "West Bengal")
 
 
+# european countries
+european_countries <- read_csv("./september.2023/other.important.calculations.data/europe_countries.csv")
+
+# western european countries
+western_european_countries <- c("Germany", "Switzerland", "Italy", "Monaco", "Luxembourg",
+                                "Belgium", "France", "Netherlands", "Andorra", "Spain",
+                                "United Kingdom", "Portugal", "Denmark", "Ireland", "Iceland", "Austria")
+
 #> trendlines tab graph function-----------------------------------
 
 ## arguments info (a Roxygen file is upcoming):

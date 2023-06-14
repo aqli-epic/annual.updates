@@ -1,52 +1,52 @@
 years,region,pop_weighted_avg_pm2.5
-1998,All other regions (excluding North India),23.14379535878367
-1999,All other regions (excluding North India),23.845591916605873
-2000,All other regions (excluding North India),25.000503545049337
-2001,All other regions (excluding North India),28.04938523227093
-2002,All other regions (excluding North India),28.35454592335558
-2003,All other regions (excluding North India),30.39908645506927
-2004,All other regions (excluding North India),30.35255866400222
-2005,All other regions (excluding North India),31.883487760872427
-2006,All other regions (excluding North India),33.30596891922081
-2007,All other regions (excluding North India),34.45003970984421
-2008,All other regions (excluding North India),35.47170802785103
-2009,All other regions (excluding North India),35.75187555609966
-2010,All other regions (excluding North India),35.97437224647478
-2011,All other regions (excluding North India),37.66871241874347
-2012,All other regions (excluding North India),34.97108160953839
-2013,All other regions (excluding North India),36.53388814576192
-2014,All other regions (excluding North India),36.91499479098135
-2015,All other regions (excluding North India),36.20856554624097
-2016,All other regions (excluding North India),37.00871815021159
-2017,All other regions (excluding North India),37.30639901342397
-2018,All other regions (excluding North India),37.00836169010817
-2019,All other regions (excluding North India),38.12608716668126
-2020,All other regions (excluding North India),39.03457388067814
-2021,All other regions (excluding North India),41.10618752323187
-1998,North India,53.61467925989389
-1999,North India,52.38983269635822
-2000,North India,58.210753725104965
-2001,North India,63.56260118847071
-2002,North India,63.338498013951316
-2003,North India,68.69266374290007
-2004,North India,67.6508584460171
-2005,North India,67.94783721613803
-2006,North India,70.50290032151156
-2007,North India,73.19045946890333
-2008,North India,80.23542158648874
-2009,North India,78.60995969534973
-2010,North India,78.58518142839978
-2011,North India,85.73803491986797
-2012,North India,77.05919379563534
-2013,North India,80.29040362444249
-2014,North India,75.98660294538303
-2015,North India,76.57647835857341
-2016,North India,83.70174329738859
-2017,North India,78.49531064680508
-2018,North India,80.02441875434215
-2019,North India,83.865424226934
-2020,North India,83.22269833501814
-2021,North India,86.28525484706827
+1998,All other regions (excluding Northern plains of India),23.14379535878367
+1999,All other regions (excluding Northern plains of India),23.845591916605873
+2000,All other regions (excluding Northern plains of India),25.000503545049337
+2001,All other regions (excluding Northern plains of India),28.04938523227093
+2002,All other regions (excluding Northern plains of India),28.35454592335558
+2003,All other regions (excluding Northern plains of India),30.39908645506927
+2004,All other regions (excluding Northern plains of India),30.35255866400222
+2005,All other regions (excluding Northern plains of India),31.883487760872427
+2006,All other regions (excluding Northern plains of India),33.30596891922081
+2007,All other regions (excluding Northern plains of India),34.45003970984421
+2008,All other regions (excluding Northern plains of India),35.47170802785103
+2009,All other regions (excluding Northern plains of India),35.75187555609966
+2010,All other regions (excluding Northern plains of India),35.97437224647478
+2011,All other regions (excluding Northern plains of India),37.66871241874347
+2012,All other regions (excluding Northern plains of India),34.97108160953839
+2013,All other regions (excluding Northern plains of India),36.53388814576192
+2014,All other regions (excluding Northern plains of India),36.91499479098135
+2015,All other regions (excluding Northern plains of India),36.20856554624097
+2016,All other regions (excluding Northern plains of India),37.00871815021159
+2017,All other regions (excluding Northern plains of India),37.30639901342397
+2018,All other regions (excluding Northern plains of India),37.00836169010817
+2019,All other regions (excluding Northern plains of India),38.12608716668126
+2020,All other regions (excluding Northern plains of India),39.03457388067814
+2021,All other regions (excluding Northern plains of India),41.10618752323187
+1998,Northern plains of India,53.61467925989389
+1999,Northern plains of India,52.38983269635822
+2000,Northern plains of India,58.210753725104965
+2001,Northern plains of India,63.56260118847071
+2002,Northern plains of India,63.338498013951316
+2003,Northern plains of India,68.69266374290007
+2004,Northern plains of India,67.6508584460171
+2005,Northern plains of India,67.94783721613803
+2006,Northern plains of India,70.50290032151156
+2007,Northern plains of India,73.19045946890333
+2008,Northern plains of India,80.23542158648874
+2009,Northern plains of India,78.60995969534973
+2010,Northern plains of India,78.58518142839978
+2011,Northern plains of India,85.73803491986797
+2012,Northern plains of India,77.05919379563534
+2013,Northern plains of India,80.29040362444249
+2014,Northern plains of India,75.98660294538303
+2015,Northern plains of India,76.57647835857341
+2016,Northern plains of India,83.70174329738859
+2017,Northern plains of India,78.49531064680508
+2018,Northern plains of India,80.02441875434215
+2019,Northern plains of India,83.865424226934
+2020,Northern plains of India,83.22269833501814
+2021,Northern plains of India,86.28525484706827
 1998,National Average,35.01092023774884
 1999,National Average,34.96237051114573
 2000,National Average,37.93449612063183
