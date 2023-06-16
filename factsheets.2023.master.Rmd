@@ -916,9 +916,7 @@ china_fs_fig4_dataset <- china_fs_fig4_dataset %>%
 
 
 
-#> figure 3 plot
-
-# figure 3 caption removed: Source: Global Burden of Disease (https://vizhub.healthdata.org/gbd-results/) causes and risks data and WHO Life Tables (https://apps.who.int/gho/data/node.main.LIFECOUNTRY?lang=en) were used combined with the Life table method to arrive at these results. 'PM2.5 relative to WHO Guideline' bar displays life years lost relative to the WHO guideline as calculated by latest AQLI (2021) data, which will be published in September 2023.
+#> figure 4 plot
 
 china_fs_fig4 <- china_fs_fig4_dataset %>%
   ggplot() + 
@@ -1192,6 +1190,23 @@ foo <- gadm2_aqli_2021 %>%
          "Life Expectancy Gains from reducing PM2.5 concentrations from 2021 Concentration to WHO Guideline of 5 µg/m³" = llpp_who_2021, 
          "Life Expectancy Gains from reducing PM2.5 concentrations from 2021 Concentration to National Guideline of 40 µg/m³" = llpp_nat_2021) %>% View()
   write_csv("./[June052023]north_india_fs_appendix_table.csv")
+  
+  
+#> top 4 most populous in each state----------------------
+gadm2_aqli_2021 %>%
+  filter(country == "India", name_1 %in% north_india) %>%
+  group_by(name_1) %>%
+  slice_max(population, n = 4) %>%
+  mutate(pop_millions = round(population/1000000, 1)) %>%
+  select(name_1, name_2, pop_millions, pm2021, llpp_who_2021, llpp_nat_2021) %>%
+    mutate(pm2021 = round(pm2021, 1), 
+           llpp_who_2021 = round(llpp_who_2021, 1), 
+           llpp_nat_2021 = round(llpp_nat_2021, 1)) %>%
+  rename(State = name_1, District = name_2, `Population (in millions)` = pop_millions, 
+         "Annual Average PM2.5 in 2021 (in µg/m³)" = pm2021, 
+         "Life Expectancy Gains from reducing PM2.5 concentrations from 2021 Concentration to WHO Guideline of 5 µg/m³" = llpp_who_2021, 
+         "Life Expectancy Gains from reducing PM2.5 concentrations from 2021 Concentration to National Guideline of 40 µg/m³" = llpp_nat_2021) %>% 
+  write_csv("./[June162023]north_india_fs_appendix_table.csv")
 
 
 
@@ -1406,7 +1421,7 @@ bangladesh_fs_fig4_dataset <- gadm2_aqli_2021 %>%
         axis.title.y = element_text(size = 9), 
         axis.title.x = element_text(size = 9)) +  
     geom_text(x = 2001.8, y = 6.7, label =  expression("WHO " ~ PM[2.5] ~ " Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
-    geom_text(x = 2001.1, y = 16.7, label = expression("Bangladesh National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5) +
+    geom_text(x = 2001.2, y = 16.7, label = expression("Bangladesh National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5) +
     themes_aqli_base
   
 
@@ -1480,13 +1495,31 @@ sum(gadm2_aqli_2021_cw_african$population, na.rm = TRUE)
 #> stats check----------------------------------
 
 # c/w africa region wide average stats
-gadm2_aqli_2021_cw_african %>%
+foo <- gadm2_aqli_2021_cw_african %>%
   mutate(country = "foo") %>%
   gadm_level_summary(c("country"), c(2021), 10) 
 
 # top polluting countries
-gadm2_aqli_2021_cw_african %>%
+foo <- gadm2_aqli_2021_cw_african %>%
   gadm_level_summary(c("country"), c(2021), 10) 
+
+# How many countries in this region are in the top n most polluted countries in the World
+top20_most_pol_countries <- gadm2_aqli_2021 %>% gadm_level_summary(c("country"), c(2021), 10) %>% slice_max(pm2021, n = 30) %>% 
+  select(country) %>% 
+  unlist() %>% 
+  as.vector()
+
+# countries in central and west africa that are in the top n most polluted countries
+foo <- central_and_west_african_countries[central_and_west_african_countries %in% top20_most_pol_countries]
+
+# open aq data stats
+foo <- openaq_data %>%
+  filter(continent == "Africa") %>% 
+  count(evid_govt_spon_aq_mon)
+
+foo <- openaq_data %>%
+  filter(continent == "Africa") %>% 
+  count(prog_access)
 
 
 
@@ -1558,34 +1591,85 @@ cw_africa_fig1 <- cw_africa_fs_fig1_data %>%
   guides(fill = guide_legend(nrow = 1))
 
 
+#> Central v/s West Africa average pollution and life years lost 2 color map---------------------
 
-#> cw africa factsheet plot 2-------------------------------------
+# central v/s west africa region
+cwafrica_fs_plt2_data <- gadm2_aqli_2021_cw_african %>%
+    left_join(gadm2_aqli_2021_shp %>% filter(name0 %in% central_and_west_african_countries), by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf() 
+
+# wrapping x-axis labels text 
+cwafrica_fs_plt2_data$region <- as.factor(cwafrica_fs_plt2_data$region)
+
+cwafrica_fs_plt2_data$region <- factor(cwafrica_fs_plt2_data$region, levels = c("West African", "Central African"))
+
+plt2_cwafrica <- cwafrica_fs_plt2_data %>%
+  ggplot() +
+   geom_sf(mapping = aes(fill = region), color = "aliceblue", lwd = 0.01) +
+   geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 %in% central_and_west_african_countries), color = "azure4", fill = "transparent", lwd = 0.1) +
+ geom_sf(data = gadm0_aqli_2021_shp %>% filter(name0 %in% central_and_west_african_countries), color = "cornsilk4", fill = "transparent", lwd = 0.3) +
+  ggthemes::theme_map() +
+  labs(fill = "", title = "", 
+       subtitle = "") + 
+  scale_fill_manual(values = c("West African" = "#D7ECF5", 
+                    "Central African" = "#B2C6D1")) +
+ theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 
+                                       , size = 12), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+       legend.key = element_rect(color = "black"), 
+       legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal", 
+       plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1)) 
+
+
+# eastern v/s western europe average
+
+east_vs_west_pol <- europe_fs_plt2.1_data %>%
+  st_drop_geometry() %>%
+  group_by(europe_region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2021_pop_weighted = pm2021*pop_weights) %>%
+  summarise(avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE))
+
+
+
+#> cw africa factsheet plot 3-------------------------------------
 
 
 #> cwafrica fig2
 
 # GBD results filtered for relevant cause of death and countries 
-gbd_results_cwafrica_fig2 <- gbd_results_master_2021 %>%
+gbd_results_cwafrica_fig3 <- gbd_results_master_2021 %>%
   filter(cause_of_death %in% c("PM2.5 relative to WHO guideline",
                                "Neglected tropical diseases and malaria", "Unsafe water, sanitation, and handwashing", 
                                "HIV/AIDS and sexually transmitted infections"), country %in% c("Nigeria", "Democratic Republic of the Congo", "Angola", "Ghana", "Cameroon"))
 
 # making the 'location' column of type factor
-gbd_results_cwafrica_fig2$country <- factor(gbd_results_cwafrica_fig2$country, 
+gbd_results_cwafrica_fig3$country <- factor(gbd_results_cwafrica_fig3$country, 
                                         levels = c("Nigeria", "Democratic Republic of the Congo", "Angola", "Ghana", "Cameroon"))
 
 # Rename Democratic Republic of the Congo to DRC
-gbd_results_cwafrica_fig2$country <-  str_replace(gbd_results_cwafrica_fig2$country, 
+gbd_results_cwafrica_fig3$country <-  str_replace(gbd_results_cwafrica_fig3$country, 
             "Democratic Republic of the Congo", "DR Congo")
 
 # Converting 'cause_of_death' to type factor
 gbd_results_cwafrica_fig2$cause_of_death <- as.factor(gbd_results_cwafrica_fig2$cause_of_death)
 
 # Rearranging 'cause of death' levels
-levels(gbd_results_cwafrica_fig2$cause_of_death) <- c( "HIV/AIDS and sexually transmitted infections", "Neglected tropical diseases and malaria", "PM2.5 relative to WHO guideline", "Unsafe water, sanitation, and handwashing")
+levels(gbd_results_cwafrica_fig3$cause_of_death) <- c( "HIV/AIDS and sexually transmitted infections", "Neglected tropical diseases and malaria", "PM2.5 relative to WHO guideline", "Unsafe water, sanitation, and handwashing")
 
 # wrapping x-axis labels text 
-levels(gbd_results_cwafrica_fig2$cause_of_death) <- str_wrap(levels(gbd_results_cwafrica_fig2$cause_of_death), 30)
+levels(gbd_results_cwafrica_fig3$cause_of_death) <- str_wrap(levels(gbd_results_cwafrica_fig3$cause_of_death), 30)
 
 # getting country wise population
 country_wise_population <- gadm2_aqli_2021_cw_african %>%
@@ -1595,16 +1679,16 @@ country_wise_population <- gadm2_aqli_2021_cw_african %>%
   arrange(desc(population))
 
 # reorder within each location as per the total life years lost column
-gbd_results_cwafrica_fig2 <- gbd_results_cwafrica_fig2 %>% 
+gbd_results_cwafrica_fig2 <- gbd_results_cwafrica_fig3 %>% 
   mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
 
 # clean the "cause of death" column and save the cwafrica factsheet figure 2
-cwafrica_fs_fig2_dataset <- gbd_results_cwafrica_fig2 %>%
+cwafrica_fs_fig3_dataset <- gbd_results_cwafrica_fig3 %>%
   mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
 
 
 # plot 
-plt <- cwafrica_fs_fig2_dataset %>%
+plt <- cwafrica_fs_fig3_dataset %>%
   ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) + 
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +
@@ -1619,11 +1703,11 @@ plt <- cwafrica_fs_fig2_dataset %>%
          strip.text = element_text(size = 14)) 
 
 
-#> cw africa figure 3----------------------------------
+#> cw africa figure 4----------------------------------
 
 
 # central and west africa figure 3 dataset
- cwafrica_fs_fig3_dataset <- gadm2_aqli_2021_cw_african %>%
+ cwafrica_fs_fig4_dataset <- gadm2_aqli_2021_cw_african %>%
   group_by(name_1_country) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
          pm2021_pop_weighted = pop_weights*pm2021) %>%
@@ -1634,21 +1718,21 @@ plt <- cwafrica_fs_fig2_dataset %>%
   slice_max(tot_pop, n = 10) 
  
 
-cwafrica_fs_fig3_dataset <- cwafrica_fs_fig3_dataset %>%
+cwafrica_fs_fig4_dataset <- cwafrica_fs_fig4_dataset %>%
   add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "gain_in_le") 
 
-cwafrica_fs_fig3 <- cwafrica_fs_fig3_dataset %>%
+cwafrica_fs_fig4 <- cwafrica_fs_fig4_dataset %>%
   mutate(name_1_country = str_replace(name_1_country, "Democratic Republic of the Congo", "DR Congo")) %>%
-  aqli_bar(scale_type = "lyl", x_var = "name_1_country", y_var = "gain_in_le", title = "", subtitle = "", x_label = "Region", y_label = "Average Life Expectancy Gains (Years)", legend_title = "Average Life Expectancy Gains (Years)", caption = "")
+  aqli_bar(scale_type = "lyl", x_var = "name_1_country", y_var = "gain_in_le", title = "", subtitle = "", x_label = "Region", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "")
 
 
-#> cw africa figure 4 trendlines -------------------------------------------------
+#> cw africa figure 5 trendlines -------------------------------------------------
 
 #> Figure 4: Average PM2.5 concentration in India from 1998 to 2021------------------------
 
 
 # creating region wise average PM2.5 data from 1998 to 2021 
-cwafrica_fs_fig4_data <- gadm2_aqli_2021_cw_african %>%
+cwafrica_fs_fig5_data <- gadm2_aqli_2021_cw_african %>%
   group_by(region) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
@@ -1661,10 +1745,10 @@ cwafrica_fs_fig4_data <- gadm2_aqli_2021_cw_african %>%
 
 
 # adding factor levels
-cwafrica_fs_fig4_data$region <- factor(cwafrica_fs_fig4_data$region, levels = c("Central African", "West African"))
+cwafrica_fs_fig5_data$region <- factor(cwafrica_fs_fig5_data$region, levels = c("Central African", "West African"))
 
 # fig 4
-cwafrica_fs_fig4 <- cwafrica_fs_fig4_data %>%
+cwafrica_fs_fig5 <- cwafrica_fs_fig5_data %>%
   ggplot() +
   geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.3) +
     geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
@@ -1673,7 +1757,7 @@ cwafrica_fs_fig4 <- cwafrica_fs_fig4_data %>%
     scale_color_manual(values = c("Central African" = "darkred", "West African" = "orange")) +
   ggthemes::theme_tufte() +
   labs(x = "Year", 
-       y = expression("Annual Average   " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
+       y = expression("Annual average   " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
        title = "") +
   theme(legend.position = "bottom",
         legend.text = element_text(size = 11),
@@ -1709,6 +1793,17 @@ gadm2_aqli_2021_cw_african %>%
   write_csv("./[June092023]cwafrica_fs_appendix_table.csv")
 
 
+
+
+# c/w africa region wide average stats
+gadm2_aqli_2021_cw_african %>%
+  mutate(country = "foo") %>%
+  gadm_level_summary(c("country"), c(2021), 10) 
+
+# top polluting countries
+gadm2_aqli_2021_cw_african %>%
+  gadm_level_summary(c("country"), c(2021), 10) %>%
+  slice_max(pm2021, n = 30)
 
 
 ```
@@ -1919,13 +2014,14 @@ plt2.1 <- europe_fs_plt2.1_data %>%
        legend.box.spacing = unit(0, "cm"), 
         legend.direction = "horizontal", 
        plot.background = element_rect(fill = "white", color = "white")) +
-  guides(fill = guide_legend(nrow = 1)) 
+  guides(fill = guide_legend(nrow = 1)) %>%
+  ggsflabel::geom_sf_label_repel(data = gadm1_aqli_2021_shp %>% filter(name0 == "India", name1 %in% north_india), mapping = aes(label = name1), force = 50, nudge_x = 3, seed = 10, size = 4)
 
 
 
 # eastern v/s western europe average
 
-plt <- europe_fs_plt2.1_data %>%
+east_vs_west_pol <- europe_fs_plt2.1_data %>%
   st_drop_geometry() %>%
   group_by(europe_region) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
@@ -1956,7 +2052,7 @@ europe_fs_fig3_dataset <-  europe_fs_fig3_dataset %>%
   add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "gain_in_le") 
 
 europe_fs_fig3 <- europe_fs_fig3_dataset %>%
-  aqli_bar(scale_type = "lyl", x_var = "name_1_country", y_var = "gain_in_le", title = "", subtitle = "", x_label = "Region", y_label = "Average Life Expectancy Gains (Years)", legend_title = "Average Life Expectancy Gains (Years)", caption = "")
+  aqli_bar(scale_type = "lyl", x_var = "name_1_country", y_var = "gain_in_le", title = "", subtitle = "", x_label = "Region", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "")
 
 
 
@@ -1984,7 +2080,7 @@ europe_fs_fig4 <- europe_fs_fig4_data %>%
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
   ggthemes::theme_tufte() +
   labs(x = "Year", 
-       y = expression("Annual Average   " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
+       y = expression("Annual average   " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
        title = "") +
   theme(legend.position = "bottom",
         legend.text = element_text(size = 11),
@@ -2051,6 +2147,242 @@ appendix_table_final %>%
   write_csv("./[June122023]EuropeFactsheet2023.csv")
 
 ```
+
+
+# Colombia factsheet---------------------------------
+
+
+```{r}
+
+#> stat checks
+
+# country rankings
+gadm2_aqli_2021 %>%
+  gadm_level_summary(c("country"), c(2021), 10) %>%
+  slice_max(pm2021, n = 246) %>%
+  mutate(rownum = row_number()) %>%
+  filter(country == "Colombia") %>%
+  select(rownum, country)
+
+# % people above WHO
+foo <- gadm2_aqli_2021 %>%
+  filter(country == "Colombia", pm2021 > 20) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE))
+  
+  
+  
+#> plot 1
+
+# colombia figure1 dataset
+colombia_fs_fig1_data <- gadm2_aqli_2021 %>%
+  filter(country == "Colombia") %>%
+  left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1", NA), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 1) & (llpp_who_2021 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 2) & (llpp_who_2021 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 3) & (llpp_who_2021 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 4) & (llpp_who_2021 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 5) & (llpp_who_2021 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - < 6", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket)) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+
+
+# colombia figure 1
+colombia_fs_fig1 <- colombia_fs_fig1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "lightgrey", lwd = 0.05) +
+ geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "Colombia"), color = "black", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+ scale_fill_manual(values = c("0 - < 0.1" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) +
+  ggthemes::theme_map() +
+  labs(fill = "Gain in years of life expectancy  ", title = "") + 
+ theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+       legend.key = element_rect(color = "black"), 
+       legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal", 
+       plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1))
+
+
+  
+
+
+#> plot 2: Potential Gain in Life Expectancy from Reducing PM2.5 from 2021 to the WHO Guideline in 10 most populous regions of Colombia -----------------------------------------
+
+colombia_fs_fig2_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Colombia") %>%
+  add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "llpp_who_2021") %>%
+  slice_max(population, n = 10)
+
+colombia_fs_fig2 <- colombia_fs_fig2_dataset %>%
+  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "Municipality", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "")
+
+
+#> plot 3: GBD-------------------------------------------------------
+
+# top 10 most deadly diseases
+colombia_fs_fig3_dataset <- gbd_results_master_2021 %>%
+  filter(country == "Colombia") %>%
+  slice_max(lyl, n = 15)
+
+colnames(colombia_fs_fig3_dataset)[3] <- c("llpp_who_2021")
+
+colombia_fs_fig3_dataset <- colombia_fs_fig3_dataset %>%
+    mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1 years", NA), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 1) & (llpp_who_2021 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 2) & (llpp_who_2021 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 3) & (llpp_who_2021 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 4) & (llpp_who_2021 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 5) & (llpp_who_2021 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1 years", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - 6", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket))
+
+
+#> figure 3 plot
+
+
+colombia_fs_fig3 <- colombia_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), width = 0.4, color = "black") +
+  labs(x = "Threats to Life Expectancy", y = "Life years lost", fill = "Life years lost", 
+       title = "") +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+ # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) + 
+  guides(fill = guide_legend(nrow = 1)) +
+  themes_aqli_base
+
+
+
+
+#> plot 4: Trendlines: 1998 to 2021------------------------------------
+
+# Colombia factsheet figure 3 dataset
+colombia_fs_fig4_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Colombia") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+
+
+
+  colombia_fs_fig4 <- colombia_fs_fig4_dataset %>%
+    ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dashed") +
+    geom_hline(mapping = aes(yintercept = 20), lwd = 0.8, linetype = "dashed") + 
+  scale_y_continuous(breaks = seq(0, 20, 5), limits = c(0, 25)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
+    scale_color_manual(values = c("National Average" = "darkgrey")) +
+  ggthemes::theme_clean() +
+  labs(x = "Year", 
+       y = expression("Annual average  " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
+       title = "") +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +  
+    geom_text(x = 2001.5, y = 5.9, label =  expression("WHO " ~ PM[2.5] ~ " Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
+    geom_text(x = 2000.7, y = 21, label = expression("Colombia National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 5) +
+    themes_aqli_base
+  
+  
+# colombia factsheet appendix table
+  
+# appendix table (gadm level 2)
+gadm2_aqli_2021 %>%
+    filter(country == "Colombia") %>%
+    select(name_1, name_2, population, pm2021, llpp_who_2021, llpp_nat_2021) %>%
+    mutate(pop_millions = round(population/1000000, 1), 
+           pm2021 = round(pm2021, 1), 
+           llpp_who_2021 = round(llpp_who_2021, 1), 
+           llpp_nat_2021 = round(llpp_nat_2021, 1)) %>%
+  mutate(lyg_red_pm2.5_30perc_2021 = round((pm2021*0.3)*0.098, 1)) %>%
+    slice_max(population, n = 25) %>% 
+    select(name_1, name_2, pop_millions, pm2021, llpp_who_2021, lyg_red_pm2.5_30perc_2021) %>%
+    rename(`Population (Millions)` = pop_millions, 
+           "Department" = name_1, 
+           "Muncipality" = name_2, 
+           "PM2.5 concentration 2021 (in µg/m³)" = pm2021, 
+           "Life Expectancy Gains from reducing PM2.5 from 2021 Concentrations to the WHO Guideline of 5 µg/m³" = llpp_who_2021, 
+           "Life Expectancy Gains from reducing PM2.5 from 2021 Concentrations by 30 percent" = lyg_red_pm2.5_30perc_2021) %>% View()
+    write_csv("./[updatedOnJune162023]Colombia Factsheet 2023 appendix table.csv")
+  
+
+
+```
+
+
 
 
 # sanity checks section (deactivated, just for testing purposes)
@@ -2494,6 +2826,144 @@ gadm2_aqli_2021 %>%
   summarise(avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE))
 
   gadm_level_summary(c("country"), c(2021), 10)
+
+
+# GBD heatmap
+  
+# GBD heatmap
+gbd_grouped_ranks <- gbd_results_master_2021 %>%
+  group_by(country) %>%
+  mutate(rank_lyl = rank(lyl)) %>%
+  ungroup()
+
+# europe's top 10 most populated countries
+country_n_most_pop_europe <- gadm2_aqli_2021_europe %>%
+  mutate(country == "foo") %>%
+  gadm_level_summary(c("country"), c(2021), 10) %>%
+  slice_max(population, n = 6) %>% 
+  select(country) %>%
+  unique() %>%
+  unlist() %>%
+  as.vector()
+
+ test_df <- gbd_grouped_ranks %>%
+  filter(country %in% country_n_most_pop_europe, 
+         cause_of_death %in% c("Tobacco", "PM2.5 relative to WHO guideline", 
+                               "Cardiovascular diseases", 
+                               "Diabetes and kidney diseases", 
+                               "Alcohol use")) %>%
+      add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "lyl") 
+ 
+ test_df$cause_of_death <- factor(test_df$cause_of_death, levels = c("Tobacco", "Diabetes and kidney diseases", "Alcohol use", "PM2.5 relative to WHO guideline", "Cardiovascular diseases"))
+  
+ plt <- test_df %>%
+   arrange(desc(cause_of_death)) %>%
+   ggplot() +
+  geom_raster(mapping = aes(x = country, y = cause_of_death, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket))) +
+       scale_fill_manual(values = c("0 - < 0.1" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) +
+   theme(legend.position = "bottom") +
+   labs(fill = "Life years lost", 
+        y = "Threats to Life Expectancy", 
+        x = "Country") +
+   ggthemes::theme_tufte()
+
+   
+  scale_fill_viridis_b(breaks = c(0, 1, 2, 3, 3.5, 4, 6, 8), option = "magma", direction = -1)
+  
+  
+  
+#> Nigeria-------------------------------------
+
+  
+gadm2_aqli_2021 %>%
+    filter(country == "Nigeria") %>%
+    slice_max(pm2021, n = 10) %>%
+    filter(name_1 == "Taraba") %>% 
+    gadm_level_summary(c("country"), c(2021), 10)
+  
+gadm2_aqli_2021 %>%
+    filter(country == "Nigeria") %>%
+      gadm_level_summary(c("country", "name_1"), c(2021), 10) %>%
+  slice_max(pm2021, n = 20)
+  
+gadm2_aqli_2021 %>%
+  filter(country == "Nigeria", name_1 %in% c("Rivers", "Delta", "Akwa Ibom", "Imo", "Edo", "Ondo", "Cross River", "Abia", "Bayelsa")) %>% 
+  gadm_level_summary(c("country"), c(2021), 10)
+
+
+
+
+# nigeria figure1 dataset
+nigeria_fs_fig1_data <- gadm2_aqli_2021 %>%
+  filter(country == "Nigeria") %>%
+  left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1", NA), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 1) & (llpp_who_2021 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 2) & (llpp_who_2021 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 3) & (llpp_who_2021 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 4) & (llpp_who_2021 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 > 5) & (llpp_who_2021 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2021 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - < 6", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket)) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# china_fs_fig1_data %>%
+#   sf::write_sf("./september.2023/factsheets/southkorea/fig1/sk_fs_fig1.shp")
+
+
+# nigeria figure 1
+nigeria_fs_fig1 <- nigeria_fs_fig1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "lightgrey", lwd = 0.05) +
+ geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "Nigeria"), color = "black", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+ scale_fill_manual(values = c("0 - < 0.1" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) +
+  ggthemes::theme_map() +
+  labs(fill = "Gain in years of life expectancy  ", title = "") + 
+ theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+       legend.key = element_rect(color = "black"), 
+       legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal", 
+       plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1))
+
+
 
 
 ```

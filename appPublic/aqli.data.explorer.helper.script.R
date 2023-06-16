@@ -137,13 +137,13 @@ gbd_results_master_2021 <- read_csv("./september.2023/gbd.calculation/GBDCompari
 # central africa definition
 central_african_countries <- c("Angola", "Burundi", "Cameroon",
                                "Central African Republic", "Chad",
-                               "Republic of Congo",
+                               "Republic of the Congo",
                                "Democratic Republic of the Congo",
                                "Equatorial Guinea", "Gabon",
                                "São Tomé and Príncipe",
                                "Rwanda")
 # west africa definition
-west_african_countries <- c("Benin", "Burkina Faso", "Cape Verde",
+west_african_countries <- c("Benin", "Burkina Faso", "Cabo Verde",
                             "Gambia", "Ghana", "Guinea", "Guinea-Bissau",
                             "Côte d'Ivoire", "Liberia", "Mali", "Mauritania",
                             "Niger", "Nigeria", "Senegal", "Sierra Leone",
@@ -168,6 +168,23 @@ european_countries <- read_csv("./september.2023/other.important.calculations.da
 western_european_countries <- c("Germany", "Switzerland", "Italy", "Monaco", "Luxembourg",
                                 "Belgium", "France", "Netherlands", "Andorra", "Spain",
                                 "United Kingdom", "Portugal", "Denmark", "Ireland", "Iceland", "Austria")
+
+#> open AQ global landscape 2022 report and clean-------------
+
+# read data
+openaq_data <- read_csv("./september.2023/other.important.calculations.data/openAQDataGlobalLandscape2022.csv")
+
+# remove top rows and some columns
+openaq_data <- openaq_data[7:nrow(openaq_data), ]
+colnames(openaq_data) <- openaq_data[1, ]
+openaq_data <- openaq_data[2:nrow(openaq_data), ]
+
+# set column names
+colnames(openaq_data) <- c("country", "evid_govt_spon_aq_mon", "evidence_ad_hoc_studies", "aq_existed_in_past_not_cur",
+                           "data_in_phys_units", "transp_geog_scale_data_provided", "data_fine_temporal_scale",
+                           "prog_access", "continent")
+
+
 
 #> trendlines tab graph function-----------------------------------
 
