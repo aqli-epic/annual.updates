@@ -140,7 +140,6 @@ for (i in 1 : length(gbd_risks_master_region_cleaned_region_wise)){
     write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "risks.csv"))
 }
 
-
 # split the master causes dataset by loaction
 gbd_causes_master_region_cleaned_region_wise <- gbd_causes_master_region_cleaned %>%
   group_split(location)
@@ -153,6 +152,8 @@ for (i in 1 : length(gbd_causes_master_region_cleaned_region_wise)){
   causes_data_tmp %>%
     write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "causes.csv"))
 }
+
+
 
 ```
 
@@ -189,6 +190,7 @@ for (i in 1:length(who_life_tables_list)){
   print(str_c("Iteration # ", i, "/", length(who_life_tables_list), " complete"))
 
 }
+
 
 ```
 

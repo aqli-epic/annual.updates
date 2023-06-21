@@ -131,6 +131,22 @@ first_year <- 1998
 gbd_results_master_2021 <- read_csv("./september.2023/gbd.calculation/GBDComparisons/results_used_in_dashboard/gbd_results_master.csv")
 
 
+# US 1970 calculation master cleaned file read
+us_1970_calc_results_cleaned <- read_csv("./september.2023/other.important.calculations.data/county_pm25_foraqli_stats_cleaned.csv")
+
+
+#> raw file is stored in the raw folder within other.important.calculations.data folder and below is the code to clean it just fyi. No, need
+#> to run this, as we already are reading in the cleaned file above.
+
+# us_1970_calc_results_raw <- read_csv("./september.2023/other.important.calculations.data/raw/county_pm25_foraqli_stats_raw.csv")
+#
+# us_1970_calc_results_cleaned <- us_1970_calc_results_raw %>%
+#   left_join(gadm2_aqli_2021 %>% filter(country == "United States"), by = c("country", "name_1", "name_2")) %>%
+#   select(objectid_gadm2.x, iso_alpha3, country, name_1, name_2, population.x, whostandard, natstandard, pm25_1970_aqli, pm1998.x, pm1999:pm2020, pm2021.x, llpp_who_1998:llpp_who_2020, llpp_who_2021.x, llpp_nat_1998:llpp_nat_2021) %>%
+#   rename(objectid_gadm2 = objectid_gadm2.x, population = population.x, pm1998 = pm1998.x, llpp_who_2021 = llpp_who_2021.x,
+#          pm1970 = pm25_1970_aqli, pm2021 = pm2021.x)
+
+
 
 #> other region wise defintions
 
