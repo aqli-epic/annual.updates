@@ -317,6 +317,7 @@ india_fs_fig2_plt <- india_fs_fig2_data %>%
                                ">= 6" = "#8C130E")) +
   coord_flip() +
   ggthemes::theme_tufte() +
+  themes_aqli_base +
   theme(legend.position = "bottom", 
         plot.title = element_text(hjust = 0.5, size = 16), 
         plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
@@ -326,8 +327,8 @@ india_fs_fig2_plt <- india_fs_fig2_data %>%
         axis.title = element_text(size = 13), 
         axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.ticks = element_blank()) +
-  themes_aqli_base
+        axis.ticks = element_blank(),
+        plot.background = element_rect(fill = "white", color = "white")) 
 
 
 svglite("india_fs_fig2")
@@ -390,6 +391,7 @@ india_fs_fig3 <- india_fs_fig3_dataset %>%
        title = expression("")) +
   coord_flip() + 
   ggthemes::theme_tufte() +
+  themes_aqli_base +
   theme(legend.position = "bottom",
         axis.text = element_text(size = 14),
         axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
@@ -398,11 +400,11 @@ india_fs_fig3 <- india_fs_fig3_dataset %>%
         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
         legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
         axis.line = element_line(), 
         legend.text = element_text(size = 11), 
         legend.title = element_text(size = 14),
-        panel.grid.major.y = element_blank()) +
+        panel.grid.major.y = element_blank(), 
+        plot.background = element_rect(fill = "white", color = "white")) +
   scale_y_continuous(breaks = seq(0, 6, 0.5)) +
  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
   scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
@@ -414,8 +416,7 @@ india_fs_fig3 <- india_fs_fig3_dataset %>%
                                "> 4 - 5" = "#E63D23", 
                                "> 5 - < 6" = "#BD251C", 
                                ">= 6" = "#8C130E")) + 
-  guides(fill = guide_legend(nrow = 1)) +
-  themes_aqli_base
+  guides(fill = guide_legend(nrow = 1)) 
 
 svglite("india_fs_fig3")
 ggsave("./september.2023/factsheets/india/fig3/india_fs_fig3.svg", width = 15, height = 12)
@@ -615,7 +616,8 @@ southkorea_fs_fig2_dataset %>%
 # fig 2
 
 south_korea_fs_fig2 <- southkorea_fs_fig2_dataset %>%
-  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "Region", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "")
+  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "Region", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "") +
+  theme(plot.background = element_rect(fill = "white", color = "white"))
  
 # plot 3: Trendlines: 1998 to 2021
 
@@ -646,16 +648,14 @@ southkorea_fs_fig3_dataset %>%
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
     scale_color_manual(values = c("National Average" = "darkgrey")) +
   ggthemes::theme_clean() +
+    themes_aqli_base +
   labs(x = "Year", 
        y = expression("Annual Average  " ~ PM[2.5] ~ "concentrations (in µg/m³)"), 
        title = "") +
   theme(legend.position = "bottom", legend.title = element_blank(), 
-        legend.text = element_text(size = 7), 
-        axis.title.y = element_text(size = 9), 
-        axis.title.x = element_text(size = 9)) +  
+        plot.background = element_rect(fill = "white", color = "white")) +  
     geom_text(x = 2001.8, y = 6.1, label =  expression("WHO " ~ PM[2.5] ~ "Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
-    geom_text(x = 2001.2, y = 16.1, label = expression("South Korea National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5) +
-    themes_aqli_base
+    geom_text(x = 2001.2, y = 16.1, label = expression("South Korea National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5) 
   
   
   ggsave("./september.2023/factsheets/southkorea/fig3/sk_fs_fig3.svg", width = 15, height = 10)
@@ -774,7 +774,8 @@ china_fs_fig2_dataset <- gadm2_aqli_2021 %>%
   slice_max(population, n = 10)
 
 china_fs_fig2 <- china_fs_fig2_dataset %>%
-  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "Prefecture", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "")
+  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "Prefecture", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "") + 
+  theme(plot.background = element_rect(fill = "white", color = "white"))
 
 
 #> plot 3: PM2.5 Concentrations in Major Regions in Mainland China Over Time (1998 to 2021)-----------------
@@ -853,21 +854,19 @@ china_fs_fig3 <- china_fs_fig3_dataset %>%
     geom_hline(mapping = aes(yintercept = 5), lwd = 0.5, linetype = "dashed") +
     geom_vline(mapping = aes(xintercept = 2014), lwd = 0.5, linetype = "dashed") +
   scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100)) +
-  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
+  scale_x_continuous(breaks = c(seq(1998, 2020, 2), 2021)) +
     scale_color_manual(values = c("PRD" = "burlywood1", "China" = "darkgrey", "BTH" = "darkred", "YRD" = "darkorange")) +
   ggthemes::theme_clean() +
+    themes_aqli_base +
   labs(x = "Year", 
        y = expression("Annual average  " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
        title = "", 
     subtitle = "", 
     color = "Region") +
   theme(legend.position = "bottom", legend.title = element_blank(), 
-        legend.text = element_text(size = 6.5), 
-        axis.title.y = element_text(size = 9), 
-        axis.title.x = element_text(size = 9)) + 
+        plot.background = element_rect(fill = "white", color = "white")) + 
     geom_text(x = 2001, y = 8.1, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³")) + 
-    geom_text(x = 2015.3, y = 92.8, label = str_wrap("China announces war on pollution", width = 18)) +
-  themes_aqli_base
+    geom_text(x = 2015.3, y = 92.8, label = str_wrap("China announces war on pollution", width = 18)) 
   
 
 
@@ -925,6 +924,7 @@ china_fs_fig4 <- china_fs_fig4_dataset %>%
        title = "") +
   coord_flip() + 
   ggthemes::theme_tufte() +
+  themes_aqli_base +
   theme(legend.position = "bottom",
         axis.text = element_text(size = 14),
         axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
@@ -933,12 +933,12 @@ china_fs_fig4 <- china_fs_fig4_dataset %>%
         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
         legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
         axis.line = element_line(), 
         legend.text = element_text(size = 11), 
         legend.title = element_text(size = 14),
-        panel.grid.major.y = element_blank()) +
-  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+        panel.grid.major.y = element_blank(), 
+        plot.background = element_rect(fill = "white", color = "white")) +
+  scale_y_continuous(breaks = seq(0, 7, 1)) +
  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
   scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
                                "0.1 - 0.5" = "#FFE6B3", 
@@ -949,8 +949,7 @@ china_fs_fig4 <- china_fs_fig4_dataset %>%
                                "> 4 - 5" = "#E63D23", 
                                "> 5 - < 6" = "#BD251C", 
                                ">= 6" = "#8C130E")) + 
-  guides(fill = guide_legend(nrow = 1)) +
-  themes_aqli_base
+  guides(fill = guide_legend(nrow = 1)) 
 
 
 #> appendix table-------------------------------
@@ -1015,9 +1014,11 @@ plt <- india_state %>%
       labs(fill = "") + 
   ggthemes::theme_tufte() +
   theme(legend.position = "bottom", 
+        legend.text = element_text(size = 13),
         axis.line = element_blank(), 
         axis.ticks = element_blank(), 
-        axis.text = element_blank())
+        axis.text = element_blank(), 
+        plot.background = element_rect(fill = "white", color = "white"))
   
 
    
@@ -1104,7 +1105,8 @@ north_india_fs_fig3_dataset <- gadm2_aqli_2021 %>%
 
 north_india_fs_fig3 <- north_india_fs_fig3_dataset %>%
   aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "District", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "") +
-  scale_y_continuous(breaks = seq(0, 12, 2))
+  scale_y_continuous(breaks = seq(0, 12, 2)) +
+  theme(plot.background = element_rect(fill = "white", color = "white"))
  
 
   
@@ -1312,7 +1314,8 @@ bangladesh_fs_fig2_dataset <- gadm2_aqli_2021 %>%
   slice_max(population, n = 10)
 
 bangladesh_fs_fig2 <- bangladesh_fs_fig2_dataset %>%
-  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "District", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "")
+  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "District", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "") +
+  theme(plot.background = element_rect(fill = "white", color = "white"))
 
 
 #> plot 3: GBD-------------------------------------------------------
@@ -1356,6 +1359,7 @@ bangladesh_fs_fig3 <- bangladesh_fs_fig3_dataset %>%
        title = "") +
   coord_flip() + 
   ggthemes::theme_tufte() +
+  themes_aqli_base +
   theme(legend.position = "bottom",
         axis.text = element_text(size = 14),
         axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
@@ -1364,12 +1368,12 @@ bangladesh_fs_fig3 <- bangladesh_fs_fig3_dataset %>%
         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
         legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
+        plot.background = element_rect(fill = "white", color = "white"),
         axis.line = element_line(), 
         legend.text = element_text(size = 11), 
         legend.title = element_text(size = 14),
         panel.grid.major.y = element_blank()) +
-  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  scale_y_continuous(breaks = seq(0, 7, 1)) +
  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
   scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
                                "0.1 - 0.5" = "#FFE6B3", 
@@ -1380,8 +1384,7 @@ bangladesh_fs_fig3 <- bangladesh_fs_fig3_dataset %>%
                                "> 4 - 5" = "#E63D23", 
                                "> 5 - < 6" = "#BD251C", 
                                ">= 6" = "#8C130E")) + 
-  guides(fill = guide_legend(nrow = 1)) +
-  themes_aqli_base
+  guides(fill = guide_legend(nrow = 1)) 
 
 
 
@@ -1413,16 +1416,15 @@ bangladesh_fs_fig4_dataset <- gadm2_aqli_2021 %>%
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
     scale_color_manual(values = c("National Average" = "darkgrey")) +
   ggthemes::theme_clean() +
+    themes_aqli_base +
   labs(x = "Year", 
        y = expression("Annual average  " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
        title = "") +
   theme(legend.position = "bottom", legend.title = element_blank(), 
         legend.text = element_text(size = 7), 
-        axis.title.y = element_text(size = 9), 
-        axis.title.x = element_text(size = 9)) +  
+        plot.background = element_rect(fill = "white", color = "white")) +  
     geom_text(x = 2001.8, y = 6.7, label =  expression("WHO " ~ PM[2.5] ~ " Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
-    geom_text(x = 2001.2, y = 16.7, label = expression("Bangladesh National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5) +
-    themes_aqli_base
+    geom_text(x = 2001.2, y = 16.7, label = expression("Bangladesh National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5) 
   
 
 
@@ -1663,7 +1665,7 @@ gbd_results_cwafrica_fig3$country <-  str_replace(gbd_results_cwafrica_fig3$coun
             "Democratic Republic of the Congo", "DR Congo")
 
 # Converting 'cause_of_death' to type factor
-gbd_results_cwafrica_fig2$cause_of_death <- as.factor(gbd_results_cwafrica_fig2$cause_of_death)
+gbd_results_cwafrica_fig3$cause_of_death <- as.factor(gbd_results_cwafrica_fig3$cause_of_death)
 
 # Rearranging 'cause of death' levels
 levels(gbd_results_cwafrica_fig3$cause_of_death) <- c( "HIV/AIDS and sexually transmitted infections", "Neglected tropical diseases and malaria", "PM2.5 relative to WHO guideline", "Unsafe water, sanitation, and handwashing")
@@ -1700,7 +1702,8 @@ plt <- cwafrica_fs_fig3_dataset %>%
        subtitle = "", fill = "Threats to Life Expectancy") +
   themes_aqli_base +
    theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(), 
-         strip.text = element_text(size = 14)) 
+         strip.text = element_text(size = 14), 
+         plot.background = element_rect(fill = "white", color = "white")) 
 
 
 #> cw africa figure 4----------------------------------
@@ -1723,7 +1726,8 @@ cwafrica_fs_fig4_dataset <- cwafrica_fs_fig4_dataset %>%
 
 cwafrica_fs_fig4 <- cwafrica_fs_fig4_dataset %>%
   mutate(name_1_country = str_replace(name_1_country, "Democratic Republic of the Congo", "DR Congo")) %>%
-  aqli_bar(scale_type = "lyl", x_var = "name_1_country", y_var = "gain_in_le", title = "", subtitle = "", x_label = "Region", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "")
+  aqli_bar(scale_type = "lyl", x_var = "name_1_country", y_var = "gain_in_le", title = "", subtitle = "", x_label = "Region", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "") + 
+  theme(plot.background = element_rect(fill = "white", color = "white"))
 
 
 #> cw africa figure 5 trendlines -------------------------------------------------
@@ -2052,7 +2056,8 @@ europe_fs_fig3_dataset <-  europe_fs_fig3_dataset %>%
   add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "gain_in_le") 
 
 europe_fs_fig3 <- europe_fs_fig3_dataset %>%
-  aqli_bar(scale_type = "lyl", x_var = "name_1_country", y_var = "gain_in_le", title = "", subtitle = "", x_label = "Region", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "")
+  aqli_bar(scale_type = "lyl", x_var = "name_1_country", y_var = "gain_in_le", title = "", subtitle = "", x_label = "Region", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "") +
+  theme(plot.background = element_rect(fill = "white", color = "white"))
 
 
 
@@ -2093,7 +2098,7 @@ europe_fs_fig4 <- europe_fs_fig4_data %>%
         plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
         plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
         axis.text = element_text(size = 12), 
-        plot.background = element_rect(color = "white"), 
+        plot.background = element_rect(color = "white", fill = "white"), 
         axis.ticks = element_blank()) +
      geom_text(x = 2000.5, y = 5.7, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5) 
 
@@ -2271,7 +2276,8 @@ colombia_fs_fig2_dataset <- gadm2_aqli_2021 %>%
   slice_max(population, n = 10)
 
 colombia_fs_fig2 <- colombia_fs_fig2_dataset %>%
-  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "Municipality", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "")
+  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2021", title = "", subtitle = "", x_label = "Municipality", y_label = "Average life expectancy gains (Years)", legend_title = "Average life expectancy gains (Years)", caption = "") +
+  theme(plot.background = element_rect(fill = "white", color = "white"))
 
 
 #> plot 3: GBD-------------------------------------------------------
@@ -2314,6 +2320,7 @@ colombia_fs_fig3 <- colombia_fs_fig3_dataset %>%
        title = "") +
   coord_flip() + 
   ggthemes::theme_tufte() +
+  themes_aqli_base +
   theme(legend.position = "bottom",
         axis.text = element_text(size = 14),
         axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
@@ -2322,7 +2329,7 @@ colombia_fs_fig3 <- colombia_fs_fig3_dataset %>%
         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
         legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
+        plot.background = element_rect(fill = "white", color = "white"),
         axis.line = element_line(), 
         legend.text = element_text(size = 11), 
         legend.title = element_text(size = 14),
@@ -2338,8 +2345,7 @@ colombia_fs_fig3 <- colombia_fs_fig3_dataset %>%
                                "> 4 - 5" = "#E63D23", 
                                "> 5 - < 6" = "#BD251C", 
                                ">= 6" = "#8C130E")) + 
-  guides(fill = guide_legend(nrow = 1)) +
-  themes_aqli_base
+  guides(fill = guide_legend(nrow = 1)) 
 
 
 
@@ -2371,22 +2377,20 @@ colombia_fs_fig4_dataset <- gadm2_aqli_2021 %>%
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
     scale_color_manual(values = c("National Average" = "darkgrey")) +
   ggthemes::theme_clean() +
+    themes_aqli_base +
   labs(x = "Year", 
        y = expression("Annual average  " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
        title = "") +
   theme(legend.position = "bottom", legend.title = element_blank(), 
         legend.text = element_text(size = 7), 
-        axis.title.y = element_text(size = 9), 
-        axis.title.x = element_text(size = 9)) +  
-    geom_text(x = 2001.5, y = 5.9, label =  expression("WHO " ~ PM[2.5] ~ " Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
-    geom_text(x = 2000.7, y = 21, label = expression("Colombia National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 5) +
-    themes_aqli_base
+        plot.background = element_rect(fill = "white", color = "white")) +  
+    geom_text(x = 2001.5, y = 5.6, label =  expression("WHO " ~ PM[2.5] ~ " Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
+    geom_text(x = 2000.7, y = 20.7, label = expression("Colombia National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 5) 
 
   
 #> life years lost range graph------------------------------------
 
-  
-# get country wise lyl min, max, range. Use gadm2 aqli dataset
+#  state wise min, average and max lyl dataset for 10 most populous states
 lyl_range_df <- gadm2_aqli_2021 %>%
     filter(country == "Colombia") %>%
   group_by(name_1) %>%
@@ -2398,13 +2402,10 @@ lyl_range_df <- gadm2_aqli_2021 %>%
             avg_lyl = round((avg_pm2.5_2021 - 5)*0.098, 1),
             range_lyl = max_lyl - min_lyl,
             total_population = sum(population, na.rm = TRUE)) %>%
-    slice_max(total_population, n = 10)
+    mutate(avg_lyl = ifelse(avg_lyl < 0, 0, avg_lyl))
   
 
-# plot 5: lyl range graph
-#> Range of life years lost graph-------------------------------
-
-# plot lyl range graph
+# plot lyl range graph (click on zoom in the plots window in R-Studio to view the plot)
 lyl_range_plt <- lyl_range_df  %>%
   ggplot(aes(x = forcats::fct_reorder(name_1, total_population), y = min_lyl)) +
   geom_point(aes(color = "Minimum life years lost"), size = 3) +
@@ -2413,22 +2414,34 @@ lyl_range_plt <- lyl_range_df  %>%
   geom_segment(aes(xend = name_1, yend = max_lyl),
                linetype = "dashed", color = "black") +
   scale_color_manual(name = "", values = c("Minimum life years lost" = "cornflowerblue",
-                                           "Average life years lost" = "lightgrey",
-                                                   "Maximum life years lost" = "darkred"
-                                           )) +
-  labs(title = "",
+                                           "Average life years lost" = "darkgrey",
+                                                   "Maximum life years lost" = "darkred"), 
+                            breaks = c("Minimum life years lost", "Average life years lost", "Maximum life years lost"),
+                     labels = c("Minimum life years lost", "Average life years lost", "Maximum life years lost")) +
+  labs(title = expression("Minimum, Average and Maximum Life years lost to" ~ PM[2.5] ~ "Air Pollution"),
        x = "Department", y = "Life years lost") +
   coord_flip() +
-  theme_minimal() +
   theme(legend.position = "bottom",
         legend.box.background = element_rect(color = "black"),
         plot.title = element_text(hjust = 0.5)) +
-  scale_y_continuous(breaks = seq(0, 13, 1)) +
-    guides(color = guide_legend(reverse = TRUE))
-  
+  scale_y_continuous(breaks = seq(0, 2, 0.5), limits = c(0, 2)) +
+  ggthemes::theme_clean() +
+    theme(legend.position = "bottom", 
+        axis.title.y = element_text(margin = margin(r = 0.8, unit = "cm"), size = 16), 
+        axis.title.x = element_text(margin = margin(t = 0.8, b = 1, unit = "cm"), size = 16), 
+        axis.text = element_text(size = 14), 
+        plot.title = element_text(hjust = 0.5, size = 18, margin = margin(b = 0.3, unit = "cm")),
+        legend.box.background = element_rect(color = "black"),
+        strip.text = element_text(size = 18, margin = margin(t = 1, b = 0.5, unit = "cm")),
+        legend.title = element_text(size = 16), 
+        legend.text = element_text(size = 14), 
+        plot.subtitle = element_text(size = 12, hjust = 0.5, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        plot.caption = element_text(hjust = 0, size = 9, face = "italic", margin = margin(t = 1.3, unit = "cm")), 
+        plot.background = element_rect(fill = "white", color = "white"))  
+
 
   
-# plot 6: Distribution of pollution in 2021
+#> plot 6: Distribution of pollution in 2021-----------------------
   
 col_name <- "pm2021"
 plt <- gadm2_aqli_2021 %>%
@@ -2441,13 +2454,13 @@ plt <- gadm2_aqli_2021 %>%
       scale_fill_gradient(low = "#CBE8F3",
                           high = "#1C2B39") +
   scale_x_continuous(breaks = seq(0, 40, 5)) +
-  labs(x = expression("Annual average" ~ PM[2.5] ~ " (in µg/m³)"), 
+  labs(x = expression("Annual average" ~ PM[2.5] ~ "(in µg/m³)"), 
        y = "Number of people", 
-       fill = expression("Annual average" ~ PM[2.5] ~ " (in µg/m³)")) +
+       fill = expression("Annual average" ~ PM[2.5] ~ "(in µg/m³)")) +
   themes_aqli_base +
   geom_text(x = 7, y = 10000000, label =  expression("WHO" ~ PM[2.5] ~ "guideline"), size = 5) +
     geom_text(x = 22, y = 10000000, label =  expression("National" ~ PM[2.5] ~ "standard"), size = 5) +
-  theme(plot.background = element_rect(color = "white"))
+  theme(plot.background = element_rect(color = "white", fill = "white"))
 
 
   
@@ -2638,7 +2651,9 @@ us_fs_fig3 <- us_fs_fig3_final_data %>%
   ) +   
   themes_aqli_base +
       coord_flip() +
-  theme(legend.position = "none")
+  theme(legend.position = "none", 
+        plot.background = element_rect(fill = "white", color = "white")) +
+  scale_y_continuous(breaks = seq(0, 3, 0.5))
   
 
 
@@ -2684,6 +2699,7 @@ us_fs_fig4 <- us_fs_fig4_dataset %>%
        title = "") +
   coord_flip() + 
   ggthemes::theme_tufte() +
+  themes_aqli_base +
   theme(legend.position = "bottom",
         axis.text = element_text(size = 14),
         axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
@@ -2692,7 +2708,7 @@ us_fs_fig4 <- us_fs_fig4_dataset %>%
         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
         legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
+        plot.background = element_rect(color = "white", fill = "white"),
         axis.line = element_line(), 
         legend.text = element_text(size = 11), 
         legend.title = element_text(size = 14),
@@ -2708,8 +2724,7 @@ us_fs_fig4 <- us_fs_fig4_dataset %>%
                                "> 4 - 5" = "#E63D23", 
                                "> 5 - < 6" = "#BD251C", 
                                ">= 6" = "#8C130E")) + 
-  guides(fill = guide_legend(nrow = 1)) +
-  themes_aqli_base
+  guides(fill = guide_legend(nrow = 1)) 
 
 
 #> plot 5------------------------------------------------
@@ -2742,13 +2757,12 @@ us_fs_fig5_dataset <- gadm2_aqli_2021 %>%
   labs(x = "Year", 
        y = expression("Annual average  " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
        title = "") +
+     themes_aqli_base +
   theme(legend.position = "bottom", legend.title = element_blank(), 
         legend.text = element_text(size = 7), 
-        axis.title.y = element_text(size = 9), 
-        axis.title.x = element_text(size = 9)) +  
+        plot.background = element_rect(fill = "white", color = "white")) +  
     geom_text(x = 2001.5, y = 5.5, label =  expression("WHO " ~ PM[2.5] ~ " Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
-    geom_text(x = 2004.2, y = 12.5, label = expression("US National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 5) +
-    themes_aqli_base
+    geom_text(x = 2004.2, y = 12.5, label = expression("US National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 5) 
 
   
 #> [not part of the factsheet] life years lost range graph------------------------------------
@@ -3306,11 +3320,13 @@ country_n_most_pop_europe <- gadm2_aqli_2021_europe %>%
                                "> 4 - 5" = "#E63D23", 
                                "> 5 - < 6" = "#BD251C", 
                                ">= 6" = "#8C130E")) +
-   theme(legend.position = "bottom") +
+   ggthemes::theme_tufte() +
+   themes_aqli_base +
+   theme(legend.position = "right", 
+         plot.background = element_rect(fill = "white", color = "white")) +
    labs(fill = "Life years lost", 
         y = "Threats to Life Expectancy", 
-        x = "Country") +
-   ggthemes::theme_tufte()
+        x = "Country") 
 
    
   scale_fill_viridis_b(breaks = c(0, 1, 2, 3, 3.5, 4, 6, 8), option = "magma", direction = -1)
