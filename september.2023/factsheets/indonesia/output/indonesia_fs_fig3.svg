@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' width='1080.00pt' height='648.00pt' viewBox='0 0 1080.00 648.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHwxMDgwLjAwfDAuMDB8NjQ4LjAw'>
+    <rect x='0.00' y='0.00' width='1080.00' height='648.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHwxMDgwLjAwfDAuMDB8NjQ4LjAw)'>
+<rect x='0.00000000000013' y='0.00' width='1080.00' height='648.00' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpMjYwLjM5fDEwNzQuNTJ8NS40OHw1MzcuOTY='>
+    <rect x='260.39' y='5.48' width='814.13' height='532.48' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMjYwLjM5fDEwNzQuNTJ8NS40OHw1MzcuOTY=)'>
+<rect x='297.40' y='23.75' width='740.12' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #800026;' />
+<rect x='297.40' y='75.95' width='458.97' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #E31A1C;' />
+<rect x='297.40' y='128.16' width='250.00' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FD8D3C;' />
+<rect x='297.40' y='180.36' width='234.93' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FD8D3C;' />
+<rect x='297.40' y='232.57' width='218.20' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FEB24C;' />
+<rect x='297.40' y='284.77' width='194.04' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FEB24C;' />
+<rect x='297.40' y='336.97' width='153.04' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FEB24C;' />
+<rect x='297.40' y='389.18' width='142.72' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FEB24C;' />
+<rect x='297.40' y='441.38' width='121.46' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FEB24C;' />
+<rect x='297.40' y='493.59' width='112.71' height='26.10' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FEB24C;' />
+</g>
+<g clip-path='url(#cpMC4wMHwxMDgwLjAwfDAuMDB8NjQ4LjAw)'>
+<polyline points='260.39,537.96 260.39,5.48 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<text x='255.46' y='511.27' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='218.88px' lengthAdjust='spacingAndGlyphs'>Respiratory infections and tuberculosis</text>
+<text x='255.46' y='459.07' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='163.66px' lengthAdjust='spacingAndGlyphs'>Diabetes and kidney diseases</text>
+<text x='255.46' y='406.86' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='190.09px' lengthAdjust='spacingAndGlyphs'>PM2.5 relative to WHO guideline</text>
+<text x='255.46' y='354.66' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='126.75px' lengthAdjust='spacingAndGlyphs'>High body-mass index</text>
+<text x='255.46' y='302.45' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='62.21px' lengthAdjust='spacingAndGlyphs'>Neoplasms</text>
+<text x='255.46' y='250.25' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='159.00px' lengthAdjust='spacingAndGlyphs'>High fasting plasma glucose</text>
+<text x='255.46' y='198.05' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='71.93px' lengthAdjust='spacingAndGlyphs'>Dietary risks</text>
+<text x='255.46' y='145.84' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='48.19px' lengthAdjust='spacingAndGlyphs'>Tobacco</text>
+<text x='255.46' y='93.64' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='159.80px' lengthAdjust='spacingAndGlyphs'>High systolic blood pressure</text>
+<text x='255.46' y='41.43' text-anchor='end' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='134.12px' lengthAdjust='spacingAndGlyphs'>Cardiovascular diseases</text>
+<polyline points='257.65,506.64 260.39,506.64 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='257.65,454.43 260.39,454.43 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='257.65,402.23 260.39,402.23 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='257.65,350.02 260.39,350.02 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='257.65,297.82 260.39,297.82 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='257.65,245.62 260.39,245.62 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='257.65,193.41 260.39,193.41 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='257.65,141.21 260.39,141.21 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='257.65,89.01 260.39,89.01 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='257.65,36.80 260.39,36.80 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='260.39,537.96 1074.52,537.96 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<polyline points='297.40,540.70 297.40,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='352.29,540.70 352.29,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='407.18,540.70 407.18,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='462.07,540.70 462.07,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='516.97,540.70 516.97,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='571.86,540.70 571.86,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='626.75,540.70 626.75,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='681.64,540.70 681.64,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='736.54,540.70 736.54,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='791.43,540.70 791.43,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='846.32,540.70 846.32,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='901.21,540.70 901.21,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='956.11,540.70 956.11,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='1011.00,540.70 1011.00,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<polyline points='1065.89,540.70 1065.89,537.96 ' style='stroke-width: 1.07; stroke: #333333; stroke-linecap: butt;' />
+<text x='297.40' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='352.29' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>0.5</text>
+<text x='407.18' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>1.0</text>
+<text x='462.07' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>1.5</text>
+<text x='516.97' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>2.0</text>
+<text x='571.86' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>2.5</text>
+<text x='626.75' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>3.0</text>
+<text x='681.64' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>3.5</text>
+<text x='736.54' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>4.0</text>
+<text x='791.43' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>4.5</text>
+<text x='846.32' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>5.0</text>
+<text x='901.21' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>5.5</text>
+<text x='956.11' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>6.0</text>
+<text x='1011.00' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>6.5</text>
+<text x='1065.89' y='552.16' text-anchor='middle' style='font-size: 14.00px;fill: #4D4D4D; font-family: "Times";' textLength='17.50px' lengthAdjust='spacingAndGlyphs'>7.0</text>
+<text x='667.45' y='582.82' text-anchor='middle' style='font-size: 16.00px; font-family: "Times";' textLength='100.40px' lengthAdjust='spacingAndGlyphs'>Life Years Lost</text>
+<text transform='translate(16.07,271.72) rotate(-90)' text-anchor='middle' style='font-size: 16.00px; font-family: "Times";' textLength='165.66px' lengthAdjust='spacingAndGlyphs'>Threats to life expectancy</text>
+<rect x='498.13' y='614.28' width='338.66' height='28.24' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='503.61' y='633.03' style='font-size: 14.00px; font-family: "Times";' textLength='80.09px' lengthAdjust='spacingAndGlyphs'>Life years lost</text>
+<rect x='591.37' y='620.47' width='15.86' height='15.86' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FEB24C;' />
+<rect x='656.61' y='620.47' width='15.86' height='15.86' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #FD8D3C;' />
+<rect x='721.85' y='620.47' width='15.86' height='15.86' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #E31A1C;' />
+<rect x='787.10' y='620.47' width='15.86' height='15.86' style='stroke-width: 1.07; stroke-linecap: butt; stroke-linejoin: miter; fill: #800026;' />
+<text x='614.92' y='632.04' style='font-size: 11.00px; font-family: "Times";' textLength='34.01px' lengthAdjust='spacingAndGlyphs'>1 to &lt; 2</text>
+<text x='680.16' y='632.04' style='font-size: 11.00px; font-family: "Times";' textLength='34.01px' lengthAdjust='spacingAndGlyphs'>2 to &lt; 3</text>
+<text x='745.40' y='632.04' style='font-size: 11.00px; font-family: "Times";' textLength='34.01px' lengthAdjust='spacingAndGlyphs'>4 to &lt; 5</text>
+<text x='810.64' y='632.04' style='font-size: 11.00px; font-family: "Times";' textLength='20.66px' lengthAdjust='spacingAndGlyphs'>&gt;= 6</text>
+</g>
+</svg>
