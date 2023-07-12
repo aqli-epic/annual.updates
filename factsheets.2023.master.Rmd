@@ -1,7 +1,7 @@
 ---
 title: "Factsheets 2023"
-author: "Aarsh"
-date: '2023-05-15'
+author: "Aarsh Batra, Nishka Sharma"
+date: '2023-07-12'
 output: html_document
 ---
 
@@ -2403,7 +2403,1687 @@ gadm2_aqli_2021 %>%
 
 ```
 
+# Guatemala Factsheet
+```{r}
+# read and filter gbd results for guatemala
+gbd_results_guatemala <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
+  filter(country == "Guatemala")
 
+# guatemala fs fig 1 data
+guatemala_fs_fig1_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Guatemala")
+  left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# guatemala fs figure 1
+guatemala_fs_fig1 <- guatemala_fs_fig1_dataset %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2021 %>% filter(name0 == "Guatemala"), color = "azure4", fill = "transparent", lwd = 0.15) +
+  geom_sf(data = gadm0_aqli_2021 %>% filter(name0 == "Guatemala"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") + 
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+# save guatemala fs figure 1
+ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig1.png"), height = 10, width = 15, guatemala_fs_fig1)
+
+svglite("guatemala_fs_fig1")
+ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig1.svg"), height = 10, width = 15, dpi = 300, guatemala_fs_fig1)
+
+# guatemala fs fig 2 data
+guatemala_fs_fig2_dataset <- gadm2_aqli_2021 %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021') %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2021_pop_weighted = pop_weights*pm2021,
+         llpp_who_2021_pop_weighted = pop_weights*llpp_who_2021) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2021 - who_guideline)*le_constant,
+            llpp_who_2021 = sum(llpp_who_2021_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
+
+# save figure 2 data
+# guatemala_fs_fig2_dataset %>% write_csv(glue("{dir}/guatemala/output/guatemala_fs_fig2_dataset.csv"))
+
+# guatemala fs figure 2
+guatemala_fs_fig2 <- guatemala_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2021), y = llpp_who_2021, fill = lyl_bucket), width = 0.5) +
+  labs(x = "Department", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 4, 1), limits = c(0, 4)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom", 
+        plot.title = element_text(hjust = 0.5, size = 16), 
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        axis.text = element_text(size = 11), 
+        axis.title = element_text(size = 13), 
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.ticks = element_blank()) 
+
+# save guatemala fs figure 2
+ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig2.png"), height = 9, width = 12, guatemala_fs_fig2)
+
+svglite("guatemala_fs_fig2")
+ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig2.svg"), height = 9, width = 12, dpi = 300, guatemala_fs_fig2)
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_guatemala)[3] <- c("llpp_who_2021")
+
+guatemala_fs_fig3_dataset <- gbd_results_guatemala %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  slice_max(llpp_who_2021, n = 5)
+
+# save figure 3 data
+# guatemala_fs_fig3_dataset %>% write_csv(glue("{dir}/guatemala/output/guatemala_fs_fig3_dataset.csv"))
+
+# guatemala factsheet figure 3
+guatemala_fs_fig3 <- guatemala_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+
+# save guatemala fs figure 3
+ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig3.png"), height = 9, width = 15, guatemala_fs_fig3)
+
+svglite("guatemala_fs_fig3")
+ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig3.svg"), height = 9, width = 15, dpi = 300, guatemala_fs_fig3)
+
+# guatemala factsheet figure 4 dataset
+guatemala_fs_fig4_dataset <- gadm2_aqli_2021 %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save figure 4 data
+# guatemala_fs_fig4_dataset %>% write_csv(glue("{dir}/guatemala/output/guatemala_fs_fig4_dataset.csv"))
+
+# guatemala factsheet figure 4
+guatemala_fs_fig4 <- guatemala_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years), 
+                          y = as.double(pop_weighted_avg_pm2.5)), 
+            lwd = 1.1, color = "#5f7aa5") +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 35)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021))  +
+  ggthemes::theme_tufte() +
+  labs(x = "Year", 
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 11),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
+        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.line = element_line(), 
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 12), 
+        plot.background = element_rect(color = "white"), 
+        axis.ticks = element_blank()) +
+  geom_text(x = 2000.6, y = 5.9, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
+
+# save guatemala fs figure 4
+ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig4.png"), height = 9, width = 15, guatemala_fs_fig4)
+
+svglite("guatemala_fs_fig4")
+ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig4.svg"), height = 9, width = 15, dpi = 300, guatemala_fs_fig4)
+
+# guatemala factsheet appendix table 
+guatemala_fs_appendix_table <- gadm2_aqli_2021 %>%
+  mutate(pm2021 = round(pm2021, 1),
+         le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2021*0.3)*le_constant, 1), 
+         pop_hun_thou = round(population/100000, 3)) %>%
+  select(name_2, pop_hun_thou, pm2021, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_hun_thou, n = 25) %>%
+  mutate(pop_hun_thou = round(pop_hun_thou, 1)) %>%
+  rename(`Municipality` = name_2, 
+         `Population (Hundred thousands)` = pop_hun_thou, 
+         `Annual Average 2021 PM2.5 Concentration (µg/m³)` = pm2021,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save guatemala factsheet appendix table
+guatemala_fs_appendix_table %>% write_csv(glue("{dir}/guatemala/output/guatemala_fs_appendix_table.csv"))
+
+```
+
+# Indonesia Factsheet
+```{r}
+# read and filter gbd results for indonesia
+gbd_results_indonesia <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
+  filter(country == "Indonesia")
+
+# indonesia fs fig 1 data
+indonesia_fs_fig1_dataset <- gadm_aqli_2021 %>%
+  left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# indonesia fs figure 1
+indonesia_fs_fig1 <- indonesia_fs_fig1_dataset %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2021 %>% filter(name0 == "Indonesia"), color = "azure4", fill = "transparent", lwd = 0.15) +
+  geom_sf(data = gadm0_aqli_2021 %>% filter(name0 == "Indonesia"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") + 
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+# save indonesia fs figure 1
+ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig1.png"), height = 10, width = 15, indonesia_fs_fig1)
+
+svglite("indonesia_fs_fig1")
+ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig1.svg"), height = 10, width = 15, dpi = 300, indonesia_fs_fig1)
+
+# indonesia fs fig 2 data
+indonesia_fs_fig2_dataset <- gadm_aqli_2021 %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021') %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2021_pop_weighted = pop_weights*pm2021,
+         llpp_who_2021_pop_weighted = pop_weights*llpp_who_2021) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2021 - who_guideline)*le_constant,
+            llpp_who_2021 = sum(llpp_who_2021_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
+
+# save figure 2 data
+# indonesia_fs_fig2_dataset %>% write_csv(glue("{dir}/indonesia/output/indonesia_fs_fig2_dataset.csv"))
+
+# indonesia fs figure 2
+indonesia_fs_fig2 <- indonesia_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2021), y = llpp_who_2021, fill = lyl_bucket), width = 0.5) +
+  labs(x = "Province", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom", 
+        plot.title = element_text(hjust = 0.5, size = 16), 
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        axis.text = element_text(size = 11), 
+        axis.title = element_text(size = 13), 
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.ticks = element_blank()) 
+
+# save indonesia fs figure 2
+ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig2.png"), height = 9, width = 12, indonesia_fs_fig2)
+
+svglite("indonesia_fs_fig2")
+ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig2.svg"), height = 9, width = 12, dpi = 300, indonesia_fs_fig2)
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_indonesia)[3] <- c("llpp_who_2021")
+
+indonesia_fs_fig3_dataset <- gbd_results_indonesia %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  slice_max(llpp_who_2021, n = 10)
+
+# save figure 3 data
+# indonesia_fs_fig3_dataset %>% write_csv(glue("{dir}/indonesia/output/indonesia_fs_fig3_dataset.csv"))
+
+# indonesia factsheet figure 3
+indonesia_fs_fig3 <- indonesia_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 7, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+
+# save indonesia fs figure 3
+ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig3.png"), height = 9, width = 15, indonesia_fs_fig3)
+
+svglite("indonesia_fs_fig3")
+ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig3.svg"), height = 9, width = 15, dpi = 300, indonesia_fs_fig3)
+
+# indonesia factsheet figure 4 dataset
+indonesia_fs_fig4_dataset <- gadm_aqli_2021 %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save figure 4 data
+# indonesia_fs_fig4_dataset %>% write_csv(glue("{dir}/indonesia/output/indonesia_fs_fig4_dataset.csv"))
+
+# indonesia factsheet figure 4
+indonesia_fs_fig4 <- indonesia_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years), 
+                          y = as.double(pop_weighted_avg_pm2.5)), 
+            lwd = 1.1, color = "#82b5d5") +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  geom_hline(mapping = aes(yintercept = 15), lwd = 0.8, linetype = "dotted") + 
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 30)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021))  +
+  ggthemes::theme_tufte() +
+  labs(x = "Year", 
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 11),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
+        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.line = element_line(), 
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 12), 
+        plot.background = element_rect(color = "white"), 
+        axis.ticks = element_blank()) +
+  geom_text(x = 2001, y = 5.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5) +
+  geom_text(x = 2006.6, y = 15.6, label = expression("Indonesia National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5)
+
+# save indonesia fs figure 4
+ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig4.png"), height = 9, width = 15, indonesia_fs_fig4)
+
+svglite("indonesia_fs_fig4")
+ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig4.svg"), height = 9, width = 15, dpi = 300, indonesia_fs_fig4)
+
+# indonesia factsheet appendix table 
+indonesia_fs_appendix_table <- gadm_aqli_2021 %>%
+  mutate(pm2021 = round(pm2021, 1),
+         le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_to_nat = round((pm2021 - natstandard)*le_constant, 1),
+         le_gain_red_to_nat = ifelse(le_gain_red_to_nat < 0, 0, le_gain_red_to_nat),
+         le_gain_red_by_30_percent = round((pm2021*0.3)*le_constant, 1), 
+         pop_millions = round(population/1000000, 3)) %>%
+  select(name_2, pop_millions, pm2021, le_gain_red_to_who, le_gain_red_to_nat,
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`Regency/City` = name_2, 
+         `Population (millions)` = pop_millions, 
+         `Annual Average 2021 PM2.5 Concentration (µg/m³)` = pm2021,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to National PM2.5 guideline of 15 µg/m³` = le_gain_red_to_nat,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save indonesia factsheet appendix table
+indonesia_fs_appendix_table %>% write_csv(glue("{dir}/indonesia/output/indonesia_fs_appendix_table.csv"))
+```
+
+# Nepal Factsheet
+```{r}
+# read and filter gbd results for Nepal
+gbd_results_nepal <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
+  filter(country == "Nepal")
+
+# nepal fs fig 1 data
+nepal_fs_fig1_dataset <- gadm_aqli_2021 %>%
+  left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# nepal fs figure 1
+nepal_fs_fig1 <- nepal_fs_fig1_dataset %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2021 %>% filter(name0 == "Nepal"), color = "azure4", fill = "transparent", lwd = 0.15) +
+  geom_sf(data = gadm0_aqli_2021 %>% filter(name0 == "Nepal"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") + 
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+# save nepal fs figure 1
+ggsave(glue("{dir}/Nepal/output/nepal_fs_fig1.png"), height = 10, width = 15, nepal_fs_fig1)
+
+svglite("nepal_fs_fig1")
+ggsave(glue("{dir}/Nepal/output/nepal_fs_fig1.svg"), height = 10, width = 15, dpi = 300, nepal_fs_fig1)
+
+# nepal fs fig 2 data
+nepal_fs_fig2_dataset <- gadm_aqli_2021 %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021') %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2021_pop_weighted = pop_weights*pm2021,
+         llpp_who_2021_pop_weighted = pop_weights*llpp_who_2021) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2021 - who_guideline)*le_constant,
+            llpp_who_2021 = sum(llpp_who_2021_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
+
+# save figure 2 data
+# nepal_fs_fig2_dataset %>% write_csv(glue("{dir}/Nepal/output/nepal_fs_fig2_dataset.csv"))
+
+# nepal fs figure 2
+nepal_fs_fig2 <- nepal_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2021), y = llpp_who_2021, fill = lyl_bucket), width = 0.5) +
+  labs(x = "Province", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 8, 1), limits = c(0, 8)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom", 
+        plot.title = element_text(hjust = 0.5, size = 16), 
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        axis.text = element_text(size = 11), 
+        axis.title = element_text(size = 13), 
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.ticks = element_blank()) 
+
+# save nepal fs figure 2
+ggsave(glue("{dir}/Nepal/output/nepal_fs_fig2.png"), height = 9, width = 12, nepal_fs_fig2)
+
+svglite("nepal_fs_fig2")
+ggsave(glue("{dir}/Nepal/output/nepal_fs_fig2.svg"), height = 9, width = 12, dpi = 300, nepal_fs_fig2)
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_nepal)[3] <- c("llpp_who_2021")
+
+nepal_fs_fig3_dataset <- gbd_results_nepal %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  slice_max(llpp_who_2021, n = 5)
+
+# save figure 3 data
+# nepal_fs_fig3_dataset %>% write_csv(glue("{dir}/Nepal/output/nepal_fs_fig3_dataset.csv"))
+
+# nepal factsheet figure 3
+nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+
+# save nepal fs figure 3
+ggsave(glue("{dir}/Nepal/output/nepal_fs_fig3.png"), height = 9, width = 15, nepal_fs_fig3)
+
+svglite("nepal_fs_fig3")
+ggsave(glue("{dir}/Nepal/output/nepal_fs_fig3.svg"), height = 9, width = 15, dpi = 300, nepal_fs_fig3)
+
+# nepal factsheet figure 4 dataset
+nepal_fs_fig4_dataset <- gadm_aqli_2021 %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save figure 4 data
+# nepal_fs_fig4_dataset %>% write_csv(glue("{dir}/Nepal/output/nepal_fs_fig4_dataset.csv"))
+
+# nepal factsheet figure 4
+nepal_fs_fig4 <- nepal_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years), 
+                          y = as.double(pop_weighted_avg_pm2.5)), 
+            lwd = 1.1, color = "#3c456f") +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 60)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021))  +
+  ggthemes::theme_tufte() +
+  labs(x = "Year", 
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 11),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
+        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.line = element_line(), 
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 12), 
+        plot.background = element_rect(color = "white"), 
+        axis.ticks = element_blank()) +
+  geom_text(x = 2000.6, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
+
+# save nepal fs figure 4
+ggsave(glue("{dir}/Nepal/output/nepal_fs_fig4.png"), height = 9, width = 15, nepal_fs_fig4)
+
+svglite("nepal_fs_fig4")
+ggsave(glue("{dir}/Nepal/output/nepal_fs_fig4.svg"), height = 9, width = 15, dpi = 300, nepal_fs_fig4)
+
+# nepal factsheet appendix table 
+nepal_fs_appendix_table <- gadm_aqli_2021 %>%
+  mutate(pm2021 = round(pm2021, 1),
+         le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2021*0.3)*le_constant, 1), 
+         pop_millions = round(population/1000000, 3)) %>%
+  select(name_2, pop_millions, pm2021, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`District Coordination Committee` = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `Annual Average 2021 PM2.5 Concentration (µg/m³)` = pm2021,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save nepal factsheet appendix table
+nepal_fs_appendix_table %>% write_csv(glue("{dir}/nepal/output/nepal_fs_appendix_table.csv"))
+```
+
+# Nigeria Factsheet
+```{r}
+# read and filter gbd results for nigeria
+gbd_results_nigeria <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
+  filter(country == "Nigeria")
+
+# nigeria fs fig 1 data
+nigeria_fs_fig1_dataset <- gadm_aqli_2021 %>%
+  left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# nigeria fs figure 1
+nigeria_fs_fig1 <- nigeria_fs_fig1_dataset %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2021 %>% filter(name0 == "Nigeria"), color = "azure4", fill = "transparent", lwd = 0.15) +
+  geom_sf(data = gadm0_aqli_2021 %>% filter(name0 == "Nigeria"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") + 
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+# save nigeria fs figure 1
+ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig1.png"), height = 10, width = 15, nigeria_fs_fig1)
+
+svglite("nigeria_fs_fig1")
+ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig1.svg"), height = 10, width = 15, dpi = 300, nigeria_fs_fig1)
+
+# nigeria fs fig 2 data
+nigeria_fs_fig2_dataset <- gadm_aqli_2021 %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021') %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2021_pop_weighted = pop_weights*pm2021,
+         llpp_who_2021_pop_weighted = pop_weights*llpp_who_2021) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2021 - who_guideline)*le_constant,
+            llpp_who_2021 = sum(llpp_who_2021_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
+
+# save figure 2 data
+# nigeria_fs_fig2_dataset %>% write_csv(glue("{dir}/nigeria/output/nigeria_fs_fig2_dataset.csv"))
+
+# nigeria fs figure 2
+nigeria_fs_fig2 <- nigeria_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2021), y = llpp_who_2021, fill = lyl_bucket), width = 0.5) +
+  labs(x = "State", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom", 
+        plot.title = element_text(hjust = 0.5, size = 16), 
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        axis.text = element_text(size = 11), 
+        axis.title = element_text(size = 13), 
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.ticks = element_blank()) 
+
+# save nigeria fs figure 2
+ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig2.png"), height = 9, width = 12, nigeria_fs_fig2)
+
+svglite("nigeria_fs_fig2")
+ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig2.svg"), height = 9, width = 12, dpi = 300, nigeria_fs_fig2)
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_nigeria)[3] <- c("llpp_who_2021")
+
+nigeria_fs_fig3_dataset <- gbd_results_nigeria %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  slice_max(llpp_who_2021, n = 10)
+
+# save figure 3 data
+# nigeria_fs_fig3_dataset %>% write_csv(glue("{dir}/nigeria/output/nigeria_fs_fig3_dataset.csv"))
+
+# nigeria factsheet figure 3
+nigeria_fs_fig3 <- nigeria_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+
+# save nigeria fs figure 3
+ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig3.png"), height = 9, width = 15, nigeria_fs_fig3)
+
+svglite("nigeria_fs_fig3")
+ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig3.svg"), height = 9, width = 15, dpi = 300, nigeria_fs_fig3)
+
+# nigeria factsheet figure 4 dataset
+nigeria_fs_fig4_dataset <- gadm_aqli_2021 %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save figure 4 data
+# nigeria_fs_fig4_dataset %>% write_csv(glue("{dir}/nigeria/output/nigeria_fs_fig4_dataset.csv"))
+
+# nigeria factsheet figure 4
+nigeria_fs_fig4 <- nigeria_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years), 
+                          y = as.double(pop_weighted_avg_pm2.5)), 
+            lwd = 1.1, color = "#7197be") +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 25)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021))  +
+  ggthemes::theme_tufte() +
+  labs(x = "Year", 
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 11),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
+        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.line = element_line(), 
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 12), 
+        plot.background = element_rect(color = "white"), 
+        axis.ticks = element_blank()) +
+  geom_text(x = 2000.6, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
+
+# save nigeria fs figure 4
+ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig4.png"), height = 9, width = 15, nigeria_fs_fig4)
+
+svglite("nigeria_fs_fig4")
+ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig4.svg"), height = 9, width = 15, dpi = 300, nigeria_fs_fig4)
+
+# nigeria factsheet appendix table 
+nigeria_fs_appendix_table <- gadm_aqli_2021 %>%
+  mutate(pm2021 = round(pm2021, 1),
+         le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2021*0.3)*le_constant, 1), 
+         pop_millions = round(population/1000000, 3)) %>%
+  select(name_2, pop_millions, pm2021, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`Local Government Area` = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `Annual Average 2021 PM2.5 Concentration (µg/m³)` = pm2021,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save nigeria factsheet appendix table
+nigeria_fs_appendix_table %>% write_csv(glue("{dir}/nigeria/output/nigeria_fs_appendix_table.csv"))
+```
+
+# Pakistan Factsheet
+```{r}
+# read and filter AQLI data
+pak_aqli_2021 <- read.csv(glue("{dir}/[June302023]aqli_internal_col_names_CSVs/[june302023]gadm2_aqli_2021_internal_col_names.csv")) %>%
+  filter(country == "Pakistan") %>%
+  mutate(region = case_when(
+    name_1 == "Islamabad" ~ "Islamabad",
+    name_1 == "Punjab" ~ "Punjab",
+    name_1 != "Islamabad"| name_1 != "Punjab" ~ "All other regions (excluding Islamabad and Punjab)"))
+
+# read and filter gbd results for pakistan
+gbd_results_pak <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
+  filter(country == "Pakistan")
+
+# pakistan fs fig 1 data
+pak_fs_fig1_dataset <- pak_aqli_2021 %>%
+  left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# pakistan fs figure 1
+pak_fs_fig1 <- pak_fs_fig1_dataset %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2021 %>% filter(name0 == "Pakistan"), color = "azure4", fill = "transparent", lwd = 0.15) +
+  geom_sf(data = gadm0_aqli_2021 %>% filter(name0 == "Pakistan"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") + 
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+# save pakistan fs figure 1
+ggsave(glue("{dir}/pakistan/output/pak_fs_fig1.png"), height = 10, width = 15, pak_fs_fig1)
+
+svglite("pak_fs_fig1")
+ggsave(glue("{dir}/pakistan/output/pak_fs_fig1.svg"), height = 10, width = 15, dpi = 300, pak_fs_fig1)
+
+# pakistan fs fig 2 data
+pak_fs_fig2_dataset <- pak_aqli_2021 %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'llpp_nat_2021') %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2021_pop_weighted = pop_weights*pm2021,
+         llpp_who_2021_pop_weighted = pop_weights*llpp_who_2021,
+         llpp_nat_2021_pop_weighted = pop_weights*llpp_nat_2021) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2021 - who_guideline)*le_constant,
+            llpp_who_2021 = sum(llpp_who_2021_pop_weighted, na.rm = TRUE),
+            llpp_nat_2021 = sum(llpp_nat_2021_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
+
+# save figure 2 data
+# pak_fs_fig2_dataset %>% write_csv(glue("{dir}/Pakistan/output/pak_fs_fig2_dataset.csv"))
+
+# pakistan fs figure 2
+pak_fs_fig2 <- pak_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2021), y = llpp_who_2021, fill = lyl_bucket), width = 0.5) +
+  labs(x = "Province", y = "Potential Gain in Life Expectancy  (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 5, 1), limits = c(0, 5)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom", 
+        plot.title = element_text(hjust = 0.5, size = 16), 
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        axis.text = element_text(size = 11), 
+        axis.title = element_text(size = 13), 
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.ticks = element_blank()) 
+
+# save pakistan fs figure 2
+ggsave(glue("{dir}/pakistan/output/pak_fs_fig2.png"), height = 9, width = 12, pak_fs_fig2)
+
+svglite("pak_fs_fig2")
+ggsave(glue("{dir}/pakistan/output/pak_fs_fig2.svg"), height = 9, width = 12, dpi = 300, pak_fs_fig2)
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_pak)[3] <- c("llpp_who_2021")
+
+pak_fs_fig3_dataset <- gbd_results_pak %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
+
+# save figure 3 data
+# pak_fs_fig3_dataset %>% write_csv(glue("{dir}/Pakistan/output/pak_fs_fig3_dataset.csv"))
+
+# pakistan factsheet figure 3
+pak_fs_fig3 <- pak_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+
+# save pakistan fs figure 3
+ggsave(glue("{dir}/pakistan/output/pak_fs_fig3.png"), height = 9, width = 15, pak_fs_fig3)
+
+svglite("pak_fs_fig3")
+ggsave(glue("{dir}/pakistan/output/pak_fs_fig3.svg"), height = 9, width = 15, dpi = 300, pak_fs_fig3)
+
+# pakistan factsheet figure 4 dataset
+pak_region_avg_ts <- pak_aqli_2021 %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+
+pak_nat_avg_ts <- pak_aqli_2021 %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+pak_fs_fig4_dataset <- rbind(pak_region_avg_ts, pak_nat_avg_ts)
+
+pak_fs_fig4_dataset$region = factor(pak_fs_fig4_dataset$region, levels = c('Islamabad', 'Punjab', 'National Average', 'All other regions (excluding Islamabad and Punjab)'))
+
+# save figure 4 data
+# pak_fs_fig4_dataset %>% write_csv(glue("{dir}/Pakistan/output/pak_fs_fig4_dataset.csv"))
+
+# pakistan factsheet figure 4
+pak_fs_fig4 <- pak_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years), 
+                          y = as.double(pop_weighted_avg_pm2.5),
+                          colour = region, linetype = region), 
+            lwd = 1.1) +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 60)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021))  +
+  scale_color_manual(values = c("Islamabad" = "#3c456f", "Punjab" = "#3c456f", "National Average" = "#4e5e8b", "All other regions (excluding Islamabad and Punjab)" = "#5f7aa5")) +
+  scale_linetype_manual(values = c("Islamabad" = "dashed", "Punjab" = "dashed", "National Average" = "solid", "All other regions (excluding Islamabad and Punjab)" = "dotted")) +
+  ggthemes::theme_tufte() +
+  labs(x = "Year", 
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 11),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
+        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.line = element_line(), 
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 12), 
+        plot.background = element_rect(color = "white"), 
+        axis.ticks = element_blank()) +
+  geom_text(x = 2000.6, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
+
+# save pakistan fs figure 4
+ggsave(glue("{dir}/Pakistan/output/pak_fs_fig4.png"), height = 9, width = 15, pak_fs_fig4)
+
+svglite("pak_fs_fig4")
+ggsave(glue("{dir}/Pakistan/output/pak_fs_fig4.svg"), height = 9, width = 15, dpi = 300, pak_fs_fig4)
+
+# pakistan factsheet appendix table 
+pak_fs_appendix_table <- pak_aqli_2021 %>%
+  mutate(pm2021 = round(pm2021, 1),
+         le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_to_nat = round((pm2021 - natstandard)*le_constant, 1),
+         le_gain_red_to_nat = ifelse(le_gain_red_to_nat < 0, 0, le_gain_red_to_nat),
+         le_gain_red_by_30_percent = round((pm2021*0.3)*le_constant, 1), 
+         pop_millions = round(population/1000000, 3)) %>%
+  select(name_2, pop_millions, pm2021, le_gain_red_to_who, le_gain_red_to_nat,
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`Region` = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `Annual Average 2021 PM2.5 Concentration (µg/m³)` = pm2021,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to National PM2.5 guideline of 15 µg/m³` = le_gain_red_to_nat,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save pakistan factsheet appendix table
+pak_fs_appendix_table %>% write_csv(glue("{dir}/pakistan/output/pak_fs_appendix_table.csv"))
+```
+
+# Southeast Asia Factsheet
+```{r}
+# read and filter gbd results for se_asia
+gbd_results_se_asia <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
+  filter(country %in% se_asia_countries)
+
+# se_asia fs fig 1 data
+se_asia_fs_fig1_dataset <- gadm_aqli_2021 %>%
+  left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# se_asia fs figure 1
+se_asia_fs_fig1 <- se_asia_fs_fig1_dataset %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2021 %>% filter(name0 %in% se_asia_countries), color = "azure4", fill = "transparent", lwd = 0.1) +
+  geom_sf(data = gadm0_aqli_2021 %>% filter(name0 %in% se_asia_countries), color = "cornsilk4", fill = "transparent", lwd = 0.3) +
+  ggthemes::theme_map() + 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") + 
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+# save se_asia fs figure 1
+ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig1.png"), height = 10, width = 15, se_asia_fs_fig1)
+
+svglite("se_asia_fs_fig1")
+ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig1.svg"), height = 10, width = 15, dpi = 300, se_asia_fs_fig1)
+
+# se_asia fs fig 2 data
+se_asia_fs_fig2_dataset <- gadm_aqli_2021 %>%
+  select(country, name_1, name_2, name_1_country, population, pm2021, llpp_who_2021) %>%
+  group_by(name_1_country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2021_pop_weighted = pop_weights*pm2021,
+         llpp_who_2021_pop_weighted = pop_weights*llpp_who_2021) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2021 - who_guideline)*le_constant,
+            llpp_who_2021 = sum(llpp_who_2021_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
+  
+# save figure 2 data
+# se_asia_fs_fig2_dataset %>% write_csv(glue("{dir}/SE Asia/output/se_asia_fs_fig2_dataset.csv"))
+
+# se_asia fs figure 2
+se_asia_fs_fig2 <- se_asia_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1_country, llpp_who_2021), y = llpp_who_2021, fill = lyl_bucket), width = 0.5) +
+  labs(x = "Region", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom", 
+        plot.title = element_text(hjust = 0.5, size = 16), 
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        axis.text = element_text(size = 11), 
+        axis.title = element_text(size = 13), 
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.ticks = element_blank()) 
+
+# save se_asia fs figure 2
+ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig2.png"), height = 9, width = 12, se_asia_fs_fig2)
+
+svglite("se_asia_fs_fig2")
+ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig2.svg"), height = 9, width = 12, dpi = 300, se_asia_fs_fig2)
+
+# # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+# colnames(gbd_results_se_asia)[3] <- c("llpp_who_2021")
+# 
+# se_asia_fs_fig3_dataset <- gbd_results_se_asia %>%
+#   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+#   slice_max(llpp_who_2021, n = 10)
+# 
+# #save figure 3 data
+# se_asia_fs_fig3_dataset %>% write_csv(glue("{dir}/SE Asia/output/se_asia_fs_fig3_dataset.csv"))
+# 
+# # se_asia factsheet figure 3
+# se_asia_fs_fig3 <- se_asia_fs_fig3_dataset %>%
+#   ggplot() + 
+#   geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+#   labs(x = "Threats to life expectancy", y = "Life years lost", fill = "Life years lost") +
+#   coord_flip() + 
+#   ggthemes::theme_tufte() +
+#   theme(legend.position = "bottom",
+#         axis.text = element_text(size = 14),
+#         axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+#         axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+#         plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+#         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+#         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+#         legend.box.background = element_rect(color = "black"),
+#         plot.background = element_rect(color = "white"),
+#         axis.line = element_line(), 
+#         legend.text = element_text(size = 11), 
+#         legend.title = element_text(size = 14),
+#         panel.grid.major.y = element_blank()) +
+#   scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+#   # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+#   scale_fill_manual(values = c("0 - < 0.1" = "#FFFFFF", 
+#                                "0.1 - 0.5" = "#FFE6B3", 
+#                                "> 0.5 - 1" = "#FFD25D", 
+#                                "> 1 - 2" = "#FFBA00", 
+#                                "> 2 - 3" = "#FF9600", 
+#                                "> 3 - 4" = "#FF6908", 
+#                                "> 4 - 5" = "#E63D23", 
+#                                "> 5 - < 6" = "#BD251C", 
+#                                ">= 6 " = "#8C130E")) + 
+#   guides(fill = guide_legend(nrow = 1))
+# 
+# # scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+# 
+# # save se_asia fs figure 3
+# ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig3.png"), height = 9, width = 15, se_asia_fs_fig3)
+# 
+# svglite("se_asia_fs_fig3")
+# ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig3.svg"), height = 9, width = 15, se_asia_fs_fig3)
+
+# se_asia factsheet figure 4 dataset
+se_asia_fs_fig4_dataset <- gadm_aqli_2021 %>%
+  filter(name_2 != "Kalibato Lake") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "South East Asia Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+se_asia_fs_fig4_dataset <- gadm_aqli_2021 %>%
+  filter(!is.na(population)) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "South East Asia Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+# save figure 4 data
+# se_asia_fs_fig4_dataset %>% write_csv(glue("{dir}/SE Asia/output/se_asia_fs_fig4_dataset.csv"))
+
+# se_asia factsheet figure 4
+se_asia_fs_fig4 <- se_asia_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years), 
+                          y = as.double(pop_weighted_avg_pm2.5)), 
+            lwd = 1.1, color = "#7197be") +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 30)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021))  +
+  ggthemes::theme_tufte() +
+  labs(x = "Year", 
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 11),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
+        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.line = element_line(), 
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 12), 
+        plot.background = element_rect(color = "white"), 
+        axis.ticks = element_blank()) +
+  geom_text(x = 2000.6, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
+
+# save se_asia fs figure 4
+ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig4.png"), height = 9, width = 15, se_asia_fs_fig4)
+
+svglite("se_asia_fs_fig4")
+ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig4.svg"), height = 9, width = 15, dpi = 300, se_asia_fs_fig4)
+
+# se_asia factsheet appendix table 
+se_asia_fs_appendix_table <- gadm_aqli_2021 %>%
+  group_by(country) %>%
+  slice_max(population, n=5) %>%
+  mutate(pm2021 = round(pm2021, 1),
+         le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2021*0.3)*le_constant, 1), 
+         pop_millions = round(population/100000, 3)) %>%
+  select(country, name_2, pop_millions, pm2021, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`Country` = country,
+         `Region` = name_2, 
+         `Population (Hundred thousands)` = pop_millions, 
+         `Annual Average 2021 PM2.5 Concentration (µg/m³)` = pm2021,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+# save se_asia factsheet appendix table
+se_asia_fs_appendix_table %>% write_csv(glue("{dir}/SE Asia/output/se_asia_fs_appendix_table.csv"))
+```
+
+# Thailand Factsheet
+```{r}
+# read and filter AQLI data
+ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei", 
+             "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu", 
+             "Nong Khai", "Roi Et", "Sakon Nakhon", "Si Sa Ket", "Surin", "Ubon Ratchathani", 
+             "Udon Thani", "Yasothon")
+
+n_thai <- c ("Chiang Mai", "Chiang Rai", "Lampang", "Lamphun", "Mae Hong Son", "Nan", "Phayao", "Phrae", 
+             "Uttaradit", "Tak", "Kamphaeng Phet", "Phetchabun", "Phichit", "Phitsanulok", "Sukhothai",
+             "Nakhon Sawan", "Uthai Thani")
+
+c_thai <- c("Ang Thong", "Bangkok Metropolis", "Chai Nat", "Lop Buri", "Nakhon Pathom", "Nonthaburi", "Pathum Thani", 
+            "Phra Nakhon Si Ayutthaya", "Samut Prakan", "Samut Sakhon", "Samut Songkhram", "Saraburi", 
+            "Sing Buri", "Suphan Buri", "Nakhon Nayok", "Chachoengsao", "Chanthaburi", "Chon Buri", 
+            "Prachin Buri", "Rayong", "Sa Kaeo", "Trat", "Kanchanaburi", "Ratchaburi", "Phetchaburi", "Prachuap Khiri Khan")
+
+s_thai <- c("Chumphon", "Nakhon Si Thammarat", "Narathiwat", "Pattani", "Phatthalung", "Songkhla", "Surat Thani", 
+            "Yala", "Krabi", "Phangnga", "Phuket", "Ranong", "Satun", "Trang")
+  
+thai_aqli_2021 <- read.csv(glue("{dir}/[June302023]aqli_internal_col_names_CSVs/[june302023]gadm2_aqli_2021_internal_col_names.csv")) %>%
+  filter(country == "Thailand") %>%
+  mutate(region = case_when(
+    name_1 %in% ne_thai ~ "Northeastern",
+    name_1 %in% n_thai ~ "Northern",
+    name_1 %in% c_thai ~ "Central",
+    name_1 %in% s_thai ~ "Southern"))
+
+# read and filter gbd results for thailand
+gbd_results_thailand <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
+  filter(country == "Thailand")
+
+# thailand fs fig 1 data
+thailand_fs_fig1_dataset <- thai_aqli_2021 %>%
+  left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# thailand fs figure 1
+thailand_fs_fig1 <- thailand_fs_fig1_dataset %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2021 %>% filter(name0 == "Thailand"), color = "azure4", fill = "transparent", lwd = 0.15) +
+  geom_sf(data = gadm0_aqli_2021 %>% filter(name0 == "Thailand"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() + 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") + 
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+# save thailand fs figure 1
+ggsave(glue("{dir}/thailand/output/thailand_fs_fig1.png"), height = 10, width = 15, thailand_fs_fig1)
+
+svglite("thailand_fs_fig1")
+ggsave(glue("{dir}/thailand/output/thailand_fs_fig1.svg"), height = 10, width = 15, dpi = 300, thailand_fs_fig1)
+
+# thailand fs fig 2 data
+thailand_fs_fig2_dataset <- thai_aqli_2021 %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021') %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2021_pop_weighted = pop_weights*pm2021,
+         llpp_who_2021_pop_weighted = pop_weights*llpp_who_2021) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), 
+            avg_pm2.5_2021 = sum(pm2021_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2021 - who_guideline)*le_constant,
+            llpp_who_2021 = sum(llpp_who_2021_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
+
+# save figure 2 data
+# thailand_fs_fig2_dataset %>% write_csv(glue("{dir}/thailand/output/thailand_fs_fig2_dataset.csv"))
+
+# thailand fs figure 2
+thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2021), y = llpp_who_2021, fill = lyl_bucket), width = 0.5) +
+  labs(x = "Province", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom", 
+        plot.title = element_text(hjust = 0.5, size = 16), 
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        axis.text = element_text(size = 11), 
+        axis.title = element_text(size = 13), 
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.ticks = element_blank()) 
+
+# save thailand fs figure 2
+ggsave(glue("{dir}/thailand/output/thailand_fs_fig2.png"), height = 9, width = 12, thailand_fs_fig2)
+
+svglite("thailand_fs_fig2")
+ggsave(glue("{dir}/thailand/output/thailand_fs_fig2.svg"), height = 9, width = 12, dpi = 300, thailand_fs_fig2)
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_thailand)[3] <- c("llpp_who_2021")
+
+thailand_fs_fig3_dataset <- gbd_results_thailand %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  slice_max(llpp_who_2021, n = 10)
+
+# save figure 3 data
+# thailand_fs_fig3_dataset %>% write_csv(glue("{dir}/thailand/output/thailand_fs_fig3_dataset.csv"))
+
+# thailand factsheet figure 3
+thailand_fs_fig3 <- thailand_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
+
+# save thailand fs figure 3
+ggsave(glue("{dir}/thailand/output/thailand_fs_fig3.png"), height = 9, width = 15, thailand_fs_fig3)
+
+svglite("thailand_fs_fig3")
+ggsave(glue("{dir}/thailand/output/thailand_fs_fig3.svg"), height = 9, width = 15, dpi = 300, thailand_fs_fig3)
+
+# thailand factsheet figure 4 dataset
+thailand_fs_fig4_regions <- thai_aqli_2021 %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+thailand_fs_fig4_nat <- gadm_aqli_2021 %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+thailand_fs_fig4_dataset <- rbind(thailand_fs_fig4_regions, thailand_fs_fig4_nat)
+
+thailand_fs_fig4_dataset$region = factor(thailand_fs_fig4_dataset$region, levels = c('National Average', 'Central', 'Northeastern', 'Northern', 'Southern'))
+
+# save figure 4 data
+# thailand_fs_fig4_dataset %>% write_csv(glue("{dir}/thailand/output/thailand_fs_fig4_dataset.csv"))
+
+# thailand factsheet figure 4
+thailand_fs_fig4 <- thailand_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years), 
+                          y = as.double(pop_weighted_avg_pm2.5),
+                          colour = region, linetype = region), lwd = 1.1) +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 35)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021))  +
+  scale_color_manual(values = c("National Average" = "#7197be", "Northeastern" = "#7197be", "Northern" = "#5f7aa5", "Central" = "#7197be", "Southern" = "#CBE8F3")) +
+  scale_linetype_manual(values = c("National Average" = "solid", "Northeastern" = "dashed", "Northern" = "dashed", "Central" = "dashed", "Southern" = "dashed")) +
+  ggthemes::theme_tufte() +
+  labs(x = "Year", 
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 11),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
+        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
+        axis.line = element_line(), 
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 12), 
+        plot.background = element_rect(color = "white"), 
+        axis.ticks = element_blank()) +
+  geom_text(x = 2001.15, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5)
+  
+# save thailand fs figure 4
+ggsave(glue("{dir}/thailand/output/thailand_fs_fig4.png"), height = 9, width = 15, thailand_fs_fig4)
+
+svglite("thailand_fs_fig4")
+ggsave(glue("{dir}/thailand/output/thailand_fs_fig4.svg"), height = 9, width = 15, dpi = 300, thailand_fs_fig4)
+
+# thailand factsheet appendix table 
+thailand_fs_appendix_table <- thai_aqli_2021 %>%
+  mutate(pm2021 = round(pm2021, 1),
+         le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_to_nat = round((pm2021 - natstandard)*le_constant, 1),
+         le_gain_red_to_nat = ifelse(le_gain_red_to_nat < 0, 0, le_gain_red_to_nat),
+         le_gain_red_by_30_percent = round((pm2021*0.3)*le_constant, 1), 
+         pop_millions = round(population/100000, 3)) %>%
+  select(name_2, pop_millions, pm2021, le_gain_red_to_who, le_gain_red_to_nat,
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`District` = name_2, 
+         `Population (Hundred thousands)` = pop_millions, 
+         `Annual Average 2021 PM2.5 Concentration (µg/m³)` = pm2021,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m³` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to National PM2.5 standard of 15 µg/m³` = le_gain_red_to_nat,
+         `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save thailand factsheet appendix table
+thailand_fs_appendix_table %>% write_csv(glue("{dir}/thailand/output/thailand_fs_appendix_table.csv"))
+```
 # US factsheet
 
 ```{r}
