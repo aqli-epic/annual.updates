@@ -1,0 +1,11 @@
+country,cause_of_death,llpp_who_2021,lyl_bucket,order_lyl_bucket
+Poland,Cardiovascular diseases,9.118026214,>= 6,9
+Poland,Neoplasms,4.603069455,4 to < 5,7
+Poland,High systolic blood pressure,3.192208838,3 to < 4,6
+Poland,Tobacco,2.883481309,2 to < 3,5
+Poland,Dietary risks,2.806545896,2 to < 3,5
+Poland,High fasting plasma glucose,2.015154442,2 to < 3,5
+Poland,High body-mass index,1.877249149,1 to < 2,4
+Poland,High LDL cholesterol,1.48059592,1 to < 2,4
+Poland,PM2.5 relative to WHO guideline,1.3,1 to < 2,4
+Poland,Alcohol use,1.110559987,1 to < 2,4
