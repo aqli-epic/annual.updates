@@ -1036,7 +1036,7 @@ ar_fig7.4 <- ar_fig7.4_data %>%
 
 ```{r}
 
-# appedix table=====================================================
+# appendix table=====================================================
 gadm0_aqli_2021 %>%
   mutate(across(where(is.numeric), ~round(., digits = 1))) %>%
   select(-c(continent.x, continent.y, continent)) %>%
