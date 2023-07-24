@@ -529,7 +529,7 @@ gbd_results_fig12 %>%
 ```{r ar-fig13}
 
 # Latin America definition
-latin_america_countries_vec <- c("Mexico", "Guatemala", "Honduras", 
+latin_america_countries_vec <- c("México", "Guatemala", "Honduras", 
                  "El Salvador", "Nicaragua", 
                  "Costa Rica", "Panama", 
                  "Colombia", "Venezuela", 

@@ -657,7 +657,7 @@ china_fs_fig1 <- china_fs_fig1_data %>%
 # china figure1.1 dataset
 china_fs_fig2_data <- gadm2_aqli_2021 %>%
   filter(country == "China") %>%
-  mutate(lyl2021minus2014 = round((pm2021 - pm2014)*0.098, 2)) %>%
+  mutate(lyl2021minus2014 = round((pm2021 - pm2014)*0.098, 1)) %>%
   add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "lyl2021minus2014") %>%
   left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   select(-geometry, geometry) %>%
@@ -4120,7 +4120,7 @@ scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
                                "5 to < 6" = "#bd0026", 
                                ">= 6" = "#800026")) +
   ggthemes::theme_map() +
-  labs(fill = "Potetial gain in life expectancy (Years)  ", title = "") + 
+  labs(fill = "Potential gain in life expectancy (Years)  ", title = "") + 
  theme(legend.position = "bottom", 
         legend.justification = c(0.5, 3), 
         legend.background = element_rect(color = "black"), 

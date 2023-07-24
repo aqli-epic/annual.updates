@@ -36,22 +36,24 @@ library(ggbeeswarm)
 # devtools::document()
 
 # read in latest color file
-color_2021 <- read_csv("./september.2023/master.dataset/[missingAndNAPopRegionsIncorpButViTcolNameChangesPartiallyIncorp]master_global_allyears_gadm2_non_geom.csv")
+# color_2021 <- read_csv("./september.2023/master.dataset/[missingAndNAPopRegionsIncorpButViTcolNameChangesPartiallyIncorp]master_global_allyears_gadm2_non_geom.csv")
 
-# updating the natstandard column (replacing 0's with NAs, corresponding llpp_nat columns already have NAs whereever natstandard is not available)
-color_2021 <- color_2021 %>%
-  dplyr::mutate(natstandard = ifelse(natstandard == 0, NA, natstandard))
+color_2021 <- read_csv("./september.2023/master.dataset/[june302023]gadm2_aqli_2021_internal_col_names.csv")
 
-# bringing the colnames back into the format in which our internal dashboard expects it (the above files are in a format in which ViT expects the colnames)
-color_2021 <- color_2021 %>%
-  dplyr::rename_with(~str_replace(.x, "who", "llpp_who_"), dplyr::contains("who")) %>%
-  dplyr::rename_with(~str_replace(.x, "nat", "llpp_nat_"), dplyr::contains("nat")) %>%
-  rename(whostandard = llpp_who_standard,
-         natstandard = llpp_nat_standard)
+# # updating the natstandard column (replacing 0's with NAs, corresponding llpp_nat columns already have NAs whereever natstandard is not available)
+# color_2021 <- color_2021 %>%
+#   dplyr::mutate(natstandard = ifelse(natstandard == 0, NA, natstandard))
+# 
+# # bringing the colnames back into the format in which our internal dashboard expects it (the above files are in a format in which ViT expects the colnames)
+# color_2021 <- color_2021 %>%
+#   dplyr::rename_with(~str_replace(.x, "who", "llpp_who_"), dplyr::contains("who")) %>%
+#   dplyr::rename_with(~str_replace(.x, "nat", "llpp_nat_"), dplyr::contains("nat")) %>%
+#   rename(whostandard = llpp_who_standard,
+#          natstandard = llpp_nat_standard)
 
 
 #> read in color map shape file for 2021
-colormap_shp_2021 <- st_read("./september.2023/master.dataset/shapefiles/master_global_allyears_gadm2_with_geom_Jan192023.shp")
+colormap_shp_2021 <- st_read("./september.2023/master.dataset/shapefiles/june302023_post_missing_data_incorp_nat_stan_adj/aqli_gadm2_final_june302023.shp")
 
 # GBD final results file (resulting file that we get after applying the steps in the GBD technical appendix)
 # gbd_results <- read_csv("./june.2022/other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
@@ -795,12 +797,12 @@ foo <- color_2021 %>%
 
 foo1 <- color_2021 %>%
   filter(country == "India") %>%
-  mutate(pm2017_red = ifelse((name_1 %in% ncap_districts$name_1) & (name_2 %in% ncap_districts$name_2), pm2017*0.75, pm2017)) %>%
+  mutate(pm2017_red = ifelse((name_1 %in% ncap_districts$name_1) & (name_2 %in% ncap_districts$name_2), pm2017*0.6, pm2017)) %>%
     mutate(pop_weights = population/sum(population, na.rm = TRUE), 
          pm2017_pop_weighted_red = pop_weights*pm2017_red, 
-         pm1998_pop_weighted = pop_weights*pm1998) %>%
+         pm2017_pop_weighted = pop_weights*pm2017) %>%
   summarise(avg_pm2017_pop_red = sum(pm2017_pop_weighted_red, na.rm = TRUE), 
-            avg_pm1998_pop = sum(pm1998_pop_weighted, na.rm = TRUE))
+            avg_pm2017_pop = sum(pm2017_pop_weighted, na.rm = TRUE))
 
 
 ########################### doing what's done in the above chunk, but with 102 cities

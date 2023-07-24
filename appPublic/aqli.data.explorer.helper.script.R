@@ -219,6 +219,37 @@ western_european_countries <- c("Germany", "Switzerland", "Italy", "Monaco", "Lu
                                 "Belgium", "France", "Netherlands", "Andorra", "Spain",
                                 "United Kingdom", "Portugal", "Denmark", "Ireland", "Iceland", "Austria")
 
+
+# European Union countries
+eu_countries <- c("Belgium", "Bulgaria", "Czechia", "Denmark", "Germany", "Estonia",
+                  "Ireland", "Greece", "Spain", "France",
+                  "Croatia", "Italy", "Cyprus", "Latvia",
+                  "Lithuania", "Luxembourg", "Hungary",
+                  "Malta", "Netherlands",
+                  "Austria", "Poland",
+                  "Portugal", "Romania",
+                  "Slovenia", "Slovakia", "Finland", "Sweden",
+                  "United Kingdom")
+
+# South Asia definition
+south_asia_def <- c("Afghanistan", "Bangladesh",
+                    "Bhutan", "India",
+                    "Maldives", "Nepal",
+                    "Pakistan", "Sri Lanka")
+
+# latin america definition
+
+latin_america_countries_vec <- c("México", "Guatemala", "Honduras",
+                                 "El Salvador", "Nicaragua",
+                                 "Costa Rica", "Panama",
+                                 "Colombia", "Venezuela",
+                                 "Ecuador", "Peru",
+                                 "Bolivia", "Brazil",
+                                 "Paraguay", "Chile",
+                                 "Argentina", "Uruguay",
+                                 "Cuba", "Haiti", "Dominican Republic",
+                                 "Puerto Rico")
+
 #> open AQ global landscape 2022 report and clean-------------
 
 # read data
@@ -233,6 +264,27 @@ openaq_data <- openaq_data[2:nrow(openaq_data), ]
 colnames(openaq_data) <- c("country", "evid_govt_spon_aq_mon", "evidence_ad_hoc_studies", "aq_existed_in_past_not_cur",
                            "data_in_phys_units", "transp_geog_scale_data_provided", "data_fine_temporal_scale",
                            "prog_access", "continent")
+
+
+#> load in archived AQLI gadm2 datasets from past years (and making their colnames same as gadm2_aqli_2021)---------------
+
+# read in
+color_2020 <- read_csv("./september.2023/master.dataset/archive/color_2020.csv")
+color_2019 <- read_csv("./september.2023/master.dataset/archive/color_2019.csv")
+color_2016 <- read_csv("./september.2023/master.dataset/archive/color_2016.csv")
+
+# bring in same format as gadm2_aqli_2021
+color_2020 <- color_2020 %>%
+  dplyr::rename_with(~str_replace(.x, "llpp_who_", "llpp_who5_"), dplyr::contains("who")) %>%
+  rename(objectid_gadm2 = objectid_color)
+
+color_2019 <- color_2019 %>%
+  dplyr::rename_with(~str_replace(.x, "llpp_who_", "llpp_who5_"), dplyr::contains("who")) %>%
+  rename(objectid_gadm2 = objectid_color)
+
+color_2016 <- color_2016 %>%
+  dplyr::rename_with(~str_replace(.x, "llpp_who_", "llpp_who5_"), dplyr::contains("who")) %>%
+  rename(objectid_gadm2 = objectid_color)
 
 
 
