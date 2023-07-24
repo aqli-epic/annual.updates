@@ -33,7 +33,7 @@ ar_south_asia_fs_fig2.1_data <- gadm2_aqli_2021 %>%
   st_as_sf()
 
 # south asia fig 2.1
-ar_south_asia_fig2.1 <- ar_south_asia_fs_fig1_data %>%
+ar_south_asia_fig2.1 <- ar_south_asia_fs_fig2.1_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
    geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 %in% south_asia_def), color = "azure4", fill = "transparent", lwd = 0.1) +
@@ -675,7 +675,7 @@ ar_fig6.3_data <- rbind(bth_yrd_prd_gain_le_part1, china_gain_le_part2, custom_r
 
 
 # plot annual report figure 16
-ar_fig6.3 <- ar_fig6.3_dataset %>%
+ar_fig6.3 <- ar_fig6.3_data %>%
   add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "change_in_le_2014_to_2021") %>%
   mutate(order_manual = ifelse(region == "Baoding", 14, NA), 
          order_manual = ifelse(region == "Beijing", 13, order_manual), 
@@ -887,7 +887,7 @@ ar_fig7.2 <- ggplot(data = ar_fig7.2_data) +
   geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "United States", name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +
    geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "United States", name1 == "California", name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +
   ggthemes::theme_map() +
-  labs(fill = expression("Annual average" ~ PM[2.5] ~ "(in  µg/m³)"), title = "") +
+  labs(fill = expression("Annual Average" ~ PM[2.5] ~ " Concentration (in  µg/m³)"), title = "") +
   scale_fill_manual(values = c("0 - 5" = "powderblue", "> 5 - 10" = "#FFCC66", "> 10 - 15" = "chocolate2", "> 15" = "darkred")) +
   # ggtitle(expression(paste("US 2020 PM2.5 concentrations, (in ", mu, "g","/", m^3, ")", ""))) +
   theme(plot.background = element_rect(colour = "white", fill = "white"), 
@@ -1070,7 +1070,6 @@ write_csv("[July182023]Annual Report 2023 appendix table.csv")
 pm_weighted_col_start <- "pm1998_weighted"
 pm_weighted_col_end <- "pm2021_weighted"
 fig_a1_plt_part1 <- trendlines_aqli_data <- gadm2_aqli_2021 %>%
-filter(country %in% central_and_west_african_countries) %>%
       dplyr::filter(!is.na(population)) %>%
       dplyr::mutate(country = "foo") %>%
       dplyr::group_by(country) %>%
@@ -1087,7 +1086,6 @@ filter(country %in% central_and_west_african_countries) %>%
 
 pm_weighted_col_end <- "pm2020_weighted"
 fig_a1_plt_part2 <- trendlines_aqli_data <- color_2020 %>%
-  filter(country %in% central_and_west_african_countries) %>%
       dplyr::filter(!is.na(population)) %>%
       dplyr::mutate(country = "foo") %>%
       dplyr::group_by(country) %>%
@@ -1103,7 +1101,6 @@ fig_a1_plt_part2 <- trendlines_aqli_data <- color_2020 %>%
 
 pm_weighted_col_end <- "pm2019_weighted"
 fig_a1_plt_part3 <- trendlines_aqli_data <- color_2019 %>%
-  filter(country %in% central_and_west_african_countries) %>%
       dplyr::filter(!is.na(population)) %>%
       dplyr::mutate(country = "foo") %>%
       dplyr::group_by(country) %>%
@@ -1119,7 +1116,6 @@ fig_a1_plt_part3 <- trendlines_aqli_data <- color_2019 %>%
 
 pm_weighted_col_end <- "pm2016_weighted"
 fig_a1_plt_part4 <- trendlines_aqli_data <- color_2016 %>%
-  filter(country %in% central_and_west_african_countries) %>%
       dplyr::filter(!is.na(population)) %>%
       dplyr::mutate(country = "foo") %>%
       dplyr::group_by(country) %>%
@@ -1140,7 +1136,7 @@ final_fig_a1_dataset <- rbind(fig_a1_plt_part1, fig_a1_plt_part2, fig_a1_plt_par
 plt <- final_fig_a1_dataset %>%
   ggplot(mapping = aes(x = years, y = pop_weighted_avg_pm2.5, color = ref_dataset)) +
   geom_line( size = 1.5) +
-  scale_y_continuous(breaks = seq(0, 80, 5), limits = c(0, 60)) +
+  scale_y_continuous(breaks = seq(0, 40, 5), limits = c(0, 40)) +
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
   themes_aqli_base +
   scale_color_viridis(discrete = TRUE) +
@@ -1152,7 +1148,7 @@ plt <- final_fig_a1_dataset %>%
                                 "2019 dataset" =  "dashed",
                                 "2020 dataset" = "dashed",
                                 "2021 dataset" = "solid")) +
-  labs(x = "Year", y = expression("Annual average " ~ PM[2.5] ~ " concentration (in µg/m³)"), color = "") +
+  labs(x = "Year", y = expression("Annual Average " ~ PM[2.5] ~ " Concentration (in µg/m³)"), color = "") +
   theme(legend.key.width = unit(1, "cm"), 
         legend.key.height = unit(1, "cm"), 
         plot.background = element_rect(color = "white", fill = "white")) 
