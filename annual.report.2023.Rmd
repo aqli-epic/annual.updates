@@ -135,16 +135,11 @@ ar_south_asia_fig2.2 <- gbd_results_sa_fig2.2 %>%
 # AR Section 3: Southeast Asia
 
 ```{r}
-# southeast asia definition
-se_asia_def <-  c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia", 
-                        "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", 
-                        "Vietnam")
-
 # figure 3.1 ------------
 
 # southeast asia figure 3.1 dataset
 ar_se_asia_fig3.1_data <- gadm2_aqli_2021 %>%
-  filter(country %in% se_asia_def) %>%
+  filter(country %in% se_asia_vec) %>%
   left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
   select(-geometry, geometry) %>%
@@ -187,7 +182,7 @@ ar_se_asia_fig3.1 <- ar_se_asia_fig3.1_data %>%
 
 # southeast asia figure 3.2 data
 ar_se_asia_fig3.2_data <- gadm2_aqli_2021 %>%
-  filter(country %in% se_asia_def) %>%
+  filter(country %in% se_asia_vec) %>%
   select(country, name_1, name_2, name_1_country, population, pm2021, llpp_who_2021) %>%
   group_by(name_1_country) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
