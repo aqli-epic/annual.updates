@@ -10,7 +10,7 @@ colnames(gbd_results_pak)[3] <- c("llpp_who_2021")
 
 pak_fs_fig3_dataset <- gbd_results_pak %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
-  slice_max(llpp_who_2021, n = 10)
+  slice_max(llpp_who_2021, n = 5)
 
 # pakistan factsheet figure 3
 pak_fs_fig3 <- pak_fs_fig3_dataset %>%
