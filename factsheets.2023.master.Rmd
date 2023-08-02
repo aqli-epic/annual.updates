@@ -1,7 +1,7 @@
 ---
 title: "Factsheets 2023"
 author: "Aarsh Batra, Nishka Sharma"
-date: '2023-07-12'
+date: '2023-07-24'
 output: html_document
 ---
 
@@ -2353,15 +2353,15 @@ gadm2_aqli_2021 %>%
 
 ```
 
+
+
 # Guatemala Factsheet
 ```{r}
-# read and filter gbd results for guatemala
-gbd_results_guatemala <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
-  filter(country == "Guatemala")
+# figure 1 ---------
 
 # guatemala fs fig 1 data
 guatemala_fs_fig1_dataset <- gadm2_aqli_2021 %>%
-  filter(country == "Guatemala")
+  filter(country == "Guatemala") %>% 
   left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
@@ -2400,14 +2400,11 @@ guatemala_fs_fig1 <- guatemala_fs_fig1_dataset %>%
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
-# save guatemala fs figure 1
-ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig1.png"), height = 10, width = 15, guatemala_fs_fig1)
-
-svglite("guatemala_fs_fig1")
-ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig1.svg"), height = 10, width = 15, dpi = 300, guatemala_fs_fig1)
+# figure 2 ---------
 
 # guatemala fs fig 2 data
 guatemala_fs_fig2_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Guatemala") %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021') %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -2420,9 +2417,6 @@ guatemala_fs_fig2_dataset <- gadm2_aqli_2021 %>%
             le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
-
-# save figure 2 data
-# guatemala_fs_fig2_dataset %>% write_csv(glue("{dir}/guatemala/output/guatemala_fs_fig2_dataset.csv"))
 
 # guatemala fs figure 2
 guatemala_fs_fig2 <- guatemala_fs_fig2_dataset %>%
@@ -2454,21 +2448,19 @@ guatemala_fs_fig2 <- guatemala_fs_fig2_dataset %>%
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
         axis.ticks = element_blank()) 
 
-# save guatemala fs figure 2
-ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig2.png"), height = 9, width = 12, guatemala_fs_fig2)
+# figure 3 ---------
 
-svglite("guatemala_fs_fig2")
-ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig2.svg"), height = 9, width = 12, dpi = 300, guatemala_fs_fig2)
+# read and filter gbd results for guatemala
+gbd_results_guatemala <- gbd_results_master_2021 %>%
+  filter(country == "Guatemala")
 
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
 colnames(gbd_results_guatemala)[3] <- c("llpp_who_2021")
 
+# guatemala fs fig 3 data
 guatemala_fs_fig3_dataset <- gbd_results_guatemala %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
   slice_max(llpp_who_2021, n = 5)
-
-# save figure 3 data
-# guatemala_fs_fig3_dataset %>% write_csv(glue("{dir}/guatemala/output/guatemala_fs_fig3_dataset.csv"))
 
 # guatemala factsheet figure 3
 guatemala_fs_fig3 <- guatemala_fs_fig3_dataset %>%
@@ -2503,16 +2495,11 @@ guatemala_fs_fig3 <- guatemala_fs_fig3_dataset %>%
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
 
-# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-
-# save guatemala fs figure 3
-ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig3.png"), height = 9, width = 15, guatemala_fs_fig3)
-
-svglite("guatemala_fs_fig3")
-ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig3.svg"), height = 9, width = 15, dpi = 300, guatemala_fs_fig3)
+# figure 4 ---------
 
 # guatemala factsheet figure 4 dataset
 guatemala_fs_fig4_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Guatemala") %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
@@ -2521,9 +2508,6 @@ guatemala_fs_fig4_dataset <- gadm2_aqli_2021 %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
          region = "National Average") %>%
   select(years, region, pop_weighted_avg_pm2.5)
-
-# save figure 4 data
-# guatemala_fs_fig4_dataset %>% write_csv(glue("{dir}/guatemala/output/guatemala_fs_fig4_dataset.csv"))
 
 # guatemala factsheet figure 4
 guatemala_fs_fig4 <- guatemala_fs_fig4_dataset %>%
@@ -2552,14 +2536,11 @@ guatemala_fs_fig4 <- guatemala_fs_fig4_dataset %>%
         axis.ticks = element_blank()) +
   geom_text(x = 2000.6, y = 5.9, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
 
-# save guatemala fs figure 4
-ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig4.png"), height = 9, width = 15, guatemala_fs_fig4)
-
-svglite("guatemala_fs_fig4")
-ggsave(glue("{dir}/guatemala/output/guatemala_fs_fig4.svg"), height = 9, width = 15, dpi = 300, guatemala_fs_fig4)
+# appendix table ---------
 
 # guatemala factsheet appendix table 
 guatemala_fs_appendix_table <- gadm2_aqli_2021 %>%
+  filter(country == "Guatemala") %>%
   mutate(pm2021 = round(pm2021, 1),
          le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
          le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
@@ -2576,20 +2557,18 @@ guatemala_fs_appendix_table <- gadm2_aqli_2021 %>%
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
 
-
-# save guatemala factsheet appendix table
-guatemala_fs_appendix_table %>% write_csv(glue("{dir}/guatemala/output/guatemala_fs_appendix_table.csv"))
-
 ```
+
+
 
 # Indonesia Factsheet
 ```{r}
-# read and filter gbd results for indonesia
-gbd_results_indonesia <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
-  filter(country == "Indonesia")
+
+# figure 1 ---------
 
 # indonesia fs fig 1 data
-indonesia_fs_fig1_dataset <- gadm_aqli_2021 %>%
+indonesia_fs_fig1_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Indonesia") %>% 
   left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
@@ -2628,14 +2607,11 @@ indonesia_fs_fig1 <- indonesia_fs_fig1_dataset %>%
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
-# save indonesia fs figure 1
-ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig1.png"), height = 10, width = 15, indonesia_fs_fig1)
-
-svglite("indonesia_fs_fig1")
-ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig1.svg"), height = 10, width = 15, dpi = 300, indonesia_fs_fig1)
+# figure 2 ---------
 
 # indonesia fs fig 2 data
 indonesia_fs_fig2_dataset <- gadm_aqli_2021 %>%
+  filter(country == "Indonesia") %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021') %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -2648,9 +2624,6 @@ indonesia_fs_fig2_dataset <- gadm_aqli_2021 %>%
             le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
-
-# save figure 2 data
-# indonesia_fs_fig2_dataset %>% write_csv(glue("{dir}/indonesia/output/indonesia_fs_fig2_dataset.csv"))
 
 # indonesia fs figure 2
 indonesia_fs_fig2 <- indonesia_fs_fig2_dataset %>%
@@ -2682,21 +2655,19 @@ indonesia_fs_fig2 <- indonesia_fs_fig2_dataset %>%
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
         axis.ticks = element_blank()) 
 
-# save indonesia fs figure 2
-ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig2.png"), height = 9, width = 12, indonesia_fs_fig2)
+# figure 3 -----------
 
-svglite("indonesia_fs_fig2")
-ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig2.svg"), height = 9, width = 12, dpi = 300, indonesia_fs_fig2)
+# read and filter gbd results for indonesia
+gbd_results_indonesia <- gbd_results_master_2021 %>%
+  filter(country == "Indonesia") 
 
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
 colnames(gbd_results_indonesia)[3] <- c("llpp_who_2021")
 
+# indonesia fs fig 3 data
 indonesia_fs_fig3_dataset <- gbd_results_indonesia %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
   slice_max(llpp_who_2021, n = 10)
-
-# save figure 3 data
-# indonesia_fs_fig3_dataset %>% write_csv(glue("{dir}/indonesia/output/indonesia_fs_fig3_dataset.csv"))
 
 # indonesia factsheet figure 3
 indonesia_fs_fig3 <- indonesia_fs_fig3_dataset %>%
@@ -2731,16 +2702,11 @@ indonesia_fs_fig3 <- indonesia_fs_fig3_dataset %>%
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
 
-# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-
-# save indonesia fs figure 3
-ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig3.png"), height = 9, width = 15, indonesia_fs_fig3)
-
-svglite("indonesia_fs_fig3")
-ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig3.svg"), height = 9, width = 15, dpi = 300, indonesia_fs_fig3)
+# figure 4 ---------
 
 # indonesia factsheet figure 4 dataset
-indonesia_fs_fig4_dataset <- gadm_aqli_2021 %>%
+indonesia_fs_fig4_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Indonesia") %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
@@ -2749,9 +2715,6 @@ indonesia_fs_fig4_dataset <- gadm_aqli_2021 %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
          region = "National Average") %>%
   select(years, region, pop_weighted_avg_pm2.5)
-
-# save figure 4 data
-# indonesia_fs_fig4_dataset %>% write_csv(glue("{dir}/indonesia/output/indonesia_fs_fig4_dataset.csv"))
 
 # indonesia factsheet figure 4
 indonesia_fs_fig4 <- indonesia_fs_fig4_dataset %>%
@@ -2782,14 +2745,11 @@ indonesia_fs_fig4 <- indonesia_fs_fig4_dataset %>%
   geom_text(x = 2001, y = 5.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5) +
   geom_text(x = 2006.6, y = 15.6, label = expression("Indonesia National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5)
 
-# save indonesia fs figure 4
-ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig4.png"), height = 9, width = 15, indonesia_fs_fig4)
-
-svglite("indonesia_fs_fig4")
-ggsave(glue("{dir}/indonesia/output/indonesia_fs_fig4.svg"), height = 9, width = 15, dpi = 300, indonesia_fs_fig4)
+# appendix table ---------
 
 # indonesia factsheet appendix table 
-indonesia_fs_appendix_table <- gadm_aqli_2021 %>%
+indonesia_fs_appendix_table <- gadm2_aqli_2021 %>%
+  filter(country == "Indonesia") %>%
   mutate(pm2021 = round(pm2021, 1),
          le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
          le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
@@ -2809,19 +2769,17 @@ indonesia_fs_appendix_table <- gadm_aqli_2021 %>%
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to National PM2.5 guideline of 15 µg/m³` = le_gain_red_to_nat,
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
 
-
-# save indonesia factsheet appendix table
-indonesia_fs_appendix_table %>% write_csv(glue("{dir}/indonesia/output/indonesia_fs_appendix_table.csv"))
 ```
+
+
 
 # Nepal Factsheet
 ```{r}
-# read and filter gbd results for Nepal
-gbd_results_nepal <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
-  filter(country == "Nepal")
+# figure 1 ---------
 
 # nepal fs fig 1 data
-nepal_fs_fig1_dataset <- gadm_aqli_2021 %>%
+nepal_fs_fig1_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Nepal") %>%
   left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
@@ -2860,14 +2818,11 @@ nepal_fs_fig1 <- nepal_fs_fig1_dataset %>%
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
-# save nepal fs figure 1
-ggsave(glue("{dir}/Nepal/output/nepal_fs_fig1.png"), height = 10, width = 15, nepal_fs_fig1)
-
-svglite("nepal_fs_fig1")
-ggsave(glue("{dir}/Nepal/output/nepal_fs_fig1.svg"), height = 10, width = 15, dpi = 300, nepal_fs_fig1)
+# figure 2 ----------
 
 # nepal fs fig 2 data
-nepal_fs_fig2_dataset <- gadm_aqli_2021 %>%
+nepal_fs_fig2_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Nepal") %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021') %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -2880,9 +2835,6 @@ nepal_fs_fig2_dataset <- gadm_aqli_2021 %>%
             le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
-
-# save figure 2 data
-# nepal_fs_fig2_dataset %>% write_csv(glue("{dir}/Nepal/output/nepal_fs_fig2_dataset.csv"))
 
 # nepal fs figure 2
 nepal_fs_fig2 <- nepal_fs_fig2_dataset %>%
@@ -2914,21 +2866,19 @@ nepal_fs_fig2 <- nepal_fs_fig2_dataset %>%
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
         axis.ticks = element_blank()) 
 
-# save nepal fs figure 2
-ggsave(glue("{dir}/Nepal/output/nepal_fs_fig2.png"), height = 9, width = 12, nepal_fs_fig2)
+# figure 3 -----------
 
-svglite("nepal_fs_fig2")
-ggsave(glue("{dir}/Nepal/output/nepal_fs_fig2.svg"), height = 9, width = 12, dpi = 300, nepal_fs_fig2)
+# read and filter gbd results for nepal
+gbd_results_nepal <-  gbd_results_master_2021  %>%
+  filter(country == "Nepal")
 
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
 colnames(gbd_results_nepal)[3] <- c("llpp_who_2021")
 
-nepal_fs_fig3_dataset <- gbd_results_nepal %>%
+# nepal fs fig 3 data
+nepal_fs_fig3_dataset <- gbd_results_master_2021 %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
   slice_max(llpp_who_2021, n = 5)
-
-# save figure 3 data
-# nepal_fs_fig3_dataset %>% write_csv(glue("{dir}/Nepal/output/nepal_fs_fig3_dataset.csv"))
 
 # nepal factsheet figure 3
 nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
@@ -2963,16 +2913,11 @@ nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
 
-# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-
-# save nepal fs figure 3
-ggsave(glue("{dir}/Nepal/output/nepal_fs_fig3.png"), height = 9, width = 15, nepal_fs_fig3)
-
-svglite("nepal_fs_fig3")
-ggsave(glue("{dir}/Nepal/output/nepal_fs_fig3.svg"), height = 9, width = 15, dpi = 300, nepal_fs_fig3)
+# figure 4 --------
 
 # nepal factsheet figure 4 dataset
-nepal_fs_fig4_dataset <- gadm_aqli_2021 %>%
+nepal_fs_fig4_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Nepal") %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
@@ -2981,9 +2926,6 @@ nepal_fs_fig4_dataset <- gadm_aqli_2021 %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
          region = "National Average") %>%
   select(years, region, pop_weighted_avg_pm2.5)
-
-# save figure 4 data
-# nepal_fs_fig4_dataset %>% write_csv(glue("{dir}/Nepal/output/nepal_fs_fig4_dataset.csv"))
 
 # nepal factsheet figure 4
 nepal_fs_fig4 <- nepal_fs_fig4_dataset %>%
@@ -3012,11 +2954,7 @@ nepal_fs_fig4 <- nepal_fs_fig4_dataset %>%
         axis.ticks = element_blank()) +
   geom_text(x = 2000.6, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
 
-# save nepal fs figure 4
-ggsave(glue("{dir}/Nepal/output/nepal_fs_fig4.png"), height = 9, width = 15, nepal_fs_fig4)
-
-svglite("nepal_fs_fig4")
-ggsave(glue("{dir}/Nepal/output/nepal_fs_fig4.svg"), height = 9, width = 15, dpi = 300, nepal_fs_fig4)
+# appendix table -----------
 
 # nepal factsheet appendix table 
 nepal_fs_appendix_table <- gadm_aqli_2021 %>%
@@ -3036,19 +2974,18 @@ nepal_fs_appendix_table <- gadm_aqli_2021 %>%
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
 
-
-# save nepal factsheet appendix table
-nepal_fs_appendix_table %>% write_csv(glue("{dir}/nepal/output/nepal_fs_appendix_table.csv"))
 ```
+
+
 
 # Nigeria Factsheet
 ```{r}
-# read and filter gbd results for nigeria
-gbd_results_nigeria <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
-  filter(country == "Nigeria")
+
+# figure 1 ---------
 
 # nigeria fs fig 1 data
-nigeria_fs_fig1_dataset <- gadm_aqli_2021 %>%
+nigeria_fs_fig1_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Nigeria") %>%
   left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
@@ -3087,14 +3024,11 @@ nigeria_fs_fig1 <- nigeria_fs_fig1_dataset %>%
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
-# save nigeria fs figure 1
-ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig1.png"), height = 10, width = 15, nigeria_fs_fig1)
-
-svglite("nigeria_fs_fig1")
-ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig1.svg"), height = 10, width = 15, dpi = 300, nigeria_fs_fig1)
+# figure 2 ----------
 
 # nigeria fs fig 2 data
-nigeria_fs_fig2_dataset <- gadm_aqli_2021 %>%
+nigeria_fs_fig2_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Nigeria") %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021') %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -3107,9 +3041,6 @@ nigeria_fs_fig2_dataset <- gadm_aqli_2021 %>%
             le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
-
-# save figure 2 data
-# nigeria_fs_fig2_dataset %>% write_csv(glue("{dir}/nigeria/output/nigeria_fs_fig2_dataset.csv"))
 
 # nigeria fs figure 2
 nigeria_fs_fig2 <- nigeria_fs_fig2_dataset %>%
@@ -3141,21 +3072,19 @@ nigeria_fs_fig2 <- nigeria_fs_fig2_dataset %>%
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
         axis.ticks = element_blank()) 
 
-# save nigeria fs figure 2
-ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig2.png"), height = 9, width = 12, nigeria_fs_fig2)
+# figure 3 ---------
 
-svglite("nigeria_fs_fig2")
-ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig2.svg"), height = 9, width = 12, dpi = 300, nigeria_fs_fig2)
+# read and filter gbd results for nigeria
+gbd_results_nigeria <- gbd_results_master_2021  %>%
+  filter(country == "Nigeria")
 
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
 colnames(gbd_results_nigeria)[3] <- c("llpp_who_2021")
 
+# nigeria fs fig 3 data
 nigeria_fs_fig3_dataset <- gbd_results_nigeria %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
   slice_max(llpp_who_2021, n = 10)
-
-# save figure 3 data
-# nigeria_fs_fig3_dataset %>% write_csv(glue("{dir}/nigeria/output/nigeria_fs_fig3_dataset.csv"))
 
 # nigeria factsheet figure 3
 nigeria_fs_fig3 <- nigeria_fs_fig3_dataset %>%
@@ -3190,16 +3119,11 @@ nigeria_fs_fig3 <- nigeria_fs_fig3_dataset %>%
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
 
-# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-
-# save nigeria fs figure 3
-ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig3.png"), height = 9, width = 15, nigeria_fs_fig3)
-
-svglite("nigeria_fs_fig3")
-ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig3.svg"), height = 9, width = 15, dpi = 300, nigeria_fs_fig3)
+# figure 4 ----------
 
 # nigeria factsheet figure 4 dataset
-nigeria_fs_fig4_dataset <- gadm_aqli_2021 %>%
+nigeria_fs_fig4_dataset <- gadm2_aqli_2021 %>%
+  filter(country == "Nigeria") %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
@@ -3208,9 +3132,6 @@ nigeria_fs_fig4_dataset <- gadm_aqli_2021 %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
          region = "National Average") %>%
   select(years, region, pop_weighted_avg_pm2.5)
-
-# save figure 4 data
-# nigeria_fs_fig4_dataset %>% write_csv(glue("{dir}/nigeria/output/nigeria_fs_fig4_dataset.csv"))
 
 # nigeria factsheet figure 4
 nigeria_fs_fig4 <- nigeria_fs_fig4_dataset %>%
@@ -3239,14 +3160,11 @@ nigeria_fs_fig4 <- nigeria_fs_fig4_dataset %>%
         axis.ticks = element_blank()) +
   geom_text(x = 2000.6, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
 
-# save nigeria fs figure 4
-ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig4.png"), height = 9, width = 15, nigeria_fs_fig4)
-
-svglite("nigeria_fs_fig4")
-ggsave(glue("{dir}/nigeria/output/nigeria_fs_fig4.svg"), height = 9, width = 15, dpi = 300, nigeria_fs_fig4)
+# appendix table ----------
 
 # nigeria factsheet appendix table 
-nigeria_fs_appendix_table <- gadm_aqli_2021 %>%
+nigeria_fs_appendix_table <- gadm2_aqli_2021 %>%
+  filter(country == "Nigeria") %>%
   mutate(pm2021 = round(pm2021, 1),
          le_gain_red_to_who = round((pm2021 - who_guideline)*le_constant, 1),
          le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
@@ -3263,24 +3181,21 @@ nigeria_fs_appendix_table <- gadm_aqli_2021 %>%
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
 
-
-# save nigeria factsheet appendix table
-nigeria_fs_appendix_table %>% write_csv(glue("{dir}/nigeria/output/nigeria_fs_appendix_table.csv"))
 ```
+
+
 
 # Pakistan Factsheet
 ```{r}
 # read and filter AQLI data
-pak_aqli_2021 <- read.csv(glue("{dir}/[June302023]aqli_internal_col_names_CSVs/[june302023]gadm2_aqli_2021_internal_col_names.csv")) %>%
+pak_aqli_2021 <- gadm2_aqli_2021 %>%
   filter(country == "Pakistan") %>%
   mutate(region = case_when(
     name_1 == "Islamabad" ~ "Islamabad",
     name_1 == "Punjab" ~ "Punjab",
     name_1 != "Islamabad"| name_1 != "Punjab" ~ "All other regions (excluding Islamabad and Punjab)"))
 
-# read and filter gbd results for pakistan
-gbd_results_pak <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
-  filter(country == "Pakistan")
+# figure 1 -----------
 
 # pakistan fs fig 1 data
 pak_fs_fig1_dataset <- pak_aqli_2021 %>%
@@ -3322,11 +3237,7 @@ pak_fs_fig1 <- pak_fs_fig1_dataset %>%
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
-# save pakistan fs figure 1
-ggsave(glue("{dir}/pakistan/output/pak_fs_fig1.png"), height = 10, width = 15, pak_fs_fig1)
-
-svglite("pak_fs_fig1")
-ggsave(glue("{dir}/pakistan/output/pak_fs_fig1.svg"), height = 10, width = 15, dpi = 300, pak_fs_fig1)
+# figure 2 -----------
 
 # pakistan fs fig 2 data
 pak_fs_fig2_dataset <- pak_aqli_2021 %>%
@@ -3344,9 +3255,6 @@ pak_fs_fig2_dataset <- pak_aqli_2021 %>%
             le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
-
-# save figure 2 data
-# pak_fs_fig2_dataset %>% write_csv(glue("{dir}/Pakistan/output/pak_fs_fig2_dataset.csv"))
 
 # pakistan fs figure 2
 pak_fs_fig2 <- pak_fs_fig2_dataset %>%
@@ -3378,20 +3286,19 @@ pak_fs_fig2 <- pak_fs_fig2_dataset %>%
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
         axis.ticks = element_blank()) 
 
-# save pakistan fs figure 2
-ggsave(glue("{dir}/pakistan/output/pak_fs_fig2.png"), height = 9, width = 12, pak_fs_fig2)
+# figure 3 ----------
 
-svglite("pak_fs_fig2")
-ggsave(glue("{dir}/pakistan/output/pak_fs_fig2.svg"), height = 9, width = 12, dpi = 300, pak_fs_fig2)
+# read and filter gbd results for pakistan
+gbd_results_pak <- gbd_results_master_2021 %>%
+  filter(country == "Pakistan")
 
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
 colnames(gbd_results_pak)[3] <- c("llpp_who_2021")
 
+# pakistan fs fig 3 data
 pak_fs_fig3_dataset <- gbd_results_pak %>%
-  add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
-
-# save figure 3 data
-# pak_fs_fig3_dataset %>% write_csv(glue("{dir}/Pakistan/output/pak_fs_fig3_dataset.csv"))
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
+  slice_max(llpp_who_2021, n = 5)
 
 # pakistan factsheet figure 3
 pak_fs_fig3 <- pak_fs_fig3_dataset %>%
@@ -3426,13 +3333,7 @@ pak_fs_fig3 <- pak_fs_fig3_dataset %>%
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
 
-# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-
-# save pakistan fs figure 3
-ggsave(glue("{dir}/pakistan/output/pak_fs_fig3.png"), height = 9, width = 15, pak_fs_fig3)
-
-svglite("pak_fs_fig3")
-ggsave(glue("{dir}/pakistan/output/pak_fs_fig3.svg"), height = 9, width = 15, dpi = 300, pak_fs_fig3)
+# figure 4 ---------
 
 # pakistan factsheet figure 4 dataset
 pak_region_avg_ts <- pak_aqli_2021 %>%
@@ -3444,7 +3345,6 @@ pak_region_avg_ts <- pak_aqli_2021 %>%
                values_to = "pop_weighted_avg_pm2.5") %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
   select(years, region, pop_weighted_avg_pm2.5)
-
 
 pak_nat_avg_ts <- pak_aqli_2021 %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -3459,9 +3359,6 @@ pak_nat_avg_ts <- pak_aqli_2021 %>%
 pak_fs_fig4_dataset <- rbind(pak_region_avg_ts, pak_nat_avg_ts)
 
 pak_fs_fig4_dataset$region = factor(pak_fs_fig4_dataset$region, levels = c('Islamabad', 'Punjab', 'National Average', 'All other regions (excluding Islamabad and Punjab)'))
-
-# save figure 4 data
-# pak_fs_fig4_dataset %>% write_csv(glue("{dir}/Pakistan/output/pak_fs_fig4_dataset.csv"))
 
 # pakistan factsheet figure 4
 pak_fs_fig4 <- pak_fs_fig4_dataset %>%
@@ -3493,11 +3390,7 @@ pak_fs_fig4 <- pak_fs_fig4_dataset %>%
         axis.ticks = element_blank()) +
   geom_text(x = 2000.6, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
 
-# save pakistan fs figure 4
-ggsave(glue("{dir}/Pakistan/output/pak_fs_fig4.png"), height = 9, width = 15, pak_fs_fig4)
-
-svglite("pak_fs_fig4")
-ggsave(glue("{dir}/Pakistan/output/pak_fs_fig4.svg"), height = 9, width = 15, dpi = 300, pak_fs_fig4)
+# appendix table ----------
 
 # pakistan factsheet appendix table 
 pak_fs_appendix_table <- pak_aqli_2021 %>%
@@ -3520,19 +3413,18 @@ pak_fs_appendix_table <- pak_aqli_2021 %>%
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to National PM2.5 guideline of 15 µg/m³` = le_gain_red_to_nat,
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
 
-
-# save pakistan factsheet appendix table
-pak_fs_appendix_table %>% write_csv(glue("{dir}/pakistan/output/pak_fs_appendix_table.csv"))
 ```
+
+
 
 # Southeast Asia Factsheet
 ```{r}
-# read and filter gbd results for se_asia
-gbd_results_se_asia <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
-  filter(country %in% se_asia_countries)
+
+# figure 1 ----------
 
 # se_asia fs fig 1 data
-se_asia_fs_fig1_dataset <- gadm_aqli_2021 %>%
+se_asia_fs_fig1_dataset <- gadm2_aqli_2021 %>%
+  filter(country %in% se_asia_vec) %>%
   left_join(gadm2_aqli_2021, by = c("objectid_gadm2" = "obidgadm2")) %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2021', 'llpp_who_2021', 'geometry') %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
@@ -3571,14 +3463,11 @@ se_asia_fs_fig1 <- se_asia_fs_fig1_dataset %>%
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
-# save se_asia fs figure 1
-ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig1.png"), height = 10, width = 15, se_asia_fs_fig1)
-
-svglite("se_asia_fs_fig1")
-ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig1.svg"), height = 10, width = 15, dpi = 300, se_asia_fs_fig1)
+# figure 2 ----------
 
 # se_asia fs fig 2 data
-se_asia_fs_fig2_dataset <- gadm_aqli_2021 %>%
+se_asia_fs_fig2_dataset <- gadm2_aqli_2021 %>%
+  filter(country %in% se_asia_vec) %>%
   select(country, name_1, name_2, name_1_country, population, pm2021, llpp_who_2021) %>%
   group_by(name_1_country) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -3592,9 +3481,6 @@ se_asia_fs_fig2_dataset <- gadm_aqli_2021 %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
   
-# save figure 2 data
-# se_asia_fs_fig2_dataset %>% write_csv(glue("{dir}/SE Asia/output/se_asia_fs_fig2_dataset.csv"))
-
 # se_asia fs figure 2
 se_asia_fs_fig2 <- se_asia_fs_fig2_dataset %>%
   ggplot() +
@@ -3625,76 +3511,11 @@ se_asia_fs_fig2 <- se_asia_fs_fig2_dataset %>%
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
         axis.ticks = element_blank()) 
 
-# save se_asia fs figure 2
-ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig2.png"), height = 9, width = 12, se_asia_fs_fig2)
-
-svglite("se_asia_fs_fig2")
-ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig2.svg"), height = 9, width = 12, dpi = 300, se_asia_fs_fig2)
-
-# # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
-# colnames(gbd_results_se_asia)[3] <- c("llpp_who_2021")
-# 
-# se_asia_fs_fig3_dataset <- gbd_results_se_asia %>%
-#   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
-#   slice_max(llpp_who_2021, n = 10)
-# 
-# #save figure 3 data
-# se_asia_fs_fig3_dataset %>% write_csv(glue("{dir}/SE Asia/output/se_asia_fs_fig3_dataset.csv"))
-# 
-# # se_asia factsheet figure 3
-# se_asia_fs_fig3 <- se_asia_fs_fig3_dataset %>%
-#   ggplot() + 
-#   geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
-#   labs(x = "Threats to life expectancy", y = "Life years lost", fill = "Life years lost") +
-#   coord_flip() + 
-#   ggthemes::theme_tufte() +
-#   theme(legend.position = "bottom",
-#         axis.text = element_text(size = 14),
-#         axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
-#         axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
-#         plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
-#         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
-#         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
-#         legend.box.background = element_rect(color = "black"),
-#         plot.background = element_rect(color = "white"),
-#         axis.line = element_line(), 
-#         legend.text = element_text(size = 11), 
-#         legend.title = element_text(size = 14),
-#         panel.grid.major.y = element_blank()) +
-#   scale_y_continuous(breaks = seq(0, 6, 0.5)) +
-#   # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
-#   scale_fill_manual(values = c("0 - < 0.1" = "#FFFFFF", 
-#                                "0.1 - 0.5" = "#FFE6B3", 
-#                                "> 0.5 - 1" = "#FFD25D", 
-#                                "> 1 - 2" = "#FFBA00", 
-#                                "> 2 - 3" = "#FF9600", 
-#                                "> 3 - 4" = "#FF6908", 
-#                                "> 4 - 5" = "#E63D23", 
-#                                "> 5 - < 6" = "#BD251C", 
-#                                ">= 6 " = "#8C130E")) + 
-#   guides(fill = guide_legend(nrow = 1))
-# 
-# # scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-# 
-# # save se_asia fs figure 3
-# ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig3.png"), height = 9, width = 15, se_asia_fs_fig3)
-# 
-# svglite("se_asia_fs_fig3")
-# ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig3.svg"), height = 9, width = 15, se_asia_fs_fig3)
+# figure 4 (time series)
 
 # se_asia factsheet figure 4 dataset
-se_asia_fs_fig4_dataset <- gadm_aqli_2021 %>%
-  filter(name_2 != "Kalibato Lake") %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE),
-         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years",
-               values_to = "pop_weighted_avg_pm2.5") %>%
-  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
-         region = "South East Asia Average") %>%
-  select(years, region, pop_weighted_avg_pm2.5)
-
-se_asia_fs_fig4_dataset <- gadm_aqli_2021 %>%
+se_asia_fs_fig4_dataset <- gadm2_aqli_2021 %>%
+  filter(country %in% se_asia_vec) %>%
   filter(!is.na(population)) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
@@ -3704,8 +3525,6 @@ se_asia_fs_fig4_dataset <- gadm_aqli_2021 %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
          region = "South East Asia Average") %>%
   select(years, region, pop_weighted_avg_pm2.5)
-# save figure 4 data
-# se_asia_fs_fig4_dataset %>% write_csv(glue("{dir}/SE Asia/output/se_asia_fs_fig4_dataset.csv"))
 
 # se_asia factsheet figure 4
 se_asia_fs_fig4 <- se_asia_fs_fig4_dataset %>%
@@ -3734,14 +3553,11 @@ se_asia_fs_fig4 <- se_asia_fs_fig4_dataset %>%
         axis.ticks = element_blank()) +
   geom_text(x = 2000.6, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
 
-# save se_asia fs figure 4
-ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig4.png"), height = 9, width = 15, se_asia_fs_fig4)
-
-svglite("se_asia_fs_fig4")
-ggsave(glue("{dir}/SE Asia/output/se_asia_fs_fig4.svg"), height = 9, width = 15, dpi = 300, se_asia_fs_fig4)
+# appendix table ----------
 
 # se_asia factsheet appendix table 
-se_asia_fs_appendix_table <- gadm_aqli_2021 %>%
+se_asia_fs_appendix_table <- gadm2_aqli_2021 %>%
+  filter(country %in% se_asia_vec) %>%
   group_by(country) %>%
   slice_max(population, n=5) %>%
   mutate(pm2021 = round(pm2021, 1),
@@ -3759,9 +3575,10 @@ se_asia_fs_appendix_table <- gadm_aqli_2021 %>%
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
 
-# save se_asia factsheet appendix table
-se_asia_fs_appendix_table %>% write_csv(glue("{dir}/SE Asia/output/se_asia_fs_appendix_table.csv"))
+
 ```
+
+
 
 # Thailand Factsheet
 ```{r}
@@ -3783,7 +3600,7 @@ c_thai <- c("Ang Thong", "Bangkok Metropolis", "Chai Nat", "Lop Buri", "Nakhon P
 s_thai <- c("Chumphon", "Nakhon Si Thammarat", "Narathiwat", "Pattani", "Phatthalung", "Songkhla", "Surat Thani", 
             "Yala", "Krabi", "Phangnga", "Phuket", "Ranong", "Satun", "Trang")
   
-thai_aqli_2021 <- read.csv(glue("{dir}/[June302023]aqli_internal_col_names_CSVs/[june302023]gadm2_aqli_2021_internal_col_names.csv")) %>%
+thai_aqli_2021 <- gadm2_aqli_2021 %>%
   filter(country == "Thailand") %>%
   mutate(region = case_when(
     name_1 %in% ne_thai ~ "Northeastern",
@@ -3791,9 +3608,7 @@ thai_aqli_2021 <- read.csv(glue("{dir}/[June302023]aqli_internal_col_names_CSVs/
     name_1 %in% c_thai ~ "Central",
     name_1 %in% s_thai ~ "Southern"))
 
-# read and filter gbd results for thailand
-gbd_results_thailand <- read.csv(glue("{dir}/gbd_results_master.csv")) %>%
-  filter(country == "Thailand")
+# figure 1 ---------
 
 # thailand fs fig 1 data
 thailand_fs_fig1_dataset <- thai_aqli_2021 %>%
@@ -3835,11 +3650,7 @@ thailand_fs_fig1 <- thailand_fs_fig1_dataset %>%
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
-# save thailand fs figure 1
-ggsave(glue("{dir}/thailand/output/thailand_fs_fig1.png"), height = 10, width = 15, thailand_fs_fig1)
-
-svglite("thailand_fs_fig1")
-ggsave(glue("{dir}/thailand/output/thailand_fs_fig1.svg"), height = 10, width = 15, dpi = 300, thailand_fs_fig1)
+# figure 2 ---------
 
 # thailand fs fig 2 data
 thailand_fs_fig2_dataset <- thai_aqli_2021 %>%
@@ -3855,9 +3666,6 @@ thailand_fs_fig2_dataset <- thai_aqli_2021 %>%
             le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021")
-
-# save figure 2 data
-# thailand_fs_fig2_dataset %>% write_csv(glue("{dir}/thailand/output/thailand_fs_fig2_dataset.csv"))
 
 # thailand fs figure 2
 thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
@@ -3889,21 +3697,19 @@ thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
         axis.ticks = element_blank()) 
 
-# save thailand fs figure 2
-ggsave(glue("{dir}/thailand/output/thailand_fs_fig2.png"), height = 9, width = 12, thailand_fs_fig2)
+# figure 3 --------
 
-svglite("thailand_fs_fig2")
-ggsave(glue("{dir}/thailand/output/thailand_fs_fig2.svg"), height = 9, width = 12, dpi = 300, thailand_fs_fig2)
+# read and filter gbd results for thailand
+gbd_results_thailand <- gbd_results_master_2021 %>%
+  filter(country == "Thailand")
 
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
 colnames(gbd_results_thailand)[3] <- c("llpp_who_2021")
 
+# thailand fs fig 3 data
 thailand_fs_fig3_dataset <- gbd_results_thailand %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2021") %>%
   slice_max(llpp_who_2021, n = 10)
-
-# save figure 3 data
-# thailand_fs_fig3_dataset %>% write_csv(glue("{dir}/thailand/output/thailand_fs_fig3_dataset.csv"))
 
 # thailand factsheet figure 3
 thailand_fs_fig3 <- thailand_fs_fig3_dataset %>%
@@ -3938,13 +3744,7 @@ thailand_fs_fig3 <- thailand_fs_fig3_dataset %>%
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
 
-# scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
-
-# save thailand fs figure 3
-ggsave(glue("{dir}/thailand/output/thailand_fs_fig3.png"), height = 9, width = 15, thailand_fs_fig3)
-
-svglite("thailand_fs_fig3")
-ggsave(glue("{dir}/thailand/output/thailand_fs_fig3.svg"), height = 9, width = 15, dpi = 300, thailand_fs_fig3)
+# figure 4 ---------
 
 # thailand factsheet figure 4 dataset
 thailand_fs_fig4_regions <- thai_aqli_2021 %>%
@@ -3970,9 +3770,6 @@ thailand_fs_fig4_nat <- gadm_aqli_2021 %>%
 thailand_fs_fig4_dataset <- rbind(thailand_fs_fig4_regions, thailand_fs_fig4_nat)
 
 thailand_fs_fig4_dataset$region = factor(thailand_fs_fig4_dataset$region, levels = c('National Average', 'Central', 'Northeastern', 'Northern', 'Southern'))
-
-# save figure 4 data
-# thailand_fs_fig4_dataset %>% write_csv(glue("{dir}/thailand/output/thailand_fs_fig4_dataset.csv"))
 
 # thailand factsheet figure 4
 thailand_fs_fig4 <- thailand_fs_fig4_dataset %>%
@@ -4003,11 +3800,7 @@ thailand_fs_fig4 <- thailand_fs_fig4_dataset %>%
         axis.ticks = element_blank()) +
   geom_text(x = 2001.15, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5)
   
-# save thailand fs figure 4
-ggsave(glue("{dir}/thailand/output/thailand_fs_fig4.png"), height = 9, width = 15, thailand_fs_fig4)
-
-svglite("thailand_fs_fig4")
-ggsave(glue("{dir}/thailand/output/thailand_fs_fig4.svg"), height = 9, width = 15, dpi = 300, thailand_fs_fig4)
+# appendix table
 
 # thailand factsheet appendix table 
 thailand_fs_appendix_table <- thai_aqli_2021 %>%
@@ -4031,9 +3824,9 @@ thailand_fs_appendix_table <- thai_aqli_2021 %>%
          `Life Expectancy Gains from reducing PM2.5 from 2021 concentration by 30 percent` = le_gain_red_by_30_percent) 
 
 
-# save thailand factsheet appendix table
-thailand_fs_appendix_table %>% write_csv(glue("{dir}/thailand/output/thailand_fs_appendix_table.csv"))
 ```
+
+
 # US factsheet
 
 ```{r}
