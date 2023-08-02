@@ -657,8 +657,8 @@ china_fs_fig1 <- china_fs_fig1_data %>%
 # china figure1.1 dataset
 china_fs_fig2_data <- gadm2_aqli_2021 %>%
   filter(country == "China") %>%
-  mutate(lyl2021minus2014 = round((pm2021 - pm2014)*0.098, 1)) %>%
-  add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "lyl2021minus2014") %>%
+  mutate(lyl2014minus2021 = round((pm2014 - pm2021)*0.098, 1)) %>%
+  add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "lyl2014minus2021") %>%
   left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   select(-geometry, geometry) %>%
   st_as_sf()
@@ -671,14 +671,14 @@ china_fs_fig2 <- china_fs_fig2_data %>%
  geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "China"), color = "azure4", fill = "transparent", lwd = 0.15) +
    geom_sf(data = gadm0_aqli_2021_shp %>% filter(name0 == "China"), color = "cornsilk", fill = "transparent", lwd = 0.5) +
   ggthemes::theme_map() + 
- scale_fill_manual(values = c("< -2" = "#4575b4", 
-                               "-2 to (< -0.5)" = "#74add1", 
-                               "-0.5 to (< -0.1)" = "#abd9e9", 
-                               "-0.1 to (< 0)" = "#e0f3f8", 
-                               "0 to (< 0.1)" = "#fee090", 
-                               "0.1 to (< 0.5)" = "#fdae61", 
-                               "0.5 to (< 2)" = "#f46d43", 
-                               ">= 2" = "#d73027")) +
+ scale_fill_manual(values = c("< -2" = "#d73027", 
+                               "-2 to (< -0.5)" = "#f46d43", 
+                               "-0.5 to (< -0.1)" = "#fdae61", 
+                               "-0.1 to (< 0)" = "#fee090", 
+                               "0 to (< 0.1)" = "#e0f3f8", 
+                               "0.1 to (< 0.5)" = "#abd9e9", 
+                               "0.5 to (< 2)" = "#74add1", 
+                               ">= 2" = "#4575b4")) +
   ggthemes::theme_map() +
   labs(fill = "Change in potential gains in life expectancy between 2014 and 2021 (Years)", title = "") + 
  theme(legend.position = "bottom", 
@@ -4179,7 +4179,7 @@ county_shp <- inner_join(county_shp, county_data, by = c("obidgadm2"="objectid_g
 
 # us figure 2
 us_1970_2021_map_data <- county_shp %>%
-  mutate(lifeyears_saved_reverse = round((pm2021 - pm25_1970_aqli)*0.098, 2)) %>%
+  mutate(lifeyears_saved_reverse = round((pm25_1970_aqli - pm2021)*0.098, 2)) %>%
   add_aqli_color_scale_buckets("lyldiff", "lifeyears_saved_reverse") %>%
   select(-geometry, geometry)
 
@@ -4189,14 +4189,14 @@ us_1970_2021_map_data <- county_shp %>%
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "United States", name1 %notin% c("Alaska", "Hawaii")), color = "azure4", fill = "transparent", lwd = 0.5) +
   ggthemes::theme_map() +
-  scale_fill_manual(values = c("< -2" = "#4575b4",
-                               "-2 to (< -0.5)" = "#74add1",
-                               "-0.5 to (< -0.1)" = "#abd9e9",
-                               "-0.1 to (< 0)" = "#e0f3f8",
-                               "0 to (< 0.1)" = "#fee090",
-                               "0.1 to (< 0.5)" = "#fdae61",
-                               "0.5 to (< 2)" = "#f46d43",
-                               ">= 2" = "#d73027")) +
+ scale_fill_manual(values = c("< -2" = "#d73027", 
+                               "-2 to (< -0.5)" = "#f46d43", 
+                               "-0.5 to (< -0.1)" = "#fdae61", 
+                               "-0.1 to (< 0)" = "#fee090", 
+                               "0 to (< 0.1)" = "#e0f3f8", 
+                               "0.1 to (< 0.5)" = "#abd9e9", 
+                               "0.5 to (< 2)" = "#74add1", 
+                               ">= 2" = "#4575b4")) +
   ggthemes::theme_map() +
   labs(fill = "Change in life expectancy between 1970 and 2021 (Years; blue values indicate improvement)", title = "") +
   theme(legend.position = "bottom",
@@ -4243,28 +4243,28 @@ us_fs_fig3_dataset_part2 <- us_1970_calc_results_cleaned %>%
 # final data set for figure 3
 us_fs_fig3_final_data <- us_fs_fig3_dataset_part1 %>%
   left_join(us_fs_fig3_dataset_part2, by = c("country", "name_1")) %>%
-  mutate(lyg_2021_1970 = round((pm2021 - pm1970)*0.098, 1)) %>%
-  add_aqli_color_scale_buckets(scale_type = "lyldiff", "lyg_2021_1970")
+  mutate(lyg_1970_2021 = round((pm1970 - pm2021)*0.098, 1)) %>%
+  add_aqli_color_scale_buckets(scale_type = "lyldiff", "lyg_1970_2021")
 
 # figure 3
 us_fs_fig3 <- us_fs_fig3_final_data %>%
   filter(name_1 != "Georgia") %>%
    ggplot() +
-      geom_col(mapping = aes(x = forcats::fct_reorder(!!as.symbol("name_1"), !!as.symbol("lyg_2021_1970")), y = !!as.symbol("lyg_2021_1970"), fill = lyldiff_bucket)) +
-      labs(x = "State", y = "Change in potential gains in life expectancy between 1970 and 2021 (Years)", title = "", subtitle = "", caption = "", fill = "Change in potential gains in life expectancy between 1970 and 2021 (Years)") +   
+      geom_col(mapping = aes(x = forcats::fct_reorder(name_1, lyg_1970_2021), y = lyg_1970_2021, fill = fct_reorder(lyldiff_bucket, order_lyldiff_bucket))) +
+      labs(x = "State", y = "Life years gained", title = "", subtitle = "", caption = "", fill = "Life years gained") +   
+      scale_y_continuous(breaks = seq(0, 3, 0.5)) +
   themes_aqli_base + 
-   scale_fill_manual(values = c("< -2" = "#4575b4", 
-                               "-2 to (< -0.5)" = "#74add1", 
-                               "-0.5 to (< -0.1)" = "#abd9e9", 
-                               "-0.1 to (< 0)" = "#e0f3f8", 
-                               "0 to (< 0.1)" = "#fee090", 
-                               "0.1 to (< 0.5)" = "#fdae61", 
-                               "0.5 to (< 2)" = "#f46d43", 
-                               ">= 2" = "#d73027")) +
+ scale_fill_manual(values = c("< -2" = "#d73027", 
+                               "-2 to (< -0.5)" = "#f46d43", 
+                               "-0.5 to (< -0.1)" = "#fdae61", 
+                               "-0.1 to (< 0)" = "#fee090", 
+                               "0 to (< 0.1)" = "#e0f3f8", 
+                               "0.1 to (< 0.5)" = "#abd9e9", 
+                               "0.5 to (< 2)" = "#74add1", 
+                               ">= 2" = "#4575b4")) +
       coord_flip() +
   theme(legend.position = "bottom", 
-        plot.background = element_rect(fill = "white", color = "white")) +
-  scale_y_continuous(breaks = seq(-3, 0, 0.5)) 
+        plot.background = element_rect(fill = "white", color = "white")) 
   
 
 
@@ -5306,3 +5306,43 @@ gadm2_aqli_2021_se_asia %>%
 
  
 ```
+
+
+```{r}
+
+aqli_map_sentence_stats(gadm2_aqli_2021, level = "country", data_type = "lyl", year1_col = "llpp_nat_2021",
+                                    year2_col = "llpp_nat_2014", country_name = "India",
+                                    state_name = "Uttar Pradesh", district_name = "Ghaziabad")
+
+
+gadm2_aqli_2021 %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm_x_pop_weighted = pop_weights*pm1998, 
+         pm_y_pop_weighted = pop_weights*pm2021) %>%
+  summarise(avg_pm_x = round(sum(pm_x_pop_weighted, na.rm = TRUE), 2), 
+            avg_pm_y = round(sum(pm_y_pop_weighted, na.rm = TRUE), 2))
+
+
+   gadm2_aqli_2021 %>%
+       filter(country == "Zambia", name_1 == "Lusaka") %>%
+        mutate(pop_weights = population/sum(population, na.rm = TRUE),
+               col_year1_weighted = pop_weights*(pm2021),
+               col_year2_weighted = pop_weights*(pm1998)) %>%
+   summarise(avg_col_year1 = round(sum(col_year1_weighted, na.rm = TRUE), 2),
+                  avg_col_year2 = round(sum(col_year2_weighted, na.rm = TRUE), 2)) %>%
+        mutate(col_diff = avg_col_year1 - avg_col_year2) %>%
+      mutate(perc_change = round(((avg_col_year1 - avg_col_year2)/avg_col_year2)*100, 2))
+   
+   
+      gadm2_aqli_2021 %>%
+        mutate(pop_weights = population/sum(population, na.rm = TRUE),
+               col_year1_weighted = pop_weights*(llpp_who_2021),
+               col_year2_weighted = pop_weights*(llpp_who_1998)) %>%
+   summarise(avg_col_year1 = round(sum(col_year1_weighted, na.rm = TRUE), 2),
+                  avg_col_year2 = round(sum(col_year2_weighted, na.rm = TRUE), 2)) %>%
+        mutate(col_diff = avg_col_year1 - avg_col_year2) %>%
+      mutate(perc_change = round(((avg_col_year1 - avg_col_year2)/avg_col_year2)*100, 2))
+
+```
+
+

@@ -693,14 +693,14 @@ ar_fig6.3 <- ar_fig6.3_data %>%
          order_manual = ifelse(region == "YRD", 3, order_manual)) %>%
   ggplot() +
   geom_col(mapping = aes(x = fct_reorder(region, order_manual), y = change_in_le_2014_to_2021, fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket))) +
- scale_fill_manual(values = c("< -2" = "#4575b4", 
-                               "-2 to (< -0.5)" = "#74add1", 
-                               "-0.5 to (< -0.1)" = "#abd9e9", 
-                               "-0.1 to (< 0)" = "#e0f3f8", 
-                               "0 to (< 0.1)" = "#fee090", 
-                               "0.1 to (< 0.5)" = "#fdae61", 
-                               "0.5 to (< 2)" = "#f46d43", 
-                               ">= 2" = "#d73027")) +
+ scale_fill_manual(values = c("< -2" = "#d73027", 
+                               "-2 to (< -0.5)" = "#f46d43", 
+                               "-0.5 to (< -0.1)" = "#fdae61", 
+                               "-0.1 to (< 0)" = "#fee090", 
+                               "0 to (< 0.1)" = "#e0f3f8", 
+                               "0.1 to (< 0.5)" = "#abd9e9", 
+                               "0.5 to (< 2)" = "#74add1", 
+                               ">= 2" = "#4575b4")) +
   coord_flip() +
   ggthemes::theme_clean() +
     themes_aqli_base +
@@ -899,6 +899,39 @@ ar_fig7.2 <- ggplot(data = ar_fig7.2_data) +
 
 
 
+#------
+
+# chart5 dataset v2 (ViT colors and buckets): join colormap and USA county level shape file and adding a grouping column
+ar_fig7.2_data_v2 <- colormap_shp_usa %>%
+  left_join(color_data_usa, by = c("country", "name_1", "name_2")) %>%
+  mutate(pollution_category = ifelse(pm2021 >= 0 & pm2021 < 5, "0 - < 5", pm2021), 
+         pollution_category = ifelse(pm2021 >= 5 & pm2021 < 10, "5 - < 10", pollution_category), 
+         pollution_category = ifelse(pm2021 >= 10 & pm2021 < 15, "10 - < 15", pollution_category), 
+         pollution_category = ifelse(pm2021 >= 15, ">= 15", pollution_category)) %>%
+  mutate(order_pollution_category = ifelse(pollution_category == "0 - < 5", 1, 0), 
+         order_pollution_category = ifelse(pollution_category == "5 - < 10", 2, order_pollution_category), 
+         order_pollution_category = ifelse(pollution_category == "10 - < 15", 3, order_pollution_category), 
+         order_pollution_category = ifelse(pollution_category == ">= 15", 4, order_pollution_category))
+
+
+
+ar_fig7.2_v2 <- ggplot(data = ar_fig7.2_data_v2) +
+  geom_sf(mapping = aes(fill = fct_reorder(pollution_category, order_pollution_category)), color = "aliceblue") + 
+  geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "United States", name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +
+   geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "United States", name1 == "California", name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +
+  ggthemes::theme_map() +
+  labs(fill = expression("Annual Average" ~ PM[2.5] ~ " Concentration (in  µg/m³)"), title = "") +
+  scale_fill_manual(values = c("0 - < 5" = "#a1f5ff", "5 - < 10" = "#92d4eb", "10 - < 15" = "#82b5d5", ">= 15" = "#7197be")) +
+  # ggtitle(expression(paste("US 2020 PM2.5 concentrations, (in ", mu, "g","/", m^3, ")", ""))) +
+  theme(plot.background = element_rect(colour = "white", fill = "white"), 
+        legend.position = "bottom", 
+        legend.justification = "center", 
+        legend.text = element_text(size = 15),
+        legend.title = element_text(size = 16),
+        legend.box.background = element_rect(color = "black")) 
+
+
+
 # figure 7.3 (Europe)===========================================================
 
 # create a europe AQLI dataset
@@ -915,9 +948,9 @@ countries_except_excluded <- european_countries %>%
 # europe figure1 dataset
 europe_1998_2021_diff_data <- gadm2_aqli_2021_europe %>%
   filter(country %notin% exclude_countries) %>%
-   mutate(lyl2021minus1998 = round((pm2021 - pm1998)*0.098, 2)) %>%
+   mutate(lyl1998minus2021 = round((pm1998 - pm2021)*0.098, 2)) %>%
   left_join(gadm2_aqli_2021_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
-  add_aqli_color_scale_buckets("lyldiff", "lyl2021minus1998") %>%
+  add_aqli_color_scale_buckets("lyldiff", "lyl1998minus2021") %>%
   select(-geometry, geometry) %>%
   st_as_sf()
 
@@ -936,14 +969,14 @@ ar_fig7.3 <- europe_1998_2021_diff_data %>%
   filter(!(name0 == "Portugal" & name1 == "Azores")), color = "azure4", fill = "transparent", lwd = 0.1) +
  geom_sf(data = gadm0_aqli_2021_shp %>% filter(name0 %in% unlist(countries_except_excluded)), color = "cornsilk4", fill = "transparent", lwd = 0.3) +
   ggthemes::theme_map()  +
- scale_fill_manual(values = c("< -2" = "#4575b4", 
-                               "-2 to (< -0.5)" = "#74add1", 
-                               "-0.5 to (< -0.1)" = "#abd9e9", 
-                               "-0.1 to (< 0)" = "#e0f3f8", 
-                               "0 to (< 0.1)" = "#fee090", 
-                               "0.1 to (< 0.5)" = "#fdae61", 
-                               "0.5 to (< 2)" = "#f46d43", 
-                               ">= 2" = "#d73027")) +
+ scale_fill_manual(values = c("< -2" = "#d73027", 
+                               "-2 to (< -0.5)" = "#f46d43", 
+                               "-0.5 to (< -0.1)" = "#fdae61", 
+                               "-0.1 to (< 0)" = "#fee090", 
+                               "0 to (< 0.1)" = "#e0f3f8", 
+                               "0.1 to (< 0.5)" = "#abd9e9", 
+                               "0.5 to (< 2)" = "#74add1", 
+                               ">= 2" = "#4575b4")) +
   ggthemes::theme_map() +
   labs(fill = "Change in potential gains in life expectancy between 1998 and 2021 (Years)", title = "", 
        subtitle = "") + 
@@ -1455,7 +1488,117 @@ gadm2_aqli_2021_europe %>%
   gadm_level_summary(c("country"), c(2021), 10) %>%
   slice_max(pm2021, n = 10)
 
+#> AR national standards continent wise stats----------------------------
+natstan_aqli_summary <-  natstan_aqli %>%
+  filter(country != "Caspian Sea") %>%
+  left_join(gadm0_aqli_2021 %>% select(country, continent), by = "country") %>%
+  select(country, continent, aaqs_countries_unep_2021_report, natstandard_pm2.5_new_2023_report_micr_grm_cubic_meter_op1) %>%
+  mutate(have_pm2.5_standard = ifelse(natstandard_pm2.5_new_2023_report_micr_grm_cubic_meter_op1 != "No national standard", 1, 0))
+
+# continent wise summary for countries with some legislative instruments for air quality
+natstan_aqli_summary %>%
+  group_by(continent) %>%
+  summarise(perc_countries_with_leg_aaqs = round((sum(aaqs_countries_unep_2021_report)/n())*100, 1), 
+            total_countries_by_continent = n()) 
+
+natstan_aqli_summary %>%
+ mutate(continent = ifelse(country == "China", "China", continent)) %>%
+ mutate(continent = ifelse(continent == "Asia", "Asia - China", continent)) %>%
+  group_by(continent) %>%
+  summarise(perc_countries_with_pm2.5_standard = round((sum(have_pm2.5_standard)/n())*100, 1)) 
+
   
+#> Global section stats
+
+    
+#> Continent wise average pollution
+  
+gadm2_aqli_2021 %>%
+  gadm_level_summary(c("continent"), c(2021), 10) %>%
+  ungroup() %>%
+  mutate(perc_of_world_pop = round((population/sum(population, na.rm = TRUE))*100, 3)) %>%
+  select(continent, population, perc_of_world_pop, pm2021, llpp_who_2021, total_lyl_who_2021_millions) 
+  write_csv("./continent_wise_pollution_lyl_population.csv")
+    
+
+#> Continent wise average pollution (Asia - China style)
+
+gadm2_aqli_2021 %>%
+  mutate(continent = ifelse(country == "China", "China", continent)) %>%
+  mutate(continent = ifelse(continent == "Asia", "Asia - China", continent)) %>%
+  gadm_level_summary(c("continent"), c(2021), 10) %>%
+  ungroup() %>%
+  mutate(perc_of_world_pop = round((population/sum(population, na.rm = TRUE))*100, 4)) %>%
+  select(continent, population, perc_of_world_pop, pm2021, llpp_who_2021, total_lyl_who_2021_millions) 
+  write_csv("./[v1]continent_wise_pollution_lyl_population.csv")
+  
+#> Europe + US + Canada (combined)
+gadm2_aqli_2021 %>%
+  filter((country %in% european_countries$Country) | (country %in% c("United States", "Canada"))) %>%
+  mutate(country = "foo") %>%
+   gadm_level_summary(c("country"), c(2021), 10) 
+ 
+#> North America (minus US + Canada)
+gadm2_aqli_2021 %>%
+  filter(continent == "North America") %>%
+  filter(country %notin% c("United States", "Canada")) %>%
+  mutate(country = "foo") %>%
+   gadm_level_summary(c("country"), c(2021), 10)
+
+
+#> Unites States + Canada
+gadm2_aqli_2021 %>%
+  filter(country %in% c("United States", "Canada")) %>%
+  mutate(country = "foo") %>%
+   gadm_level_summary(c("country"), c(2021), 10)
+
+#> Latin America
+
+gadm2_aqli_2021 %>%
+  filter(country %in% latin_america_countries_vec) %>%
+  mutate(country = "foo") %>%
+   gadm_level_summary(c("country"), c(2021), 10)
+
+#> Europe
+
+gadm2_aqli_2021 %>%
+  filter(country %in% european_countries$Country) %>%
+  mutate(country = "foo") %>%
+  gadm_level_summary(c("country"), c(2021), 10)
+
+
+# continent wise summary for countries with some legislative instruments for air quality
+natstan_aqli_summary %>%
+  group_by(continent) %>%
+  summarise(perc_countries_with_leg_aaqs = round((sum(aaqs_countries_unep_2021_report)/n())*100, 1), 
+            total_countries_by_continent = n()) 
+
+natstan_aqli_summary %>%
+ mutate(continent = ifelse(country == "China", "China", continent)) %>%
+ mutate(continent = ifelse(continent == "Asia", "Asia - China", continent)) %>%
+  group_by(continent) %>%
+  summarise(have_pm2.5_stan_count = sum(have_pm2.5_standard), num_countries = n(), perc_countries_with_pm2.5_standard = round((sum(have_pm2.5_standard)/n())*100, 1)) 
+
+# Europe
+
+gadm0_aqli_2021 %>%
+  filter(country %in% european_countries$Country) %>%
+  filter(!is.na(natstandard))
+
+# Latin America nat standard
+gadm0_aqli_2021 %>%
+  filter(country %in% latin_america_countries_vec) 
+#  filter(!is.na(natstandard))
+  
+  
+# open AQ data
+openaq_data <- openaq_data %>%
+  mutate(fully_open_aq_data_exists = ifelse(((data_in_phys_units == "Y") & (transp_geog_scale_data_provided == "Y") 
+                                            & (data_fine_temporal_scale == "Y") & (prog_access == "Y")) == TRUE, 1, 0)) 
+openaq_data %>%
+  group_by(continent) %>%
+  summarise(num_countries_full_open_aqdata = sum(fully_open_aq_data_exists), 
+            num_countries_in_continent = n())
 
 ```
 
@@ -1468,16 +1611,42 @@ gadm2_aqli_2021_europe %>%
 
 
 # calculating population weights and replacing the "pm" columns with their population weighted counterparts
-ar_prelim_fig2 <- gadm2_aqli_2021 %>%
-  mutate(country = "foo") %>%
-  trendlines_aqli(country_name = "foo", start_year = 1998, end_year = 2021) +
-  scale_y_continuous(breaks = seq(0, 40, 5), limits = c(0, 40)) +
+# global average pollution 1998 to 2021
+ trendlines_aqli_data <- gadm2_aqli_2021 %>%
+      dplyr::filter(!is.na(population)) %>%
+      mutate(country = "foo") %>%
+      dplyr::group_by(country) %>%
+      dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE),
+             mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+      dplyr::summarise(across(ends_with("weighted"), sum)) %>%
+      tidyr::pivot_longer(cols = pm1998_weighted:pm2021_weighted , names_to = "years",
+                   values_to = "pop_weighted_avg_pm2.5") %>%
+      dplyr::mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+             region = "National Average") %>%
+      dplyr::select(years, region, pop_weighted_avg_pm2.5)
+
+
+    ar_prelim_fig3 <- trendlines_aqli_data %>%
+     ggplot2::ggplot() +
+      ggplot2::geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1,
+                color = "#7197be") +
+      ggplot2::scale_x_continuous(breaks = seq(1998, 2021, 2)) +
+      # scale_y_continuous(breaks = seq(0, max(trendlines_aqli_data$pop_weighted_avg_pm2.5), 10)) +
+      ggthemes::theme_hc() +
+      ggplot2::labs(x = "Years",
+           y = "Annual Average PM2.5 concentration (in µg/m3)") +
+      ggplot2::theme(legend.position = "bottom", legend.title = element_blank(),
+            legend.text = element_text(size = 7),
+            axis.title.y = element_text(size = 9),
+            axis.title.x = element_text(size = 9)) +
+       scale_y_continuous(breaks = seq(0, 40, 5), limits = c(0, 40)) +
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
-  labs(y = expression("Annual average " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
+  labs(y = expression("Annual Average " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
        x = "Year", 
        title = "") +
   themes_aqli_base +
-  theme(plot.background = element_rect(fill = "white", color = "white"))
+  theme(plot.background = element_rect(fill = "white", color = "white")) 
+
 
 
 #> Preliminary figure 3: 10 most populated countries in the world: population, life expectancy gains, total potential life years gained, 3 panel graph=======================================================================================================
@@ -1499,7 +1668,7 @@ ar_fig3_dataset$country <- factor(ar_fig3_dataset$country, levels = c("China", "
 # population plot of the top 10 most populous
 plt_top10_most_populous_population <- ar_fig3_dataset %>%
   ggplot() +
-  geom_col(mapping = aes(x = forcats::fct_reorder(country, pop_millions), y = pop_millions, fill = country), width = 0.7) +
+  geom_col(mapping = aes(x = forcats::fct_reorder(country, total_lyl_who_2021_millions), y = pop_millions, fill = country), width = 0.7) +
   labs(x = "Country", y = "Population (in millions)") +
   scale_y_continuous(breaks = seq(0, 1500, 200)) +
   coord_flip() +
@@ -1512,7 +1681,7 @@ plt_top10_most_populous_population <- ar_fig3_dataset %>%
 # Average Life Expectancy Gains experienced by a person in top 10 most populous countries if PM2.5 is reduced to the WHO guideline
 plt_top10_most_populous_le_gains_per_person <- ar_fig3_dataset %>%
   ggplot() +
-  geom_col(mapping = aes(x = forcats::fct_reorder(country, pop_millions), y = llpp_who_2021, fill = country), , width = 0.7) +
+  geom_col(mapping = aes(x = forcats::fct_reorder(country, total_lyl_who_2021_millions), y = llpp_who_2021, fill = country), , width = 0.7) +
   labs(x = "", y = "Average Life Expectancy Gains (Years)") +
   scale_y_continuous(breaks = seq(0, 8, 1)) +
    ggthemes::theme_tufte() +
@@ -1527,7 +1696,7 @@ plt_top10_most_populous_le_gains_per_person <- ar_fig3_dataset %>%
 
 plt_top10_most_populous_tot_person_years_gained <- ar_fig3_dataset %>%
   ggplot() +
-  geom_col(mapping = aes(x = forcats::fct_reorder(country, pop_millions), y = total_lyl_who_2021_millions, fill = country), width = 0.7) +
+  geom_col(mapping = aes(x = forcats::fct_reorder(country, total_lyl_who_2021_millions), y = total_lyl_who_2021_millions, fill = country), width = 0.7) +
   labs(x = "", y = "Total Person Years Gained (Million Years)") +
   scale_y_continuous(breaks = seq(0, 7500, 1000)) +
    ggthemes::theme_tufte() +
@@ -1625,7 +1794,8 @@ ar_prelim_fig4_v2_dataset <- gbd_results_master_2021 %>%
                                                     "Transport injuries", 
                                                     "HIV/AIDS and sexually transmitted infections", 
                                                     "Neglected tropical diseases and malaria", 
-                                                    "Nutritional deficiencies"))
+                                                    "Nutritional deficiencies", 
+                                                    "Child and maternal malnutrition"))
 colnames(ar_prelim_fig4_v2_dataset)[3] <- c("llpp_who_2021")
 
 ar_prelim_fig4_v2_dataset <- ar_prelim_fig4_v2_dataset %>%
@@ -1692,6 +1862,24 @@ ar_prelim_fig4_v2 <- ar_prelim_fig4_v2_dataset %>%
 
 #> Preliminary figure 5 (Global PM2.5 trends, 1998 to 2021: South Asia, China, Rest of the World)=============================
 
+
+# Global GBD
+trendlines_aqli_data_global <- gadm2_aqli_2021 %>%
+      dplyr::filter(!is.na(population)) %>%
+      mutate(country = "foo") %>%
+      dplyr::group_by(country) %>%
+      dplyr::mutate(pop_weights = population/sum(population, na.rm = TRUE),
+             mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+      dplyr::summarise(across(ends_with("weighted"), sum)) %>%
+      tidyr::pivot_longer(cols = pm1998_weighted:pm2021_weighted , names_to = "years",
+                   values_to = "pop_weighted_avg_pm2.5") %>%
+      dplyr::mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+             region = "National Average") %>%
+      dplyr::select(years, region, pop_weighted_avg_pm2.5) %>%
+  select(region, years, pop_weighted_avg_pm2.5) %>%
+  mutate(region = "Global")
+
+
 # South Asia definition
 south_asia_def <- c("Afghanistan", "Bangladesh", 
                     "Bhutan", "India", 
@@ -1716,16 +1904,23 @@ ar_prelim_fig5_dataset <- ar_prelim_fig5_dataset %>%
                values_to = "pop_weighted_avg_pm2.5") %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) 
 
+# add global trendlines data to the above dataset
+ar_prelim_fig5_dataset <- ar_prelim_fig5_dataset %>%
+  rbind(trendlines_aqli_data_global)
+
+ar_prelim_fig5_dataset$region <- factor(ar_prelim_fig5_dataset$region, levels = c("South Asia", "China", "Rest of the World", "Global"))
 
 # AR figure 5 plot
 ar_prelim_fig5 <- ar_prelim_fig5_dataset %>%
-  ggplot() +  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region, lwd = 0.9), lwd = 2) +
-  labs(x = "Year", y = expression("Annual average " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
+  ggplot() +  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = interaction(region), linetype = interaction(region), lwd = 0.7), lwd = 2) +
+  labs(x = "Year", y = expression("Annual Average " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
        color = "") +
   ggthemes::theme_fivethirtyeight() +
-  scale_color_manual(values = c("South Asia" = "darkorange2",
-    "China" = "chartreuse4", "Rest of the World" = "blue4"), 
-    breaks = c("South Asia", "China", "Rest of the World")) +
+  scale_color_manual(values = c("South Asia" = "darkred",
+    "China" = "orange", "Rest of the World" = "khaki", "Global" = "snow4"), 
+    breaks = c("South Asia", "China", "Rest of the World", "Global"), name = "legend") +
+  scale_linetype_manual(values = c("South Asia" = "dashed",
+    "China" = "dashed", "Rest of the World" = "dashed", "Global" = "solid"), name = "legend") +
    theme(legend.position = "bottom", legend.title = element_blank(), 
         legend.text = element_text(size = 7), 
         axis.title.y = element_text(size = 9), 
@@ -1734,7 +1929,9 @@ ar_prelim_fig5 <- ar_prelim_fig5_dataset %>%
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
   guides(guide_legend(reverse = TRUE)) +
   themes_aqli_base +
-  theme(plot.background = element_rect(fill = "white", color = "white"))
+  theme(plot.background = element_rect(fill = "white", color = "white"), 
+        legend.title = element_blank(), 
+        legend.key.width = unit(1, "cm"))
 
 
 
@@ -1825,5 +2022,8 @@ ar_prelim_fig6 <- ar_prelim_fig6_dataset %>%
 ```
 
 
+```{r}
 
+
+```
 

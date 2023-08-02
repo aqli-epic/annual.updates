@@ -253,7 +253,7 @@ latin_america_countries_vec <- c("México", "Guatemala", "Honduras",
 #> open AQ global landscape 2022 report and clean-------------
 
 # read data
-openaq_data <- read_csv("./september.2023/other.important.calculations.data/openAQDataGlobalLandscape2022.csv")
+openaq_data <- read_csv("./september.2023/other.important.calculations.data/openAQDataGlobalLandscape2022_apr2023_continent_adj.csv")
 
 # # remove top rows and some columns
 openaq_data <- openaq_data[7:nrow(openaq_data), ]
@@ -286,6 +286,8 @@ color_2016 <- color_2016 %>%
   dplyr::rename_with(~str_replace(.x, "llpp_who_", "llpp_who5_"), dplyr::contains("who")) %>%
   rename(objectid_gadm2 = objectid_color)
 
+# natstandard AQLI (last updated: June 2023) raw file
+natstan_aqli <- read_csv("./september.2023/other.important.calculations.data/country_annual_average_pm2.5_standards_asInJune2023.csv")
 
 
 #> trendlines tab graph function-----------------------------------
