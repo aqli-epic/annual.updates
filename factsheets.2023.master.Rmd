@@ -403,7 +403,7 @@ india_fs_fig4 <- ggplot(india_fs_fig4_data) +
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2021)) +
     scale_color_manual(values = c("Northern Plains of India" = "#1a1638", "National Average" =  "#3c456f", "All other regions (excluding Northern Plains of India)" = "#4e5e8b"), name = "legend") +
    scale_linetype_manual(values = c("Northern Plains of India" = "dashed", "National Average" = "solid", "All other regions (excluding Northern Plains of India)" = "dotted"), name = "legend")  +
-  ggthemes::theme_tufte() +
+  ggthemes::theme_hc() +
   labs(x = "Year", 
        y = expression("Annual Average   " ~ PM[2.5] ~ " Concentration (in µg/m³)"), 
        title = "") +
@@ -813,7 +813,7 @@ trendlines_china_region_wise_df <- color_2021_china %>%
   group_by(region) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(across(ends_with("weighted"), sum)) %>%
+  summarise(across(ends_with("weighted"), sum)) %>% 
   pivot_longer(cols = pm1998_weighted:pm2021_weighted, names_to = "years", 
                values_to = "pop_weighted_avg_pm2.5") %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
@@ -1597,6 +1597,8 @@ cwafrica_fs_fig4_data <- gadm2_aqli_2021_cw_african %>%
   select(years, region, pop_weighted_avg_pm2.5)
 
 
+# creating a
+
 
 # adding factor levels
 cwafrica_fs_fig4_data$region <- factor(cwafrica_fs_fig4_data$region, levels = c("Central African", "West African"))
@@ -2021,6 +2023,7 @@ country_wise_part1_2_combined <- country_wise_summary_pol %>%
 
 # part-3: country wise most polluted region, pollution, lyl
 country_wise_most_polluted_region_stats <- gadm2_aqli_2021_europe %>%
+  filter(!is.na(population), !is.na(pm2021)) %>%
   group_by(country) %>%
   summarise(most_polluted = name_2[which(pm2021 == max(pm2021))], 
             most_polluted_pm2021 = pm2021[which(pm2021 == max(pm2021))], 
@@ -2044,7 +2047,8 @@ appendix_table_final <- appendix_table %>%
           "Life Expectancy Gains from reducing PM2.5 from 2021 Concentrations to the WHO Guideline of 5 µg/m³ in the most polluted region" = lyl_most_polluted_pm2021)
 
 appendix_table_final %>%
-  write_csv("./[July052023]EuropeFactsheet2023_appendix_table.csv")
+  arrange(Country) %>%
+  write_csv("./[August072023]EuropeFactsheet2023_appendix_table.csv")
 
 ```
 
@@ -3757,7 +3761,7 @@ thailand_fs_fig4_regions <- thai_aqli_2021 %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
   select(years, region, pop_weighted_avg_pm2.5)
 
-thailand_fs_fig4_nat <- gadm_aqli_2021 %>%
+thailand_fs_fig4_nat <- thai_aqli_2021 %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
@@ -5097,6 +5101,7 @@ gadm2_aqli_2021_se_asia %>%
   select(country, name_1, name_2, population, pm2021, llpp_who_2021)
   
 
+
  
 ```
 
@@ -5117,10 +5122,10 @@ gadm2_aqli_2021 %>%
 
 
    gadm2_aqli_2021 %>%
-       filter(country == "Zambia", name_1 == "Lusaka") %>%
+      # filter(country == "Zambia", name_1 == "Lusaka") %>%
         mutate(pop_weights = population/sum(population, na.rm = TRUE),
-               col_year1_weighted = pop_weights*(pm2021),
-               col_year2_weighted = pop_weights*(pm1998)) %>%
+               col_year1_weighted = pop_weights*(llpp_who_2021),
+               col_year2_weighted = pop_weights*(llpp_who_2014)) %>%
    summarise(avg_col_year1 = round(sum(col_year1_weighted, na.rm = TRUE), 2),
                   avg_col_year2 = round(sum(col_year2_weighted, na.rm = TRUE), 2)) %>%
         mutate(col_diff = avg_col_year1 - avg_col_year2) %>%
@@ -5128,13 +5133,26 @@ gadm2_aqli_2021 %>%
    
    
       gadm2_aqli_2021 %>%
+        filter(country == "Venezuela") %>%
         mutate(pop_weights = population/sum(population, na.rm = TRUE),
-               col_year1_weighted = pop_weights*(llpp_who_2021),
-               col_year2_weighted = pop_weights*(llpp_who_1998)) %>%
+               col_year1_weighted = pop_weights*(pm2020),
+               col_year2_weighted = pop_weights*(pm2019)) %>%
    summarise(avg_col_year1 = round(sum(col_year1_weighted, na.rm = TRUE), 2),
                   avg_col_year2 = round(sum(col_year2_weighted, na.rm = TRUE), 2)) %>%
         mutate(col_diff = avg_col_year1 - avg_col_year2) %>%
       mutate(perc_change = round(((avg_col_year1 - avg_col_year2)/avg_col_year2)*100, 2))
+      
+
+# website calculations
+      
+gadm2_aqli_2021 %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2021_pop_weighted = pm2021*pop_weights, 
+         pm1998_pop_weighted = pm1998*pop_weights) %>%
+  summarise(avg_pm2021 = sum(pm2021_pop_weighted, na.rm = TRUE), 
+            avg_pm1998 = sum(pm1998_pop_weighted, na.rm = TRUE))
+      
+      
 
 ```
 

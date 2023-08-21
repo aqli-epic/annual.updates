@@ -130,12 +130,12 @@ ui <- fluidPage(
                column(2, selectizeInput("district5", "District", choices = NULL)),
                column(2, selectInput("dist_type5", "Distribution Type", choices = c("PM2.5 Pollution", "LYL rel to WHO standard",
                                                                                     "LYL rel to National standard"))),
-               column(2, selectInput("year5", "Year", choices = c(latest_year:first_year)))
+               column(2, sliderInput("year5", "Year", min = first_year, max = latest_year, value = 1))
 
              ),
              shiny::tags$br(),
              shiny::tags$hr(),
-             shinycssloaders::withSpinner(plotOutput("distribution_plot_5"))
+            plotOutput("distribution_plot_5")
              ),
     tabPanel("GADM Level Summary",
              shiny::tags$br(),
@@ -269,6 +269,7 @@ ui <- fluidPage(
              ),
              shiny::tags$br(),
              shinycssloaders::withSpinner(DT::dataTableOutput("table8"))
+
     ),
     tabPanel("About AQLI",
              shiny::tags$br(),
@@ -754,25 +755,30 @@ output$distribution_plot_5 <- shiny::renderPlot({
   if(input$dist_type5 == "PM2.5 Pollution"){
     filteredData5() %>%
       ggplot2::ggplot() +
-      ggplot2::geom_histogram(mapping = aes(x = !!as.symbol(pol_col_5())), color = "white", fill = "cornflowerblue") +
+      ggplot2::geom_density(mapping = aes(x = !!as.symbol(pol_col_5())), color = "white", fill = "cornflowerblue") +
       ggthemes::theme_hc() +
-      ggplot2::scale_y_log10()
+    #  ggplot2::scale_y_log10() +
+      ggplot2::scale_x_continuous(breaks = seq(0, 130, 10), limits = c(0, 130))
 
 
   } else if (input$dist_type5 == "LYL rel to WHO standard") {
     filteredData5() %>%
       ggplot2::ggplot() +
-      ggplot2::geom_histogram(mapping = aes(x = !!as.symbol(llpp_who_col_5())), color = "white", fill = "darkred") +
+      ggplot2::geom_density(mapping = aes(x = !!as.symbol(llpp_who_col_5())), color = "white", fill = "darkred") +
       ggthemes::theme_hc() +
-      ggplot2::scale_y_log10()
+     # ggplot2::scale_y_log10() +
+      ggplot2::scale_x_continuous(breaks = seq(0, 12, 1), limits = c(0, 12))
+
 
 
   } else if (input$dist_type5 == "LYL rel to National standard"){
     filteredData5() %>%
       ggplot2::ggplot() +
-      ggplot2::geom_histogram(mapping = aes(x = !!as.symbol(llpp_nat_col_5())), color = "white", fill = "darkred") +
+      ggplot2::geom_density(mapping = aes(x = !!as.symbol(llpp_nat_col_5())), color = "white", fill = "darkred") +
       ggthemes::theme_hc() +
-      ggplot2::scale_y_log10()
+     # ggplot2::scale_y_log10() +
+      ggplot2::scale_x_continuous(breaks = seq(0, 12, 1), limits = c(0, 12))
+
   }
 
 })
