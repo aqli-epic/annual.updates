@@ -1,0 +1,10 @@
+country,cause_of_death,llpp_who_2021,lyl_bucket,order_lyl_bucket
+Global,Alcohol use,0.630777079,> 0.5 - 1,3
+Global,PM2.5 relative to WHO guideline,2.3,> 2 - 3,5
+Global,Child and maternal malnutrition,1.571716367,> 1 - 2,4
+Global,HIV/AIDS and sexually transmitted infections,0.345312287,0.1 - 0.5,2
+Global,Neglected tropical diseases and malaria,0.321742108,0.1 - 0.5,2
+Global,Nutritional deficiencies,0.091084507,0 - < 0.1 years,1
+Global,Tobacco,2.219544447,> 2 - 3,5
+Global,Transport injuries,0.416987374,0.1 - 0.5,2
+Global,"Unsafe water, sanitation, and handwashing",0.591966974,> 0.5 - 1,3

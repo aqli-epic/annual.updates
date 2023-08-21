@@ -27,7 +27,7 @@ source("./appPublic/aqli.data.explorer.helper.script.R")
 
 # create a version of the figure with the same diseases as used in the same figure in last year's report
  
-ar_global_fig2.1_data <- gbd_results_master_2021 %>%
+ar_global_fig1.1_data <- gbd_results_master_2021 %>%
   filter(country == "Global", cause_of_death %in% c("PM2.5 relative to WHO guideline", "Tobacco", "Alcohol use", 
                                                     "Unsafe water, sanitation, and handwashing", 
                                                     "Transport injuries", 
@@ -35,9 +35,9 @@ ar_global_fig2.1_data <- gbd_results_master_2021 %>%
                                                     "Neglected tropical diseases and malaria", 
                                                     "Nutritional deficiencies", 
                                                     "Child and maternal malnutrition"))
-colnames(ar_global_fig2.1_data)[3] <- c("llpp_who_2021")
+colnames(ar_global_fig1.1_data)[3] <- c("llpp_who_2021")
 
-ar_global_fig2.1_data <- ar_global_fig2.1_data %>%
+ar_global_fig1.1_data <- ar_global_fig1.1_data %>%
     mutate(lyl_bucket = ifelse((llpp_who_2021 >= 0) & (llpp_who_2021 < 0.1), "0 - < 0.1 years", NA), 
          lyl_bucket = ifelse((llpp_who_2021 >= 0.1) & (llpp_who_2021 <= 0.5), "0.1 - 0.5", lyl_bucket), 
          lyl_bucket = ifelse((llpp_who_2021 > 0.5) & (llpp_who_2021 <= 1), "> 0.5 - 1", lyl_bucket), 
@@ -61,9 +61,9 @@ ar_global_fig2.1_data <- ar_global_fig2.1_data %>%
 
 
 
-# ar_fig4_v2 plot
+# ar_fig1.1 plot
 
-ar_global_fig2.1 <- ar_global_fig2.1_data %>%
+ar_global_fig1.1 <- ar_global_fig1.1_data %>%
   ggplot() + 
   geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2021), y = llpp_who_2021, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), width = 0.4, color = "black") +
   labs(x = "Threats to Life Expectancy", y = "Life years lost", fill = "Life years lost", 
