@@ -14,14 +14,16 @@ library(gridExtra)
 aqli_2022 <- read_csv("data/aqli_gadm2_2022.csv")
 
 # India data. Incomplete because of China conflict territories
+# Pakistan conflict region
 azad_kashmir_gilgit_baltistan <- aqli_2022 %>%
   filter(country == "Pakistan", name_1 %in% c("Azad Kashmir", "Gilgit Baltistan"))
 
 india_aqli <- aqli_2022 %>%
   filter(country == "India") %>%
-  bind_rows(azad_kashmir_gilgit_baltistan) %>%
+  # bind_rows(azad_kashmir_gilgit_baltistan) %>%
   select(objectid_gadm2, name_1, name_2, population, pm2022:pm1998) %>%
-  mutate(diff_ncap = pm2022-pm2017)
+  mutate(diff_ncap = pm2022-pm2017,
+         pct_decline = 100*(abs(diff_ncap)/pm2017))
 
 # NCAP data
 ncap_dist <- read_csv("data/ncap_cities_district_state_long.csv") %>%
@@ -48,15 +50,43 @@ summary <- india_aqli %>%
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum))
 
+# rate of change
+rate_of_change <- india_aqli %>%
+  group_by(name_1, name_2) %>%
+  select(pm2017:pm2022) %>%
+  pivot_longer(cols = pm2017:pm2022, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         category = ifelse(name_2 %in% non_attainmnent_cities, "Non-attainment", "Not non-attainment"),
+         full_name = paste(name_2, name_1, sep = ', '),
+         pct_change = (pop_weighted_avg_pm2.5/lag(pop_weighted_avg_pm2.5) - 1)*100) %>%
+  group_by(category) %>%
+  mutate(avg_pct_decline = mean(pct_change, na.rm = TRUE))
+
+rate_of_change %>% group_by(category) %>% distinct(avg_pct_decline)
+
+# ten districts with the greatest absolute decline by category
+india_aqli %>%
+  mutate(category = ifelse(name_2 %in% non_attainmnent_cities, "Non-attainment", "Not non-attainment"),
+         full_name = paste(name_2, name_1, sep = ', ')) %>%
+  group_by(category) %>%
+  slice_min(diff_ncap, n=10) %>% # slice min used here because pm2022-pm2017 is negative 
+  select(full_name)
+
+# ten districts with the greatest % decline by category
+india_aqli %>%
+  mutate(category = ifelse(name_2 %in% non_attainmnent_cities, "Non-attainment", "Not non-attainment"),
+         full_name = paste(name_2, name_1, sep = ', ')) %>%
+  group_by(category) %>%
+  slice_max(pct_decline, n=10) %>%
+  select(full_name, pct_change, pm2017)
+
 ######### Trends in non attainment cities #########
 # spread of ACAG data in non attainment cities
 ncap_dist_trendlines_data <- ncap_dist %>%
   group_by(state_ut, district) %>%
-  mutate(tot_pop = sum(population, na.rm = TRUE),
-         pop_weights = population/tot_pop, 
-         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm2017_weighted:pm2022_weighted, names_to = "years", 
+  select(starts_with("pm")) %>%
+  pivot_longer(cols = pm2017:pm2022, names_to = "years", 
                values_to = "pop_weighted_avg_pm2.5") %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
          full_name = paste(district, state_ut, sep = ', ')) 
@@ -139,11 +169,8 @@ cpcb_annual <- cpcb_data_wide_annual %>%
 #       renaming Aurangabad, Bihar to avoid data duplictaion in plot.
 all_dist_trendlines_data <- india_aqli %>%
   group_by(name_1, name_2) %>%
-  mutate(tot_pop = sum(population, na.rm = TRUE),
-         pop_weights = population/tot_pop, 
-         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm2017_weighted:pm2022_weighted, names_to = "years", 
+  select(pm2017:pm2022) %>%
+  pivot_longer(cols = pm2017:pm2022, names_to = "years", 
                values_to = "pop_weighted_avg_pm2.5") %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
          full_name = paste(name_2, name_1, sep = ', '),
