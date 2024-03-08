@@ -11,7 +11,7 @@ library(gridExtra)
 `%notin%` <- Negate(`%in%`)
 
 # read data
-aqli_2022 <- read_csv("data/aqli_gadm2_2022.csv")
+aqli_2022 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/aqli_gadm2_2022.csv")
 
 # India data. Incomplete because of China conflict territories
 # Pakistan conflict region
