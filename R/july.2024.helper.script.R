@@ -350,3 +350,59 @@ gadm_level_summary <- function(df, level_col_name_vec, years, perc_red_by){
     
   }
 }
+
+#> aqli bar plot function (ViT color check complete and matched with note)---------------------------------------------------------
+
+## arguments:
+
+# df: AQLI dataset in question
+# scale_type: "pollution" or "lyl"
+# x_var: col name (in quotes) to be plotted on the x-axis.
+# y_var: col name (in quotes) to be plotted on the y-axis.
+# subtitle: subtitle for the figure
+# x_label: x axis label for the figure
+# y_label: y axis label for the figure
+# legend_title: legend title
+# caption: figure caption
+
+aqli_bar <- function(df, scale_type = "pollution", x_var, y_var, title, subtitle, x_label, y_label, legend_title, caption){
+  if(scale_type == "pollution"){
+    plt <- df %>%
+      add_aqli_color_scale_buckets(scale_type = "pollution", col_name = y_var) %>%
+      ggplot() +
+      geom_col(mapping = aes(x = forcats::fct_reorder(!!as.symbol(x_var), !!as.symbol(y_var)), y = !!as.symbol(y_var), fill = forcats::fct_reorder(!!as.symbol("pol_bucket"), !!as.symbol("order_pol_bucket")))) +
+      scale_fill_manual(values = c("0 to < 5" = "#a1f5ff",
+                                   "5 to < 10" = "#92d4eb",
+                                   "10 to < 20" = "#82b5d5",
+                                   "20 to < 30" = "#7197be",
+                                   "30 to < 40" = "#5f7aa5",
+                                   "40 to < 50" = "#4e5e8b",
+                                   "50 to < 60" = "#3c456f",
+                                   "60 to < 70" = "#2b2d54",
+                                   ">= 70" = "#1a1638")) +
+      labs(x = x_label, y = y_label, title = title, subtitle = subtitle, caption = caption, fill = legend_title) +
+      themes_aqli_base +
+      coord_flip()
+    return(plt)
+    
+  } else if(scale_type == "lyl"){
+    plt <- df %>%
+      add_aqli_color_scale_buckets(scale_type = "lyl", col_name = y_var) %>%
+      ggplot() +
+      geom_col(mapping = aes(x = forcats::fct_reorder(!!as.symbol(x_var), !!as.symbol(y_var)), y = !!as.symbol(y_var), fill = forcats::fct_reorder(!!as.symbol("lyl_bucket"), !!as.symbol("order_lyl_bucket")))) +
+      scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                                   "0.1 to < 0.5" = "#ffeda0",
+                                   "0.5 to < 1" = "#fed976",
+                                   "1 to < 2" = "#feb24c",
+                                   "2 to < 3" = "#fd8d3c",
+                                   "3 to < 4" = "#fc4e2a",
+                                   "4 to < 5" = "#e31a1c",
+                                   "5 to < 6" = "#bd0026",
+                                   ">= 6" = "#800026")) +
+      labs(x = x_label, y = y_label, title = title, subtitle = subtitle, caption = caption, fill = legend_title) +
+      themes_aqli_base +
+      coord_flip()
+    return(plt)
+    
+  }
+}
