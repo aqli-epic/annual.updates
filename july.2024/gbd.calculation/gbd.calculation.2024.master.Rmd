@@ -1,0 +1,328 @@
+---
+title: "GBD Calculations 2024 Update"
+author: "Nishka"
+date: "2024-03-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# get packages, global variables and datasets
+```{r load-lib-helper-files-data-global-var}
+  
+# libraries
+library(tidytext)
+library(tidyverse)
+library(sf)
+library(usethis)
+library(devtools)
+library(data.table)
+
+# read in the helper file
+source("R/july.2024.helper.script.R")
+
+# global variables
+who_guideline <- 5
+le_constant <- 0.098
+
+```
+
+### Note: Due to GBD and WHO life table's most recent updates being in 2019, cleaned GBD 
+### and WHO life table files from 2023 update are being used here directly. If they are
+### updated, then the following commented code chunks, including paths, will have to be 
+### uncommented and run to generate the latest GBD data.
+
+# set paths
+
+```{r}
+
+# set path for where risks and causes master files are stored
+gbd_risks_causes_path <- "~/Desktop/AQLI/2024 AQLI Update/data/GBD_calc/GBD/"
+
+# # WHO raw life tables path
+# who_raw_life_tables_path <- "~/Desktop/AQLI/2024 AQLI Update/data/GBD_calc/WHO life tables/"
+
+# WHO clean life tables path
+who_cleaned_life_tables_path <- "~/Desktop/AQLI/2024 AQLI Update/data/GBD_calc/WHO life tables/"
+
+# sex ratio country wise file path
+sr_country_wise_file_path <- "~/Desktop/AQLI/2024 AQLI Update/data/GBD_calc/"
+
+# results (without country names) folder path
+results_without_country_names_folder_path <- "~/Desktop/AQLI/2024 AQLI Update/data/GBD_calc/results/"
+
+# results (with country names) folder path
+results_with_country_names_folder_path <- "~/Desktop/AQLI/2024 AQLI Update/data/"
+
+
+```
+
+# sex ratio file cleaning
+
+```{r}
+# read in sex ration country wise file
+sr_country_wise <- read_csv(str_c(sr_country_wise_file_path, "sr_country_wise.csv"), skip = 4)
+
+#' keep only the country column and the latest year's (which has data in it, have 
+#' a look at the dataset for this and then set below, can also automate this but 
+#' as of now not automated) sex ration column
+sr_country_wise_cleaned <- sr_country_wise %>%
+  select(`Country Name`, `2021`) %>%
+  rename(region = `Country Name`, 
+         sr = `2021`)
+
+# places where sex ratio is not available, assume it to be 1
+sr_country_wise_cleaned[is.na(sr_country_wise_cleaned$sr), ]$sr <- 1
+
+```
+
+# GBD master files cleaning
+
+```{r}
+# 
+# # risks and causes master files specific paths
+# gbd_risks_master_path <- str_c(gbd_risks_causes_path, "gbdrates_master_risks_raw.csv")
+# gbd_causes_master_path <- str_c(gbd_risks_causes_path, "gbdrates_master_causes_raw.csv")
+# 
+# # read in master risks and causes files
+# gbd_risks_master <- read_csv(gbd_risks_master_path)
+# gbd_causes_master <- read_csv(gbd_causes_master_path)
+# 
+# # clean causes master file and write as csv
+# gbd_causes_master_region_cleaned <- gbd_causes_master %>%
+#   mutate(age = str_remove(age, " years"), 
+#          age = str_replace(age, "\\+", " plus"), 
+#          age = str_replace(age, "-", " to "))  
+# 
+# gbd_causes_master_region_cleaned %>%
+# write_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_master_causes_cleaned.csv")
+# 
+# # clean risks master file and write as csv
+# gbd_risks_master_region_cleaned <- gbd_risks_master %>%
+#   mutate(age = str_remove(age, "years"), 
+#          age = str_replace(age, "\\+", " plus"), 
+#          age = str_replace(age, "-", " to ")) 
+# 
+# gbd_risks_master_region_cleaned %>%
+#  write_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_master_risks_cleaned.csv")
+# 
+```
+
+# Creating region wise causes and risks file from master files and writing it to the GBD folder
+
+```{r}
+# 
+# # split the master risks dataset by location
+# gbd_risks_master_region_cleaned_region_wise <- gbd_risks_master_region_cleaned %>%
+#   group_split(location)
+# 
+# # write location wise CSVs
+# for (i in 1 : length(gbd_risks_master_region_cleaned_region_wise)){
+#   risks_data_tmp <- gbd_risks_master_region_cleaned_region_wise[[i]]
+#   location_tmp <- risks_data_tmp$location[i]
+#   risks_data_tmp %>%
+#     write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "risks.csv"))
+# }
+# 
+# # split the master causes dataset by loaction
+# gbd_causes_master_region_cleaned_region_wise <- gbd_causes_master_region_cleaned %>%
+#   group_split(location)
+# 
+# 
+# # write location wise CSVs
+# for (i in 1 : length(gbd_causes_master_region_cleaned_region_wise)){
+#   causes_data_tmp <- gbd_causes_master_region_cleaned_region_wise[[i]]
+#   location_tmp <- causes_data_tmp$location[i]
+#   causes_data_tmp %>%
+#     write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "causes.csv"))
+# }
+# 
+# 
+```
+
+# Writing the cleaned version of the WHO raw life tables
+
+```{r}
+# # read in WHO raw life tables 1 by 1 in a loop, clean and write the cleaned versions
+# 
+# who_life_tables_list <- list.files(who_raw_life_tables_path)
+# 
+# for (i in 1:length(who_life_tables_list)){
+#   
+#   who_raw_life_table_tmp <- read_csv(str_c(who_raw_life_tables_path, who_life_tables_list[i]))
+# 
+#   location_tmp <- str_remove(who_life_tables_list[i], "_raw.csv")
+#   
+#   who_raw_life_table_tmp <- who_raw_life_table_tmp[, 1:5]
+#   
+#   colnames(who_raw_life_table_tmp) <- who_raw_life_table_tmp[1, ]
+#   
+#   who_raw_life_table_tmp <- who_raw_life_table_tmp[2:nrow(who_raw_life_table_tmp), c(1, 2, 4, 5)]
+#   
+#   colnames(who_raw_life_table_tmp) <- c("indicator", "agegroup", "male", "female")
+#   
+#   cleaned_life_table_tmp <- who_raw_life_table_tmp  %>%
+#   mutate(lt_var = str_extract(indicator, ".+ (\\-)"), 
+#          lt_var = str_remove(lt_var, " -"),
+#     agegroup = str_replace(agegroup, "&lt;", "<"))
+#     
+# 
+#   cleaned_life_table_tmp %>%
+#     write_csv(str_c(who_cleaned_life_tables_path, location_tmp, ".csv"))
+#   
+#   print(str_c("Iteration # ", i, "/", length(who_life_tables_list), " complete"))
+# 
+# }
+# 
+```
+
+
+### Reading in the country names of WHO life tables (after their country names have 
+### been matched with the names of the GBD risks and causes files) and creating a 
+### tibble that contains country wise sex ratio, which will then be read by the STATA 
+### lifetable_analysis script to produce all country wise results in a loop.
+
+```{r}
+
+# Sanity check----------------------
+
+#' test if the first n (figure out n) characters uniquely identify a cause of death 
+#' (this is needed  because the STATA script creates variable names by selecting a 
+#' couple characters of the causes of death. If enough characters are not used in 
+#' assigning this, than multiple diseases will have the same variable names and 
+#' there is a risk of them getting assigned the same life years lost. For example: 
+#' If only first 5 characters are used for creating a variable name than "Child 
+#' and Maternal Malnutrition" and "Childhood abuse", both will have the abbreviation 
+#' "Child" and hence that's not right. Therefore, the 'n' selected should be long 
+#' enough that it uniquely identifies the variable, but also not too long to break 
+#' the STATA variable name length limit). I am reading in India results file, 
+#' assuming that it would mostly have all causes of deaths.
+
+#' read in a gbd causes dataset (India/Somalia read in here, assuming that it has 
+#' the most cod, can do it a different way directly listing cod and risks in a column 
+#' from GBD)
+causes_names_test <- read_csv(str_c(gbd_risks_causes_path, "gbdrates_Somalia_causes.csv")) 
+causes_names_test <- causes_names_test %>%
+  select(cause) %>%
+  rename(cod = cause)
+
+
+#' read in a gbd risks dataset (India read in here, assuming that it has the most cod, 
+#' can do it a different way directly listing cod and risks in a column from GBD) and 
+#' rename risks to causes
+risks_names_test <-  read_csv(str_c(gbd_risks_causes_path, "gbdrates_Somalia_risks.csv")) 
+risks_names_test <-  risks_names_test %>%
+  rename(cod = rei) %>%
+  select(cod)
+
+# append all risks and causes together in a single column and keep only unique causes
+test_dataset <- rbind(causes_names_test, risks_names_test)
+test_dataset <- test_dataset %>%
+  count(cod) %>%
+  select(cod)
+
+# select first n (in this case I think 12 is enough to uniquely identify cod)
+foo <- test_dataset %>%
+  mutate(unique_var_name = str_sub(cod, 1,  12))
+
+# check if its actually unique
+foo1 <- count(foo, unique_var_name)
+
+foo1 %>%
+  filter(n > 1)
+
+#-------------------------------------
+
+# list all file names in the WHO life tables directory and create a tibble out of it
+who_life_tables_file_names <- list.files(who_cleaned_life_tables_path)
+
+who_life_tables_file_names_tibble <- who_life_tables_file_names %>%
+  as_tibble() %>%
+  rename(country_file_name = value)
+
+# remove the _raw files
+who_life_tables_file_names_tibble_non_raw <- who_life_tables_file_names_tibble %>%
+  filter(!(str_detect(country_file_name, "raw"))) %>%
+  mutate(region = str_remove(country_file_name, ".csv")) %>%
+  select(region)
+
+# join the country wise cleaned tibble with country wise sex ratio
+country_wise_sr_who_life_table_country_names_join <- who_life_tables_file_names_tibble_non_raw %>% 
+  left_join(sr_country_wise_cleaned, by = "region")
+
+country_wise_sr_who_life_table_country_names_join %>%
+  write_csv(str_c(sr_country_wise_file_path, "sr_country_wise_cleaned.csv"))
+
+#' For those countries for which we did not get a sex ratio, assign it manually 
+#' (and for those countries that do not have a sex ratio available, assign sex 
+#' ratio to be 1)
+
+```
+
+# Run lifetable_analysis.do before resuming the code from here
+
+```{r}
+
+#' read in the processed results, fill in the country names in a new column called 
+#' country, row bind all datasets to create a master GBD dataset. Keep only the 
+#' country, cause of death and aggregate life years lost columns and the replace 
+#' "Ambient particulate matter pollution" with "PM2.5 relative to WHO guideline" 
+#' and add in the AQLI country level annual average PM2.5 there.
+
+results_file_names <- list.files(results_without_country_names_folder_path)
+
+# creating an empty list that will contain all processed datasets
+results_with_file_names_list <- list()
+
+# country level AQLI summary
+country_level_aqli <- gadm_level_summary(gadm2_aqli_2021, "country", c(2021), 10)
+
+# clean each country's processed results (add a country and AQLI lyl column) 
+for(i in 1:length(results_file_names)){
+  tmp_file <- readxl::read_excel(str_c(results_without_country_names_folder_path, results_file_names[i]))
+  tmp_country <- str_remove(results_file_names[i], "estimated_life_expectancy_differences_")
+  tmp_country <- str_remove(tmp_country, ".xlsx")
+  tmp_file <- tmp_file %>%
+    select(`Cause of death`, `Estimated life expectancy difference vs. actual: aggregate`) %>%
+    rename(cause_of_death = `Cause of death`, lyl = `Estimated life expectancy difference vs. actual: aggregate`) %>%
+    mutate(country = tmp_country) %>%
+    select(country, cause_of_death, lyl) 
+  
+ tmp_country_level_aqli <- country_level_aqli %>%
+    filter(country == tmp_country) 
+ 
+ # if the exact country name is NA, fill in NA in AQLI lyl number (and then will later fill this in manually: should improve this)
+ if(nrow(tmp_country_level_aqli) == 0){
+   tmp_file <- tmp_file %>%
+     mutate(cause_of_death = ifelse(cause_of_death == "Ambient particulate matter pollution", "PM2.5 relative to WHO guideline", cause_of_death),
+       lyl = ifelse(cause_of_death == "PM2.5 relative to WHO guideline", NA, lyl))
+ } else if (nrow(tmp_country_level_aqli) > 0) {
+   tmp_aqli_lyl_num <- tmp_country_level_aqli %>%
+     select(llpp_who_2021) %>%
+     unlist()
+   
+    tmp_file <- tmp_file %>%
+     mutate(cause_of_death = ifelse(cause_of_death == "Ambient particulate matter pollution", "PM2.5 relative to WHO guideline", cause_of_death),
+       lyl = ifelse(cause_of_death == "PM2.5 relative to WHO guideline", tmp_aqli_lyl_num, lyl))
+ }
+ 
+ # store the final prepped data for a given country into the list
+ results_with_file_names_list[[i]] <- tmp_file
+
+  print(str_c("Iteration # ", i, "/", length(results_file_names), " completed"))
+}
+
+# create a data frame out of the list
+final_master_results <- rbindlist(results_with_file_names_list)
+
+# coerce it to a tibble format
+final_master_results <- as_tibble(final_master_results)
+
+# check how many lyl have an NA (will be filled in manually: should come up with a better alternate solution)
+final_master_results %>% filter(cause_of_death == "PM2.5 relative to WHO guideline") %>% select(country, lyl) %>% filter(is.na(lyl)) %>% View()
+
+final_master_results %>%
+    write_csv(str_c(results_with_country_names_folder_path, "gbd_results_master", ".csv"))
+
+```
