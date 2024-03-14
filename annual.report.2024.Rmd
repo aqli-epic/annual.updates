@@ -1,0 +1,338 @@
+---
+title: "Annual Report 2024"
+author: "Nishka, Hrishikesh"
+date: "2024-03-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# get packages, global variables and datasets
+```{r load-lib-helper-files-data-global-var}
+
+# read in the helper file
+source("R/july.2024.helper.script.R")
+
+```
+
+# AR Section 1: Global
+```{r}
+
+# Global section figure 1.1: GBD ============
+# create a version of the figure with the same diseases as used in the same figure in last year's report
+ar_global_fig1.1_data <- gbd_results_master_2022 %>%
+  filter(country == "Global", cause_of_death %in% c("PM2.5 relative to WHO guideline", "Tobacco", "Alcohol use", 
+                                                    "Unsafe water, sanitation, and handwashing", 
+                                                    "Transport injuries", 
+                                                    "HIV/AIDS and sexually transmitted infections", 
+                                                    "Neglected tropical diseases and malaria", 
+                                                    "Nutritional deficiencies", 
+                                                    "Child and maternal malnutrition"))
+colnames(ar_global_fig1.1_data)[3] <- c("llpp_who_2022")
+
+ar_global_fig1.1_data <- ar_global_fig1.1_data %>%
+    mutate(lyl_bucket = ifelse((llpp_who_2022 >= 0) & (llpp_who_2022 < 0.1), "0 - < 0.1 years", NA), 
+         lyl_bucket = ifelse((llpp_who_2022 >= 0.1) & (llpp_who_2022 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2022 > 0.5) & (llpp_who_2022 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2022 > 1) & (llpp_who_2022 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2022 > 2) & (llpp_who_2022 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2022 > 3) & (llpp_who_2022 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2022 > 4) & (llpp_who_2022 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2022 > 5) & (llpp_who_2022 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2022 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1 years", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - 6", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket))
+
+# ar_fig1.1 plot
+ar_global_fig1.1 <- ar_global_fig1.1_data %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2022), 
+                         y = llpp_who_2022, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), 
+           width = 0.4, color = "black") +
+  labs(x = "Threats to Life Expectancy", y = "Life years lost", fill = "Life years lost", 
+       title = "") +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  themes_aqli_base +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(fill = "white", color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 11), 
+        legend.title = element_text(size = 14),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 7, 1)) +
+  scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) + 
+  guides(fill = guide_legend(nrow = 1)) 
+
+
+# Global section figure 1.2 ============
+trendlines_aqli_data_global <- gadm2_aqli_2022 %>%
+  filter(!is.na(population)) %>%
+  mutate(country = "foo") %>%
+  group_by(country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted , names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5) %>%
+  select(region, years, pop_weighted_avg_pm2.5) %>%
+  mutate(region = "Global")
+
+# create an identifer for South Asia  
+ar_global_fig1.2_data <- gadm2_aqli_2022 %>%
+  filter(!is.na(population)) %>%
+  mutate(region = ifelse(country %in% south_asia_def, "South Asia", country), 
+         region = ifelse(region %in% "China", "China", region), 
+         region = ifelse(region %in% c("China", "South Asia"), region, "Rest of the World"))
+
+# convert data from wode to long
+ar_global_fig1.2_data <- ar_global_fig1.2_data %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) 
+
+# add global trendlines data to the above dataset
+ar_global_fig1.2_data <- ar_global_fig1.2_data %>%
+  rbind(trendlines_aqli_data_global)
+
+ar_global_fig1.2_data$region <- factor(ar_global_fig1.2_data$region, levels = c("South Asia", "China", "Rest of the World", "Global"))
+
+# AR figure 5 plot
+ar_global_fig1.2 <- ar_global_fig1.2_data %>%
+  ggplot() +  
+  geom_line(mapping = aes(x = years, y = pop_weighted_avg_pm2.5, color = interaction(region), 
+                          linetype = interaction(region), lwd = 0.7), lwd = 2) +
+  labs(x = "Year", y = expression("Annual Average " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
+       color = "") +
+  ggthemes::theme_fivethirtyeight() +
+  scale_color_manual(values = c("South Asia" = "darkred", 
+                                "China" = "orange", 
+                                "Rest of the World" = "khaki", 
+                                "Global" = "snow4"), 
+                     breaks = c("South Asia", 
+                                "China", 
+                                "Rest of the World", 
+                                "Global"), 
+                     name = "legend") +
+  scale_linetype_manual(values = c("South Asia" = "dashed", 
+                                   "China" = "dashed", 
+                                   "Rest of the World" = "dashed", 
+                                   "Global" = "solid"), 
+                        name = "legend") +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+  scale_y_continuous(breaks = seq(0, 60, 10), limits = c(0, 60)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022)) +
+  guides(guide_legend(reverse = TRUE)) +
+  themes_aqli_base +
+  theme(plot.background = element_rect(fill = "white", color = "white"), 
+        legend.title = element_blank(), 
+        legend.key.width = unit(1, "cm"))
+
+
+# Global section figure 1.3 ============
+#' 10 most populated countries in the world: population, life expectancy gains, 
+#' total potential life years gained, 3 panel graph
+ar_fig1.3_dataset <- gadm2_aqli_2022 %>%
+  gadm_level_summary(c("country"), c(2022), 10) %>%
+  slice_max(population, n = 10) %>%
+  mutate(pop_millions = round(population/1000000, 1), 
+         total_person_years_gained_billions = (llpp_who_2022*population)/1000000000)
+
+ar_fig1.3_dataset$country <- factor(ar_fig1.3_dataset$country, levels = c("China", "India", "United States", "Indonesia", 
+                                                              "Pakistan", "Nigeria", "Brazil", 
+                                                              "Bangladesh", "Russia", 
+                                                              "México"))
+
+
+# population plot of the top 10 most populous
+plt_top10_most_populous_population <- ar_fig1.3_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(country, total_lyl_who_2022_millions), 
+                         y = pop_millions, fill = country), 
+           width = 0.7) +
+  labs(x = "Country", y = "Population (in millions)") +
+  scale_y_continuous(breaks = seq(0, 1500, 200)) +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  themes_aqli_base +
+  scale_fill_viridis_d(option = "inferno") +
+  theme(legend.position = "none", 
+        plot.background = element_rect(fill = "white", color = "white"))
+
+# Average Life Expectancy Gains experienced by a person in top 10 most populous countries if PM2.5 is reduced to the WHO guideline
+plt_top10_most_populous_le_gains_per_person <- ar_fig1.3_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(country, total_lyl_who_2022_millions), 
+                         y = llpp_who_2022, fill = country), 
+           width = 0.7) +
+  labs(x = "", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 8, 1)) +
+  ggthemes::theme_tufte() +
+  themes_aqli_base +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+  coord_flip() +
+  scale_fill_viridis_d(option = "inferno") + 
+  theme(legend.position = "none", 
+        plot.background = element_rect(fill = "white", color = "white"))
+
+# Total person years gained on the country level for the top 10 most populous regions in the world (if PM2.5 is reduced to the WHO guideline)
+
+plt_top10_most_populous_tot_person_years_gained <- ar_fig1.3_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(country, total_lyl_who_2022_millions), 
+                         y = total_person_years_gained_billions, fill = country), 
+           width = 0.7) +
+  labs(x = "", y = "Total Person Years Gained (Billion Years)") +
+  scale_y_continuous(breaks = seq(0, 8, 1)) +
+  ggthemes::theme_tufte() +
+  themes_aqli_base +
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+  coord_flip() +
+  scale_fill_viridis_d(option = "inferno") + 
+  theme(legend.position = "none", 
+        plot.background = element_rect(fill = "white", color = "white"))
+
+# Combine all 3 graphs in a panel
+ar_prelim_fig1.3 <- gridExtra::grid.arrange(plt_top10_most_populous_population , 
+                                            plt_top10_most_populous_le_gains_per_person, 
+                                            plt_top10_most_populous_tot_person_years_gained, 
+                                            nrow = 1)
+
+```
+
+# AR Section 2: South Asia 
+```{r}
+
+# South Asia figure 2.1 ============
+
+# south asia figure 2.1 dataset
+ar_south_asia_fs_fig2.1_data <- gadm2_aqli_2022 %>%
+  filter(country %in% south_asia_def) %>%
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# south asia fig 2.1
+ar_south_asia_fig2.1 <- ar_south_asia_fs_fig2.1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 %in% south_asia_def), color = "azure4", fill = "transparent", lwd = 0.1) +
+  geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 %in% south_asia_def), color = "cornsilk4", fill = "transparent", lwd = 0.3) +
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)  ", title = "", 
+       subtitle = "") + 
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        # legend.key = element_rect(color = "black"),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 12), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal", 
+        plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1))
+
+
+# South Asia figure 2.2 ============
+# GBD results filtered for relevant cause of death and countries 
+gbd_results_sa_fig2.2 <- gbd_results_master_2022 %>%
+  filter(cause_of_death %in% c("PM2.5 relative to WHO guideline",
+                               "Cardiovascular diseases", "Child and maternal malnutrition", 
+                               "Tobacco", "High systolic blood pressure"), country %in% c("Bangladesh", "Nepal", "India", "Pakistan"))
+
+# making the 'location' column of type factor
+gbd_results_sa_fig2.2$country <- factor(gbd_results_sa_fig2.2$country, 
+                                        levels = c("Bangladesh", "Nepal", "India", "Pakistan"))
+
+
+# Converting 'cause_of_death' to type factor
+gbd_results_sa_fig2.2$cause_of_death <- as.factor(gbd_results_sa_fig2.2$cause_of_death)
+
+# Rearranging 'cause of death' levels
+levels(gbd_results_sa_fig2.2$cause_of_death) <- c("Cardiovascular diseases", "Child and maternal malnutrition", "High systolic blood pressure", "PM2.5 relative to WHO guideline", "Tobacco")
+
+# wrapping x-axis labels text 
+levels(gbd_results_sa_fig2.2$cause_of_death) <- str_wrap(levels(gbd_results_sa_fig2.2$cause_of_death), 30)
+
+# getting country wise population
+country_wise_population <- gadm2_aqli_2022 %>%
+  filter(country %in% south_asia_def) %>%
+  gadm_level_summary(c("country"), c(2022), 10) %>%
+  filter(country %in% c("Bangladesh", "India", "Nepal", "Pakistan")) %>%
+  arrange(desc(population))
+
+# reorder within each location as per the total life years lost column
+gbd_results_sa_fig2.2 <- gbd_results_sa_fig2.2 %>% 
+  mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
+
+# clean the "cause of death" column and save the cwafrica factsheet figure 2
+gbd_results_sa_fig2.2 <- gbd_results_sa_fig2.2 %>%
+  mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
+
+# plot 
+ar_south_asia_fig2.2 <- gbd_results_sa_fig2.2 %>%
+  ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) + 
+  geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
+  scale_x_reordered() +
+  facet_wrap(~factor(country, levels = c("Bangladesh", "Nepal", "India", 
+                  "Pakistan")), scales = "free_x", ncol = 4) +
+  scale_fill_manual(values = c("#D3D9E0", "#7BC1D9", "#808A94", "#8F3931",
+                               "darkkhaki")) +
+  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "", 
+       subtitle = "", fill = "Threats to Life Expectancy") +
+  themes_aqli_base +
+  theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(), 
+         strip.text = element_text(size = 14), 
+         plot.background = element_rect(fill = "white", color = "white")) 
+
+```
