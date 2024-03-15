@@ -8,14 +8,8 @@
 # email: nishkasharma@uchicago.edu
 
 # libraries
-library(readr)
-library(dplyr)
-library(stringr)
-library(magrittr)
-library(ggplot2)
-library(readr)
 library(tidytext)
-library(tidyr)
+library(readxl)
 library(tidyverse)
 library(sf)
 library(usethis)
@@ -32,25 +26,32 @@ who_guideline <- 5
 `%notin%` <- Negate(`%in%`)
 who_guideline <- 5
 
+# set working directory here
+setwd("~/Desktop/AQLI/2024 AQLI Update")
+
 # read in latest PM2.5 data file
-gadm2_aqli_2022 <- readr::read_csv("~/Desktop/AQLI/2024 AQLI Update/data/aqli_gadm2_2022.csv")
-gadm1_aqli_2022 <- readr::read_csv("~/Desktop/AQLI/2024 AQLI Update/data/aqli_gadm1_2022.csv")
-gadm0_aqli_2022 <- readr::read_csv("~/Desktop/AQLI/2024 AQLI Update/data/aqli_gadm0_2022.csv")
+gadm2_aqli_2022 <- read_csv("data/aqli_gadm2_2022.csv")
+gadm1_aqli_2022 <- read_csv("data/aqli_gadm1_2022.csv")
+gadm0_aqli_2022 <- read_csv("data/aqli_gadm0_2022.csv")
 
 # read in the shapefile
-gadm2_aqli_2022_shp <- sf::st_read("~/Desktop/AQLI/shapefiles/gadm2/aqli_gadm2_final_june2023.shp")
-gadm1_aqli_2022_shp <- sf::st_read("~/Desktop/AQLI/shapefiles/gadm1/aqli_gadm1_final_june2023.shp")
-gadm0_aqli_2022_shp <- sf::st_read("~/Desktop/AQLI/shapefiles/gadm0/aqli_gadm0_final_june2023.shp")
+gadm2_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm2/aqli_gadm2_final_june2023.shp")
+gadm1_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm1/aqli_gadm1_final_june2023.shp")
+gadm0_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm0/aqli_gadm0_final_june2023.shp")
 
 # india state
 india_state <- st_read("~/Desktop/AQLI/shapefiles/india_state/india_state.shp")
 
-#> join each one of these with the country continent file, so that each one of these has a continent column
+# read archive data
+color_2021 <- read_csv("archive/color_2021.csv")
+color_2020 <- read_csv("archive/color_2020.csv")
+color_2019 <- read_csv("archive/color_2019.csv")
+color_2016 <- read_csv("archive/color_2016.csv")
 
 # read in the country continent file
-country_continent <- readr::read_csv("~/Desktop/AQLI/2024 AQLI Update/data/country_continent.csv")
+country_continent <- read_csv("data/country_continent.csv")
 
-# join each of the above 3 datasets with the country_continent file using the continent column
+# join gadm2 dataset with the country_continent file using the continent column
 gadm2_aqli_2022 <- gadm2_aqli_2022 %>%
   left_join(country_continent, by = "country")
 
@@ -66,10 +67,10 @@ first_year <- 1998
 #> gbd results-----------
 
 # gbd results master
-gbd_results_master_2022 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/gbd_results_master.csv")
+gbd_results_master_2022 <- read_csv("data/gbd_results_master.csv")
 
 # US 1970 calculation master cleaned file read
-us_1970_calc_results_cleaned <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/county_pm25_foraqli_stats_cleaned.csv")
+us_1970_calc_results_cleaned <- read_csv("data/county_pm25_foraqli_stats_cleaned.csv")
 
 # other region wise defintions
 # Central Africa definition
@@ -99,7 +100,7 @@ indo_gangetic_plains_states <- c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Hary
 
 
 # European countries
-european_countries <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/europe_countries.csv")
+european_countries <- read_csv("data/europe_countries.csv")
 
 # Western European countries
 western_european_countries <- c("Germany", "Switzerland", "Italy", "Monaco", 
@@ -262,7 +263,7 @@ gadm_level_summary <- function(df, level_col_name_vec, years, perc_red_by){
   total_lyl_nat_columns <- stringr::str_c("total_lyl_nat_", years, "_millions")
   total_lyl_pol_red_to_columns <- stringr::str_c("total_lyl_pol_red_", years, "_millions")
   
-  # when level  just equal to continent, deal separately, as in this case natstandard column should not be included
+  # when level just equal to continent, deal separately, as in this case natstandard column should not be included
   if((level_col_name_vec[1] == "continent") & (length(level_col_name_vec) == 1)){
     aqli_wide <- df %>%
       dplyr::group_by_at(level_col_name_vec) %>%
