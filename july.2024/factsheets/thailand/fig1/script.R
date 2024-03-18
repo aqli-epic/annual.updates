@@ -27,57 +27,44 @@ thai_aqli_2022 <- gadm2_aqli_2022 %>%
     name_1 %in% c_thai ~ "Central",
     name_1 %in% s_thai ~ "Southern"))
 
-# thailand factsheet figure 4 dataset
-thailand_fs_fig4_regions <- thai_aqli_2022 %>%
-  group_by(region) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE),
-         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
-               values_to = "pop_weighted_avg_pm2.5") %>%
-  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
-  select(years, region, pop_weighted_avg_pm2.5)
+# thailand fs fig 1 data
+thailand_fs_fig1_dataset <- thai_aqli_2022 %>%
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
 
-thailand_fs_fig4_nat <- gadm2_aqli_2022 %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE),
-         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
-               values_to = "pop_weighted_avg_pm2.5") %>%
-  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
-         region = "National Average") %>%
-  select(years, region, pop_weighted_avg_pm2.5)
-
-thailand_fs_fig4_dataset <- rbind(thailand_fs_fig4_regions, thailand_fs_fig4_nat)
-
-thailand_fs_fig4_dataset$region = factor(thailand_fs_fig4_dataset$region, levels = c('National Average', 'Central', 'Northeastern', 'Northern', 'Southern'))
-
-# thailand factsheet figure 4
-thailand_fs_fig4 <- thailand_fs_fig4_dataset %>%
+# thailand fs figure 1
+thailand_fs_fig1 <- thailand_fs_fig1_dataset %>%
   ggplot() +
-  geom_line(mapping = aes(x = as.integer(years),
-                          y = as.double(pop_weighted_avg_pm2.5),
-                          colour = region, linetype = region), lwd = 1.1) +
-  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
-  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 35)) +
-  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022))  +
-  scale_color_manual(values = c("National Average" = "#7197be", "Northeastern" = "#7197be", "Northern" = "#5f7aa5", "Central" = "#7197be", "Southern" = "#CBE8F3")) +
-  scale_linetype_manual(values = c("National Average" = "solid", "Northeastern" = "dashed", "Northern" = "dashed", "Central" = "dashed", "Southern" = "dashed")) +
-  ggthemes::theme_tufte() +
-  labs(x = "Year",
-       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "Thailand"), color = "azure4", fill = "transparent", lwd = 0.15) +
+  geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "Thailand"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 11),
-        legend.title = element_blank(),
-        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")),
-        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
-        axis.line = element_line(),
-        legend.box.background = element_rect(color = "black"),
-        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
-        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
-        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
-        axis.text = element_text(size = 12),
-        plot.background = element_rect(color = "white"),
-        axis.ticks = element_blank()) +
-  geom_text(x = 2001.15, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2022): 5 µg/m³"), size = 5)
-ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig4.png", thailand_fs_fig4, width = 15, height = 10)
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15),
+        plot.title = element_text(hjust = 0.5, size = 15),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(0, "cm"),
+        legend.direction = "horizontal",
+        plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1))
+ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig1.png", thailand_fs_fig1, width = 15, height = 10)
