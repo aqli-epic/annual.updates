@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # se_asia fs fig 2 data
 se_asia_fs_fig2_dataset <- gadm2_aqli_2022 %>%
@@ -46,4 +46,3 @@ se_asia_fs_fig2 <- se_asia_fs_fig2_dataset %>%
         axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")),
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")),
         axis.ticks = element_blank())
-ggsave("C:/Users/Aarsh/Downloads/se_asia_fs_fig2.png", se_asia_fs_fig2, width = 15, height = 10)

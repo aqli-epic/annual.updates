@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # indonesia factsheet figure 4 dataset
 indonesia_fs_fig4_dataset <- gadm2_aqli_2022 %>%
@@ -41,4 +41,3 @@ indonesia_fs_fig4 <- indonesia_fs_fig4_dataset %>%
         axis.ticks = element_blank()) +
   geom_text(x = 2001, y = 5.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2022): 5 µg/m³"), size = 5) +
   geom_text(x = 2006.6, y = 15.6, label = expression("Indonesia National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5)
-ggsave("C:/Users/Aarsh/Downloads/indonesia_fs_fig4.png", indonesia_fs_fig4, width = 15, height = 10)

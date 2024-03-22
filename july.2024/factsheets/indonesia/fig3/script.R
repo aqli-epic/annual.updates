@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
 gbd_results_indonesia <- gbd_results_master_2022 %>%
@@ -43,4 +43,3 @@ indonesia_fs_fig3 <- indonesia_fs_fig3_dataset %>%
                                "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
-ggsave("C:/Users/Aarsh/Downloads/indonesia_fs_fig3.png", indonesia_fs_fig3, width = 15, height = 10)

@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # se_asia factsheet figure 4 dataset
 se_asia_fs_fig4_dataset <- gadm2_aqli_2022 %>%
@@ -40,4 +40,3 @@ se_asia_fs_fig4 <- se_asia_fs_fig4_dataset %>%
         plot.background = element_rect(color = "white"),
         axis.ticks = element_blank()) +
   geom_text(x = 2000.6, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2022): 5 µg/m³"), size = 4.5)
-ggsave("C:/Users/Aarsh/Downloads/se_asia_fs_fig4.png", se_asia_fs_fig4, width = 15, height = 10)

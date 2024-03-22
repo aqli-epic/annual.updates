@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # indonesia fs fig 1 data
 indonesia_fs_fig1_dataset <- gadm2_aqli_2022 %>%
@@ -42,4 +42,3 @@ indonesia_fs_fig1 <- indonesia_fs_fig1_dataset %>%
         legend.direction = "horizontal",
         plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
-ggsave("C:/Users/Aarsh/Downloads/indonesia_fs_fig1.png", indonesia_fs_fig1, width = 15, height = 10)

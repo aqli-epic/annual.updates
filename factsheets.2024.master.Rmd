@@ -723,7 +723,7 @@ pak_fs_appendix_table <- pak_aqli_2022 %>%
          `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent)
 ```
 
-# Nepal Factsheet
+## Nepal Factsheet
 ```{r}
 
 # Fig 1:  Potential gain in Life Expectancy from permanently reducing PM2.5 ------ 

@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # southeast asia definition
 se_asia_def <-  c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia",
@@ -48,5 +48,3 @@ ar_se_asia_fig3.1 <- ar_se_asia_fig3.1_data %>%
         legend.direction = "horizontal",
         plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
-ggsave("C:/Users/Aarsh/Downloads/ar_se_asia_fs_fig3.1.png", ar_se_asia_fig3.1, width = 15, height = 10)
-

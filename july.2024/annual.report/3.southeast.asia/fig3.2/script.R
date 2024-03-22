@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # southeast asia definition
 se_asia_def <-  c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia",
@@ -43,8 +43,5 @@ ar_se_asia_fig3.2 <- ar_se_asia_fig3.2_data %>%
   ggthemes::theme_tufte() +
   themes_aqli_base +
   theme(plot.background = element_rect(color = "white", fill = "white"))
-ggsave("C:/Users/Aarsh/Downloads/ar_se_asia_fig3.2.png", ar_se_asia_fig3.2, width = 15, height = 10)
-
-
 
 
