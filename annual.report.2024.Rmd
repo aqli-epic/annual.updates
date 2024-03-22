@@ -584,7 +584,7 @@ ar_china_fig6.3 <- ar_china_fig6.3_data %>%
   labs(x = "Region", y = "Life years gained", fill = "Life years gained") 
 
 
-# figure 6.4 ============
+# China figure 6.4 ============
 
 # top 5 most deadly diseases
 ar_china_fig6.4_dataset <- gbd_results_master_2022 %>%

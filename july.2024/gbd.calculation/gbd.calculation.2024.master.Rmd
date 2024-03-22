@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 # get packages, global variables and datasets
 ```{r load-lib-helper-files-data-global-var}
-  
+
 # libraries
 library(tidytext)
 library(tidyverse)
@@ -20,7 +20,7 @@ library(devtools)
 library(data.table)
 
 # read in the helper file
-source("R/july.2024.helper.script.R")
+source("~/Desktop/AQLI/REPO/annual.updates/R/july.2024.helper.script.R")
 
 # global variables
 who_guideline <- 5
@@ -276,7 +276,7 @@ results_file_names <- list.files(results_without_country_names_folder_path)
 results_with_file_names_list <- list()
 
 # country level AQLI summary
-country_level_aqli <- gadm_level_summary(gadm2_aqli_2021, "country", c(2021), 10)
+country_level_aqli <- gadm_level_summary(gadm2_aqli_2022, "country", c(2021), 10)
 
 # clean each country's processed results (add a country and AQLI lyl column) 
 for(i in 1:length(results_file_names)){
@@ -320,7 +320,10 @@ final_master_results <- rbindlist(results_with_file_names_list)
 final_master_results <- as_tibble(final_master_results)
 
 # check how many lyl have an NA (will be filled in manually: should come up with a better alternate solution)
-final_master_results %>% filter(cause_of_death == "PM2.5 relative to WHO guideline") %>% select(country, lyl) %>% filter(is.na(lyl)) %>% View()
+view(final_master_results %>% 
+       filter(cause_of_death == "PM2.5 relative to WHO guideline") %>% 
+       select(country, lyl) %>% 
+       filter(is.na(lyl)))
 
 final_master_results %>%
     write_csv(str_c(results_with_country_names_folder_path, "gbd_results_master", ".csv"))
