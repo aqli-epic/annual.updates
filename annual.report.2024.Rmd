@@ -339,6 +339,141 @@ ar_south_asia_fig2.2 <- gbd_results_sa_fig2.2 %>%
 # AR Section 3: South East Asia
 
 ```{r}
+# southeast asia definition
+se_asia_def <-  c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia",
+                  "Laos", "Malaysia", "Philippines", "Singapore", "Thailand",
+                  "Vietnam")
+
+# southeast asia figure 3.1 ===================================
+
+# southeast asia figure 3.1 dataset
+ar_se_asia_fig3.1_data <- gadm2_aqli_2022 %>%
+  filter(country %in% se_asia_def) %>%
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# southeast asia figure 3.1: map
+ar_se_asia_fig3.1 <- ar_se_asia_fig3.1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 %in% se_asia_vec), color = "azure4", fill = "transparent", lwd = 0.1) +
+  geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 %in% se_asia_vec), color = "cornsilk4", fill = "transparent", lwd = 0.3) +
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") +
+  theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15),
+        plot.title = element_text(hjust = 0.5, size = 15),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(0, "cm"),
+        legend.direction = "horizontal",
+        plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1))
+
+# southeast asia figure 3.2 ================================
+
+# southeast asia figure 3.2 data
+ar_se_asia_fig3.2_data <- gadm2_aqli_2022 %>%
+  filter(country %in% se_asia_def) %>%
+  select(country, name_1, name_2, population, pm2022, llpp_who_2022) %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2022_pop_weighted = pop_weights*pm2022,
+         llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE),
+            avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
+            llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
+
+# southeast asia figure 3.2: 10 most populous regions
+ar_se_asia_fig3.2 <- ar_se_asia_fig3.2_data %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
+  labs(x = "Region", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  themes_aqli_base +
+  theme(plot.background = element_rect(color = "white", fill = "white"))
+
+# southeast asia figure 3.3 ===============================================
+
+#filter for relevant countries
+country_list <- c("Indonesia", "Vietnam", "Thailand", "Myanmar", "Malaysia")
+# filter for relevant cause of death
+diseases_list <- c("PM2.5 relative to WHO guideline",
+                   "Respiratory infections and tuberculosis",
+                   "Diabetes and kidney diseases",
+                   "Child and maternal malnutrition",
+                   "High LDL cholesterol")
+
+ar_se_asia_fig3.3_data <- gbd_results_master_2022 %>%
+  filter(cause_of_death %in% diseases_list, country %in% country_list)
+
+# making the 'location' column of type factor
+ar_se_asia_fig3.3_data$country <- factor(ar_se_asia_fig3.3_data$country,
+                                         levels = country_list)
+
+# Converting 'cause_of_death' to type factor
+ar_se_asia_fig3.3_data$cause_of_death <- factor(ar_se_asia_fig3.3_data$cause_of_death, levels = diseases_list)
+
+# wrapping x-axis labels text
+levels(ar_se_asia_fig3.3_data$cause_of_death) <- str_wrap(levels(ar_se_asia_fig3.3_data$cause_of_death), 30)
+
+# reorder within each location as per the total life years lost column
+ar_se_asia_fig3.3_data <- ar_se_asia_fig3.3_data %>%
+  mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
+
+# clean the "cause of death" column and save the cwafrica factsheet figure 2
+ar_se_asia_fig3.3_data <- ar_se_asia_fig3.3_data %>%
+  mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
+
+# southeast asia figure 3.3: GBD
+ar_se_asia_fig3.3 <- ar_se_asia_fig3.3_data %>%
+  ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) +
+  geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
+  scale_x_reordered() +
+  facet_wrap(~factor(country, levels = country_list), scales = "free_x", ncol = 5) +
+  scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 30),
+                    values = c("#B4CDD9", "#707F8C", "#ADE9FA", "#8F3931", "#CBE8F3")) +
+  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "",
+       subtitle = "", fill = "Threats to Life Expectancy") +
+  themes_aqli_base +
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        strip.text = element_text(size = 14),
+        plot.background = element_rect(fill = "white", color = "white")) +
+  scale_y_continuous(breaks = seq(0, 7, 0.5))
+
 
 ```
 
@@ -346,6 +481,7 @@ ar_south_asia_fig2.2 <- gbd_results_sa_fig2.2 %>%
 # AR Section 4: Central and West Africa
 
 ```{r}
+
 
 ```
 
