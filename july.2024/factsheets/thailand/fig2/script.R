@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # read and filter AQLI data
 ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
@@ -71,4 +71,3 @@ thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
         axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")),
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")),
         axis.ticks = element_blank())
-ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig2.png", thailand_fs_fig2, width = 15, height = 10)

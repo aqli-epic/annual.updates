@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # read and filter AQLI data
 ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
@@ -67,4 +67,3 @@ thailand_fs_fig1 <- thailand_fs_fig1_dataset %>%
         legend.direction = "horizontal",
         plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
-ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig1.png", thailand_fs_fig1, width = 15, height = 10)
