@@ -92,18 +92,14 @@ ar_global_fig1.1 <- ar_global_fig1.1_data %>%
 # Global section figure 1.2 ============
 trendlines_aqli_data_global <- gadm2_aqli_2022 %>%
   filter(!is.na(population)) %>%
-  mutate(country = "foo") %>%
-  group_by(country) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
   pivot_longer(cols = pm1998_weighted:pm2022_weighted , names_to = "years",
                values_to = "pop_weighted_avg_pm2.5") %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
-         region = "National Average") %>%
-  select(years, region, pop_weighted_avg_pm2.5) %>%
-  select(region, years, pop_weighted_avg_pm2.5) %>%
-  mutate(region = "Global")
+         region = "Global") %>%
+  select(region, years, pop_weighted_avg_pm2.5)
 
 # create an identifer for South Asia  
 ar_global_fig1.2_data <- gadm2_aqli_2022 %>%
@@ -481,7 +477,108 @@ ar_se_asia_fig3.3 <- ar_se_asia_fig3.3_data %>%
 # AR Section 4: Central and West Africa
 
 ```{r}
+# Central and West Africa figure 4.1 ============
 
+# cw africa figure 4.1 dataset
+ar_cw_africa_fig4.1_data <- gadm2_aqli_2022 %>%
+  filter(country %in% central_and_west_african_countries) %>%
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# cw africa fig1 (burlywood4)
+ar_cw_africa_fig4.1 <- ar_cw_africa_fig4.1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 %in% central_and_west_african_countries), color = "azure4", fill = "transparent", lwd = 0.1) +
+ geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 %in% central_and_west_african_countries), color = "cornsilk4", fill = "transparent", lwd = 0.3) +
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)", 
+       title = "", subtitle = "") +
+  theme(legend.position = "bottom", 
+        legend.justification = c(0.5, 3), 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        # legend.key = element_rect(color = "black"),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 12), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal", 
+        plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1))
+
+
+# Central and West Africa figure 4.2 ============
+
+# GBD results filtered for relevant cause of death and countries 
+gbd_results_cwafrica_fig4.2 <- gbd_results_master_2022 %>%
+  filter(cause_of_death %in% c("PM2.5 relative to WHO guideline",
+                               "Neglected tropical diseases and malaria", "Unsafe water, sanitation, and handwashing", 
+                               "HIV/AIDS and sexually transmitted infections"), country %in% c("Nigeria", "Democratic Republic of the Congo", "Angola", "Ghana", "Cameroon"))
+
+# making the 'location' column of type factor
+gbd_results_cwafrica_fig4.2$country <- factor(gbd_results_cwafrica_fig4.2$country, 
+                                        levels = c("Nigeria", "Democratic Republic of the Congo", "Angola", "Ghana", "Cameroon"))
+
+# Rename Democratic Republic of the Congo to DRC
+gbd_results_cwafrica_fig4.2$country <-  str_replace(gbd_results_cwafrica_fig4.2$country, 
+            "Democratic Republic of the Congo", "DR Congo")
+
+# Converting 'cause_of_death' to type factor
+gbd_results_cwafrica_fig4.2$cause_of_death <- as.factor(gbd_results_cwafrica_fig4.2$cause_of_death)
+
+# Rearranging 'cause of death' levels
+levels(gbd_results_cwafrica_fig4.2$cause_of_death) <- c( "HIV/AIDS and sexually transmitted infections", "Neglected tropical diseases and malaria", "PM2.5 relative to WHO guideline", "Unsafe water, sanitation, and handwashing")
+
+# wrapping x-axis labels text 
+levels(gbd_results_cwafrica_fig4.2$cause_of_death) <- str_wrap(levels(gbd_results_cwafrica_fig4.2$cause_of_death), 30)
+
+# getting country wise population
+country_wise_population <- gadm2_aqli_2022 %>%
+  filter(country %in% central_and_west_african_countries) %>%
+  gadm_level_summary(c("country"), c(2022), 10) %>%
+  filter(country %in% c("Cameroon", "Nigeria", "Angola", "Ghana", 
+                  "Democratic Republic of the Congo")) %>%
+  arrange(desc(population))
+
+# reorder within each location as per the total life years lost column
+gbd_results_cwafrica_fig4.2 <- gbd_results_cwafrica_fig4.2 %>% 
+  mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
+
+# clean the "cause of death" column and save the cwafrica factsheet figure 2
+gbd_results_cwafrica_fig4.2 <- gbd_results_cwafrica_fig4.2 %>%
+  mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
+
+# plot 
+ar_cw_africa_fig4.2_plt <- gbd_results_cwafrica_fig4.2 %>%
+  ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) + 
+  geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
+  scale_x_reordered() +
+  facet_wrap(~factor(country, levels = c("Angola", "Cameroon", "DR Congo", 
+                  "Ghana", "Nigeria")), scales = "free_x", ncol = 5) +
+  scale_fill_manual(values = c("#D3D9E0", "#7BC1D9", "#8F3931",
+                               "#808A94")) +
+  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "", 
+       subtitle = "", fill = "Threats to Life Expectancy") +
+  themes_aqli_base +
+   theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(), 
+         strip.text = element_text(size = 14), 
+         plot.background = element_rect(fill = "white", color = "white")) 
 
 ```
 

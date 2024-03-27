@@ -4,18 +4,14 @@ source("R/july.2024.helper.script.R")
 # Global section figure 1.2 ============
 trendlines_aqli_data_global <- gadm2_aqli_2022 %>%
   filter(!is.na(population)) %>%
-  mutate(country = "foo") %>%
-  group_by(country) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
   pivot_longer(cols = pm1998_weighted:pm2022_weighted , names_to = "years",
                values_to = "pop_weighted_avg_pm2.5") %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
-         region = "National Average") %>%
-  select(years, region, pop_weighted_avg_pm2.5) %>%
-  select(region, years, pop_weighted_avg_pm2.5) %>%
-  mutate(region = "Global")
+         region = "Global") %>%
+  select(region, years, pop_weighted_avg_pm2.5)
 
 # create an identifer for South Asia  
 ar_global_fig1.2_data <- gadm2_aqli_2022 %>%
