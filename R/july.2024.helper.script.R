@@ -43,10 +43,10 @@ gadm0_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm0/aqli_gadm0_final
 india_state <- st_read("~/Desktop/AQLI/shapefiles/india_state/india_state.shp")
 
 # read archive data
-color_2021 <- read_csv("archive/color_2021.csv")
-color_2020 <- read_csv("archive/color_2020.csv")
-color_2019 <- read_csv("archive/color_2019.csv")
-color_2016 <- read_csv("archive/color_2016.csv")
+color_2021 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/archive/color_2021.csv")
+color_2020 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/archive/color_2020.csv")
+color_2019 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/archive/color_2019.csv")
+color_2016 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/archive/color_2016.csv")
 
 # read in the country continent file
 country_continent <- read_csv("data/country_continent.csv")
