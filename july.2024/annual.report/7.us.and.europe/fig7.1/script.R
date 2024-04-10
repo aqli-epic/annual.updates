@@ -45,7 +45,7 @@ ar_fig7.1 <- us_1970_2022_map_data %>%
                                "0.5 to (< 2)" = "#f46d43",
                                ">= 2" = "#d73027")) +
   ggthemes::theme_map() +
-  labs(fill = "Change in life expectancy between 1970 and 2021 (Years; blue values indicate improvement)", title = "") +
+  labs(fill = "Change in life expectancy between 1970 and 2022 (Years; blue values indicate improvement)", title = "") +
   theme(legend.position = "bottom",
         legend.justification = c(0.5, 3),
         legend.background = element_rect(color = "black"),

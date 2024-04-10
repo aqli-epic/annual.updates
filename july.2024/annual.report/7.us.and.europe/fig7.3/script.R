@@ -51,7 +51,7 @@ ar_fig7.3 <- ar_fig7.3_data %>%
                                "0.5 to (< 2)" = "#f46d43", 
                                ">= 2" = "#d73027")) +
   ggthemes::theme_map() +
-  labs(fill = "Change in potential gains in life expectancy between 1998 and 2021 (Years)", title = "", 
+  labs(fill = "Change in potential gains in life expectancy between 1998 and 2022 (Years)", title = "", 
        subtitle = "") + 
   theme(legend.position = "bottom", 
         legend.justification = c(0.5, 3), 
