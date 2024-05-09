@@ -110,12 +110,12 @@ western_european_countries <- c("Germany", "Switzerland", "Italy", "Monaco",
 
 
 # European Union countries
-eu_countries <- c("Belgium", "Bulgaria", "Czechia", "Denmark", "Germany", 
-                  "Estonia", "Ireland", "Greece", "Spain", "France",  "Croatia", 
-                  "Italy", "Cyprus", "Latvia", "Lithuania", "Luxembourg", 
-                  "Hungary", "Malta", "Netherlands", "Austria", "Poland", 
-                  "Portugal", "Romania", "Slovenia", "Slovakia", "Finland", 
-                  "Sweden", "United Kingdom")
+eu_countries <- c("Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", 
+                  "Czechia", "Denmark", "Estonia", "Finland", "France", 
+                  "Germany", "Greece", "Hungary", "Ireland", "Italy", 
+                  "Latvia", "Lithuania", "Luxembourg", "Malta", 
+                  "Netherlands",  "Poland", "Portugal", "Romania", 
+                  "Slovakia", "Slovenia", "Spain", "Sweden")
 
 # South Asia definition
 south_asia_def <- c("Afghanistan", "Bangladesh", "Bhutan", "India", "Maldives", 
@@ -128,6 +128,17 @@ latin_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvado
                                  "Brazil", "Paraguay", "Chile", "Argentina", 
                                  "Uruguay", "Cuba", "Haiti", "Dominican Republic",
                                  "Puerto Rico")
+
+# Middle East definition
+mid_east_countries <- c("Bahrain", "Iran", "Iraq", "Israel", "Jordan", 
+                        "Kuwait", "Lebanon", "Oman", "Qatar", "Saudi Arabia", 
+                        "Syria", "United Arab Emirates", "Yemen")
+
+# North Africa
+north_africa_countries <- c("Algeria", "Djibouti", "Egypt", "Libya", "Morocco", "Tunisia")
+
+# middle east and north africa
+mena_countries <- c(mid_east_countries, north_africa_countries)
 
 # aqli base theme function---------------------------------------------------------------------------
 # add this to your graphs to standardize them, example: plt1 %>% theme_aqli_base
