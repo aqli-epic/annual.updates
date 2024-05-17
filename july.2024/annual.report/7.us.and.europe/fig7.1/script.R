@@ -26,7 +26,7 @@ county_shp <- inner_join(county_shp, county_data, by = c("obidgadm2"="objectid_g
 # fig 7.1 data
 us_1970_2022_map_data <- county_shp %>%
   mutate(lifeyears_saved_reverse = round((pm2022 - pm25_1970_aqli)*0.098, 2)) %>%
-  add_aqli_color_scale_buckets("lyldiff", "lifeyears_saved_reverse") %>%
+  add_aqli_color_scale_buckets("lyldiff", "lifeyears_saved") %>%
   select(-geometry, geometry)
 
 # fig 7.1
@@ -36,14 +36,14 @@ ar_fig7.1 <- us_1970_2022_map_data %>%
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "United States", name1 %notin% c("Alaska", "Hawaii")), color = "azure4", fill = "transparent", lwd = 0.5) +
   ggthemes::theme_map() +
-  scale_fill_manual(values = c("< -2" = "#4575b4",
-                               "-2 to (< -0.5)" = "#74add1",
-                               "-0.5 to (< -0.1)" = "#abd9e9",
-                               "-0.1 to (< 0)" = "#e0f3f8",
-                               "0 to (< 0.1)" = "#fee090",
-                               "0.1 to (< 0.5)" = "#fdae61",
-                               "0.5 to (< 2)" = "#f46d43",
-                               ">= 2" = "#d73027")) +
+  scale_fill_manual(values = c(">= 2" = "#4575b4",
+                               "0.5 to (< 2)" = "#74add1",
+                               "0.1 to (< 0.5)" = "#abd9e9",
+                               "0 to (< 0.1)" = "#e0f3f8",
+                               "-0.1 to (< 0)" = "#fee090",
+                               "-0.5 to (< -0.1)" = "#fdae61",
+                               "-2 to (< -0.5)" = "#f46d43",
+                               "< -2" = "#d73027")) +
   ggthemes::theme_map() +
   labs(fill = "Change in life expectancy between 1970 and 2022 (Years; blue values indicate improvement)", title = "") +
   theme(legend.position = "bottom",

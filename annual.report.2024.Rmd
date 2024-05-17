@@ -593,7 +593,8 @@ latin_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvado
                                  "Brazil", "Paraguay", "Chile", "Argentina",
                                  "Uruguay", "Cuba", "Haiti", "Dominican Republic",
                                  "Puerto Rico")
-# 15 most populated regions in Latin America (fig 5.1)===================
+
+# Latin America figure 5.1 ===========
 
 # AR Figure 5.1 dataset
 ar_fig5.1_dataset <- gadm2_aqli_2022 %>%
@@ -602,7 +603,6 @@ ar_fig5.1_dataset <- gadm2_aqli_2022 %>%
 
 #ar_fig5.1_dataset <- gadm2_aqli_2022_latin_america %>%
  # mutate(name_1_country = str_c(name_1, "(", country, ")", sep = ""))
-
 
 # Plot AR figure 5.1
 ar_fig5.1 <- ar_fig5.1_dataset %>%
@@ -632,7 +632,7 @@ ar_fig5.1 <- ar_fig5.1_dataset %>%
       coord_flip()
 
 
-# map figure (fig 5.2)==================================
+# Latin America figure 5.2 ===========
 
 # data
 ar_fig5.2_data <- gadm2_aqli_2022 %>%
@@ -642,14 +642,14 @@ ar_fig5.2_data <- gadm2_aqli_2022 %>%
   select(-geometry, geometry) %>%
   st_as_sf()
 
-# plt
+# plot
 ar_fig5.2 <- ar_fig5.2_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
-   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 %in% latin_america_countries_vec), color = "azure4", fill = "transparent", lwd = 0.1) +
- geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 %in% latin_america_countries_vec), color = "cornsilk4", fill = "transparent", lwd = 0.3) +
+  geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 %in% latin_america_countries_vec), color = "azure4", fill = "transparent", lwd = 0.1) +
+  geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 %in% latin_america_countries_vec), color = "cornsilk4", fill = "transparent", lwd = 0.3) +
   ggthemes::theme_map() +
-   scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
                                "0.1 to < 0.5" = "#ffeda0",
                                "0.5 to < 1" = "#fed976",
                                "1 to < 2" = "#feb24c",
@@ -661,25 +661,24 @@ ar_fig5.2 <- ar_fig5.2_data %>%
   ggthemes::theme_map() +
   labs(fill = "Potential gain in life expectancy (Years)  ", title = "",
        subtitle = "") +
- theme(legend.position = "bottom",
+  theme(legend.position = "bottom",
         legend.justification = c(0.5, 3),
         legend.background = element_rect(color = "black"),
         legend.text = element_text(size = 14),
         legend.title = element_text(size = 15),
         plot.title = element_text(hjust = 0.5, size = 15),
-       # legend.key = element_rect(color = "black"),
-       legend.box.margin = margin(b = 1, unit = "cm"),
+        # legend.key = element_rect(color = "black"),
+        legend.box.margin = margin(b = 1, unit = "cm"),
         plot.subtitle = element_text(hjust = 0.5, size = 12),
         plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
-       legend.key = element_rect(color = "black"),
-       legend.box.spacing = unit(0, "cm"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(0, "cm"),
         legend.direction = "horizontal",
-       plot.background = element_rect(fill = "white", color = "white")) +
+        plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
 
 
-# GBD figure 5.3================================================
-
+# Latin America figure 5.3 ===========
 
 diseases_list <- c("Unsafe water, sanitation, and handwashing",
                                "HIV/AIDS and sexually transmitted infections",
@@ -697,14 +696,11 @@ ar_fig5.3_data <- gbd_results_master_2022 %>%
 ar_fig5.3_data$country <- factor(ar_fig5.3_data$country,
                                         levels = country_list)
 
-
-
 # Converting 'cause_of_death' to type factor
 ar_fig5.3_data$cause_of_death <- factor(ar_fig5.3_data$cause_of_death, levels = diseases_list)
 
 # wrapping x-axis labels text
 levels(ar_fig5.3_data$cause_of_death) <- str_wrap(levels(ar_fig5.3_data$cause_of_death), 30)
-
 
 # reorder within each location as per the total life years lost column
 ar_fig5.3_data <- ar_fig5.3_data %>%
@@ -714,20 +710,18 @@ ar_fig5.3_data <- ar_fig5.3_data %>%
 ar_fig5.3_data <- ar_fig5.3_data %>%
   mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
 
-
-
 # plot
 ar_fig5.3 <- ar_fig5.3_data %>%
   ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) +
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +
   facet_wrap(~factor(country, levels = country_list), scales = "free_x", ncol = 5) +
-   scale_fill_manual(values = c("#B4CDD9", "#707F8C", "#8F3931",
+  scale_fill_manual(values = c("#B4CDD9", "#707F8C", "#8F3931",
                                 "#ADE9FA", "#CBE8F3")) +
   labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "",
        subtitle = "", fill = "Threats to Life Expectancy") +
   themes_aqli_base +
-   theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(),
+  theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(),
          strip.text = element_text(size = 14),
          plot.background = element_rect(fill = "white", color = "white"))
 
@@ -828,8 +822,8 @@ ar_china_fig6.1 <- ar_china_fig6.1_data %>%
 # filter data for china and create shapefile
 ar_china_fig6.2_data <- gadm2_aqli_2022 %>%
   filter(country == "China") %>%
-  mutate(lyl2022minus2014 = round((pm2022 - pm2014)*0.098, 1)) %>%
-  add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "lyl2022minus2014") %>%
+  mutate(lyl2014minus2022 = round((pm2014 - pm2022)*0.098, 1)) %>% # to reflect gain in life expectancy
+  add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "lyl2014minus2022") %>% 
   left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   select(-geometry, geometry) %>%
   st_as_sf()
@@ -841,16 +835,16 @@ ar_china_fig6.2 <- ar_china_fig6.2_data %>%
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "China"), color = "azure4", fill = "transparent", lwd = 0.15) +
   geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "China"), color = "cornsilk", fill = "transparent", lwd = 0.5) +
   ggthemes::theme_map() + 
-  scale_fill_manual(values = c("< -2" = "#4575b4", 
-                               "-2 to (< -0.5)" = "#74add1", 
-                               "-0.5 to (< -0.1)" = "#abd9e9", 
-                               "-0.1 to (< 0)" = "#e0f3f8", 
-                               "0 to (< 0.1)" = "#fee090", 
-                               "0.1 to (< 0.5)" = "#fdae61", 
-                               "0.5 to (< 2)" = "#f46d43", 
-                               ">= 2" = "#d73027")) +
+  scale_fill_manual(values = c(">= 2" = "#4575b4",
+                               "0.5 to (< 2)" = "#74add1",
+                               "0.1 to (< 0.5)" = "#abd9e9",
+                               "0 to (< 0.1)" = "#e0f3f8",
+                               "-0.1 to (< 0)" = "#fee090",
+                               "-0.5 to (< -0.1)" = "#fdae61",
+                               "-2 to (< -0.5)" = "#f46d43",
+                               "< -2" = "#d73027")) +
   ggthemes::theme_map() +
-  labs(fill = "Change in potential gains in life \nexpectancy between 2014 and 2022 (Years)", title = "") + 
+  labs(fill = "Change in life expectancy between 1998 and 2022 \n(Years; blue values indicate improvement)", title = "") + 
   theme(legend.position = "bottom", 
         legend.justification = c(0.5, 3), 
         legend.background = element_rect(color = "black"), 
@@ -865,100 +859,6 @@ ar_china_fig6.2 <- ar_china_fig6.2_data %>%
         legend.direction = "horizontal",
         plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
-
-
-# China figure 6.3 ============
-
-# Part-1: BTH, YRD, PRD gain in LE from 2014 to 2022
-bth_yrd_prd_gain_le_part1 <- color_2022_china %>%
-  group_by(region) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2022_pop_weighted  = pm2022*pop_weights, 
-         pm2014_pop_weighted = pm2014*pop_weights) %>% 
-  summarise(avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE), 
-            avg_pm2.5_2014 = sum(pm2014_pop_weighted, na.rm = TRUE), 
-            diff_avg_pm2.5_2014_to_2022 = (avg_pm2.5_2014 - avg_pm2.5_2022), 
-            change_in_le_2014_to_2022 = round((diff_avg_pm2.5_2014_to_2022*0.098), 1)) %>%
-  filter(region %in% c("BTH", "YRD", "PRD"))
-
-# Part-2: China gain in LE from 2014 to 2022
-china_gain_le_part2 <- color_2022_china %>%
-   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
-         pm2022_pop_weighted  = pm2022*pop_weights, 
-         pm2014_pop_weighted = pm2014*pop_weights) %>% 
-  summarise(avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE), 
-            avg_pm2.5_2014 = sum(pm2014_pop_weighted, na.rm = TRUE), 
-            diff_avg_pm2.5_2014_to_2022 = (avg_pm2.5_2014 - avg_pm2.5_2022), 
-            change_in_le_2014_to_2022 = round((diff_avg_pm2.5_2014_to_2022*0.098), 1)) %>%
-  mutate(region = "China") %>%
-  select(region, everything())
-
-# Part-3: China gain in LE for specific regions as shown in AR 
-# regions of interest (note: there are 2 "Suzhou", I have taken the one that is 
-# in the Jiangsu gadm level 1 region, mention this in a footnote or as a note  
-# within the figure itself)
-gadm2_regions_to_plt <- c("Baoding", "Beijing", "Chengdu", 
-                         "Chongqing", "Guangzhou", "Harbin", 
-                         "Nanyang", "Shanghai", "Suzhou", 
-                         "Tianjin")
-
-# filter color dataset for the above regions
-custom_regions_china_le_part3 <- color_2022_china %>%
-  filter(name_2 %in% gadm2_regions_to_plt) %>%
-  group_by(name_1, name_2) %>%
-  summarise(pm2014 = pm2014[1], pm2022 = pm2022[1], diff_avg_pm2.5_2014_to_2022 = (pm2014 - pm2022), 
-          change_in_le_2014_to_2022 = round((diff_avg_pm2.5_2014_to_2022*0.098), 1)) %>%
-  filter(name_1 != "Jiangsu") %>%
-  ungroup() %>%
-  select(name_2, pm2022, pm2014, diff_avg_pm2.5_2014_to_2022, change_in_le_2014_to_2022) %>%
-  rename(region = name_2, avg_pm2.5_2022 = pm2022, avg_pm2.5_2014 = pm2014) 
-
-# # correcting Suzhou's 2020 and 2013 value, to be the one that corresponds to the Anhui gadm level 1 region
-# custom_regions_china_le_part3[custom_regions_china_le_part3$region == "Suzhou", ]$avg_pm2.5_2020 <- 44.9
-# custom_regions_china_le_part3[custom_regions_china_le_part3$region == "Suzhou", ]$avg_pm2.5_2013 <- 63.6
-# custom_regions_china_le_part3[custom_regions_china_le_part3$region == "Suzhou", ]$diff_avg_pm2.5_2013_to_2020 <- 18.7
-# custom_regions_china_le_part3[custom_regions_china_le_part3$region == "Suzhou", ]$change_in_le_2013_to_2020 <- 1.8
-
-# combine Parts 1, 2 and 3 datasets to create AR figure 16 dataset
-ar_china_fig6.3_data <- rbind(bth_yrd_prd_gain_le_part1, china_gain_le_part2, custom_regions_china_le_part3)
-
-# plot annual report figure 16
-ar_china_fig6.3 <- ar_china_fig6.3_data %>%
-  add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "change_in_le_2014_to_2022") %>%
-  mutate(order_manual = ifelse(region == "Baoding", 14, NA), 
-         order_manual = ifelse(region == "Beijing", 13, order_manual), 
-         order_manual = ifelse(region == "Tianjin", 12, order_manual), 
-         order_manual = ifelse(region == "Suzhou", 11, order_manual), 
-         order_manual = ifelse(region == "Harbin", 10, order_manual), 
-         order_manual = ifelse(region == "Nanyang", 9, order_manual), 
-         order_manual = ifelse(region == "Shanghai", 8, order_manual), 
-         order_manual = ifelse(region == "Chongqing", 7, order_manual),
-         order_manual = ifelse(region == "Chengdu", 6, order_manual),
-         order_manual = ifelse(region == "Guangzhou", 5, order_manual),
-         order_manual = ifelse(region == "BTH", 4, order_manual),
-         order_manual = ifelse(region == "China", 3, order_manual), 
-         order_manual = ifelse(region == "PRD", 2, order_manual), 
-         order_manual = ifelse(region == "YRD", 3, order_manual)) %>%
-  ggplot() +
-  geom_col(mapping = aes(x = fct_reorder(region, order_manual), 
-                         y = change_in_le_2014_to_2022, 
-                         fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket))) +
-  scale_fill_manual(values = c("< -2" = "#d73027", 
-                               "-2 to (< -0.5)" = "#f46d43", 
-                               "-0.5 to (< -0.1)" = "#fdae61", 
-                               "-0.1 to (< 0)" = "#fee090", 
-                               "0 to (< 0.1)" = "#e0f3f8", 
-                               "0.1 to (< 0.5)" = "#abd9e9", 
-                               "0.5 to (< 2)" = "#74add1", 
-                               ">= 2" = "#4575b4")) +
-  coord_flip() +
-  ggthemes::theme_clean() +
-  themes_aqli_base +
-  theme(axis.line.x = element_line(), 
-        axis.line.y = element_line(), 
-        plot.background = element_rect(color = "white", fill = "white")) +
-  scale_y_continuous(breaks = seq(0, 6, 1)) +
-  labs(x = "Region", y = "Life years gained", fill = "Life years gained") 
 
 
 # China figure 6.4 ============
@@ -1039,8 +939,7 @@ county_shp <- inner_join(county_shp, county_data, by = c("obidgadm2"="objectid_g
 
 # fig 7.1 data
 us_1970_2022_map_data <- county_shp %>%
-  mutate(lifeyears_saved_reverse = round((pm2022 - pm25_1970_aqli)*0.098, 2)) %>%
-  add_aqli_color_scale_buckets("lyldiff", "lifeyears_saved_reverse") %>%
+  add_aqli_color_scale_buckets("lyldiff", "lifeyears_saved") %>%
   select(-geometry, geometry)
 
 # fig 7.1
@@ -1050,16 +949,16 @@ ar_fig7.1 <- us_1970_2022_map_data %>%
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "United States", name1 %notin% c("Alaska", "Hawaii")), color = "azure4", fill = "transparent", lwd = 0.5) +
   ggthemes::theme_map() +
-  scale_fill_manual(values = c("< -2" = "#4575b4",
-                               "-2 to (< -0.5)" = "#74add1",
-                               "-0.5 to (< -0.1)" = "#abd9e9",
-                               "-0.1 to (< 0)" = "#e0f3f8",
-                               "0 to (< 0.1)" = "#fee090",
-                               "0.1 to (< 0.5)" = "#fdae61",
-                               "0.5 to (< 2)" = "#f46d43",
-                               ">= 2" = "#d73027")) +
+  scale_fill_manual(values = c(">= 2" = "#4575b4",
+                               "0.5 to (< 2)" = "#74add1",
+                               "0.1 to (< 0.5)" = "#abd9e9",
+                               "0 to (< 0.1)" = "#e0f3f8",
+                               "-0.1 to (< 0)" = "#fee090",
+                               "-0.5 to (< -0.1)" = "#fdae61",
+                               "-2 to (< -0.5)" = "#f46d43",
+                               "< -2" = "#d73027")) +
   ggthemes::theme_map() +
-  labs(fill = "Change in life expectancy between 1970 and 2021 (Years; blue values indicate improvement)", title = "") +
+  labs(fill = "Change in life expectancy between 1970 and 2022 (Years; blue values indicate improvement)", title = "") +
   theme(legend.position = "bottom",
         legend.justification = c(0.5, 3),
         legend.background = element_rect(color = "black"),
@@ -1150,9 +1049,9 @@ ar_fig7.3_data <- gadm2_aqli_2022 %>%
   filter(!(country == "Spain" & name_1 == "Islas Canarias")) %>%
   filter(!(country == "Portugal" & name_1 == "Azores")) %>%
   filter(!(country == "Portugal" & name_1 == "Madeira")) %>%
-  mutate(lyl2022minus1998 = round((pm2022 - pm1998)*0.098, 2)) %>%
+  mutate(lyl1998minus2022 = round((pm1998 - pm2022)*0.098, 2)) %>% # to reflect gain in life expectancy
   left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
-  add_aqli_color_scale_buckets("lyldiff", "lyl2022minus1998") %>%
+  add_aqli_color_scale_buckets("lyldiff", "lyl1998minus2022") %>%
   select(-geometry, geometry) %>%
   st_as_sf()
 
@@ -1163,16 +1062,16 @@ ar_fig7.3 <- ar_fig7.3_data %>%
   geom_sf(data = europe_gadm1_shp, color = "azure4", fill = "transparent", lwd = 0.1) +
   geom_sf(data = europe_gadm0_shp, color = "cornsilk4", fill = "transparent", lwd = 0.3) +
   ggthemes::theme_map()  +
-  scale_fill_manual(values = c("< -2" = "#4575b4", 
-                               "-2 to (< -0.5)" = "#74add1", 
-                               "-0.5 to (< -0.1)" = "#abd9e9", 
-                               "-0.1 to (< 0)" = "#e0f3f8", 
-                               "0 to (< 0.1)" = "#fee090", 
-                               "0.1 to (< 0.5)" = "#fdae61", 
-                               "0.5 to (< 2)" = "#f46d43", 
-                               ">= 2" = "#d73027")) +
+  scale_fill_manual(values = c(">= 2" = "#4575b4",
+                               "0.5 to (< 2)" = "#74add1",
+                               "0.1 to (< 0.5)" = "#abd9e9",
+                               "0 to (< 0.1)" = "#e0f3f8",
+                               "-0.1 to (< 0)" = "#fee090",
+                               "-0.5 to (< -0.1)" = "#fdae61",
+                               "-2 to (< -0.5)" = "#f46d43",
+                               "< -2" = "#d73027")) +
   ggthemes::theme_map() +
-  labs(fill = "Change in potential gains in life expectancy between 1998 and 2021 (Years)", title = "", 
+  labs(fill = "Change in life expectancy between 1998 and 2022 \n(Years; blue values indicate improvement)", title = "", 
        subtitle = "") + 
   theme(legend.position = "bottom", 
         legend.justification = c(0.5, 3), 

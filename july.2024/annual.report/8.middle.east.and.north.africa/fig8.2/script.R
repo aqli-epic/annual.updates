@@ -7,11 +7,11 @@ source("R/july.2024.helper.script.R")
 gbd_results_mena_fig8.2 <- gbd_results_master_2022 %>%
   filter(cause_of_death %in% c("Neoplasms", "PM2.5 relative to WHO guideline", 
                                "Tobacco", "Transport injuries"), 
-         country %in% c("Algeria", "Egypt", "Iraq", "Qatar", "Saudi Arabia"))
+         country %in% c("Egypt", "Morocco", "Iraq", "Qatar", "Saudi Arabia"))
 
 # making the 'location' column of type factor
 gbd_results_mena_fig8.2$country <- factor(gbd_results_mena_fig8.2$country, 
-                                          levels = c("Algeria", "Egypt", "Iraq", "Qatar", "Saudi Arabia"))
+                                          levels = c("Morocco", "Egypt", "Iraq", "Qatar", "Saudi Arabia"))
 
 # Converting 'cause_of_death' to type factor
 gbd_results_mena_fig8.2$cause_of_death <- as.factor(gbd_results_mena_fig8.2$cause_of_death)
@@ -26,7 +26,7 @@ levels(gbd_results_mena_fig8.2$cause_of_death) <- str_wrap(levels(gbd_results_me
 country_wise_population <- gadm2_aqli_2022 %>%
   filter(country %in% mena_countries) %>%
   gadm_level_summary(c("country"), c(2022), 10) %>%
-  filter(country %in% c("Algeria", "Egypt", "Iraq", "Qatar", "Saudi Arabia")) %>%
+  filter(country %in% c("Egypt", "Morocco", "Iraq", "Qatar", "Saudi Arabia")) %>%
   arrange(desc(population))
 
 # reorder within each location as per the total life years lost column
@@ -42,7 +42,7 @@ ar_mena_fig8.2 <- gbd_results_mena_fig8.2 %>%
   ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) + 
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +
-  facet_wrap(~factor(country, levels = c("Algeria", "Egypt", "Iraq", "Qatar", 
+  facet_wrap(~factor(country, levels = c("Egypt", "Morocco", "Iraq", "Qatar", 
                                          "Saudi Arabia")), scales = "free_x", ncol = 5) +
   scale_fill_manual(values = c("#D3D9E0", "#8F3931", "#7BC1D9",
                                "#808A94")) +
