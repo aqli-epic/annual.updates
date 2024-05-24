@@ -35,9 +35,9 @@ gadm1_aqli_2022 <- read_csv("data/aqli_gadm1_2022.csv")
 gadm0_aqli_2022 <- read_csv("data/aqli_gadm0_2022.csv")
 
 # read in the shapefile
-gadm2_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm2/aqli_gadm2_final_june2023.shp")
-gadm1_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm1/aqli_gadm1_final_june2023.shp")
-gadm0_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm0/aqli_gadm0_final_june2023.shp")
+gadm2_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm2/aqli_gadm2_final_june302023.shp")
+gadm1_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm1/aqli_gadm1_final_june302023.shp")
+gadm0_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/gadm0/aqli_gadm0_final_june302023.shp")
 
 # india state
 india_state <- st_read("~/Desktop/AQLI/shapefiles/india_state/india_state.shp")
@@ -106,7 +106,8 @@ european_countries <- read_csv("data/europe_countries.csv")
 western_european_countries <- c("Germany", "Switzerland", "Italy", "Monaco", 
                                 "Luxembourg", "Belgium", "France", "Netherlands", 
                                 "Andorra", "Spain", "United Kingdom", "Portugal", 
-                                "Denmark", "Ireland", "Iceland", "Austria")
+                                "Denmark", "Ireland", "Iceland", "Austria",
+                                "Liechtenstein", "San Marino")
 
 
 # European Union countries
