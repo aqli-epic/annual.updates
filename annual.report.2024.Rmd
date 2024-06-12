@@ -386,40 +386,27 @@ ar_se_asia_fig3.1 <- ar_se_asia_fig3.1_data %>%
 # southeast asia figure 3.2 ================================
 
 # southeast asia figure 3.2 data
-ar_se_asia_fig3.2_data <- gadm2_aqli_2022 %>%
-  filter(country %in% se_asia_def) %>%
-  select(country, name_1, name_2, population, pm2022, llpp_who_2022) %>%
-  group_by(name_1) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE),
-         pm2022_pop_weighted = pop_weights*pm2022,
-         llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE),
-            avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
-            le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
-            llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
-            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
-  slice_max(tot_pop, n = 10) %>%
-  add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
+ar_se_asia_fig3.2_data <- gadm0_aqli_2022 %>% filter(country %in% c("Malaysia","Indonesia"))%>% select(country, pm2022,pm2019) %>%
+  group_by(country)
+# Assuming 'dat' is your original data frame
+ar_se_asia_fig3.2_data <- data.frame(country = ar_se_asia_fig3.2_data$country,
+                     pm2022 = ar_se_asia_fig3.2_data$pm2022,
+                     pm2019 = ar_se_asia_fig3.2_data$pm2019)
 
-# southeast asia figure 3.2: 10 most populous regions
-ar_se_asia_fig3.2 <- ar_se_asia_fig3.2_data %>%
-  ggplot() +
-  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
-  labs(x = "Region", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
-  scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
-                               "0.1 to < 0.5" = "#ffeda0",
-                               "0.5 to < 1" = "#fed976",
-                               "1 to < 2" = "#feb24c",
-                               "2 to < 3" = "#fd8d3c",
-                               "3 to < 4" = "#fc4e2a",
-                               "4 to < 5" = "#e31a1c",
-                               "5 to < 6" = "#bd0026",
-                               ">= 6" = "#800026")) +
-  coord_flip() +
-  ggthemes::theme_tufte() +
+ar_se_asia_fig3.2_data <- gather(ar_se_asia_fig3.2_data, Year, PM2.5, pm2022:pm2019)
+
+# Change x-axis labels to "2022" and "2019"
+ar_se_asia_fig3.2_data$Year <- recode(ar_se_asia_fig3.2_data$Year, pm2022 = "2022", pm2019 = "2019")
+
+# southeast asia figure 3.2: 15 most polluted regions
+ar_se_asia_fig3.2 <- ggplot(ar_se_asia_fig3.2_data, aes(country, PM2.5, fill = Year)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.6) +
+  scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 30),
+                    values = c("#fed976","#fd8d3c","#fc4e2a","#800026")) +
+  labs(x = "Country", y = "Annual average PM2.5 concentration", title = "", subtitle = "", caption = "", fill = "Year") +
   themes_aqli_base +
   theme(plot.background = element_rect(color = "white", fill = "white"))
+
 
 # southeast asia figure 3.3 ===============================================
 
@@ -596,41 +583,52 @@ latin_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvado
 
 # Latin America figure 5.1 ===========
 
-# AR Figure 5.1 dataset
-ar_fig5.1_dataset <- gadm2_aqli_2022 %>%
-  filter(country %in% latin_america_countries_vec ) %>%
-  select(country, name_1, name_2, population, pm2022, llpp_who_2022)
+# GBD figure 5.1 -----------------------------------------
 
-#ar_fig5.1_dataset <- gadm2_aqli_2022_latin_america %>%
- # mutate(name_1_country = str_c(name_1, "(", country, ")", sep = ""))
+diseases_list <- c("Tobacco",
+                   "Respiratory infections and tuberculosis",
+                   "Child and maternal malnutrition",
+                   "Self-harm and interpersonal violence",
+                   "PM2.5 relative to WHO guideline")
 
-# Plot AR figure 5.1
-ar_fig5.1 <- ar_fig5.1_dataset %>%
-  group_by(name_1) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE),
-         pm2022_pop_weighted = pop_weights*pm2022) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_pop_weighted = sum(pm2022_pop_weighted, na.rm = TRUE),
-            gain_in_le = (avg_pm2.5_pop_weighted - who_guideline) * le_constant,
-            gain_in_le = ifelse(gain_in_le < 0, 0, gain_in_le)) %>%
-  ungroup() %>%
-  slice_max(tot_pop, n = 15) %>%
-      add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "gain_in_le") %>%
-      ggplot() +
-      geom_col(mapping = aes(x = forcats::fct_reorder(!!as.symbol("name_1"), !!as.symbol("gain_in_le")), y = !!as.symbol("gain_in_le"), fill = forcats::fct_reorder(!!as.symbol("lyl_bucket"), !!as.symbol("order_lyl_bucket"))), color = "black") +
-      scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
-                                   "0.1 to < 0.5" = "#ffeda0",
-                                   "0.5 to < 1" = "#fed976",
-                                   "1 to < 2" = "#feb24c",
-                                   "2 to < 3" = "#fd8d3c",
-                                   "3 to < 4" = "#fc4e2a",
-                                   "4 to < 5" = "#e31a1c",
-                                   "5 to < 6" = "#bd0026",
-                                   ">= 6" = "#800026")) +
-      labs(x = "Region", y = "Potential Gain in Life Expectancy (Years)", title = "", subtitle = "", caption = "", fill = "Potential gain in life expectancy (Years)") +
-      themes_aqli_base +
-  theme(plot.background = element_rect(color = "white", fill = "white")) +
-      coord_flip()
+country_list <- c("Bolivia", "Guatemala", "Brazil", "Mexico", "Colombia")
 
+# GBD results filtered for relevant cause of death (given Europe) and countries
+ar_fig5.1_data <- gbd_results_master_2022 %>%
+  filter(cause_of_death %in% diseases_list, country %in% country_list)
+
+# making the 'location' column of type factor
+ar_fig5.1_data$country <- factor(ar_fig5.1_data$country,
+                                 levels = country_list)
+
+# Converting 'cause_of_death' to type factor
+ar_fig5.1_data$cause_of_death <- factor(ar_fig5.1_data$cause_of_death, levels = diseases_list)
+
+# wrapping x-axis labels text
+levels(ar_fig5.1_data$cause_of_death) <- str_wrap(levels(ar_fig5.1_data$cause_of_death), 30)
+
+# reorder within each location as per the total life years lost column
+ar_fig5.1_data <- ar_fig5.1_data %>%
+  mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
+
+# clean the "cause of death" column and save the cwafrica factsheet figure 2
+ar_fig5.1_data <- ar_fig5.1_data %>%
+  mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
+
+# plot
+ar_fig5.1 <- ar_fig5.1_data %>%
+  ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) +
+  geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
+  scale_x_reordered() +
+  facet_wrap(~factor(country, levels = country_list), scales = "free_x", ncol = 5) +
+  scale_fill_manual(values = c("#B4CDD9", "#8F3931", "#707F8C",
+                               "#ADE9FA", "#CBE8F3")) +
+  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "",
+       subtitle = "", fill = "Threats to Life Expectancy") +
+  themes_aqli_base +
+  theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(),
+        strip.text = element_text(size = 14),
+        plot.background = element_rect(fill = "white", color = "white"))
 
 # Latin America figure 5.2 ===========
 
@@ -680,51 +678,39 @@ ar_fig5.2 <- ar_fig5.2_data %>%
 
 # Latin America figure 5.3 ===========
 
-diseases_list <- c("Tobacco",
-                   "Respiratory infections and tuberculosis",
-                   "Child and maternal malnutrition",
-                   "Self-harm and interpersonal violence",
-                   "PM2.5 relative to WHO guideline")
+# AR Figure 5.3 dataset
+ar_fig5.3_dataset <- gadm2_aqli_2022 %>%
+  filter(country %in% latin_america_countries_vec ) %>%
+  select(country, name_1, name_2, population, pm2022, llpp_who_2022)
 
-country_list <- c("Bolivia", "Guatemala", "Brazil", "Mexico", "Colombia")
+ar_fig5.3_dataset <- ar_fig5.3_dataset %>% mutate(name_1_country = str_c(name_1, " (", country, ")", sep = ""))
 
-# GBD results filtered for relevant cause of death (given Europe) and countries
-ar_fig5.3_data <- gbd_results_master_2022 %>%
-  filter(cause_of_death %in% diseases_list, country %in% country_list)
-
-# making the 'location' column of type factor
-ar_fig5.3_data$country <- factor(ar_fig5.3_data$country,
-                                 levels = country_list)
-
-# Converting 'cause_of_death' to type factor
-ar_fig5.3_data$cause_of_death <- factor(ar_fig5.3_data$cause_of_death, levels = diseases_list)
-
-# wrapping x-axis labels text
-levels(ar_fig5.3_data$cause_of_death) <- str_wrap(levels(ar_fig5.3_data$cause_of_death), 30)
-
-# reorder within each location as per the total life years lost column
-ar_fig5.3_data <- ar_fig5.3_data %>%
-  mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
-
-# clean the "cause of death" column and save the cwafrica factsheet figure 2
-ar_fig5.3_data <- ar_fig5.3_data %>%
-  mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
-
-# plot
-ar_fig5.3 <- ar_fig5.3_data %>%
-  ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) +
-  geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
-  scale_x_reordered() +
-  facet_wrap(~factor(country, levels = country_list), scales = "free_x", ncol = 5) +
-  scale_fill_manual(values = c("#B4CDD9", "#8F3931", "#707F8C",
-                               "#ADE9FA", "#CBE8F3")) +
-  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "",
-       subtitle = "", fill = "Threats to Life Expectancy") +
-  themes_aqli_base +
-  theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(),
-        strip.text = element_text(size = 14),
-        plot.background = element_rect(fill = "white", color = "white"))
-
+# Plot AR figure 5.3
+ar_fig5.3 <- ar_fig5.3_dataset %>%
+  group_by(name_1_country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2022_pop_weighted = pop_weights*pm2022) %>%
+  summarise(tot_poll = mean(pm2022, na.rm = TRUE), avg_pm2.5_pop_weighted = sum(pm2022_pop_weighted, na.rm = TRUE),
+            gain_in_le = (avg_pm2.5_pop_weighted - who_guideline) * le_constant,
+            gain_in_le = ifelse(gain_in_le < 0, 0, gain_in_le)) %>%
+  ungroup() %>%
+  slice_max(tot_pop, n = 15) %>%
+      add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "gain_in_le") %>%
+      ggplot() +
+      geom_col(mapping = aes(x = forcats::fct_reorder(!!as.symbol("name_1_country"), !!as.symbol("gain_in_le")), y = !!as.symbol("gain_in_le"), fill = forcats::fct_reorder(!!as.symbol("lyl_bucket"), !!as.symbol("order_lyl_bucket"))), color = "black") +
+      scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                                   "0.1 to < 0.5" = "#ffeda0",
+                                   "0.5 to < 1" = "#fed976",
+                                   "1 to < 2" = "#feb24c",
+                                   "2 to < 3" = "#fd8d3c",
+                                   "3 to < 4" = "#fc4e2a",
+                                   "4 to < 5" = "#e31a1c",
+                                   "5 to < 6" = "#bd0026",
+                                   ">= 6" = "#800026")) +
+      labs(x = "Region", y = "Potential Gain in Life Expectancy (Years)", title = "", subtitle = "", caption = "", fill = "Potential gain in life expectancy (Years)") +
+      themes_aqli_base +
+  theme(plot.background = element_rect(color = "white", fill = "white")) +
+      coord_flip()
 ```
 
 

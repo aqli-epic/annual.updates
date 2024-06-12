@@ -20,7 +20,7 @@ ar_se_asia_fig3.2_data <- gather(ar_se_asia_fig3.2_data, Year, PM2.5, pm2022:pm2
 # Change x-axis labels to "2022" and "2019"
 ar_se_asia_fig3.2_data$Year <- recode(ar_se_asia_fig3.2_data$Year, pm2022 = "2022", pm2019 = "2019")
 
-# southeast asia figure 3.2: 10 most populous regions
+# southeast asia figure 3.2: 15 most polluted regions
 ar_se_asia_fig3.2 <- ggplot(ar_se_asia_fig3.2_data, aes(country, PM2.5, fill = Year)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.6) +
   scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 30),
