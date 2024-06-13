@@ -80,65 +80,65 @@ sr_country_wise_cleaned[is.na(sr_country_wise_cleaned$sr), ]$sr <- 1
 # GBD master files cleaning
 
 ```{r}
-# 
-# # risks and causes master files specific paths
-# gbd_risks_master_path <- str_c(gbd_risks_causes_path, "gbdrates_master_risks_raw.csv")
-# gbd_causes_master_path <- str_c(gbd_risks_causes_path, "gbdrates_master_causes_raw.csv")
-# 
-# # read in master risks and causes files
-# gbd_risks_master <- read_csv(gbd_risks_master_path)
-# gbd_causes_master <- read_csv(gbd_causes_master_path)
-# 
-# # clean causes master file and write as csv
-# gbd_causes_master_region_cleaned <- gbd_causes_master %>%
-#   mutate(age = str_remove(age, " years"), 
-#          age = str_replace(age, "\\+", " plus"), 
-#          age = str_replace(age, "-", " to "))  
-# 
-# gbd_causes_master_region_cleaned %>%
-# write_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_master_causes_cleaned.csv")
-# 
-# # clean risks master file and write as csv
-# gbd_risks_master_region_cleaned <- gbd_risks_master %>%
-#   mutate(age = str_remove(age, "years"), 
-#          age = str_replace(age, "\\+", " plus"), 
-#          age = str_replace(age, "-", " to ")) 
-# 
-# gbd_risks_master_region_cleaned %>%
-#  write_csv("./september.2023/gbd.calculation/GBDComparisons/GBD/gbdrates_master_risks_cleaned.csv")
-# 
+
+# risks and causes master files specific paths
+gbd_risks_master_path <- str_c(gbd_risks_causes_path, "gbdrates_master_risks_raw.csv")
+gbd_causes_master_path <- str_c(gbd_risks_causes_path, "gbdrates_master_causes_raw.csv")
+
+# read in master risks and causes files
+gbd_risks_master <- read_csv(gbd_risks_master_path)
+gbd_causes_master <- read_csv(gbd_causes_master_path)
+
+# clean causes master file and write as csv
+gbd_causes_master_region_cleaned <- gbd_causes_master %>%
+  mutate(age = str_remove(age, " years"),
+         age = str_replace(age, "\\+", " plus"),
+         age = str_replace(age, "-", " to "))
+
+gbd_causes_master_region_cleaned %>%
+write_csv(str_c(gbd_risks_causes_path, "gbdrates_master_causes_cleaned.csv"))
+
+# clean risks master file and write as csv
+gbd_risks_master_region_cleaned <- gbd_risks_master %>%
+  mutate(age = str_remove(age, "years"),
+         age = str_replace(age, "\\+", " plus"),
+         age = str_replace(age, "-", " to "))
+
+gbd_risks_master_region_cleaned %>%
+write_csv(str_c(gbd_risks_causes_path, "gbdrates_master_risks_cleaned.csv"))
+
 ```
 
 # Creating region wise causes and risks file from master files and writing it to the GBD folder
 
 ```{r}
-# 
-# # split the master risks dataset by location
-# gbd_risks_master_region_cleaned_region_wise <- gbd_risks_master_region_cleaned %>%
-#   group_split(location)
-# 
-# # write location wise CSVs
-# for (i in 1 : length(gbd_risks_master_region_cleaned_region_wise)){
-#   risks_data_tmp <- gbd_risks_master_region_cleaned_region_wise[[i]]
-#   location_tmp <- risks_data_tmp$location[i]
-#   risks_data_tmp %>%
-#     write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "risks.csv"))
-# }
-# 
-# # split the master causes dataset by loaction
-# gbd_causes_master_region_cleaned_region_wise <- gbd_causes_master_region_cleaned %>%
-#   group_split(location)
-# 
-# 
-# # write location wise CSVs
-# for (i in 1 : length(gbd_causes_master_region_cleaned_region_wise)){
-#   causes_data_tmp <- gbd_causes_master_region_cleaned_region_wise[[i]]
-#   location_tmp <- causes_data_tmp$location[i]
-#   causes_data_tmp %>%
-#     write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "causes.csv"))
-# }
-# 
-# 
+
+# split the master risks dataset by location
+gbd_risks_master_region_cleaned_region_wise <- gbd_risks_master_region_cleaned %>%
+  group_split(location)
+
+# write location wise CSVs
+for (i in 1 : length(gbd_risks_master_region_cleaned_region_wise)){
+  risks_data_tmp <- gbd_risks_master_region_cleaned_region_wise[[i]]
+  location_tmp <- risks_data_tmp$location[i]
+  risks_data_tmp %>%
+    write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "risks.csv"))
+}
+
+# split the master causes dataset by loaction
+gbd_causes_master_region_cleaned_region_wise <- gbd_causes_master_region_cleaned %>%
+  group_split(location)
+
+
+# write location wise CSVs
+for (i in 1 : length(gbd_causes_master_region_cleaned_region_wise)){
+  causes_data_tmp <- gbd_causes_master_region_cleaned_region_wise[[i]]
+  location_tmp <- causes_data_tmp$location[i]
+  causes_data_tmp %>%
+    write_csv(str_c(gbd_risks_causes_path, "gbdrates_", location_tmp, "_", "causes.csv"))
+}
+
+
 ```
 
 # Writing the cleaned version of the WHO raw life tables
@@ -295,7 +295,7 @@ for(i in 1:length(results_file_names)){
  # if the exact country name is NA, fill in NA in AQLI lyl number (and then will later fill this in manually: should improve this)
  if(nrow(tmp_country_level_aqli) == 0){
    tmp_file <- tmp_file %>%
-     mutate(cause_of_death = ifelse(cause_of_death == "Ambient particulate matter pollution", "PM2.5 relative to WHO guideline", cause_of_death),
+     mutate(cause_of_death = ifelse(cause_of_death == "Particulate matter pollution", "PM2.5 relative to WHO guideline", cause_of_death),
        lyl = ifelse(cause_of_death == "PM2.5 relative to WHO guideline", NA, lyl))
  } else if (nrow(tmp_country_level_aqli) > 0) {
    tmp_aqli_lyl_num <- tmp_country_level_aqli %>%
@@ -303,7 +303,7 @@ for(i in 1:length(results_file_names)){
      unlist()
    
     tmp_file <- tmp_file %>%
-     mutate(cause_of_death = ifelse(cause_of_death == "Ambient particulate matter pollution", "PM2.5 relative to WHO guideline", cause_of_death),
+     mutate(cause_of_death = ifelse(cause_of_death == "Particulate matter pollution", "PM2.5 relative to WHO guideline", cause_of_death),
        lyl = ifelse(cause_of_death == "PM2.5 relative to WHO guideline", tmp_aqli_lyl_num, lyl))
  }
  

@@ -48,6 +48,17 @@ color_2020 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/archive/color_2020.csv")
 color_2019 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/archive/color_2019.csv")
 color_2016 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/archive/color_2016.csv")
 
+# gbd results master
+gbd_results_master_2022 <- read_csv("data/gbd_results_master.csv")
+
+# US 1970 calculation master cleaned file read
+us_1970_calc_results_cleaned <- read_csv("data/county_pm25_foraqli_stats_cleaned.csv")
+
+# read in latest national standard file
+nat_standard <- readr::read_csv("~/Desktop/AQLI/2024 AQLI Update/data/country_annual_average_pm2.5_standards_2024.csv", skip = 26) %>%
+  rename(natstandard = `National Annual Average PM2.5 Standard (in µg/m³)`) %>%
+  mutate(natstandard = as.numeric(natstandard))
+
 # read in the country continent file
 country_continent <- read_csv("data/country_continent.csv")
 
@@ -63,14 +74,6 @@ first_year <- 1998
 
 # global operations
 `%notin%` <- Negate(`%in%`)
-
-#> gbd results-----------
-
-# gbd results master
-gbd_results_master_2022 <- read_csv("data/gbd_results_master.csv")
-
-# US 1970 calculation master cleaned file read
-us_1970_calc_results_cleaned <- read_csv("data/county_pm25_foraqli_stats_cleaned.csv")
 
 # other region wise defintions
 # Central Africa definition
@@ -94,10 +97,14 @@ se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia",
                  "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", 
                  "Vietnam")
 
-# Indo-gangetic plains states
+# Northern plains (India)
 indo_gangetic_plains_states <- c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Haryana",
                                  "Punjab", "Chandigarh", "West Bengal")
 
+# Fenwei Plain (China)
+fenwei_plain <- c("Xi'an", "Baoji", "Xianyang", "Weinan", "Tongchuan", 
+                  "Jinzhong", "Luliang", "Linfen", "Yuncheng", "Luoyang", 
+                  "Sanmenxia")
 
 # European countries
 european_countries <- read_csv("data/europe_countries.csv")
