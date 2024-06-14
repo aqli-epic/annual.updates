@@ -1,71 +1,51 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# Global section figure 1.3 ============
-#' 10 most populated countries in the world: population, life expectancy gains, 
-#' total potential life years gained, 3 panel graph
-ar_fig1.3_dataset <- gadm2_aqli_2022 %>%
-  gadm_level_summary(c("country"), c(2022), 10) %>%
-  slice_max(population, n = 10) %>%
-  mutate(pop_millions = round(population/1000000, 1), 
-         total_person_years_gained_billions = (llpp_who_2022*population)/1000000000)
+# AQ standards data
+ar_global_fig1.3_data <- gadm0_aqli_2022 %>%
+  left_join(nat_standard, by = c("country"="Country")) %>%
+  select(iso_alpha3, country, natstandard.y, pm2022, llpp_who_2022) %>%
+  mutate(aq_std_bucket = if_else(natstandard.y <= 5, "WHO Guideline: 5 µg/m³", NA),
+         aq_std_bucket = if_else(natstandard.y > 5 & natstandard.y <= 10, "WHO Interim Target 4: 10 µg/m³", aq_std_bucket),
+         aq_std_bucket = if_else(natstandard.y > 10 & natstandard.y <= 15, "WHO Interim Target 3: 15 µg/m³", aq_std_bucket),
+         aq_std_bucket = if_else(natstandard.y > 15 & natstandard.y <= 25, "WHO Interim Target 2: 25 µg/m³", aq_std_bucket),
+         aq_std_bucket = if_else(natstandard.y > 25 & natstandard.y <= 35, "WHO Interim Target 1: 35 µg/m³", aq_std_bucket),
+         aq_std_bucket = if_else(natstandard.y > 35, " > 35 µg/m³", aq_std_bucket)) %>%
+  replace_na(list(aq_std_bucket = "No PM2.5 Standard")) %>%
+  left_join(gadm0_aqli_2022_shp, by = c("iso_alpha3" = "isoalp3")) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  select(-geometry, geometry, ) %>%
+  st_as_sf()
 
-ar_fig1.3_dataset$country <- factor(ar_fig1.3_dataset$country, levels = c("China", "India", "United States", "Indonesia", 
-                                                                          "Pakistan", "Nigeria", "Brazil", 
-                                                                          "Bangladesh", "Russia", 
-                                                                          "México"))
+ar_global_fig1.3_data$aq_std_bucket <- factor(ar_global_fig1.3_data$aq_std_bucket, 
+                                              levels=c("WHO Guideline: 5 µg/m³", "WHO Interim Target 2: 25 µg/m³", 
+                                                       " > 35 µg/m³", "WHO Interim Target 4: 10 µg/m³", 
+                                                       "WHO Interim Target 1: 35 µg/m³", "No PM2.5 Standard", "WHO Interim Target 3: 15 µg/m³" ))
 
-
-# population plot of the top 10 most populous
-plt_top10_most_populous_population <- ar_fig1.3_dataset %>%
-  ggplot() +
-  geom_col(mapping = aes(x = forcats::fct_reorder(country, total_lyl_who_2022_millions), 
-                         y = pop_millions, fill = country), 
-           width = 0.7) +
-  labs(x = "Country", y = "Population (in millions)") +
-  scale_y_continuous(breaks = seq(0, 1500, 200)) +
-  coord_flip() +
-  ggthemes::theme_tufte() +
-  themes_aqli_base +
-  scale_fill_viridis_d(option = "inferno") +
-  theme(legend.position = "none", 
-        plot.background = element_rect(fill = "white", color = "white"))
-
-# Average Life Expectancy Gains experienced by a person in top 10 most populous countries if PM2.5 is reduced to the WHO guideline
-plt_top10_most_populous_le_gains_per_person <- ar_fig1.3_dataset %>%
-  ggplot() +
-  geom_col(mapping = aes(x = forcats::fct_reorder(country, total_lyl_who_2022_millions), 
-                         y = llpp_who_2022, fill = country), 
-           width = 0.7) +
-  labs(x = "", y = "Average Life Expectancy Gains (Years)") +
-  scale_y_continuous(breaks = seq(0, 8, 1)) +
-  ggthemes::theme_tufte() +
-  themes_aqli_base +
-  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
-  coord_flip() +
-  scale_fill_viridis_d(option = "inferno") + 
-  theme(legend.position = "none", 
-        plot.background = element_rect(fill = "white", color = "white"))
-
-# Total person years gained on the country level for the top 10 most populous regions in the world (if PM2.5 is reduced to the WHO guideline)
-
-plt_top10_most_populous_tot_person_years_gained <- ar_fig1.3_dataset %>%
-  ggplot() +
-  geom_col(mapping = aes(x = forcats::fct_reorder(country, total_lyl_who_2022_millions), 
-                         y = total_person_years_gained_billions, fill = country), 
-           width = 0.7) +
-  labs(x = "", y = "Total Person Years Gained (Billion Years)") +
-  scale_y_continuous(breaks = seq(0, 8, 1)) +
-  ggthemes::theme_tufte() +
-  themes_aqli_base +
-  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
-  coord_flip() +
-  scale_fill_viridis_d(option = "inferno") + 
-  theme(legend.position = "none", 
-        plot.background = element_rect(fill = "white", color = "white"))
-
-# Combine all 3 graphs in a panel
-ar_prelim_fig1.3 <- gridExtra::grid.arrange(plt_top10_most_populous_population , 
-                                            plt_top10_most_populous_le_gains_per_person, 
-                                            plt_top10_most_populous_tot_person_years_gained, 
-                                            nrow = 1)
+# global fig 1.3
+ar_global_fig1.3 <- ggplot() +
+  geom_sf(data = gadm0_aqli_2022_shp, color = "cornsilk4", fill = "white", lwd = 0.05) +
+  geom_sf(data = ar_global_fig1.3_data, mapping = aes(fill = aq_std_bucket), color = "cornsilk4", lwd = 0.05) +
+  ggthemes::theme_map() +
+  labs(fill="Air quality standards around the world") +
+  scale_fill_manual(values = c("WHO Guideline: 5 µg/m³" = "#5f7aa5", 
+                               "WHO Interim Target 4: 10 µg/m³" = "#7197be", 
+                               "WHO Interim Target 3: 15 µg/m³" = "#4575b4",
+                               "WHO Interim Target 2: 25 µg/m³" = "#74add1", 
+                               "WHO Interim Target 1: 35 µg/m³" = "#abd9e9",
+                               " > 35 µg/m³" = "#e0f3f8",
+                               "No PM2.5 Standard" = "lightgrey" )) +
+  theme(plot.title = element_text(hjust = 0.5, size = 15), 
+        plot.background = element_rect(fill = "white", color = "white"),
+        plot.subtitle = element_text(hjust = 0.5, size = 12), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.position = "bottom", 
+        legend.justification = "center", 
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15),
+        legend.key = element_rect(color = "black"),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(ncol = 3, nrow = 3))

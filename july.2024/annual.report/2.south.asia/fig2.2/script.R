@@ -1,12 +1,14 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# South Asia figure 2.2 ============
 # GBD results filtered for relevant cause of death and countries 
 gbd_results_sa_fig2.2 <- gbd_results_master_2022 %>%
   filter(cause_of_death %in% c("PM2.5 relative to WHO guideline",
-                               "Cardiovascular diseases", "Child and maternal malnutrition", 
-                               "Tobacco", "High systolic blood pressure"), country %in% c("Bangladesh", "Nepal", "India", "Pakistan"))
+                               "Cardiovascular diseases", 
+                               "Child and maternal malnutrition", 
+                               "Tobacco", 
+                               "High systolic blood pressure"), 
+         country %in% c("Bangladesh", "Nepal", "India", "Pakistan"))
 
 # making the 'location' column of type factor
 gbd_results_sa_fig2.2$country <- factor(gbd_results_sa_fig2.2$country, 
@@ -33,7 +35,7 @@ country_wise_population <- gadm2_aqli_2022 %>%
 gbd_results_sa_fig2.2 <- gbd_results_sa_fig2.2 %>% 
   mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
 
-# clean the "cause of death" column and save the cwafrica factsheet figure 2
+# clean the "cause of death" column and save South Asia figure 2
 gbd_results_sa_fig2.2 <- gbd_results_sa_fig2.2 %>%
   mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
 
@@ -49,6 +51,8 @@ ar_south_asia_fig2.2 <- gbd_results_sa_fig2.2 %>%
   labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "", 
        subtitle = "", fill = "Threats to Life Expectancy") +
   themes_aqli_base +
-  theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(), 
+  theme(axis.text.x = element_blank(), 
+        legend.position = "bottom", 
+        axis.ticks = element_blank(), 
         strip.text = element_text(size = 14), 
         plot.background = element_rect(fill = "white", color = "white")) 

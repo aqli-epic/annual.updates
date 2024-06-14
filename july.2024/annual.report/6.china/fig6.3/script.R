@@ -1,20 +1,18 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# figure 6.4 ============
-
-# top 5 most deadly diseases
-china_fs_fig6.4_dataset <- gbd_results_master_2022 %>%
+# 5 deadliest diseases
+ar_china_fig6.3_dataset <- gbd_results_master_2022 %>%
   filter(country == "China") %>%
   slice_max(lyl, n = 5)
 
-colnames(china_fs_fig6.4_dataset)[3] <- c("llpp_who_2022")
+colnames(ar_china_fig6.3_dataset)[3] <- c("llpp_who_2022")
 
-china_fs_fig6.4_dataset <- china_fs_fig6.4_dataset %>%
+ar_china_fig6.3_dataset <- ar_china_fig6.3_dataset %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
 
-# figure 4 plot 
-china_fs_fig6.4 <- china_fs_fig6.4_dataset %>%
+# figure 3 plot 
+ar_china_fig6.3 <- ar_china_fig6.3_dataset %>%
   ggplot() + 
   geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2022), 
                          y = llpp_who_2022, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), 

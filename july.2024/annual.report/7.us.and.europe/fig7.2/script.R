@@ -1,51 +1,70 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# figure 7.2 (US)======================================
+# Europe definition and shapefile for figures 7.2 and 7.4
+# exclude the following countries to keep the map less wide and to show a stark 
+# difference between eastern and western europe
+exclude_countries <-  c("Russia", "Turkey", "Sweden", "Finland", "Norway", 
+                        "Kazakhstan", "Iceland", "Georgia", "Azerbaijan", 
+                        "Armenia", "Cyprus", "Northern Cyprus", 
+                        "Svalbard and Jan Mayen")
 
-# get USA country level data from the color file
-color_data_usa <- gadm2_aqli_2021 %>%
-  filter(country == "United States", name_1 != "Alaska", name_1 != "Hawaii")
+countries_except_excluded <- european_countries %>% 
+  filter(Country %notin% exclude_countries)
 
-# filter colormap (county level) shape file to only include United States
-colormap_shp_usa <- gadm2_aqli_2021_shp %>%
-  filter(name0  == "United States", name1 != "Alaska", name1 != "Hawaii")
+europe_gadm1_shp <- gadm1_aqli_2022_shp %>% 
+  filter(name0 %in% unlist(countries_except_excluded)) %>% 
+  filter(!(name0 == "Spain" & name1 == "Islas Canarias")) %>%
+  filter(!(name0 == "Portugal" & name1 == "Azores")) %>%
+  filter(!(name0 == "Portugal" & name1 == "Madeira"))
 
-# rename columns in the USA county level shape file
-colormap_shp_usa <- colormap_shp_usa %>%
-  rename(country = name0,
-         name_1 = name1, 
-         name_2 = name2)
+# very important: this code is run to obtain a country level shapefile of 
+# Europe without Islas Canarias, Azores and Madeira
+europe_gadm0_shp <- europe_gadm1_shp %>% 
+  count(name0)
 
+# europe dataset
+ar_fig7.2_data <- gadm2_aqli_2022 %>%
+  filter(country %in% unlist(countries_except_excluded), !is.na(llpp_who_2022)) %>%
+  filter(!(country == "Spain" & name_1 == "Islas Canarias")) %>%
+  filter(!(country == "Portugal" & name_1 == "Azores")) %>%
+  filter(!(country == "Portugal" & name_1 == "Madeira")) %>%
+  mutate(lyl1998minus2022 = round((pm1998 - pm2022)*0.098, 2)) %>% # to reflect gain in life expectancy
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  add_aqli_color_scale_buckets("lyldiff", "lyl1998minus2022") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
 
-# chart5 dataset: join colormap and USA county level shape file and adding a grouping column
-ar_fig7.2_data <- colormap_shp_usa %>%
-  left_join(color_data_usa, by = c("country", "name_1", "name_2")) %>%
-  mutate(pollution_category = ifelse(pm2021 >= 0 & pm2021 <= 5, "0 - 5", pm2021), 
-         pollution_category = ifelse(pm2021 > 5 & pm2021 <= 10, "> 5 - 10", pollution_category), 
-         pollution_category = ifelse(pm2021 > 10 & pm2021 <= 15, "> 10 - 15", pollution_category), 
-         pollution_category = ifelse(pm2021 > 15, "> 15", pollution_category)) %>%
-  mutate(order_pollution_category = ifelse(pollution_category == "0 - 5", 1, 0), 
-         order_pollution_category = ifelse(pollution_category == "> 5 - 10", 2, order_pollution_category), 
-         order_pollution_category = ifelse(pollution_category == "> 10 - 15", 3, order_pollution_category), 
-         order_pollution_category = ifelse(pollution_category == "> 15", 4, order_pollution_category))
-
-
-
-# chart number 7.2 plot
-ar_fig7.2 <- ggplot(data = ar_fig7.2_data) +
-  geom_sf(mapping = aes(fill = fct_reorder(pollution_category, order_pollution_category)), color = "aliceblue") + 
-  geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "United States", name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +
-   geom_sf(data = gadm1_aqli_2021_shp %>% filter(name0 == "United States", name1 == "California", name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +
+# europe fig 7.2
+ar_fig7.2 <- ar_fig7.2_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = europe_gadm1_shp, color = "azure4", fill = "transparent", lwd = 0.1) +
+  geom_sf(data = europe_gadm0_shp, color = "cornsilk4", fill = "transparent", lwd = 0.3) +
+  ggthemes::theme_map()  +
+  scale_fill_manual(values = c(">= 2" = "#4575b4",
+                               "0.5 to (< 2)" = "#74add1",
+                               "0.1 to (< 0.5)" = "#abd9e9",
+                               "0 to (< 0.1)" = "#e0f3f8",
+                               "-0.1 to (< 0)" = "#fee090",
+                               "-0.5 to (< -0.1)" = "#fdae61",
+                               "-2 to (< -0.5)" = "#f46d43",
+                               "< -2" = "#d73027")) +
   ggthemes::theme_map() +
-  labs(fill = expression("Annual Average" ~ PM[2.5] ~ " Concentration (in  µg/m³)"), title = "") +
-  scale_fill_manual(values = c("0 - 5" = "powderblue", "> 5 - 10" = "#FFCC66", "> 10 - 15" = "chocolate2", "> 15" = "darkred")) +
-  # ggtitle(expression(paste("US 2020 PM2.5 concentrations, (in ", mu, "g","/", m^3, ")", ""))) +
-  theme(plot.background = element_rect(colour = "white", fill = "white"), 
-        legend.position = "bottom", 
+  labs(fill = "Change in life expectancy between 1998 and 2022 \n(Years; blue values indicate improvement)", title = "", 
+       subtitle = "") + 
+  theme(legend.position = "bottom", 
         legend.justification = "center", 
-        legend.text = element_text(size = 15),
-        legend.title = element_text(size = 16),
-        legend.box.background = element_rect(color = "black")) 
-
-
+        legend.background = element_rect(color = "black"), 
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15), 
+        plot.title = element_text(hjust = 0.5, size = 15), 
+        # legend.key = element_rect(color = "black"),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 12), 
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+        legend.key = element_rect(color = "black"), 
+        legend.box.spacing = unit(0, "cm"), 
+        legend.direction = "horizontal", 
+        plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1)) 

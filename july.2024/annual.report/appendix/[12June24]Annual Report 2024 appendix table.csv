@@ -3,19 +3,19 @@ Algeria,6.1,*,0.1,*
 Angola,21.1,*,1.6,*
 Benin,17.3,*,1.2,*
 Botswana,12.5,*,0.7,*
-Bouvet Island,*,*,*,*
+Bouvet Island,*,10,*,*
 British Indian Ocean Territory,*,*,*,*
 Burkina Faso,8.7,*,0.4,*
-Burundi,34,*,2.8,*
+Burundi,34,35,2.8,*
 Cabo Verde,2.2,*,0,*
 Cameroon,32.6,*,2.7,*
 Central African Republic,25,*,2,*
 Chad,11.3,*,0.6,*
 Comoros,7,*,0.2,*
 Côte d'Ivoire,10.4,*,0.5,*
-Democratic Republic of the Congo,34.7,*,2.9,*
+Democratic Republic of the Congo,34.7,35,2.9,*
 Djibouti,18.4,*,1.3,*
-Egypt,19.2,50,1.4,0
+Egypt,19.2,50,1.4,*
 Equatorial Guinea,32.9,*,2.7,*
 Eritrea,14.4,*,0.9,*
 Ethiopia,16.9,*,1.2,*
@@ -25,7 +25,7 @@ Gambia,6.9,*,0.2,*
 Ghana,13.7,*,0.9,*
 Guinea,9.8,*,0.5,*
 Guinea-Bissau,7.9,*,0.3,*
-Kenya,16.5,35,1.1,0
+Kenya,16.5,35,1.1,*
 Lesotho,27.9,*,2.2,*
 Liberia,9.4,*,0.4,*
 Libya,8.9,*,0.4,*
@@ -35,167 +35,167 @@ Mali,6.6,*,0.2,*
 Mauritania,3.5,*,0,*
 Mauritius,5.7,*,0.1,*
 Mayotte,8.1,*,0.3,*
-Morocco,7.1,*,0.2,*
+Morocco,7.1,50,0.2,*
 Mozambique,12.7,*,0.8,*
 Namibia,14.5,*,0.9,*
 Niger,10.6,*,0.5,*
-Nigeria,25,*,2,*
+Nigeria,25,20,2,0.49
 Republic of the Congo,31.9,*,2.6,*
-Rwanda,33.4,*,2.8,*
+Rwanda,33.4,35,2.8,*
 Réunion,2.7,*,0,*
 "Saint Helena, Ascension and Tris",2.7,*,0,*
 Senegal,5.7,*,0.1,*
 Seychelles,5,*,0,*
 Sierra Leone,9.9,*,0.5,*
-Somalia,8.9,*,0.4,*
-South Africa,23.3,20,1.8,0.3
-South Sudan,16,*,1.1,*
-Sudan,10.2,*,0.5,*
+Somalia,8.9,35,0.4,*
+South Africa,23.3,20,1.8,0.3234
+South Sudan,16,35,1.1,*
+Sudan,10.2,10,0.5,0.0195999999999999
 Swaziland,16.4,*,1.1,*
 São Tomé and Príncipe,10.3,*,0.5,*
-Tanzania,18.2,*,1.3,*
+Tanzania,18.2,35,1.3,*
 Togo,15.6,*,1,*
 Tunisia,10.2,*,0.5,*
-Uganda,27.8,*,2.2,*
+Uganda,27.8,35,2.2,*
 Western Sahara,4.9,*,0,*
 Zambia,22.2,*,1.7,*
 Zimbabwe,16,*,1.1,*
-Afghanistan,17,35,1.2,0
-Bahrain,22.8,*,1.7,*
-Bangladesh,54.2,15,4.8,3.8
+Afghanistan,17,35,1.2,*
+Bahrain,22.8,25,1.7,*
+Bangladesh,54.2,15,4.8,3.8416
 Bhutan,22.8,*,1.7,*
 Brunei,6.3,*,0.1,*
 Cambodia,16.9,*,1.2,*
-China,28.2,35,2.3,0
-India,41.4,40,3.6,0.1
-Indonesia,18.3,15,1.3,0.3
-Iran,18.8,*,1.4,*
-Iraq,32.4,*,2.7,*
-Israel,14.3,25,0.9,0
-Japan,11.3,15,0.6,0
-Jordan,19.7,*,1.4,*
+China,28.2,35,2.3,*
+India,41.4,40,3.6,0.1372
+Indonesia,18.3,15,1.3,0.3234
+Iran,18.8,12,1.4,0.6664
+Iraq,32.4,10,2.7,2.1952
+Israel,14.3,25,0.9,*
+Japan,11.3,15,0.6,*
+Jordan,19.7,15,1.4,0.4606
 Kuwait,21.7,*,1.6,*
-Kyrgyzstan,12.1,5,0.7,0.7
+Kyrgyzstan,12.1,5,0.7,0.6958
 Laos,23.5,*,1.8,*
 Lebanon,18.6,*,1.3,*
-Malaysia,13.3,*,0.8,*
+Malaysia,13.3,15,0.8,*
 Maldives,8.2,*,0.3,*
-Mongolia,30.1,25,2.5,0.5
+Mongolia,30.1,25,2.5,0.4998
 Myanmar,28.6,*,2.3,*
 Nepal,39.2,*,3.4,*
 North Korea,18.6,*,1.3,*
 Oman,13.4,*,0.8,*
-Pakistan,38.9,15,3.3,2.3
+Pakistan,38.9,15,3.3,2.3422
 Palestine,14,*,0.9,*
 Paracel Islands,4,*,0,*
-Philippines,19.2,25,1.4,0
+Philippines,19.2,25,1.4,*
 Qatar,39.1,*,3.3,*
-Saudi Arabia,27.5,15,2.2,1.2
-Singapore,13.9,10,0.9,0.4
-South Korea,20.8,15,1.5,0.6
+Saudi Arabia,27.5,15,2.2,1.225
+Singapore,13.9,10,0.9,0.3822
+South Korea,20.8,15,1.5,0.5684
 Spratly Islands,0,*,0,*
-Sri Lanka,19.1,15,1.4,0.4
+Sri Lanka,19.1,15,1.4,0.4018
 Syria,22.8,*,1.7,*
 Taiwan,17.3,*,1.2,*
 Tajikistan,17.1,*,1.2,*
-Thailand,21.2,15,1.6,0.6
+Thailand,21.2,15,1.6,0.6076
 Timor-Leste,11,*,0.6,*
 Turkmenistan,10.4,*,0.5,*
 United Arab Emirates,20.7,*,1.5,*
 Uzbekistan,18.6,*,1.3,*
-Vietnam,23.6,25,1.8,0
+Vietnam,23.6,25,1.8,*
 Yemen,16.8,*,1.2,*
 Akrotiri and Dhekelia,13.4,*,0.8,*
-Albania,12.6,25,0.7,0
-Andorra,8.7,25,0.4,0
+Albania,12.6,10,0.7,0.2548
+Andorra,8.7,25,0.4,*
 Armenia,19.5,*,1.4,*
-Austria,9.5,25,0.4,0
+Austria,9.5,10,0.4,*
 Azerbaijan,11.9,*,0.7,*
-Belarus,9.8,*,0.5,*
-Belgium,8.8,25,0.4,0
-Bosnia and Herzegovina,23.9,25,1.9,0
-Bulgaria,18.8,25,1.4,0
-Croatia,14.1,25,0.9,0
-Cyprus,14.7,25,1,0
-Czechia,11.5,25,0.6,0
-Denmark,7.1,25,0.2,0
-Estonia,5.6,25,0.1,0
+Belarus,9.8,15,0.5,*
+Belgium,8.8,10,0.4,*
+Bosnia and Herzegovina,23.9,25,1.9,*
+Bulgaria,18.8,10,1.4,0.8624
+Croatia,14.1,10,0.9,0.4018
+Cyprus,14.7,10,1,0.4606
+Czechia,11.5,10,0.6,0.147
+Denmark,7.1,10,0.2,*
+Estonia,5.6,10,0.1,*
 Faroe Islands,2.6,*,0,*
-Finland,4.4,25,0,0
-France,8.4,25,0.3,0
-Georgia,13.7,20,0.9,0
-Germany,8.5,25,0.3,0
+Finland,4.4,10,0,*
+France,8.4,10,0.3,*
+Georgia,13.7,20,0.9,*
+Germany,8.5,10,0.3,*
 Gibraltar,7.3,*,0.2,*
-Greece,12.6,25,0.7,0
+Greece,12.6,10,0.7,0.2548
 Guernsey,6.9,*,0.2,*
-Hungary,11.9,25,0.7,0
-Iceland,2.9,25,0,0
-Ireland,5.4,25,0,0
+Hungary,11.9,10,0.7,0.1862
+Iceland,2.9,25,0,*
+Ireland,5.4,10,0,*
 Isle of Man,5.4,*,0,*
-Italy,13.1,25,0.8,0
+Italy,13.1,10,0.8,0.3038
 Jersey,6.9,*,0.2,*
 Kazakhstan,12,*,0.7,*
 Kosovo,15.5,*,1,*
-Latvia,12.2,25,0.7,0
+Latvia,12.2,10,0.7,0.2156
 Liechtenstein,10.8,*,0.6,*
-Lithuania,9.6,25,0.5,0
-Luxembourg,8,25,0.3,0
+Lithuania,9.6,10,0.5,*
+Luxembourg,8,10,0.3,*
 Macedonia,19,*,1.4,*
-Malta,7.2,25,0.2,0
-Moldova,11.5,25,0.6,0
+Malta,7.2,10,0.2,*
+Moldova,11.5,25,0.6,*
 Monaco,9.9,*,0.5,*
-Montenegro,15.1,25,1,0
-Netherlands,8.5,25,0.3,0
+Montenegro,15.1,25,1,*
+Netherlands,8.5,10,0.3,*
 Northern Cyprus,14.5,*,0.9,*
-Norway,4.9,12,0,0
-Poland,14.1,25,0.9,0
-Portugal,5.7,25,0.1,0
-Romania,13.7,25,0.9,0
-Russia,9.3,25,0.4,0
+Norway,4.9,12,0,*
+Poland,14.1,10,0.9,0.4018
+Portugal,5.7,10,0.1,*
+Romania,13.7,10,0.9,0.3626
+Russia,9.3,25,0.4,*
 San Marino,13.5,*,0.8,*
-Serbia,16.9,25,1.2,0
-Slovakia,12.1,25,0.7,0
-Slovenia,12.3,25,0.7,0
-Spain,7.5,25,0.2,0
+Serbia,16.9,25,1.2,*
+Slovakia,12.1,10,0.7,0.2058
+Slovenia,12.3,10,0.7,0.2254
+Spain,7.5,10,0.2,*
 Svalbard and Jan Mayen,*,*,*,*
-Sweden,4.9,25,0,0
-Switzerland,8.7,10,0.4,0
+Sweden,4.9,10,0,*
+Switzerland,8.7,10,0.4,*
 Turkey,21.1,*,1.6,*
-Ukraine,10.8,25,0.6,0
-United Kingdom,8.3,25,0.3,0
+Ukraine,10.8,25,0.6,*
+United Kingdom,8.3,25,0.3,*
 Vatican City,11.1,*,0.6,*
 Åland,4,*,0,*
 Anguilla,1.7,*,0,*
 Antigua and Barbuda,1.8,*,0,*
 Aruba,3.4,*,0,*
 Bahamas,3.1,*,0,*
-Barbados,2,10,0,0
+Barbados,2,10,0,*
 Belize,9.9,*,0.5,*
 Bermuda,2.8,*,0,*
 "Bonaire, Sint Eustatius and Saba",3.3,*,0,*
 British Virgin Islands,1.5,*,0,*
-Canada,6,8.8,0.1,0
+Canada,6,8.8,0.1,*
 Cayman Islands,8,*,0.3,*
 Clipperton Island,*,*,*,*
 Costa Rica,12.6,*,0.7,*
 Cuba,6.3,*,0.1,*
 Curaçao,3.7,*,0,*
 Dominica,2.3,*,0,*
-Dominican Republic,7.9,15,0.3,0
-El Salvador,27.4,15,2.2,1.2
+Dominican Republic,7.9,15,0.3,*
+El Salvador,27.4,15,2.2,1.2152
 Greenland,1.1,*,0,*
 Grenada,2.2,*,0,*
 Guadeloupe,2.3,*,0,*
 Guatemala,25.1,*,2,*
 Haiti,9.9,*,0.5,*
 Honduras,24.5,*,1.9,*
-Jamaica,13.2,15,0.8,0
+Jamaica,13.2,15,0.8,*
 Martinique,2.7,*,0,*
 Montserrat,2.3,*,0,*
-México,15.6,*,1,*
+México,15.6,12,1,0.3528
 Nicaragua,14.6,*,0.9,*
-Panama,9.7,20,0.5,0
-Puerto Rico,2.2,12,0,0
+Panama,9.7,20,0.5,*
+Puerto Rico,2.2,12,0,*
 Saint Kitts and Nevis,2.4,*,0,*
 Saint Lucia,2,*,0,*
 Saint Pierre and Miquelon,3.4,*,0,*
@@ -203,29 +203,29 @@ Saint Vincent and the Grenadines,2.1,*,0,*
 Saint-Barthélemy,2,*,0,*
 Saint-Martin,1.8,*,0,*
 Sint Maarten,2,*,0,*
-Trinidad and Tobago,3.9,15,0,0
+Trinidad and Tobago,3.9,15,0,*
 Turks and Caicos Islands,2.7,*,0,*
-United States,6.9,12,0.2,0
-"Virgin Islands, U.S.",1.8,12,0,0
-American Samoa,1.4,12,0,0
-Australia,3.4,8,0,0
+United States,6.9,9,0.2,*
+"Virgin Islands, U.S.",1.8,9,0,*
+American Samoa,1.4,12,0,*
+Australia,3.4,8,0,*
 Christmas Island,2.9,*,0,*
 Cocos Islands,1.7,*,0,*
 Cook Islands,1.1,*,0,*
 Fiji,3.2,*,0,*
 French Polynesia,1.5,*,0,*
-Guam,1.2,12,0,0
+Guam,1.2,12,0,*
 Heard Island and McDonald Island,*,*,*,*
 Kiribati,0.9,*,0,*
 Marshall Islands,1,*,0,*
 Micronesia,0.9,*,0,*
 Nauru,1.2,*,0,*
 New Caledonia,4.3,*,0,*
-New Zealand,3.7,5,0,0
+New Zealand,3.7,5,0,*
 Niue,1.2,*,0,*
 Norfolk Island,1.6,*,0,*
-Northern Mariana Islands,1.1,12,0,0
-Palau,2.4,12,0,0
+Northern Mariana Islands,1.1,12,0,*
+Palau,2.4,12,0,*
 Papua New Guinea,14.5,*,0.9,*
 Samoa,1.7,*,0,*
 Solomon Islands,7,*,0.2,*
@@ -235,17 +235,17 @@ Tuvalu,1.5,*,0,*
 United States Minor Outlying Islands,3.2,*,0,*
 Vanuatu,5.1,*,0,*
 Wallis and Futuna,1.8,*,0,*
-Argentina,12.5,15,0.7,0
+Argentina,12.5,15,0.7,*
 Bolivia,29.6,*,2.4,*
-Brazil,12.1,*,0.7,*
-Chile,22.8,20,1.7,0.3
-Colombia,16.2,20,1.1,0
-Ecuador,18.3,15,1.3,0.3
+Brazil,12.1,20,0.7,*
+Chile,22.8,20,1.7,0.2744
+Colombia,16.2,20,1.1,*
+Ecuador,18.3,15,1.3,0.3234
 Falkland Islands,2.6,*,0,*
 French Guiana,5.5,*,0,*
 Guyana,7.2,*,0.2,*
-Paraguay,13.2,15,0.8,0
-Peru,25.5,25,2,0
+Paraguay,13.2,15,0.8,*
+Peru,25.5,25,2,0.049
 Pitcairn Islands,2.5,*,0,*
 South Georgia and the South Sand,*,*,*,*
 Suriname,6.1,*,0.1,*

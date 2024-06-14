@@ -1,10 +1,9 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# US + Europe figure 7.4 ======
-
-# Europe definition and shapefile for figures 7.3 and 7.4
-# exclude the following countries to keep the map less wide and to show a stark difference between eastern and western europe
+# Europe definition and shapefile for figures 7.2 and 7.4
+# exclude the following countries to keep the map less wide and to show a stark 
+# difference between eastern and western europe
 exclude_countries <-  c("Russia", "Turkey", "Sweden", "Finland", "Norway", 
                         "Kazakhstan", "Iceland", "Georgia", "Azerbaijan", 
                         "Armenia", "Cyprus", "Northern Cyprus", 
@@ -19,8 +18,8 @@ europe_gadm1_shp <- gadm1_aqli_2022_shp %>%
   filter(!(name0 == "Portugal" & name1 == "Azores")) %>%
   filter(!(name0 == "Portugal" & name1 == "Madeira"))
 
-# very important: this code is run to obtian a country level shapefile of Europe without
-# Islas Canarias, Azores and Madeira
+# very important: this code is run to obtain a country level shapefile of 
+# Europe without Islas Canarias, Azores and Madeira
 europe_gadm0_shp <- europe_gadm1_shp %>% 
   count(name0)
 
@@ -38,7 +37,7 @@ east_west_border <- st_intersection(eastern_europe_large_polygon, western_europe
 
 # europe dataset
 ar_fig7.4_data <- gadm2_aqli_2022 %>%
-  filter(country %in% unlist(countries_except_excluded)) %>%
+  filter(country %in% unlist(countries_except_excluded), !is.na(llpp_who_2022)) %>%
   filter(!(country == "Spain" & name_1 == "Islas Canarias")) %>%
   filter(!(country == "Portugal" & name_1 == "Azores")) %>%
   filter(!(country == "Portugal" & name_1 == "Madeira")) %>%
@@ -69,9 +68,9 @@ ar_fig7.4 <- ar_fig7.4_data %>%
   labs(fill = "Potential gain in life expectancy (Years)  ", title = "", 
        subtitle = "") + 
   annotate("text", x = 33, y = 61, label = "Eastern Europe: 13 µg/m³, \n9.4 months potential gain") +
-  annotate("text", x =-11, y = 35, label = "Western Europe: 10 µg/m³, \n4.8 months potential gain") +
+  annotate("text", x =-11, y = 35, label = "Western Europe: 8.9 µg/m³, \n4.6 months potential gain") +
   theme(legend.position = "bottom", 
-        legend.justification = c(0.5, 3), 
+        legend.justification = "center", 
         legend.background = element_rect(color = "black"), 
         legend.text = element_text(size = 14),
         legend.title = element_text(size = 15), 

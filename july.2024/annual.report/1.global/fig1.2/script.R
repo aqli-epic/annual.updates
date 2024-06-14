@@ -1,7 +1,7 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# Global section figure 1.2 ============
+# figure 1.2 trendlines data
 trendlines_aqli_data_global <- gadm2_aqli_2022 %>%
   filter(!is.na(population)) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -13,14 +13,15 @@ trendlines_aqli_data_global <- gadm2_aqli_2022 %>%
          region = "Global") %>%
   select(region, years, pop_weighted_avg_pm2.5)
 
-# create an identifer for South Asia  
+# create an identifier for South Asia and Middle East & North Africa 
 ar_global_fig1.2_data <- gadm2_aqli_2022 %>%
   filter(!is.na(population)) %>%
   mutate(region = ifelse(country %in% south_asia_def, "South Asia", country), 
          region = ifelse(region %in% "China", "China", region), 
-         region = ifelse(region %in% c("China", "South Asia"), region, "Rest of the World"))
+         region = ifelse(country %in% mena_countries, "Middle East & North Africa", region), 
+         region = ifelse(region %in% c("China", "Middle East & North Africa", "South Asia"), region, "Rest of the World"))
 
-# convert data from wode to long
+# convert data from wide to long
 ar_global_fig1.2_data <- ar_global_fig1.2_data %>%
   group_by(region) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
@@ -34,9 +35,8 @@ ar_global_fig1.2_data <- ar_global_fig1.2_data %>%
 ar_global_fig1.2_data <- ar_global_fig1.2_data %>%
   rbind(trendlines_aqli_data_global)
 
-ar_global_fig1.2_data$region <- factor(ar_global_fig1.2_data$region, levels = c("South Asia", "China", "Rest of the World", "Global"))
+ar_global_fig1.2_data$region <- factor(ar_global_fig1.2_data$region, levels = c("South Asia", "Middle East & North Africa", "China", "Rest of the World", "Global"))
 
-# AR figure 5 plot
 ar_global_fig1.2 <- ar_global_fig1.2_data %>%
   ggplot() +  
   geom_line(mapping = aes(x = years, y = pop_weighted_avg_pm2.5, color = interaction(region), 
@@ -44,16 +44,19 @@ ar_global_fig1.2 <- ar_global_fig1.2_data %>%
   labs(x = "Year", y = expression("Annual Average " ~ PM[2.5] ~ " concentrations (in µg/m³)"), 
        color = "") +
   ggthemes::theme_fivethirtyeight() +
-  scale_color_manual(values = c("South Asia" = "darkred", 
-                                "China" = "orange", 
-                                "Rest of the World" = "khaki", 
+  scale_color_manual(values = c("South Asia" = "#800026", 
+                                "Middle East & North Africa" = "#fc4e2a", 
+                                "China" = "#feb24c", 
+                                "Rest of the World" = "#ffeda0", 
                                 "Global" = "snow4"), 
                      breaks = c("South Asia", 
+                                "Middle East & North Africa",
                                 "China", 
                                 "Rest of the World", 
                                 "Global"), 
                      name = "legend") +
-  scale_linetype_manual(values = c("South Asia" = "dashed", 
+  scale_linetype_manual(values = c("South Asia" = "dashed",
+                                   "Middle East & North Africa" = "dashed",
                                    "China" = "dashed", 
                                    "Rest of the World" = "dashed", 
                                    "Global" = "solid"), 

@@ -1,13 +1,13 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# Central and West Africa figure 4.2 ============
-
 # GBD results filtered for relevant cause of death and countries 
 gbd_results_cwafrica_fig4.2 <- gbd_results_master_2022 %>%
   filter(cause_of_death %in% c("PM2.5 relative to WHO guideline",
-                               "Neglected tropical diseases and malaria", "Unsafe water, sanitation, and handwashing", 
-                               "HIV/AIDS and sexually transmitted infections"), country %in% c("Nigeria", "Democratic Republic of the Congo", "Angola", "Ghana", "Cameroon"))
+                               "Neglected tropical diseases and malaria", 
+                               "Unsafe water, sanitation, and handwashing", 
+                               "HIV/AIDS and sexually transmitted infections"), 
+         country %in% c("Nigeria", "Democratic Republic of the Congo", "Angola", "Ghana", "Cameroon"))
 
 # making the 'location' column of type factor
 gbd_results_cwafrica_fig4.2$country <- factor(gbd_results_cwafrica_fig4.2$country, 
@@ -43,7 +43,7 @@ gbd_results_cwafrica_fig4.2 <- gbd_results_cwafrica_fig4.2 %>%
   mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
 
 # plot 
-ar_cw_africa_fig4.2_plt <- gbd_results_cwafrica_fig4.2 %>%
+ar_cw_africa_fig4.2 <- gbd_results_cwafrica_fig4.2 %>%
   ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) + 
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +

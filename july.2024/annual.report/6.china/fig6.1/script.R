@@ -1,9 +1,7 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# China figure 6.1 ============
-
-# filtering the data for China
+# filter China data and add broad region identifiers. common for figures 6.1 and 6.3
 color_2022_china <- gadm2_aqli_2022 %>%
   filter(country == "China", !is.na(population))
 
@@ -51,18 +49,18 @@ trendline_national_avg_df <- color_2022_china %>%
   select(years, region, pop_weighted_avg_pm2.5)
 
 # China section figure 1 data final
-ar_china_fig1_dataset <- rbind(trendlines_china_region_wise_df, trendline_national_avg_df)
+ar_china_fig6.1_data <- rbind(trendlines_china_region_wise_df, trendline_national_avg_df)
 
-ar_china_fig1_dataset <-  ar_china_fig1_dataset %>%
+ar_china_fig6.1_data <- ar_china_fig6.1_data %>%
   mutate(region_order = ifelse(region == "China", 1, NA), 
          region_order = ifelse(region == "PRD", 2, region_order), 
          region_order = ifelse(region == "YRD", 3, region_order), 
          region_order = ifelse(region == "BTH", 4, region_order))
 
-ar_china_fig1_dataset$region <- factor(ar_china_fig1_dataset$region, levels = c("BTH", "China", "YRD", "PRD"))
+ar_china_fig6.1_data$region <- factor(ar_china_fig6.1_data$region, levels = c("BTH", "China", "YRD", "PRD"))
 
 # plot china factsheet figure 3
-ar_china_fig1 <- ar_china_fig1_dataset %>%
+ar_china_fig6.1 <- ar_china_fig6.1_data %>%
   ggplot() +
   geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = interaction(region), 
                                    linetype = interaction(region)), lwd = 1.1) +
@@ -82,6 +80,5 @@ ar_china_fig1 <- ar_china_fig1_dataset %>%
   theme(legend.position = "bottom", legend.title = element_blank(), 
         plot.background = element_rect(fill = "white", color = "white"), 
         legend.key.width = unit(2, "cm")) + 
-  geom_text(x = 2002.8, y = 8.1, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³")) + 
-  geom_text(x = 2015.3, y = 92.8, label = str_wrap("China announces war on pollution", width = 18)) 
-
+  geom_text(x = 2002.1, y = 8.1, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³")) + 
+  geom_text(x = 2015.8, y = 92.8, label = str_wrap("China announces war on pollution", width = 18)) 

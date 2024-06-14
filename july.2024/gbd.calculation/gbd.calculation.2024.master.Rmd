@@ -276,7 +276,7 @@ results_file_names <- list.files(results_without_country_names_folder_path)
 results_with_file_names_list <- list()
 
 # country level AQLI summary
-country_level_aqli <- gadm_level_summary(gadm2_aqli_2022, "country", c(2021), 10)
+country_level_aqli <- gadm_level_summary(gadm2_aqli_2022, "country", c(2022), 10)
 
 # clean each country's processed results (add a country and AQLI lyl column) 
 for(i in 1:length(results_file_names)){
@@ -299,7 +299,7 @@ for(i in 1:length(results_file_names)){
        lyl = ifelse(cause_of_death == "PM2.5 relative to WHO guideline", NA, lyl))
  } else if (nrow(tmp_country_level_aqli) > 0) {
    tmp_aqli_lyl_num <- tmp_country_level_aqli %>%
-     select(llpp_who_2021) %>%
+     select(llpp_who_2022) %>%
      unlist()
    
     tmp_file <- tmp_file %>%
@@ -325,7 +325,12 @@ view(final_master_results %>%
        select(country, lyl) %>% 
        filter(is.na(lyl)))
 
+# assigning causes and risks to cause of death
+causes <- read_csv(str_c(sr_country_wise_file_path, "GBD_causes.csv"))
+risks <- read_csv(str_c(sr_country_wise_file_path, "GBD_risks.csv"))
+
 final_master_results %>%
-    write_csv(str_c(results_with_country_names_folder_path, "gbd_results_master", ".csv"))
+  mutate(`cause/risk` = if_else(cause_of_death %in% unlist(risks), "Risk", "Cause")) %>%
+  write_csv(str_c(results_with_country_names_folder_path, "gbd_results_master", ".csv"))
 
 ```

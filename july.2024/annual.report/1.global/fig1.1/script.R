@@ -3,7 +3,9 @@ source("R/july.2024.helper.script.R")
 
 # create a version of the figure with the same diseases as used in the same figure in last year's report
 ar_global_fig1.1_data <- gbd_results_master_2022 %>%
-  filter(country == "Global", cause_of_death %in% c("PM2.5 relative to WHO guideline", "Tobacco", "Alcohol use", 
+  filter(country == "Global", cause_of_death %in% c("PM2.5 relative to WHO guideline", 
+                                                    "Tobacco", 
+                                                    "Alcohol use", 
                                                     "Unsafe water, sanitation, and handwashing", 
                                                     "Transport injuries", 
                                                     "HIV/AIDS and sexually transmitted infections", 

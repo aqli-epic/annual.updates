@@ -1,8 +1,6 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# MENA figure 8.2 ============
-
 # GBD results filtered for relevant cause of death and countries 
 gbd_results_mena_fig8.2 <- gbd_results_master_2022 %>%
   filter(cause_of_death %in% c("Neoplasms", "PM2.5 relative to WHO guideline", 
@@ -42,6 +40,7 @@ ar_mena_fig8.2 <- gbd_results_mena_fig8.2 %>%
   ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) + 
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +
+  ylim(0,3) +
   facet_wrap(~factor(country, levels = c("Egypt", "Morocco", "Iraq", "Qatar", 
                                          "Saudi Arabia")), scales = "free_x", ncol = 5) +
   scale_fill_manual(values = c("#D3D9E0", "#8F3931", "#7BC1D9",

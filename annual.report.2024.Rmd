@@ -561,6 +561,7 @@ ar_cw_africa_fig4.2 <- gbd_results_cwafrica_fig4.2 %>%
 # AR Section 5: Latin America
 
 ```{r}
+# Latin America figure 5.1 ===========
 diseases_list <- c("Tobacco",
                    "Child and maternal malnutrition",
                    "Self-harm and interpersonal violence",
@@ -824,17 +825,17 @@ ar_china_fig6.2 <- ar_china_fig6.2_data %>%
 
 # China figure 6.3 ============
 # 5 deadliest diseases
-ar_china_fig6.4_dataset <- gbd_results_master_2022 %>%
+ar_china_fig6.3_dataset <- gbd_results_master_2022 %>%
   filter(country == "China") %>%
   slice_max(lyl, n = 5)
 
-colnames(ar_china_fig6.4_dataset)[3] <- c("llpp_who_2022")
+colnames(ar_china_fig6.3_dataset)[3] <- c("llpp_who_2022")
 
-ar_china_fig6.4_dataset <- ar_china_fig6.4_dataset %>%
+ar_china_fig6.3_dataset <- ar_china_fig6.3_dataset %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
 
 # figure 4 plot 
-ar_china_fig6.4 <- ar_china_fig6.4_dataset %>%
+ar_china_fig6.3 <- ar_china_fig6.3_dataset %>%
   ggplot() + 
   geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2022), 
                          y = llpp_who_2022, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), 
@@ -936,7 +937,8 @@ ar_fig7.1 <- us_1970_2022_map_data %>%
   guides(fill = guide_legend(nrow = 1))
 
 # Europe definition and shapefile for figures 7.2 and 7.4
-# exclude the following countries to keep the map less wide and to show a stark difference between eastern and western europe
+# exclude the following countries to keep the map less wide and to show a stark 
+# difference between eastern and western europe
 exclude_countries <-  c("Russia", "Turkey", "Sweden", "Finland", "Norway", 
                         "Kazakhstan", "Iceland", "Georgia", "Azerbaijan", 
                         "Armenia", "Cyprus", "Northern Cyprus", 
@@ -951,8 +953,8 @@ europe_gadm1_shp <- gadm1_aqli_2022_shp %>%
   filter(!(name0 == "Portugal" & name1 == "Azores")) %>%
   filter(!(name0 == "Portugal" & name1 == "Madeira"))
 
-# very important: this code is run to obtain a country level shapefile of Europe without
-# Islas Canarias, Azores and Madeira
+# very important: this code is run to obtain a country level shapefile of 
+# Europe without Islas Canarias, Azores and Madeira
 europe_gadm0_shp <- europe_gadm1_shp %>% 
   count(name0)
 
@@ -1200,7 +1202,7 @@ ar_mena_fig8.2 <- gbd_results_mena_fig8.2 %>%
   ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) + 
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +
-  ylim(0,3) +
+  ylim(0,3.5) +
   facet_wrap(~factor(country, levels = c("Egypt", "Morocco", "Iraq", "Qatar", 
                                          "Saudi Arabia")), scales = "free_x", ncol = 5) +
   scale_fill_manual(values = c("#D3D9E0", "#8F3931", "#7BC1D9",

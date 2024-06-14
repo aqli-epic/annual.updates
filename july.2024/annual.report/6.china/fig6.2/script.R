@@ -1,11 +1,9 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# China figure 6.2 ============
-
 # filter data for china and create shapefile
 ar_china_fig6.2_data <- gadm2_aqli_2022 %>%
-  filter(country == "China") %>%
+  filter(country == "China", !is.na(llpp_who_2022)) %>%
   mutate(lyl2014minus2022 = round((pm2014 - pm2022)*0.098, 1)) %>% # to reflect gain in life expectancy
   add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "lyl2014minus2022") %>% 
   left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
@@ -18,6 +16,7 @@ ar_china_fig6.2 <- ar_china_fig6.2_data %>%
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "China"), color = "azure4", fill = "transparent", lwd = 0.15) +
   geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "China"), color = "cornsilk", fill = "transparent", lwd = 0.5) +
+  geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "China", name1 %in% c("Hebei", "Sichuan", "Xinjiang Uygur")), color = "black", fill = "transparent", lwd = 0.5) + 
   ggthemes::theme_map() + 
   scale_fill_manual(values = c(">= 2" = "#4575b4",
                                "0.5 to (< 2)" = "#74add1",
@@ -28,9 +27,9 @@ ar_china_fig6.2 <- ar_china_fig6.2_data %>%
                                "-2 to (< -0.5)" = "#f46d43",
                                "< -2" = "#d73027")) +
   ggthemes::theme_map() +
-  labs(fill = "Change in life expectancy between 1998 and 2022 \n(Years; blue values indicate improvement)", title = "") + 
+  labs(fill = "Change in life expectancy between 2014 and 2022 \n(Years; blue values indicate improvement)", title = "") + 
   theme(legend.position = "bottom", 
-        legend.justification = c(0.5, 3), 
+        legend.justification = "center", 
         legend.background = element_rect(color = "black"), 
         legend.text = element_text(size = 14),
         legend.title = element_text(size = 15), 
@@ -43,4 +42,3 @@ ar_china_fig6.2 <- ar_china_fig6.2_data %>%
         legend.direction = "horizontal",
         plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
-

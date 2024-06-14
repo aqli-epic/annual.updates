@@ -3,7 +3,7 @@ source("R/july.2024.helper.script.R")
 
 # cw africa figure 4.1 dataset
 ar_cw_africa_fig4.1_data <- gadm2_aqli_2022 %>%
-  filter(country %in% central_and_west_african_countries) %>%
+  filter(country %in% central_and_west_african_countries, !is.na(llpp_who_2022)) %>%
   left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
   select(-geometry, geometry) %>%
@@ -29,7 +29,7 @@ ar_cw_africa_fig4.1 <- ar_cw_africa_fig4.1_data %>%
   labs(fill = "Potential gain in life expectancy (Years)", 
        title = "", subtitle = "") +
   theme(legend.position = "bottom", 
-        legend.justification = c(0.5, 3), 
+        legend.justification = "center", 
         legend.background = element_rect(color = "black"), 
         legend.text = element_text(size = 14),
         legend.title = element_text(size = 15), 

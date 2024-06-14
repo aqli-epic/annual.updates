@@ -1,8 +1,6 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# US + Europe figure 7.1 ======
-
 # percent reduction in pollution since 1970
 caa_pct_reduction <- 0.67 
 
@@ -46,8 +44,8 @@ ar_fig7.1 <- us_1970_2022_map_data %>%
                                "< -2" = "#d73027")) +
   ggthemes::theme_map() +
   labs(fill = "Change in life expectancy between 1970 and 2022 (Years; blue values indicate improvement)", title = "") +
-  theme(legend.position = "bottom",
-        legend.justification = c(0.5, 3),
+  theme(legend.position = "bottom", 
+        legend.justification = "center",
         legend.background = element_rect(color = "black"),
         legend.text = element_text(size = 14),
         legend.title = element_text(size = 15),

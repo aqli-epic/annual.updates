@@ -1,11 +1,9 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# MENA figure 8.1 ============
-
 # MENA figure 8.1 dataset
 ar_mena_fig8.1_data <- gadm2_aqli_2022 %>%
-  filter(country %in% mena_countries) %>%
+  filter(country %in% mena_countries, !is.na(llpp_who_2022)) %>%
   left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
   select(-geometry, geometry) %>%
@@ -31,7 +29,7 @@ ar_mena_fig8.1 <- ar_mena_fig8.1_data %>%
   labs(fill = "Potential gain in life expectancy (Years)", 
        title = "", subtitle = "") +
   theme(legend.position = "bottom", 
-        legend.justification = c(0.5, 3), 
+        legend.justification = "center", 
         legend.background = element_rect(color = "black"), 
         legend.text = element_text(size = 14),
         legend.title = element_text(size = 15), 
