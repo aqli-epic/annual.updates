@@ -1,51 +1,57 @@
 # read in the helper file
-source("R/july.2024.helper.script.R")
+# Inequality in AQ
+ar_fig1.3_dataset <- data.frame(group = c("Least polluted  \n(Bottom 20 percentile)", 
+                                          "Most polluted \n(Top 20 percentile)"),
+                                PM2.5 = c(5.5, 33.9),
+                                LYL = c(0.1, 2.8)) %>%
+  add_aqli_color_scale_buckets("lyl", "LYL") %>%
+  add_aqli_color_scale_buckets("pollution", "PM2.5")
 
-# AQ standards data
-ar_global_fig1.3_data <- gadm0_aqli_2022 %>%
-  left_join(nat_standard, by = c("country"="Country")) %>%
-  select(iso_alpha3, country, natstandard.y, pm2022, llpp_who_2022) %>%
-  mutate(aq_std_bucket = if_else(natstandard.y <= 5, "WHO Guideline: 5 µg/m³", NA),
-         aq_std_bucket = if_else(natstandard.y > 5 & natstandard.y <= 10, "WHO Interim Target 4: 10 µg/m³", aq_std_bucket),
-         aq_std_bucket = if_else(natstandard.y > 10 & natstandard.y <= 15, "WHO Interim Target 3: 15 µg/m³", aq_std_bucket),
-         aq_std_bucket = if_else(natstandard.y > 15 & natstandard.y <= 25, "WHO Interim Target 2: 25 µg/m³", aq_std_bucket),
-         aq_std_bucket = if_else(natstandard.y > 25 & natstandard.y <= 35, "WHO Interim Target 1: 35 µg/m³", aq_std_bucket),
-         aq_std_bucket = if_else(natstandard.y > 35, " > 35 µg/m³", aq_std_bucket)) %>%
-  replace_na(list(aq_std_bucket = "No PM2.5 Standard")) %>%
-  left_join(gadm0_aqli_2022_shp, by = c("iso_alpha3" = "isoalp3")) %>%
-  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
-  select(-geometry, geometry, ) %>%
-  st_as_sf()
+pollution <- ar_fig1.3_dataset %>%
+  ggplot(aes(x = group, y = PM2.5 , fill = forcats::fct_reorder(pol_bucket, order_pol_bucket))) +
+  geom_bar(stat = 'identity', position = 'stack', width = 0.5, colour = "black") +
+  ylim(0, 35) +
+  scale_fill_manual(values = c("0 to < 5" = "#a1f5ff", 
+                               "5 to < 10" = "#92d4eb", 
+                               "10 to < 20" = "#82b5d5", 
+                               "20 to < 30" = "#7197be", 
+                               "30 to < 40" = "#5f7aa5", 
+                               "40 to < 50" = "#4e5e8b", 
+                               "50 to < 60" = "#3c456f", 
+                               "60 to < 70" = "#2b2d54", 
+                               ">= 70" = "#1a1638")) +
+  labs(x = "Pollution group", y = expression("Annual average " ~ PM[2.5] ~ "concentrations (in µg/m³)"),
+       fill = "Annual average PM2.5 \nconcentrations (in µg/m³)") +
+  coord_flip() +
+  themes_aqli_base +
+  theme(legend.position = "bottom", 
+        axis.ticks = element_blank(), 
+        strip.text = element_text(size = 14), 
+        plot.background = element_rect(fill = "white", color = "white"))
 
-ar_global_fig1.3_data$aq_std_bucket <- factor(ar_global_fig1.3_data$aq_std_bucket, 
-                                              levels=c("WHO Guideline: 5 µg/m³", "WHO Interim Target 2: 25 µg/m³", 
-                                                       " > 35 µg/m³", "WHO Interim Target 4: 10 µg/m³", 
-                                                       "WHO Interim Target 1: 35 µg/m³", "No PM2.5 Standard", "WHO Interim Target 3: 15 µg/m³" ))
-
-# global fig 1.3
-ar_global_fig1.3 <- ggplot() +
-  geom_sf(data = gadm0_aqli_2022_shp, color = "cornsilk4", fill = "white", lwd = 0.05) +
-  geom_sf(data = ar_global_fig1.3_data, mapping = aes(fill = aq_std_bucket), color = "cornsilk4", lwd = 0.05) +
-  ggthemes::theme_map() +
-  labs(fill="Air quality standards around the world") +
-  scale_fill_manual(values = c("WHO Guideline: 5 µg/m³" = "#5f7aa5", 
-                               "WHO Interim Target 4: 10 µg/m³" = "#7197be", 
-                               "WHO Interim Target 3: 15 µg/m³" = "#4575b4",
-                               "WHO Interim Target 2: 25 µg/m³" = "#74add1", 
-                               "WHO Interim Target 1: 35 µg/m³" = "#abd9e9",
-                               " > 35 µg/m³" = "#e0f3f8",
-                               "No PM2.5 Standard" = "lightgrey" )) +
-  theme(plot.title = element_text(hjust = 0.5, size = 15), 
-        plot.background = element_rect(fill = "white", color = "white"),
-        plot.subtitle = element_text(hjust = 0.5, size = 12), 
-        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
+lyl <- ar_fig1.3_dataset %>%
+  ggplot(aes(x = group, y = LYL , fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket))) +
+  geom_bar(stat = 'identity', position = 'stack', width = 0.5, colour = "black") +
+  ylim(0, 3) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
+                               "0.1 to < 0.5" = "#ffeda0", 
+                               "0.5 to < 1" = "#fed976", 
+                               "1 to < 2" = "#feb24c", 
+                               "2 to < 3" = "#fd8d3c", 
+                               "3 to < 4" = "#fc4e2a", 
+                               "4 to < 5" = "#e31a1c", 
+                               "5 to < 6" = "#bd0026", 
+                               ">= 6" = "#800026")) +
+  labs(x = "", y = "Potential gain in life expectancy (Years)",
+       fill = "Potential gain in \nlife expectancy (Years)") +
+  coord_flip() +
+  themes_aqli_base +
+  theme(axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
         legend.position = "bottom", 
-        legend.justification = "center", 
-        legend.background = element_rect(color = "black"), 
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 15),
-        legend.key = element_rect(color = "black"),
-        legend.box.margin = margin(b = 1, unit = "cm"),
-        legend.box.spacing = unit(0, "cm"), 
-        legend.direction = "horizontal") +
-  guides(fill = guide_legend(ncol = 3, nrow = 3))
+        strip.text = element_text(size = 14), 
+        plot.background = element_rect(fill = "white", color = "white"))
+
+# Combine both graphs in a panel
+ar_global_fig1.3 <- gridExtra::grid.arrange(pollution, lyl, nrow = 1, widths=c(3,2))
