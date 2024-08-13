@@ -1,53 +1,41 @@
 # read in the helper file
-source("R/july.2024.helper.script.R")
+source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
 
-# read and filter AQLI data
-ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
-             "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu",
-             "Nong Khai", "Roi Et", "Sakon Nakhon", "Si Sa Ket", "Surin", "Ubon Ratchathani",
-             "Udon Thani", "Yasothon")
+# thailand fs fig 3 data
+gbd_results_thailand <- gbd_results_master_2022 %>%
+  filter(cause_of_death!= "Cardiovascular diseases")%>%
+  filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
+  filter(country == "Thailand")
 
-n_thai <- c ("Chiang Mai", "Chiang Rai", "Lampang", "Lamphun", "Mae Hong Son", "Nan", "Phayao", "Phrae",
-             "Uttaradit", "Tak", "Kamphaeng Phet", "Phetchabun", "Phichit", "Phitsanulok", "Sukhothai",
-             "Nakhon Sawan", "Uthai Thani")
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_thailand)[3] <- c("llpp_who_2022")
 
-c_thai <- c("Ang Thong", "Bangkok Metropolis", "Chai Nat", "Lop Buri", "Nakhon Pathom", "Nonthaburi", "Pathum Thani",
-            "Phra Nakhon Si Ayutthaya", "Samut Prakan", "Samut Sakhon", "Samut Songkhram", "Saraburi",
-            "Sing Buri", "Suphan Buri", "Nakhon Nayok", "Chachoengsao", "Chanthaburi", "Chon Buri",
-            "Prachin Buri", "Rayong", "Sa Kaeo", "Trat", "Kanchanaburi", "Ratchaburi", "Phetchaburi", "Prachuap Khiri Khan")
+thailand_fs_fig3_dataset <- gbd_results_thailand %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  slice_max(llpp_who_2022, n = 10)
 
-s_thai <- c("Chumphon", "Nakhon Si Thammarat", "Narathiwat", "Pattani", "Phatthalung", "Songkhla", "Surat Thani",
-            "Yala", "Krabi", "Phangnga", "Phuket", "Ranong", "Satun", "Trang")
-
-thai_aqli_2022 <- gadm2_aqli_2022 %>%
-  filter(country == "Thailand") %>%
-  mutate(region = case_when(
-    name_1 %in% ne_thai ~ "Northeastern",
-    name_1 %in% n_thai ~ "Northern",
-    name_1 %in% c_thai ~ "Central",
-    name_1 %in% s_thai ~ "Southern"))
-
-# thailand fs fig 2 data
-thailand_fs_fig2_dataset <- thai_aqli_2022 %>%
-  select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022') %>%
-  group_by(name_1) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE),
-         pm2022_pop_weighted = pop_weights*pm2022,
-         llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE),
-            avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
-            le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
-            llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
-            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
-  slice_max(tot_pop, n = 10) %>%
-  add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
-
-# thailand fs figure 2
-thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
+# thailand factsheet figure 3
+thailand_fs_fig3 <- thailand_fs_fig3_dataset %>%
   ggplot() +
-  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
-  labs(x = "Province", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
-  scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),axis.ticks.y = element_blank(),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
   scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
                                "0.1 to < 0.5" = "#ffeda0",
                                "0.5 to < 1" = "#fed976",
@@ -57,17 +45,7 @@ thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
                                "4 to < 5" = "#e31a1c",
                                "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
-  coord_flip() +
-  ggthemes::theme_tufte() +
-  theme(legend.position = "bottom",
-        plot.title = element_text(hjust = 0.5, size = 16),
-        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")),
-        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
-        legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
-        axis.line = element_line(),
-        axis.text = element_text(size = 11),
-        axis.title = element_text(size = 13),
-        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")),
-        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")),
-        axis.ticks = element_blank())
+  guides(fill = guide_legend(nrow = 1))
+ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig3.png", thailand_fs_fig3, width = 15, height = 10)
+svglite("thailand_fs_fig3")
+ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig3.svg", width = 15, height = 10)
