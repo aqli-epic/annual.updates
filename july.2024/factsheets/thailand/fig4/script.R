@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # read and filter AQLI data
 ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
@@ -82,6 +82,3 @@ thailand_fs_fig4 <- thailand_fs_fig4_dataset %>%
         axis.ticks = element_blank()) +
   geom_text(x = 2001.15, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5)+
   geom_text(x = 2006.6, y = 15.6, label = expression("Thailand National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5)
-ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig4.png", thailand_fs_fig4, width = 15, height = 10)
-svglite("thailand_fs_fig4")
-ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig4.svg", width = 15, height = 10)

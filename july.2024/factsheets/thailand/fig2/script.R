@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # thailand fs fig 3 data
 gbd_results_thailand <- gbd_results_master_2022 %>%
@@ -46,6 +46,4 @@ thailand_fs_fig3 <- thailand_fs_fig3_dataset %>%
                                "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
-ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig3.png", thailand_fs_fig3, width = 15, height = 10)
-svglite("thailand_fs_fig3")
-ggsave("C:/Users/Aarsh/Downloads/thailand_fs_fig3.svg", width = 15, height = 10)
+
