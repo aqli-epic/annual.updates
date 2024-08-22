@@ -1,17 +1,19 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
+# Global section figure 1.1 ============
 # create a version of the figure with the same diseases as used in the same figure in last year's report
 ar_global_fig1.1_data <- gbd_results_master_2022 %>%
   filter(country == "Global", cause_of_death %in% c("PM2.5 relative to WHO guideline", 
                                                     "Tobacco", 
+                                                    "Child and maternal malnutrition", 
+                                                    "Maternal and neonatal disorders", 
                                                     "Alcohol use", 
-                                                    "Unsafe water, sanitation, and handwashing", 
                                                     "Transport injuries", 
-                                                    "HIV/AIDS and sexually transmitted infections", 
+                                                    "Unsafe water, sanitation, and handwashing", 
                                                     "Neglected tropical diseases and malaria", 
-                                                    "Nutritional deficiencies", 
-                                                    "Child and maternal malnutrition"))
+                                                    "HIV/AIDS and sexually transmitted infections", 
+                                                    "Nutritional deficiencies"))
 colnames(ar_global_fig1.1_data)[3] <- c("llpp_who_2022")
 
 ar_global_fig1.1_data <- ar_global_fig1.1_data %>%

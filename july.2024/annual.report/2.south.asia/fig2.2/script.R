@@ -1,13 +1,13 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# GBD results filtered for relevant cause of death and countries 
+# South Asia figure 2.2 ============
 gbd_results_sa_fig2.2 <- gbd_results_master_2022 %>%
   filter(cause_of_death %in% c("PM2.5 relative to WHO guideline",
-                               "Cardiovascular diseases", 
+                               "Dietary risks", 
                                "Child and maternal malnutrition", 
                                "Tobacco", 
-                               "High systolic blood pressure"), 
+                               "Unsafe water, sanitation, and handwashing"), 
          country %in% c("Bangladesh", "Nepal", "India", "Pakistan"))
 
 # making the 'location' column of type factor
@@ -19,7 +19,11 @@ gbd_results_sa_fig2.2$country <- factor(gbd_results_sa_fig2.2$country,
 gbd_results_sa_fig2.2$cause_of_death <- as.factor(gbd_results_sa_fig2.2$cause_of_death)
 
 # Rearranging 'cause of death' levels
-levels(gbd_results_sa_fig2.2$cause_of_death) <- c("Cardiovascular diseases", "Child and maternal malnutrition", "High systolic blood pressure", "PM2.5 relative to WHO guideline", "Tobacco")
+levels(gbd_results_sa_fig2.2$cause_of_death) <- c("Cardiovascular diseases", 
+                                                  "Child and maternal malnutrition", 
+                                                  "High systolic blood pressure", 
+                                                  "PM2.5 relative to WHO guideline", 
+                                                  "Tobacco")
 
 # wrapping x-axis labels text 
 levels(gbd_results_sa_fig2.2$cause_of_death) <- str_wrap(levels(gbd_results_sa_fig2.2$cause_of_death), 30)
@@ -35,7 +39,7 @@ country_wise_population <- gadm2_aqli_2022 %>%
 gbd_results_sa_fig2.2 <- gbd_results_sa_fig2.2 %>% 
   mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
 
-# clean the "cause of death" column and save South Asia figure 2
+# clean the "cause of death" column 
 gbd_results_sa_fig2.2 <- gbd_results_sa_fig2.2 %>%
   mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
 
@@ -46,13 +50,10 @@ ar_south_asia_fig2.2 <- gbd_results_sa_fig2.2 %>%
   scale_x_reordered() +
   facet_wrap(~factor(country, levels = c("Bangladesh", "Nepal", "India", 
                                          "Pakistan")), scales = "free_x", ncol = 4) +
-  scale_fill_manual(values = c("#D3D9E0", "#7BC1D9", "#808A94", "#8F3931",
-                               "darkkhaki")) +
+  scale_fill_manual(values = c("#5e92a9", "#8ea75b", "#8F3931", "#564681", "#f29e37")) +
   labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "", 
        subtitle = "", fill = "Threats to Life Expectancy") +
   themes_aqli_base +
-  theme(axis.text.x = element_blank(), 
-        legend.position = "bottom", 
-        axis.ticks = element_blank(), 
+  theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(), 
         strip.text = element_text(size = 14), 
         plot.background = element_rect(fill = "white", color = "white")) 

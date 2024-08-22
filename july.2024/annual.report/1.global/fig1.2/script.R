@@ -1,6 +1,7 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
+# Global section figure 1.2 ============
 # figure 1.2 trendlines data
 trendlines_aqli_data_global <- gadm2_aqli_2022 %>%
   filter(!is.na(population)) %>%
@@ -45,10 +46,10 @@ ar_global_fig1.2 <- ar_global_fig1.2_data %>%
        color = "") +
   ggthemes::theme_fivethirtyeight() +
   scale_color_manual(values = c("South Asia" = "#800026", 
-                                "Middle East & North Africa" = "#fc4e2a", 
-                                "China" = "#feb24c", 
-                                "Rest of the World" = "#ffeda0", 
-                                "Global" = "snow4"), 
+                                "Middle East & North Africa" = "#8ea75b", 
+                                "China" = "#D63333", 
+                                "Rest of the World" = "#f29e37", 
+                                "Global" = "#5e92a9"), 
                      breaks = c("South Asia", 
                                 "Middle East & North Africa",
                                 "China", 
