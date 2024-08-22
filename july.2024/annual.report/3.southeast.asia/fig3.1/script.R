@@ -24,14 +24,14 @@ ar_se_asia_fig3.1 <- ar_se_asia_fig3.1_data %>%
   geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 %in% se_asia_vec), color = "cornsilk4", fill = "transparent", lwd = 0.3) +
   ggthemes::theme_map() +
   scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
-                               "0.1 to < 0.5" = "#ffeda0",
-                               "0.5 to < 1" = "#fed976",
-                               "1 to < 2" = "#feb24c",
-                               "2 to < 3" = "#fd8d3c",
-                               "3 to < 4" = "#fc4e2a",
-                               "4 to < 5" = "#e31a1c",
-                               "5 to < 6" = "#bd0026",
-                               ">= 6" = "#800026")) +
+                               "0.1 to < 0.5" = "#fff2e1",
+                               "0.5 to < 1" = "#ffedd3",
+                               "1 to < 2" = "#ffc97a",
+                               "2 to < 3" = "#ffa521",
+                               "3 to < 4" = "#eb6c2a",
+                               "4 to < 5" =  "#d63333",
+                               "5 to < 6" = "#8e2946",
+                               ">= 6" = "#451f59"))+
   ggthemes::theme_map() +
   labs(fill = "Potential gain in life expectancy (Years)") +
   theme(legend.position = "bottom",
@@ -44,7 +44,7 @@ ar_se_asia_fig3.1 <- ar_se_asia_fig3.1_data %>%
         plot.subtitle = element_text(hjust = 0.5, size = 7),
         plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
         legend.key = element_rect(color = "black"),
-        legend.box.spacing = unit(0, "cm"),
+        legend.box.spacing = unit(2, "cm"),
         legend.direction = "horizontal",
         plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))

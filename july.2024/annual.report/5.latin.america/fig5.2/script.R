@@ -56,4 +56,3 @@ ar_fig5.2 <- ar_fig5.2_data %>%
   guides(fill = guide_legend(nrow = 1))
 
 
-

@@ -3,12 +3,10 @@ source("R/july.2024.helper.script.R")
 
 # GBD figure 5.1 -----------------------------------------
 
-diseases_list <- c("Tobacco",
-                   "Child and maternal malnutrition",
-                   "Self-harm and interpersonal violence",
-                   "PM2.5 relative to WHO guideline")
+diseases_list <- c("Child and maternal malnutrition","PM2.5 relative to WHO guideline",
+                   "Self-harm and interpersonal violence","Tobacco")
 
-country_list <- c("Bolivia", "Guatemala", "Brazil", "Mexico", "Colombia")
+country_list <- c("Bolivia", "Brazil", "Colombia","Guatemala", "Mexico")
 
 # GBD results filtered for relevant cause of death (given Europe) and countries
 ar_fig5.1_data <- gbd_results_master_2022 %>%
@@ -34,12 +32,11 @@ ar_fig5.1_data <- ar_fig5.1_data %>%
 
 # plot
 ar_fig5.1 <- ar_fig5.1_data %>%
-  ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) +
+  ggplot(mapping = aes(x = cause_of_death, y = lyl)) +
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +
   facet_wrap(~factor(country, levels = country_list), scales = "free_x", ncol = 5) +
-  scale_fill_manual(values = c("#B4CDD9", "#8F3931", "#707F8C",
-                               "#ADE9FA", "#CBE8F3")) +
+  scale_fill_manual(values = c("#5e92a9", "#7f152c" ,"#f29e37", "#8ea75b")) +
   labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "",
        subtitle = "", fill = "Threats to Life Expectancy") +
   themes_aqli_base +

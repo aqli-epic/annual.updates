@@ -31,18 +31,17 @@ ar_fig5.3 <- ar_fig5.3_dataset %>%
   slice_max(tot_poll, n = 15) %>%
       add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "gain_in_le") %>%
       ggplot() +
-      geom_col(mapping = aes(x = forcats::fct_reorder(!!as.symbol("name_1_country"), !!as.symbol("gain_in_le")), y = !!as.symbol("gain_in_le"), fill = forcats::fct_reorder(!!as.symbol("lyl_bucket"), !!as.symbol("order_lyl_bucket"))), color = "black") +
+      geom_col(mapping = aes(x = forcats::fct_reorder(!!as.symbol("name_1_country"), desc(!!as.symbol("gain_in_le"))), y = !!as.symbol("gain_in_le"), fill = forcats::fct_reorder(!!as.symbol("lyl_bucket"), !!as.symbol("order_lyl_bucket"))), color = "black") +
       scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
-                                   "0.1 to < 0.5" = "#ffeda0",
-                                   "0.5 to < 1" = "#fed976",
-                                   "1 to < 2" = "#feb24c",
-                                   "2 to < 3" = "#fd8d3c",
-                                   "3 to < 4" = "#fc4e2a",
-                                   "4 to < 5" = "#e31a1c",
-                                   "5 to < 6" = "#bd0026",
-                                   ">= 6" = "#800026")) +
+                               "0.1 to < 0.5" = "#fff2e1",
+                               "0.5 to < 1" = "#ffedd3",
+                               "1 to < 2" = "#ffc97a",
+                               "2 to < 3" = "#ffa521",
+                               "3 to < 4" = "#eb6c2a",
+                               "4 to < 5" =  "#d63333",
+                               "5 to < 6" = "#8e2946",
+                               ">= 6" = "#451f59"))+
       labs(x = "Region", y = "Potential Gain in Life Expectancy (Years)", title = "", subtitle = "", caption = "", fill = "Potential gain in life expectancy (Years)") +
       themes_aqli_base +
   theme(plot.background = element_rect(color = "white", fill = "white")) +
       coord_flip()
-

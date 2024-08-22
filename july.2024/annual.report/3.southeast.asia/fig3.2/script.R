@@ -7,26 +7,47 @@ se_asia_def <-  c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia",
                   "Vietnam")
 
 # figure 3.2 ------------
-# southeast asia figure 3.2 data
-ar_se_asia_fig3.2_data <- gadm0_aqli_2022 %>% filter(country %in% c("Malaysia","Indonesia"))%>% select(country, pm2022,pm2019) %>%
-  group_by(country)
-# Assuming 'dat' is your original data frame
-ar_se_asia_fig3.2_data <- data.frame(country = ar_se_asia_fig3.2_data$country,
-                     pm2022 = ar_se_asia_fig3.2_data$pm2022,
-                     pm2019 = ar_se_asia_fig3.2_data$pm2019)
 
-ar_se_asia_fig3.2_data <- gather(ar_se_asia_fig3.2_data, Year, PM2.5, pm2022:pm2019)
+#filter for relevant countries
+country_list <- c("Indonesia", "Malaysia", "Myanmar", "Thailand", "Vietnam")
+# filter for relevant cause of death
+diseases_list <- c("High fasting plasma glucose","PM2.5 relative to WHO guideline",
+                   "Tobacco", "Transport injuries")
 
-# Change x-axis labels to "2022" and "2019"
-ar_se_asia_fig3.2_data$Year <- recode(ar_se_asia_fig3.2_data$Year, pm2022 = "2022", pm2019 = "2019")
+ar_se_asia_fig3.2_data <- gbd_results_master_2022 %>%
+  filter(cause_of_death %in% diseases_list, country %in% country_list)
 
-# southeast asia figure 3.2: 15 most polluted regions
-ar_se_asia_fig3.2 <- ggplot(ar_se_asia_fig3.2_data, aes(country, PM2.5, fill = Year)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.6) +
+# making the 'location' column of type factor
+ar_se_asia_fig3.2_data$country <- factor(ar_se_asia_fig3.2_data$country,
+                                         levels = country_list)
+
+# Converting 'cause_of_death' to type factor
+ar_se_asia_fig3.2_data$cause_of_death <- factor(ar_se_asia_fig3.3_data$cause_of_death, levels = diseases_list)
+
+# wrapping x-axis labels text
+levels(ar_se_asia_fig3.2_data$cause_of_death) <- str_wrap(levels(ar_se_asia_fig3.3_data$cause_of_death), 30)
+
+# reorder within each location as per the total life years lost column
+ar_se_asia_fig3.2_data <- ar_se_asia_fig3.2_data %>%
+  mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
+
+# clean the "cause of death" column
+ar_se_asia_fig3.2_data <- ar_se_asia_fig3.2_data %>%
+  mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
+
+# southeast asia figure 3.2: GBD
+ar_fig3.2 <- ar_se_asia_fig3.2_data %>%
+  ggplot(mapping = aes(x = cause_of_death, y = lyl)) +
+  geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
+  scale_x_reordered() +
+  facet_wrap(~factor(country, levels = country_list), scales = "free_x", ncol = 5) +
   scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 30),
-                    values = c("#fed976","#fd8d3c","#fc4e2a","#800026")) +
-  labs(x = "Country", y = "Annual average PM2.5 concentration", title = "", subtitle = "", caption = "", fill = "Year") +
+                    values = c("#5e92a9", "#7f152c" , "#8ea75b","#f29e37")) +
+  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "",
+       subtitle = "", fill = "Threats to Life Expectancy") +
   themes_aqli_base +
-  theme(plot.background = element_rect(color = "white", fill = "white"))
-
-
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        strip.text = element_text(size = 14),
+        plot.background = element_rect(fill = "white", color = "white")) +
+  scale_y_continuous(breaks = seq(0, 7, 0.5))
