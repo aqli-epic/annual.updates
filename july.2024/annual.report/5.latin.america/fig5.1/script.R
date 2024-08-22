@@ -4,7 +4,6 @@ source("R/july.2024.helper.script.R")
 # GBD figure 5.1 -----------------------------------------
 
 diseases_list <- c("Tobacco",
-                   "Respiratory infections and tuberculosis",
                    "Child and maternal malnutrition",
                    "Self-harm and interpersonal violence",
                    "PM2.5 relative to WHO guideline")
