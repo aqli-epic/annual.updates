@@ -1,6 +1,8 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
+#Figure 1: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
+
 # read and filter AQLI data
 ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
              "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu",

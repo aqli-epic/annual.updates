@@ -1,6 +1,6 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
-
+# Figure 1: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
 # indonesia fs fig 1 data
 indonesia_fs_fig1_dataset <- gadm2_aqli_2022 %>%
   filter(country == "Indonesia") %>%
@@ -31,14 +31,14 @@ indonesia_fs_fig1 <- indonesia_fs_fig1_dataset %>%
   theme(legend.position = "bottom",
         legend.justification = c(0.5, 3),
         legend.background = element_rect(color = "black"),
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 15),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
         plot.title = element_text(hjust = 0.5, size = 15),
         legend.box.margin = margin(b = 1, unit = "cm"),
         plot.subtitle = element_text(hjust = 0.5, size = 7),
         plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
         legend.key = element_rect(color = "black"),
-        legend.box.spacing = unit(0, "cm"),
+        legend.box.spacing = unit(2, "cm"),
         legend.direction = "horizontal",
         plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))

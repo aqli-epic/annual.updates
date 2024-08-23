@@ -1,6 +1,8 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
+#Figure 4: Annual average PM2.5 concentrations in Indonesia, 1998-2022
+
 # indonesia factsheet figure 4 dataset
 indonesia_fs_fig4_dataset <- gadm2_aqli_2022 %>%
   filter(country == "Indonesia") %>%
@@ -27,17 +29,18 @@ indonesia_fs_fig4 <- indonesia_fs_fig4_dataset %>%
   labs(x = "Year",
        y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 11),
+        legend.text = element_text(size = 20, color="#222222"),
         legend.title = element_blank(),
-        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")),
-        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
         axis.line = element_line(),
         legend.box.background = element_rect(color = "black"),
         plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
         plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
-        axis.text = element_text(size = 12),
+        axis.text = element_text(size = 20, color="#222222"),
         plot.background = element_rect(color = "white"),
         axis.ticks = element_blank()) +
-  geom_text(x = 2001, y = 5.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2022): 5 µg/m³"), size = 5) +
+  geom_text(x = 2001.5, y = 5.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5) +
   geom_text(x = 2006.6, y = 15.6, label = expression("Indonesia National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5)
+

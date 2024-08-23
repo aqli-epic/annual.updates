@@ -1,6 +1,8 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
+#Figure 4: Annual average PM2.5 concentrations in Thailand, 1998-2022
+
 # read and filter AQLI data
 ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
              "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu",
@@ -82,3 +84,4 @@ thailand_fs_fig4 <- thailand_fs_fig4_dataset %>%
         axis.ticks = element_blank()) +
   geom_text(x = 2001.15, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5)+
   geom_text(x = 2006.6, y = 15.6, label = expression("Thailand National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5)
+

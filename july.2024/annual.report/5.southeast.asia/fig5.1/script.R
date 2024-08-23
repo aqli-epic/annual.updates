@@ -6,18 +6,18 @@ se_asia_def <-  c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia",
                   "Laos", "Malaysia", "Philippines", "Singapore", "Thailand",
                   "Vietnam")
 
-# figure 3.1 ------------
+# figure 5.1 ------------
 
-# southeast asia figure 3.1 dataset
-ar_se_asia_fig3.1_data <- gadm2_aqli_2022 %>%
+# southeast asia figure 5.1 dataset
+ar_se_asia_fig5.1_data <- gadm2_aqli_2022 %>%
   filter(country %in% se_asia_def) %>%
   left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
   select(-geometry, geometry) %>%
   st_as_sf()
 
-# southeast asia figure 3.1: map
-ar_se_asia_fig3.1 <- ar_se_asia_fig3.1_data %>%
+# southeast asia figure 5.1: map
+ar_se_asia_fig5.1 <- ar_se_asia_fig5.1_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 %in% se_asia_vec), color = "azure4", fill = "transparent", lwd = 0.1) +

@@ -1,6 +1,8 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
+#Figure 3: Potential gain in life expectancy from reducing PM2.5 from 2022 levels to the WHO guideline in 10 most populous provinces of Thailand
+
 # read and filter AQLI data
 ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
              "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu",
@@ -27,8 +29,8 @@ thai_aqli_2022 <- gadm2_aqli_2022 %>%
     name_1 %in% c_thai ~ "Central",
     name_1 %in% s_thai ~ "Southern"))
 
-# thailand fs fig 2 data
-thailand_fs_fig2_dataset <- thai_aqli_2022 %>%
+# thailand fs fig 3 data
+thailand_fs_fig3_dataset <- thai_aqli_2022 %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022') %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -42,8 +44,8 @@ thailand_fs_fig2_dataset <- thai_aqli_2022 %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
 
-# thailand fs figure 2
-thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
+# thailand fs figure 3
+thailand_fs_fig3 <- thailand_fs_fig3_dataset %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
   labs(x = "Province", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
@@ -73,3 +75,4 @@ thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
         axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")),
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")),
         axis.ticks = element_blank())
+

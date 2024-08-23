@@ -1,7 +1,9 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
 
-# thailand fs fig 3 data
+#Figure 2: Top 10 threats to life expectancy in Thailand
+
+# thailand fs fig 2 data
 gbd_results_thailand <- gbd_results_master_2022 %>%
   filter(cause_of_death!= "Cardiovascular diseases")%>%
   filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
@@ -10,12 +12,16 @@ gbd_results_thailand <- gbd_results_master_2022 %>%
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
 colnames(gbd_results_thailand)[3] <- c("llpp_who_2022")
 
-thailand_fs_fig3_dataset <- gbd_results_thailand %>%
+thailand_fs_fig2_dataset <- gbd_results_thailand %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
   slice_max(llpp_who_2022, n = 10)
 
-# thailand factsheet figure 3
-thailand_fs_fig3 <- thailand_fs_fig3_dataset %>%
+# Reorder the data to ensure the additional cause is in the correct position
+thailand_fs_fig2_dataset <- thailand_fs_fig2_dataset %>%
+  arrange(desc(llpp_who_2022))
+
+# thailand factsheet figure 2
+thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
   labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
