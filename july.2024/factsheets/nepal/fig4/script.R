@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # Figure 4: Annual average PM2.5 concentration in Nepal, 1998-2022 ------
 
@@ -41,6 +41,3 @@ nepal_fs_fig4 <- nepal_fs_fig4_dataset %>%
         plot.background = element_rect(color = "white"),
         axis.ticks = element_blank()) +
   geom_text(x = 2001.6, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
-ggsave("C:/Users/Aarsh/Downloads/nepal_fs_fig4.png", nepal_fs_fig4, width = 15, height = 10)
-svglite("nepal_fs_fig4")
-ggsave("C:/Users/Aarsh/Downloads/nepal_fs_fig4.svg", width = 15, height = 10)

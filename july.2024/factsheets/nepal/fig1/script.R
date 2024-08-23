@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/Aarsh/Downloads/annual.updates/R/july.2024.helper.script.R")
+source("R/july.2024.helper.script.R")
 
 # Fig 1:  Potential gain in Life Expectancy from permanently reducing PM2.5 ------
 # from 2022 levels to the WHO PM2.5 guideline.
@@ -43,6 +43,4 @@ nepal_fs_fig1 <- nepal_fs_fig1_dataset %>%
         legend.box.spacing = unit(2, "cm"),
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
-ggsave("C:/Users/Aarsh/Downloads/nepal_fs_fig1.png", nepal_fs_fig1, width = 15, height = 10)
-svglite("nepal_fs_fig1")
-ggsave("C:/Users/Aarsh/Downloads/nepal_fs_fig1.svg", width = 15, height = 10)
+

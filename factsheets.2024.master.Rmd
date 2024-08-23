@@ -273,29 +273,10 @@ india_fs_appendix_table <- gadm_level_summary(gadm2_aqli_2022, c("country", "nam
 ```
 
 ## Bangladesh Factsheet
-```{r}
+```{r bangladesh_fs_2024}
 
-# stats check/update
-# by what multiple does particulate pollution exceed the WHO guideline in each of Bangladesh's districts
-gadm2_aqli_2022 %>%
-  filter(country == "Bangladesh") %>%
-  mutate(mult_of_who = pm2022/5, 
-         mult_of_nat = pm2022/15) %>%
-  select(name_1, name_2, mult_of_who, mult_of_nat) %>% 
-  slice_min(mult_of_who, n = 5) %>%
-  View()
-
-
-gadm2_aqli_2022 %>%
-  filter(country == "Bangladesh") %>%
-  slice_max(population, n = 5)
-
-gadm2_aqli_2022 %>%
-  gadm_level_summary(c("country"), c(2022), 10) %>%
-  filter(country == "Bangladesh")
-
-# Fig 1: Potential gain in Life Expectancy from permanently reducing PM2.5 from ------
-# 2022 levels to the WHO PM2.5 guideline.
+#' Fig 1: Potential gain in Life Expectancy from permanently reducing PM2.5 from --------
+#' 2022 levels to the WHO PM2.5 guideline.
 
 # bangladesh figure1 dataset
 bangladesh_fs_fig1_data <- gadm2_aqli_2022 %>%
@@ -310,64 +291,71 @@ bangladesh_fs_fig1 <- bangladesh_fs_fig1_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "lightgrey", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "Bangladesh"), color = "black", fill = "transparent", lwd = 0.15) +
-  ggthemes::theme_map() + 
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
   ggthemes::theme_map() +
-  labs(fill = "Potential gain in life expectancy (Years)  ", title = "") + 
-  theme(legend.position = "bottom", 
-        legend.justification = c(0.5, 3), 
-        legend.background = element_rect(color = "black"), 
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 15), 
-        plot.title = element_text(hjust = 0.5, size = 15), 
+  labs(fill = "Potential gain in life expectancy (Years)  ", title = "") +
+  theme(legend.position = "bottom",
+        legend.justification = c(0.5, 0),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 16),
         # legend.key = element_rect(color = "black"),
         legend.box.margin = margin(b = 1, unit = "cm"),
-        plot.subtitle = element_text(hjust = 0.5, size = 7), 
-        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
-        legend.key = element_rect(color = "black"), 
-        legend.box.spacing = unit(0, "cm"), 
-        legend.direction = "horizontal", 
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(0, "cm"),
+        legend.direction = "horizontal",
        plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
 
-
-# Fig 2: Potential Gain in Life Expectancy from Reducing PM2.5 ------
-# from 2022 to the WHO Guideline in 10 most populous regions of Bangladesh 
+#' Fig 2: Potential Gain in Life Expectancy from Reducing PM2.5 from 2022 to
+#' the WHO Guideline in 10 most populous regions of Bangladesh -----------------------------------------
 
 # bangladesh figure 2 data
 bangladesh_fs_fig2_dataset <- gadm2_aqli_2022 %>%
   filter(country == "Bangladesh") %>%
   add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "llpp_who_2022") %>%
   slice_max(population, n = 10)
-
+bangladesh_fs_fig2_dataset <- bangladesh_fs_fig2_dataset %>% mutate(dist_prov = str_c(name_2, " (", name_1, ")", sep = ""))
 # bangladesh figure 2
 bangladesh_fs_fig2 <- bangladesh_fs_fig2_dataset %>%
-  aqli_bar(scale_type = "lyl", x_var = "name_2", y_var = "llpp_who_2022", title = "", subtitle = "", x_label = "District", y_label = "Potential Gain in Life Expectancy (Years)", legend_title = "Potential gain in life expectancy (Years)", caption = "") +
-  theme(legend.position = "bottom", 
-        plot.title = element_text(hjust = 0.5, size = 16), 
-        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
-        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
-        axis.line = element_line(), 
-        axis.text = element_text(size = 11), 
-        axis.title = element_text(size = 13), 
-        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
-        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.ticks = element_blank(),
-        plot.background = element_rect(fill = "white", color = "white"))
+  aqli_bar(scale_type = "lyl", x_var = "dist_prov", y_var = "llpp_who_2022", title = "", subtitle = "", x_label = "District", y_label = "Potential Gain in Life Expectancy (Years)", legend_title = "Potential gain in life expectancy (Years)", caption = "") +
+  themes_aqli_base +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 20,color = "#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"),color = "#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"),color = "#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm"), color = "#222222"),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), color = "#222222"),
+        legend.box.background = element_rect(color = "#222222"),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20,color = "#222222"),
+        legend.title = element_text(size = 20,color = "#222222"),
+        panel.grid.major.y = element_blank(),
+        plot.background = element_rect(fill = "white", color = "white"),axis.ticks.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 2)) +
+  guides(fill = guide_legend(nrow = 1))
 
 
-# Fig 3: GBD ------
+#Figure 3: Top 10 threats to life expectancy in Bangladesh---------------------------------------
 
 # top 10 most deadly diseases
 bangladesh_fs_fig3_dataset <- gbd_results_master_2022 %>%
+  filter(cause_of_death!= "Cardiovascular diseases")%>%
+  filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
+  filter(cause_of_death!= "Chronic respiratory diseases")%>%
   filter(country == "Bangladesh") %>%
   slice_max(lyl, n = 10)
 
@@ -379,121 +367,119 @@ bangladesh_fs_fig3_dataset <- bangladesh_fs_fig3_dataset %>%
 
 # bangladesh figure 3
 
-#' figure 3 caption removed: Source: Global Burden of Disease 
-#' (https://vizhub.healthdata.org/gbd-results/) causes and risks data and WHO 
-#' Life Tables (https://apps.who.int/gho/data/node.main.LIFECOUNTRY?lang=en) 
-#' were used combined with the Life table method to arrive at these results. 
-#' 'PM2.5 relative to WHO Guideline' bar displays life years lost relative to 
-#' the WHO guideline as calculated by latest AQLI (2022) data, which will be 
+#' figure 3 caption removed: Source: Global Burden of Disease
+#' (https://vizhub.healthdata.org/gbd-results/) causes and risks data and WHO
+#' Life Tables (https://apps.who.int/gho/data/node.main.LIFECOUNTRY?lang=en)
+#' were used combined with the Life table method to arrive at these results.
+#' 'PM2.5 relative to WHO Guideline' bar displays life years lost relative to
+#' the WHO guideline as calculated by latest AQLI (2022) data, which will be
 #' published in September 2024.
 
 bangladesh_fs_fig3 <- bangladesh_fs_fig3_dataset %>%
-  ggplot() + 
-  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2022), 
-                         y = llpp_who_2022, 
-                         fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), 
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2022),
+                         y = llpp_who_2022,
+                         fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)),
            width = 0.4, color = "black") +
-  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", fill = "Life years lost", 
+  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", fill = "Life years lost",
        title = "") +
-  coord_flip() + 
+  coord_flip() +
   ggthemes::theme_tufte() +
   themes_aqli_base +
   theme(legend.position = "bottom",
-        axis.text = element_text(size = 14),
-        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
-        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
         plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
         legend.box.background = element_rect(color = "black"),
-        axis.line = element_line(), 
-        legend.text = element_text(size = 11), 
-        legend.title = element_text(size = 14),
-        panel.grid.major.y = element_blank(), 
-        plot.background = element_rect(fill = "white", color = "white")) +
+        plot.background = element_rect(fill = "white", color = "white"),axis.ticks.y = element_blank(),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        panel.grid.major.y = element_blank()) +
   scale_y_continuous(breaks = seq(0, 7, 1)) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
-                               ">= 6" = "#800026")) + 
-  guides(fill = guide_legend(nrow = 1)) 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026"))+
+  guides(fill = guide_legend(nrow = 1))
 
 
-# Fig 4: Average PM2.5 concentration in Bangladesh from 1998 to 2022 ------
+#Figure 4: Annual average PM2.5 concentrations in Bangladesh, 1998-2022-------------------------------
 
 # bangladesh figure 4 data
 bangladesh_fs_fig4_dataset <- gadm2_aqli_2022 %>%
   filter(country == "Bangladesh", !is.na(population)) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years", 
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
                values_to = "pop_weighted_avg_pm2.5") %>%
-  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
-         region = "National Average") %>% 
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
   select(years, region, pop_weighted_avg_pm2.5)
 
 # bangladesh figure 4
-bangladesh_fs_fig4 <- bangladesh_fs_fig4_dataset %>%  
-  ggplot() +
-  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1,   
+  bangladesh_fs_fig4 <- bangladesh_fs_fig4_dataset %>%
+    ggplot() +
+    geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1,
             color = "#1a1638") +
-  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dashed") +
-  geom_hline(mapping = aes(yintercept = 15), lwd = 0.8, linetype = "dashed") + 
-  scale_y_continuous(breaks = seq(0, 80, 10), limits = c(0, 80)) +
-  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022)) +
-  scale_color_manual(values = c("National Average" = "#1a1638")) +
-  ggthemes::theme_clean() +
-  themes_aqli_base +
-  labs(x = "Year", 
-       y = expression("Annual Average  " ~ PM[2.5] ~ " Concentration (in µg/m³)"), 
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dashed") +
+    geom_hline(mapping = aes(yintercept = 35), lwd = 0.8, linetype = "dashed") +
+    scale_y_continuous(breaks = seq(0, 80, 10), limits = c(0, 80)) +
+    scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022)) +
+    scale_color_manual(values = c("National Average" = "#1a1638")) +
+    ggthemes::theme_clean() +
+    themes_aqli_base +
+    labs(x = "Year",
+       y = expression("Annual Average  " ~ PM[2.5] ~ " Concentration (in µg/m³)"),
        title = "") +
-  theme(legend.position = "bottom",
-        legend.text = element_text(size = 11),
-        legend.title = element_blank(),
-        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
-        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.line = element_line(), 
-        legend.box.background = element_rect(color = "black"),
-        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
-        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
-        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
-        axis.text = element_text(size = 12), 
-        plot.background = element_rect(color = "white"), 
-        axis.ticks = element_blank(), 
-        legend.key.width = unit(2, "cm")) +
-  geom_text(x = 2003.8, y = 6.7, label =  expression("WHO " ~ PM[2.5] ~ " Guideline (last updated in 2022): 5 µg/m³"), size = 5) +
-  geom_text(x = 2002.9, y = 16.7, label = expression("Bangladesh National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5) 
-
-
-# appendix table ------
-bangladesh_fs_appendix_table <- gadm2_aqli_2022 %>%
-    filter(country == "Bangladesh") %>%
-    select(name_1, name_2, population, pm2022, llpp_who_2022, llpp_nat_2022) %>%
-    mutate(pop_millions = round(population/1000000, 1), 
-           pm2022 = round(pm2022, 1), 
-           llpp_who_2022 = round(llpp_who_2022, 1), 
-           llpp_nat_2022 = round(llpp_nat_2022, 1)) %>%
-  mutate(lyg_red_pm2.5_30perc_2022 = round((pm2022*0.3)*0.098, 1)) %>%
-    slice_max(population, n = 25) %>% 
-    select(name_1, name_2, pop_millions, pm2022, llpp_who_2022, llpp_nat_2022, lyg_red_pm2.5_30perc_2022) %>%
-    rename(`Population (Millions)` = pop_millions, 
-           "Division" = name_1, 
-           "District" = name_2, 
-           "PM2.5 concentration 2022 (in µg/m³)" = pm2022, 
-           "Life Expectancy Gains from reducing PM2.5 from 2022 Concentrations to the National Guideline of 15 µg/m³" = llpp_nat_2022, 
-           "Life Expectancy Gains from reducing PM2.5 from 2022 Concentrations to the WHO Guideline of 5 µg/m³" = llpp_who_2022, 
-           "Life Expectancy Gains from reducing PM2.5 from 2022 Concentrations by 30 percent" = lyg_red_pm2.5_30perc_2022)
-
+    theme(legend.position = "bottom", legend.title = element_blank(),
+        legend.text = element_text(size = 20, color="#222222"),
+        axis.line = element_line(),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+        plot.background = element_rect(fill = "white", color = "white")) +
+    geom_text(x = 2001.8, y = 6.7, label =  expression("WHO " ~ PM[2.5] ~ " Guideline (last updated in 2021): 5 µg/m³"), size = 5) +
+    geom_text(x = 2001.2, y = 36.7, label = expression("Bangladesh National" ~ PM[2.5] ~ "Standard: 35 µg/m³"), size = 5)
+  # bangladesh appendix table
+  bangladesh_fs_appendix_table <- gadm2_aqli_2022 %>%
+  filter(country == "Bangladesh") %>%
+  mutate(pm2022 = round(pm2022, 1),
+         le_gain_red_to_who = round((pm2022 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_to_nat = round((pm2022 - 35)*le_constant, 1),
+         le_gain_red_to_nat = ifelse(le_gain_red_to_nat < 0, 0, le_gain_red_to_nat),
+         le_gain_red_by_30_percent = round((pm2022*0.3)*le_constant, 1), 
+         pop_millions = round(population/1000000, 3)) %>%
+  select(name_1,name_2, pop_millions, pm2022, le_gain_red_to_who, le_gain_red_to_nat,
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`Division`=name_1,
+         `District` = name_2, 
+         `Population (millions)` = pop_millions, 
+         `Annual Average 2022 PM2.5 Concentration (µg/m³)` = pm2022,
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to National PM2.5 guideline of 15 µg/m³` = le_gain_red_to_nat,
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent)
 ```
 
 ## Pakistan factsheet
-```{r}
+```{pakistan_fs_2024 r}
+#Figure 1: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
 
 # read and filter AQLI data
 pak_aqli_2022 <- gadm2_aqli_2022 %>%
@@ -502,9 +488,6 @@ pak_aqli_2022 <- gadm2_aqli_2022 %>%
     name_1 == "Islamabad" ~ "Islamabad",
     name_1 == "Punjab" ~ "Punjab",
     name_1 != "Islamabad"| name_1 != "Punjab" ~ "All other regions (excluding Islamabad and Punjab)"))
-
-# Fig 1: Potential gain in life expectancy from permanently reducing PM2.5 ------
-# in 2022 to WHO guideline
 
 # pakistan fs fig 1 data
 pak_fs_fig1_dataset <- pak_aqli_2022 %>%
@@ -520,34 +503,41 @@ pak_fs_fig1 <- pak_fs_fig1_dataset %>%
   geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "Pakistan"), color = "azure4", fill = "transparent", lwd = 0.15) +
   geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "Pakistan"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
-  ggthemes::theme_map() + 
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
   ggthemes::theme_map() +
-  labs(fill = "Potential gain in life expectancy (Years)") + 
-  theme(legend.position = "bottom", 
-        legend.justification = c(0.5, 3), 
-        legend.background = element_rect(color = "black"), 
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 15), 
-        plot.title = element_text(hjust = 0.5, size = 15), 
+  labs(fill = "Potential gain in life expectancy (Years)") +
+  theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 18, color="#222222"),
+        legend.title = element_text(size = 18, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 15),
         legend.box.margin = margin(b = 1, unit = "cm"),
-        plot.subtitle = element_text(hjust = 0.5, size = 7), 
-        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
-        legend.key = element_rect(color = "black"), 
-        legend.box.spacing = unit(0, "cm"), 
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(2, "cm"),
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
+#Figure 2:  Potential gain in life expectancy from reducing PM2.5 from 2022 levels to the WHO guideline in all provinces of Pakistan
 
-# Fig 2: Potential gain in life expectancy in states in Pakistan ------
+# read and filter AQLI data
+pak_aqli_2022 <- gadm2_aqli_2022 %>%
+  filter(country == "Pakistan") %>%
+  mutate(region = case_when(
+    name_1 == "Islamabad" ~ "Islamabad",
+    name_1 == "Punjab" ~ "Punjab",
+    name_1 != "Islamabad"| name_1 != "Punjab" ~ "All other regions (excluding Islamabad and Punjab)"))
 
 # pakistan fs fig 2 data
 pak_fs_fig2_dataset <- pak_aqli_2022 %>%
@@ -557,7 +547,7 @@ pak_fs_fig2_dataset <- pak_aqli_2022 %>%
          pm2022_pop_weighted = pop_weights*pm2022,
          llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022,
          llpp_nat_2022_pop_weighted = pop_weights*llpp_nat_2022) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
+  summarise(tot_pop = sum(population, na.rm = TRUE),
             avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
             le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
             llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
@@ -572,86 +562,97 @@ pak_fs_fig2 <- pak_fs_fig2_dataset %>%
   geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
   labs(x = "Province", y = "Potential Gain in Life Expectancy  (Years)", fill = "Potential gain in life expectancy (Years)") +
   scale_y_continuous(breaks = seq(0, 5, 1), limits = c(0, 5)) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
-  coord_flip() + 
+  coord_flip() +
   ggthemes::theme_tufte() +
-  theme(legend.position = "bottom", 
-        plot.title = element_text(hjust = 0.5, size = 16), 
-        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 16),
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")),
         plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
         legend.box.background = element_rect(color = "black"),
         plot.background = element_rect(color = "white"),
-        axis.line = element_line(), 
-        axis.text = element_text(size = 11), 
-        axis.title = element_text(size = 13), 
-        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
-        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.ticks = element_blank()) 
+        axis.line = element_line(),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title = element_text(size = 24, color="#222222"),
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.ticks = element_blank())
 
+# Figure 3: Top 5 threats to life expectancy in Pakistan
 
-# Fig 3: GBD ------
 # pakistan fs fig 3 data
-pak_fs_fig3_dataset <- gbd_results_master_2022 %>%
+gbd_results_pak <- gbd_results_master_2022 %>%
+  filter(cause_of_death!= "Cardiovascular diseases")%>%
+  filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
   filter(country == "Pakistan")
 
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
-colnames(pak_fs_fig3_dataset)[3] <- c("llpp_who_2022")
+colnames(gbd_results_pak)[3] <- c("llpp_who_2022")
 
-pak_fs_fig3_dataset <- pak_fs_fig3_dataset %>%
+pak_fs_fig3_dataset <- gbd_results_pak %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
   slice_max(llpp_who_2022, n = 5)
 
 # pakistan factsheet figure 3
 pak_fs_fig3 <- pak_fs_fig3_dataset %>%
-  ggplot() + 
+  ggplot() +
   geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
   labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
-  coord_flip() + 
+  coord_flip() +
   ggthemes::theme_tufte() +
   theme(legend.position = "bottom",
-        axis.text = element_text(size = 14),
-        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
-        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
         plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
         legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
-        axis.line = element_line(), 
-        legend.text = element_text(size = 11), 
-        legend.title = element_text(size = 14),
+        plot.background = element_rect(fill = "white", color = "white"),axis.ticks.y = element_blank(),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
         panel.grid.major.y = element_blank()) +
   scale_y_continuous(breaks = seq(0, 6, 0.5)) +
   # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
 
+#Figure 4: Annual average PM2.5 concentration in Pakistan, 1998-2022
 
-# Fig 4: Average PM2.5 concentration in Pakistan from 1998 to 2022 ------
+# read and filter AQLI data
+pak_aqli_2022 <- gadm2_aqli_2022 %>%
+  filter(country == "Pakistan") %>%
+  mutate(region = case_when(
+    name_1 == "Islamabad" ~ "Islamabad",
+    name_1 == "Punjab" ~ "Punjab",
+    name_1 != "Islamabad"| name_1 != "Punjab" ~ "All other regions (excluding Islamabad and Punjab)"))
 
 # pakistan factsheet figure 4 dataset
 pak_region_avg_ts <- pak_aqli_2022 %>%
   group_by(region) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years", 
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
                values_to = "pop_weighted_avg_pm2.5") %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
   select(years, region, pop_weighted_avg_pm2.5)
@@ -673,40 +674,42 @@ pak_fs_fig4_dataset$region = factor(pak_fs_fig4_dataset$region, levels = c('Isla
 # pakistan factsheet figure 4
 pak_fs_fig4 <- pak_fs_fig4_dataset %>%
   ggplot() +
-  geom_line(mapping = aes(x = as.integer(years), 
+  geom_line(mapping = aes(x = as.integer(years),
                           y = as.double(pop_weighted_avg_pm2.5),
-                          colour = region, linetype = region), 
+                          colour = region, linetype = region),
             lwd = 1.1) +
   geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  geom_hline(mapping = aes(yintercept = 15), lwd = 0.8, linetype = "dotted") +
   scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 60)) +
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022))  +
   scale_color_manual(values = c("Islamabad" = "#3c456f", "Punjab" = "#3c456f", "National Average" = "#4e5e8b", "All other regions (excluding Islamabad and Punjab)" = "#5f7aa5")) +
   scale_linetype_manual(values = c("Islamabad" = "dashed", "Punjab" = "dashed", "National Average" = "solid", "All other regions (excluding Islamabad and Punjab)" = "dotted")) +
   ggthemes::theme_tufte() +
-  labs(x = "Year", 
+  labs(x = "Year",
        y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 11),
+        legend.text = element_text(size = 20, color="#222222"),
         legend.title = element_blank(),
-        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
-        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.line = element_line(), 
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.line = element_line(),
         legend.box.background = element_rect(color = "black"),
-        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
-        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
         plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
-        axis.text = element_text(size = 12), 
-        plot.background = element_rect(color = "white"), 
+        axis.text = element_text(size = 20, color="#222222"),
+        plot.background = element_rect(color = "white"),
         axis.ticks = element_blank()) +
-  geom_text(x = 2002.8, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2022): 5 µg/m³"), size = 4.5)
+  geom_text(x = 2002.8, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2022): 5 µg/m³"), size = 4.5)+
+  geom_text(x = 2001.2, y = 16.7, label = expression("Pakistan National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5)
 
-
-# appendix table ------
-pak_fs_appendix_table <- pak_aqli_2022 %>%
+# Pakistan factsheet appendix table 
+Pakistan_fs_appendix_table <- gadm2_aqli_2022 %>%
+  filter(country == "Pakistan") %>%
   mutate(pm2022 = round(pm2022, 1),
          le_gain_red_to_who = round((pm2022 - who_guideline)*le_constant, 1),
          le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
-         le_gain_red_to_nat = round((pm2022 - natstandard)*le_constant, 1),
+         le_gain_red_to_nat = round((pm2022 - 15)*le_constant, 1),
          le_gain_red_to_nat = ifelse(le_gain_red_to_nat < 0, 0, le_gain_red_to_nat),
          le_gain_red_by_30_percent = round((pm2022*0.3)*le_constant, 1), 
          pop_millions = round(population/1000000, 3)) %>%
@@ -715,18 +718,18 @@ pak_fs_appendix_table <- pak_aqli_2022 %>%
   ungroup() %>%
   slice_max(pop_millions, n = 25) %>%
   mutate(pop_millions = round(pop_millions, 1)) %>%
-  rename(`Region` = name_2, 
-         `Population (Millions)` = pop_millions, 
+  rename(`Region`=name_2,
+         `Population (millions)` = pop_millions, 
          `Annual Average 2022 PM2.5 Concentration (µg/m³)` = pm2022,
          `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
          `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to National PM2.5 guideline of 15 µg/m³` = le_gain_red_to_nat,
          `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent)
+
 ```
 
 ## Nepal Factsheet
-```{r}
-
-# Fig 1:  Potential gain in Life Expectancy from permanently reducing PM2.5 ------ 
+```{nepal_fs_2024 r}
+# Fig 1:  Potential gain in Life Expectancy from permanently reducing PM2.5 ------
 # from 2022 levels to the WHO PM2.5 guideline.
 # nepal fs fig 1 data
 nepal_fs_fig1_dataset <- gadm2_aqli_2022 %>%
@@ -743,34 +746,33 @@ nepal_fs_fig1 <- nepal_fs_fig1_dataset %>%
   geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "Nepal"), color = "azure4", fill = "transparent", lwd = 0.15) +
   geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "Nepal"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
-  ggthemes::theme_map() + 
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
   ggthemes::theme_map() +
-  labs(fill = "Potential gain in life expectancy (Years)") + 
-  theme(legend.position = "bottom", 
-        legend.justification = c(0.5, 3), 
-        legend.background = element_rect(color = "black"), 
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 15), 
-        plot.title = element_text(hjust = 0.5, size = 15), 
+  labs(fill = "Potential gain in life expectancy (Years)") +
+  theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 15),
         legend.box.margin = margin(b = 1, unit = "cm"),
-        plot.subtitle = element_text(hjust = 0.5, size = 7), 
-        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
-        legend.key = element_rect(color = "black"), 
-        legend.box.spacing = unit(0, "cm"), 
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(2, "cm"),
         legend.direction = "horizontal") +
   guides(fill = guide_legend(nrow = 1))
 
-
-# Fig 2: Potential gain in life expectancy in states in Nepal ------
+# Figure 2: Potential gain in life expectancy from reducing PM2.5 from 2022 levels to the WHO guideline in all provinces of Nepal ------
 
 # nepal fs fig 2 data
 nepal_fs_fig2_dataset <- gadm2_aqli_2022 %>%
@@ -780,7 +782,7 @@ nepal_fs_fig2_dataset <- gadm2_aqli_2022 %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          pm2022_pop_weighted = pop_weights*pm2022,
          llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
+  summarise(tot_pop = sum(population, na.rm = TRUE),
             avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
             le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
             llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
@@ -793,36 +795,40 @@ nepal_fs_fig2 <- nepal_fs_fig2_dataset %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
   labs(x = "Province", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
-  scale_y_continuous(breaks = seq(0, 8, 1), limits = c(0, 8)) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  scale_y_continuous(breaks = seq(0, 6, 1), limits = c(0, 6)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
-  coord_flip() + 
+  coord_flip() +
   ggthemes::theme_tufte() +
-  theme(legend.position = "bottom", 
-        plot.title = element_text(hjust = 0.5, size = 16), 
-        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 16),
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")),
         plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
         legend.box.background = element_rect(color = "black"),
         plot.background = element_rect(color = "white"),
-        axis.line = element_line(), 
-        axis.text = element_text(size = 11), 
-        axis.title = element_text(size = 13), 
-        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
-        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.ticks = element_blank()) 
+        axis.line = element_line(),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title = element_text(size = 24, color="#222222"),
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")),
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        axis.ticks = element_blank())
 
-
-# Fig 3: GBD ------
+# Figure 3: Top 5 threats to life expectancy in Nepal ------
 
 # read and filter gbd results for nepal
 nepal_fs_fig3_dataset <-  gbd_results_master_2022  %>%
+  filter(cause_of_death!= "Cardiovascular diseases")%>%
+  filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
+  filter(cause_of_death!= "Chronic respiratory diseases")%>%
   filter(country == "Nepal")
 
 # filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
@@ -835,39 +841,38 @@ nepal_fs_fig3_dataset <- nepal_fs_fig3_dataset %>%
 
 # nepal factsheet figure 3
 nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
-  ggplot() + 
+  ggplot() +
   geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
   labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
-  coord_flip() + 
+  coord_flip() +
   ggthemes::theme_tufte() +
   theme(legend.position = "bottom",
-        axis.text = element_text(size = 14),
-        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
-        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
         plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
         legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
-        axis.line = element_line(), 
-        legend.text = element_text(size = 11), 
-        legend.title = element_text(size = 14),
+        plot.background = element_rect(color = "white"),axis.ticks.y = element_blank(),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
         panel.grid.major.y = element_blank()) +
   scale_y_continuous(breaks = seq(0, 6, 0.5)) +
   # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
   guides(fill = guide_legend(nrow = 1))
 
-
-# Fig 4: Average PM2.5 concentration in Nepal from 1998 to 2022 ------
+# Figure 4: Annual average PM2.5 concentration in Nepal, 1998-2022 ------
 
 # nepal factsheet figure 4 dataset
 nepal_fs_fig4_dataset <- gadm2_aqli_2022 %>%
@@ -884,35 +889,33 @@ nepal_fs_fig4_dataset <- gadm2_aqli_2022 %>%
 # nepal factsheet figure 4
 nepal_fs_fig4 <- nepal_fs_fig4_dataset %>%
   ggplot() +
-  geom_line(mapping = aes(x = as.integer(years), 
-                          y = as.double(pop_weighted_avg_pm2.5)), 
+  geom_line(mapping = aes(x = as.integer(years),
+                          y = as.double(pop_weighted_avg_pm2.5)),
             lwd = 1.1, color = "#3c456f") +
   geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
   scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 60)) +
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022))  +
   ggthemes::theme_tufte() +
-  labs(x = "Year", 
+  labs(x = "Year",
        y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 11),
+        legend.text = element_text(size = 20, color="#222222"),
         legend.title = element_blank(),
-        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
-        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.line = element_line(), 
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.line = element_line(),
         legend.box.background = element_rect(color = "black"),
-        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
-        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
         plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
-        axis.text = element_text(size = 12), 
-        plot.background = element_rect(color = "white"), 
+        axis.text = element_text(size = 20, color="#222222"),
+        plot.background = element_rect(color = "white"),
         axis.ticks = element_blank()) +
-  geom_text(x = 2000.6, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2022): 5 µg/m³"), size = 4.5)
+  geom_text(x = 2001.6, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
 
-
-# appendix table ------
-
-# nepal factsheet appendix table 
+# Nepal factsheet appendix table 
 nepal_fs_appendix_table <- gadm2_aqli_2022 %>%
+  filter(country == "Nepal") %>%
   mutate(pm2022 = round(pm2022, 1),
          le_gain_red_to_who = round((pm2022 - who_guideline)*le_constant, 1),
          le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
@@ -923,20 +926,19 @@ nepal_fs_appendix_table <- gadm2_aqli_2022 %>%
   ungroup() %>%
   slice_max(pop_millions, n = 25) %>%
   mutate(pop_millions = round(pop_millions, 1)) %>%
-  rename(`District Coordination Committee` = name_2, 
+  rename(`District` = name_2, 
          `Population (Millions)` = pop_millions, 
          `Annual Average 2022 PM2.5 Concentration (µg/m³)` = pm2022,
          `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
-         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent) 
-
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent)
+ 
 ```
 ## Indonesia factsheet
-```{r}
-# figure 1 ---------
-
+```{Indonesia_fs_2024 r}
+# Figure 1: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
 # indonesia fs fig 1 data
 indonesia_fs_fig1_dataset <- gadm2_aqli_2022 %>%
-  filter(country == "Indonesia") %>% 
+  filter(country == "Indonesia") %>%
   left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022', 'geometry') %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
@@ -949,43 +951,94 @@ indonesia_fs_fig1 <- indonesia_fs_fig1_dataset %>%
   geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "Indonesia"), color = "azure4", fill = "transparent", lwd = 0.15) +
   geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "Indonesia"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
-  ggthemes::theme_map() + 
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
   ggthemes::theme_map() +
-  labs(fill = "Potential gain in life expectancy (Years)") + 
-  theme(legend.position = "bottom", 
-        legend.justification = c(0.5, 3), 
-        legend.background = element_rect(color = "black"), 
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 15), 
-        plot.title = element_text(hjust = 0.5, size = 15), 
+  labs(fill = "Potential gain in life expectancy (Years)") +
+  theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 15),
         legend.box.margin = margin(b = 1, unit = "cm"),
-        plot.subtitle = element_text(hjust = 0.5, size = 7), 
-        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
-        legend.key = element_rect(color = "black"), 
-        legend.box.spacing = unit(0, "cm"), 
-        legend.direction = "horizontal") +
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(2, "cm"),
+        legend.direction = "horizontal",
+        plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
 
-# figure 2 ---------
 
-# indonesia fs fig 2 data
-indonesia_fs_fig2_dataset <- gadm2_aqli_2022 %>%
+# Figure 2:Top 10 threats to life expectancy in Indonesia
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+gbd_results_indonesia <- gbd_results_master_2022 %>%
+  filter(cause_of_death!= "Cardiovascular diseases")%>%
+  filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
+  filter(cause_of_death!= "Chronic respiratory diseases")%>%
+  filter(country == "Indonesia")
+
+colnames(gbd_results_indonesia)[3] <- c("llpp_who_2022")
+
+indonesia_fs_fig2_dataset <- gbd_results_indonesia %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  slice_max(llpp_who_2022, n = 10)
+
+# indonesia factsheet figure 2
+indonesia_fs_fig2 <- indonesia_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),axis.ticks.y = element_blank(),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 7, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+
+#Figure 3: Potential gain in life expectancy from reducing PM2.5 from 2022 levels to the WHO guideline in 10 most populous provinces of Indonesia
+
+# indonesia fs fig 3 data
+indonesia_fs_fig3_dataset <- gadm2_aqli_2022 %>%
   filter(country == "Indonesia") %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022') %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          pm2022_pop_weighted = pop_weights*pm2022,
          llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
+  summarise(tot_pop = sum(population, na.rm = TRUE),
             avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
             le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
             llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
@@ -993,84 +1046,40 @@ indonesia_fs_fig2_dataset <- gadm2_aqli_2022 %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
 
-# indonesia fs figure 2
-indonesia_fs_fig2 <- indonesia_fs_fig2_dataset %>%
+# indonesia fs figure 3
+indonesia_fs_fig3 <- indonesia_fs_fig3_dataset %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
   labs(x = "Province", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
   scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
-  coord_flip() + 
-  ggthemes::theme_tufte() +
-  theme(legend.position = "bottom", 
-        plot.title = element_text(hjust = 0.5, size = 16), 
-        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
-        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
-        legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
-        axis.line = element_line(), 
-        axis.text = element_text(size = 11), 
-        axis.title = element_text(size = 13), 
-        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
-        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.ticks = element_blank()) 
-
-# figure 3 -----------
-
-# read and filter gbd results for indonesia
-gbd_results_indonesia <- gbd_results_master_2022 %>%
-  filter(country == "Indonesia") 
-
-# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
-colnames(gbd_results_indonesia)[3] <- c("llpp_who_2022")
-
-# indonesia fs fig 3 data
-indonesia_fs_fig3_dataset <- gbd_results_indonesia %>%
-  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
-  slice_max(llpp_who_2022, n = 10)
-
-# indonesia factsheet figure 3
-indonesia_fs_fig3 <- indonesia_fs_fig3_dataset %>%
-  ggplot() + 
-  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
-  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
-  coord_flip() + 
+  coord_flip() +
   ggthemes::theme_tufte() +
   theme(legend.position = "bottom",
-        axis.text = element_text(size = 14),
-        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
-        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
-        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
-        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
-        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 16),
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")),
+        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
         legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
-        axis.line = element_line(), 
-        legend.text = element_text(size = 11), 
-        legend.title = element_text(size = 14),
-        panel.grid.major.y = element_blank()) +
-  scale_y_continuous(breaks = seq(0, 7, 0.5)) +
-  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
-                               ">= 6" = "#800026")) +
-  guides(fill = guide_legend(nrow = 1))
+        plot.background = element_rect(color = "white"),axis.ticks.y = element_blank(),
+        axis.line = element_line(),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title = element_text(size = 24, color="#222222"),
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.ticks = element_blank())
 
-# figure 4 ---------
+
+#Figure 4: Annual average PM2.5 concentrations in Indonesia, 1998-2022
 
 # indonesia factsheet figure 4 dataset
 indonesia_fs_fig4_dataset <- gadm2_aqli_2022 %>%
@@ -1087,33 +1096,31 @@ indonesia_fs_fig4_dataset <- gadm2_aqli_2022 %>%
 # indonesia factsheet figure 4
 indonesia_fs_fig4 <- indonesia_fs_fig4_dataset %>%
   ggplot() +
-  geom_line(mapping = aes(x = as.integer(years), 
-                          y = as.double(pop_weighted_avg_pm2.5)), 
+  geom_line(mapping = aes(x = as.integer(years),
+                          y = as.double(pop_weighted_avg_pm2.5)),
             lwd = 1.1, color = "#82b5d5") +
   geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
-  geom_hline(mapping = aes(yintercept = 15), lwd = 0.8, linetype = "dotted") + 
+  geom_hline(mapping = aes(yintercept = 15), lwd = 0.8, linetype = "dotted") +
   scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 30)) +
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022))  +
   ggthemes::theme_tufte() +
-  labs(x = "Year", 
+  labs(x = "Year",
        y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 11),
+        legend.text = element_text(size = 20, color="#222222"),
         legend.title = element_blank(),
-        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
-        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.line = element_line(), 
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.line = element_line(),
         legend.box.background = element_rect(color = "black"),
-        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
-        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
         plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
-        axis.text = element_text(size = 12), 
-        plot.background = element_rect(color = "white"), 
+        axis.text = element_text(size = 20, color="#222222"),
+        plot.background = element_rect(color = "white"),
         axis.ticks = element_blank()) +
-  geom_text(x = 2001, y = 5.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2022): 5 µg/m³"), size = 5) +
+  geom_text(x = 2001.5, y = 5.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5) +
   geom_text(x = 2006.6, y = 15.6, label = expression("Indonesia National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5)
-
-# appendix table ---------
 
 # indonesia factsheet appendix table 
 indonesia_fs_appendix_table <- gadm2_aqli_2022 %>%
@@ -1135,29 +1142,32 @@ indonesia_fs_appendix_table <- gadm2_aqli_2022 %>%
          `Annual Average 2022 PM2.5 Concentration (µg/m³)` = pm2022,
          `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
          `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to National PM2.5 guideline of 15 µg/m³` = le_gain_red_to_nat,
-         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent) %>%
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent) 
+indonesia_fs_appendix_table
 
 ```
 ##Thailand factsheet
-```{r}
+```{thailand_fs_2024 r}
+#Figure 1: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
+
 # read and filter AQLI data
-ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei", 
-             "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu", 
-             "Nong Khai", "Roi Et", "Sakon Nakhon", "Si Sa Ket", "Surin", "Ubon Ratchathani", 
+ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
+             "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu",
+             "Nong Khai", "Roi Et", "Sakon Nakhon", "Si Sa Ket", "Surin", "Ubon Ratchathani",
              "Udon Thani", "Yasothon")
 
-n_thai <- c ("Chiang Mai", "Chiang Rai", "Lampang", "Lamphun", "Mae Hong Son", "Nan", "Phayao", "Phrae", 
+n_thai <- c ("Chiang Mai", "Chiang Rai", "Lampang", "Lamphun", "Mae Hong Son", "Nan", "Phayao", "Phrae",
              "Uttaradit", "Tak", "Kamphaeng Phet", "Phetchabun", "Phichit", "Phitsanulok", "Sukhothai",
              "Nakhon Sawan", "Uthai Thani")
 
-c_thai <- c("Ang Thong", "Bangkok Metropolis", "Chai Nat", "Lop Buri", "Nakhon Pathom", "Nonthaburi", "Pathum Thani", 
-            "Phra Nakhon Si Ayutthaya", "Samut Prakan", "Samut Sakhon", "Samut Songkhram", "Saraburi", 
-            "Sing Buri", "Suphan Buri", "Nakhon Nayok", "Chachoengsao", "Chanthaburi", "Chon Buri", 
+c_thai <- c("Ang Thong", "Bangkok Metropolis", "Chai Nat", "Lop Buri", "Nakhon Pathom", "Nonthaburi", "Pathum Thani",
+            "Phra Nakhon Si Ayutthaya", "Samut Prakan", "Samut Sakhon", "Samut Songkhram", "Saraburi",
+            "Sing Buri", "Suphan Buri", "Nakhon Nayok", "Chachoengsao", "Chanthaburi", "Chon Buri",
             "Prachin Buri", "Rayong", "Sa Kaeo", "Trat", "Kanchanaburi", "Ratchaburi", "Phetchaburi", "Prachuap Khiri Khan")
 
-s_thai <- c("Chumphon", "Nakhon Si Thammarat", "Narathiwat", "Pattani", "Phatthalung", "Songkhla", "Surat Thani", 
+s_thai <- c("Chumphon", "Nakhon Si Thammarat", "Narathiwat", "Pattani", "Phatthalung", "Songkhla", "Surat Thani",
             "Yala", "Krabi", "Phangnga", "Phuket", "Ranong", "Satun", "Trang")
-  
+
 thai_aqli_2022 <- gadm2_aqli_2022 %>%
   filter(country == "Thailand") %>%
   mutate(region = case_when(
@@ -1165,8 +1175,6 @@ thai_aqli_2022 <- gadm2_aqli_2022 %>%
     name_1 %in% n_thai ~ "Northern",
     name_1 %in% c_thai ~ "Central",
     name_1 %in% s_thai ~ "Southern"))
-
-# figure 1 ---------
 
 # thailand fs fig 1 data
 thailand_fs_fig1_dataset <- thai_aqli_2022 %>%
@@ -1182,42 +1190,122 @@ thailand_fs_fig1 <- thailand_fs_fig1_dataset %>%
   geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "Thailand"), color = "azure4", fill = "transparent", lwd = 0.15) +
   geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "Thailand"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
-  ggthemes::theme_map() + 
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
   ggthemes::theme_map() +
-  labs(fill = "Potential gain in life expectancy (Years)") + 
-  theme(legend.position = "bottom", 
-        legend.justification = c(0.5, 3), 
-        legend.background = element_rect(color = "black"), 
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 15), 
-        plot.title = element_text(hjust = 0.5, size = 15), 
+  labs(fill = "Potential gain in life expectancy (Years)") +
+  theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 15),
         legend.box.margin = margin(b = 1, unit = "cm"),
-        plot.subtitle = element_text(hjust = 0.5, size = 7), 
-        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"), 
-        legend.key = element_rect(color = "black"), 
-        legend.box.spacing = unit(0, "cm"), 
-        legend.direction = "horizontal") +
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(2, "cm"),
+        legend.direction = "horizontal",
+        plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
 
-# figure 2 ---------
+
+#Figure 2: Top 10 threats to life expectancy in Thailand
 
 # thailand fs fig 2 data
-thailand_fs_fig2_dataset <- thai_aqli_2022 %>%
+gbd_results_thailand <- gbd_results_master_2022 %>%
+  filter(cause_of_death!= "Cardiovascular diseases")%>%
+  filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
+  filter(country == "Thailand")
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_thailand)[3] <- c("llpp_who_2022")
+
+thailand_fs_fig2_dataset <- gbd_results_thailand %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  slice_max(llpp_who_2022, n = 10)
+
+# Reorder the data to ensure the additional cause is in the correct position
+thailand_fs_fig2_dataset <- thailand_fs_fig2_dataset %>%
+  arrange(desc(llpp_who_2022))
+
+# thailand factsheet figure 2
+thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),axis.ticks.y = element_blank(),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+#Figure 3: Potential gain in life expectancy from reducing PM2.5 from 2022 levels to the WHO guideline in 10 most populous provinces of Thailand
+
+# read and filter AQLI data
+ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
+             "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu",
+             "Nong Khai", "Roi Et", "Sakon Nakhon", "Si Sa Ket", "Surin", "Ubon Ratchathani",
+             "Udon Thani", "Yasothon")
+
+n_thai <- c ("Chiang Mai", "Chiang Rai", "Lampang", "Lamphun", "Mae Hong Son", "Nan", "Phayao", "Phrae",
+             "Uttaradit", "Tak", "Kamphaeng Phet", "Phetchabun", "Phichit", "Phitsanulok", "Sukhothai",
+             "Nakhon Sawan", "Uthai Thani")
+
+c_thai <- c("Ang Thong", "Bangkok Metropolis", "Chai Nat", "Lop Buri", "Nakhon Pathom", "Nonthaburi", "Pathum Thani",
+            "Phra Nakhon Si Ayutthaya", "Samut Prakan", "Samut Sakhon", "Samut Songkhram", "Saraburi",
+            "Sing Buri", "Suphan Buri", "Nakhon Nayok", "Chachoengsao", "Chanthaburi", "Chon Buri",
+            "Prachin Buri", "Rayong", "Sa Kaeo", "Trat", "Kanchanaburi", "Ratchaburi", "Phetchaburi", "Prachuap Khiri Khan")
+
+s_thai <- c("Chumphon", "Nakhon Si Thammarat", "Narathiwat", "Pattani", "Phatthalung", "Songkhla", "Surat Thani",
+            "Yala", "Krabi", "Phangnga", "Phuket", "Ranong", "Satun", "Trang")
+
+thai_aqli_2022 <- gadm2_aqli_2022 %>%
+  filter(country == "Thailand") %>%
+  mutate(region = case_when(
+    name_1 %in% ne_thai ~ "Northeastern",
+    name_1 %in% n_thai ~ "Northern",
+    name_1 %in% c_thai ~ "Central",
+    name_1 %in% s_thai ~ "Southern"))
+
+# thailand fs fig 3 data
+thailand_fs_fig3_dataset <- thai_aqli_2022 %>%
   select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022') %>%
   group_by(name_1) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          pm2022_pop_weighted = pop_weights*pm2022,
          llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE), 
+  summarise(tot_pop = sum(population, na.rm = TRUE),
             avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
             le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
             llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
@@ -1225,92 +1313,73 @@ thailand_fs_fig2_dataset <- thai_aqli_2022 %>%
   slice_max(tot_pop, n = 10) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
 
-# thailand fs figure 2
-thailand_fs_fig2 <- thailand_fs_fig2_dataset %>%
+# thailand fs figure 3
+thailand_fs_fig3 <- thailand_fs_fig3_dataset %>%
   ggplot() +
   geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
   labs(x = "Province", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
   scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
                                ">= 6" = "#800026")) +
-  coord_flip() + 
+  coord_flip() +
   ggthemes::theme_tufte() +
-  theme(legend.position = "bottom", 
-        plot.title = element_text(hjust = 0.5, size = 16), 
-        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")), 
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 16),
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")),
         plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
         legend.box.background = element_rect(color = "black"),
         plot.background = element_rect(color = "white"),
-        axis.line = element_line(), 
-        axis.text = element_text(size = 11), 
-        axis.title = element_text(size = 13), 
-        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")), 
-        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.ticks = element_blank()) 
+        axis.line = element_line(),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title = element_text(size = 24, color="#222222"),
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")),
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        axis.ticks = element_blank())
 
-# figure 3 --------
+#Figure 4: Annual average PM2.5 concentrations in Thailand, 1998-2022
 
-# read and filter gbd results for thailand
-gbd_results_thailand <- gbd_results_master_2022 %>%
-  filter(country == "Thailand")
+# read and filter AQLI data
+ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
+             "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu",
+             "Nong Khai", "Roi Et", "Sakon Nakhon", "Si Sa Ket", "Surin", "Ubon Ratchathani",
+             "Udon Thani", "Yasothon")
 
-# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
-colnames(gbd_results_thailand)[3] <- c("llpp_who_2022")
+n_thai <- c ("Chiang Mai", "Chiang Rai", "Lampang", "Lamphun", "Mae Hong Son", "Nan", "Phayao", "Phrae",
+             "Uttaradit", "Tak", "Kamphaeng Phet", "Phetchabun", "Phichit", "Phitsanulok", "Sukhothai",
+             "Nakhon Sawan", "Uthai Thani")
 
-# thailand fs fig 3 data
-thailand_fs_fig3_dataset <- gbd_results_thailand %>%
-  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
-  slice_max(llpp_who_2022, n = 10)
+c_thai <- c("Ang Thong", "Bangkok Metropolis", "Chai Nat", "Lop Buri", "Nakhon Pathom", "Nonthaburi", "Pathum Thani",
+            "Phra Nakhon Si Ayutthaya", "Samut Prakan", "Samut Sakhon", "Samut Songkhram", "Saraburi",
+            "Sing Buri", "Suphan Buri", "Nakhon Nayok", "Chachoengsao", "Chanthaburi", "Chon Buri",
+            "Prachin Buri", "Rayong", "Sa Kaeo", "Trat", "Kanchanaburi", "Ratchaburi", "Phetchaburi", "Prachuap Khiri Khan")
 
-# thailand factsheet figure 3
-thailand_fs_fig3 <- thailand_fs_fig3_dataset %>%
-  ggplot() + 
-  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
-  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
-  coord_flip() + 
-  ggthemes::theme_tufte() +
-  theme(legend.position = "bottom",
-        axis.text = element_text(size = 14),
-        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
-        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
-        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
-        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
-        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
-        legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
-        axis.line = element_line(), 
-        legend.text = element_text(size = 11), 
-        legend.title = element_text(size = 14),
-        panel.grid.major.y = element_blank()) +
-  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
-  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff", 
-                               "0.1 to < 0.5" = "#ffeda0", 
-                               "0.5 to < 1" = "#fed976", 
-                               "1 to < 2" = "#feb24c", 
-                               "2 to < 3" = "#fd8d3c", 
-                               "3 to < 4" = "#fc4e2a", 
-                               "4 to < 5" = "#e31a1c", 
-                               "5 to < 6" = "#bd0026", 
-                               ">= 6" = "#800026")) +
-  guides(fill = guide_legend(nrow = 1))
+s_thai <- c("Chumphon", "Nakhon Si Thammarat", "Narathiwat", "Pattani", "Phatthalung", "Songkhla", "Surat Thani",
+            "Yala", "Krabi", "Phangnga", "Phuket", "Ranong", "Satun", "Trang")
 
-# figure 4 ---------
+thai_aqli_2022 <- gadm2_aqli_2022 %>%
+  filter(country == "Thailand") %>%
+  mutate(region = case_when(
+    name_1 %in% ne_thai ~ "Northeastern",
+    name_1 %in% n_thai ~ "Northern",
+    name_1 %in% c_thai ~ "Central",
+    name_1 %in% s_thai ~ "Southern"))
 
 # thailand factsheet figure 4 dataset
 thailand_fs_fig4_regions <- thai_aqli_2022 %>%
   group_by(region) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
   summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years", 
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
                values_to = "pop_weighted_avg_pm2.5") %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
   select(years, region, pop_weighted_avg_pm2.5)
@@ -1332,33 +1401,33 @@ thailand_fs_fig4_dataset$region = factor(thailand_fs_fig4_dataset$region, levels
 # thailand factsheet figure 4
 thailand_fs_fig4 <- thailand_fs_fig4_dataset %>%
   ggplot() +
-  geom_line(mapping = aes(x = as.integer(years), 
+  geom_line(mapping = aes(x = as.integer(years),
                           y = as.double(pop_weighted_avg_pm2.5),
                           colour = region, linetype = region), lwd = 1.1) +
   geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  geom_hline(mapping = aes(yintercept = 15), lwd = 0.8, linetype = "dotted") +
   scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 35)) +
   scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022))  +
   scale_color_manual(values = c("National Average" = "#7197be", "Northeastern" = "#7197be", "Northern" = "#5f7aa5", "Central" = "#7197be", "Southern" = "#CBE8F3")) +
   scale_linetype_manual(values = c("National Average" = "solid", "Northeastern" = "dashed", "Northern" = "dashed", "Central" = "dashed", "Southern" = "dashed")) +
   ggthemes::theme_tufte() +
-  labs(x = "Year", 
+  labs(x = "Year",
        y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 11),
+        legend.text = element_text(size = 20, color="#222222"),
         legend.title = element_blank(),
-        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")), 
-        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")), 
-        axis.line = element_line(), 
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.line = element_line(),
         legend.box.background = element_rect(color = "black"),
-        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")), 
-        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"), 
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
         plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
-        axis.text = element_text(size = 12), 
-        plot.background = element_rect(color = "white"), 
+        axis.text = element_text(size = 20, color="#222222"),
+        plot.background = element_rect(color = "white"),
         axis.ticks = element_blank()) +
-  geom_text(x = 2001.15, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2022): 5 µg/m³"), size = 5)
-  
-# appendix table
+  geom_text(x = 2001.15, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5)+
+  geom_text(x = 2006.6, y = 15.6, label = expression("Thailand National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 5)
 
 # thailand factsheet appendix table 
 thailand_fs_appendix_table <- thai_aqli_2022 %>%
@@ -1379,8 +1448,8 @@ thailand_fs_appendix_table <- thai_aqli_2022 %>%
          `Annual Average 2022 PM2.5 Concentration (µg/m³)` = pm2022,
          `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to WHO PM2.5 guideline of 5 µg/m³` = le_gain_red_to_who, 
          `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to National PM2.5 standard of 15 µg/m³` = le_gain_red_to_nat,
-         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent)%>%
-
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent)
+thailand_fs_appendix_table
 
 ```
 ## Colombia
@@ -1608,7 +1677,7 @@ colombia_fs_appendix_table <- gadm2_aqli_2022 %>%
 
 ```
 
-##USA
+##USA Factsheet
 ```{r USA_fs_2024}
 
 #Figure 1: Change in life expectancy due to change in PM2.5 concentration in 235 counties in the United States between 1970 and 2022.
@@ -1789,13 +1858,37 @@ us_fs_fig3 <- mean_lyg %>%
   guides(fill = guide_legend(nrow = 1))
 
 
+# US Appendix data table
 
+# calculate pollution in the above states for the year 2022
+app_table_part1 <- gadm2_aqli_2022 %>%
+  filter(country == "United States") %>%
+  gadm_level_summary(c("country", "name_1"), c(2022), 10) %>%
+  select(country, name_1, population, pm2022, llpp_who_2022)
+
+# calculate pollution in the above states for the year 1970
+app_table_part2 <- us_1970_calc_results_cleaned %>%
+  gadm_level_summary(c("country", "name_1"), c(1970), 10) %>%
+  select(country, name_1, pm1970)
+
+# final data set for figure 3
+app_table_part1 %>%
+  left_join(app_table_part2, by = c("country", "name_1")) %>%
+  mutate(lyg_1970_2022 = round((pm1970 - pm2022)*0.098, 1)) %>%
+  mutate(pop_millions = round(population/1000000, 1)) %>%
+  select(name_1, pop_millions, pm1970, pm2022, lyg_1970_2022, llpp_who_2022) %>%
+  rename(`PM2.5 Concentration, 1970 (µg/m³)` = pm1970, 
+         `PM2.5 Concentration, 2022 (µg/m³)` = pm2022, 
+         `Years of Life Expectancy Gained due to Decrease in PM2.5, 1970-2022` = lyg_1970_2022, 
+         `Years of Life Expectancy Gain through Reducing PM2.5 from 2022 Concentration to WHO Guideline` = llpp_who_2022, 
+         `Population (millions)` = pop_millions, 
+         State = name_1)
 
 
 ```
 
 
-##Qatar
+##Qatar Factsheet
 ```{r Qatar_fs_2024}
 
 #Figure 1: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
@@ -1940,6 +2033,1154 @@ Qatar_fs_fig3 <- Qatar_fs_fig3_dataset %>%
         axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm")),
         axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")),
         axis.ticks = element_blank())
+
+#Figure 4: Annual average PM2.5 concentrations in Qatar, 1998-2022
+# Qatar factsheet figure 4 dataset
+Qatar_fs_fig4_dataset <- gadm2_aqli_2022 %>%
+  filter(country == "Qatar") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# Qatar factsheet figure 4
+Qatar_fs_fig4 <- Qatar_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years),
+                          y = as.double(pop_weighted_avg_pm2.5)),
+            lwd = 1.1, color = "#82b5d5") +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 40)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022))  +
+  ggthemes::theme_tufte() +
+  labs(x = "Year",
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.line = element_line(),
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 20, color="#222222"),
+        plot.background = element_rect(color = "white"),
+        axis.ticks = element_blank()) +
+  geom_text(x = 2001.5, y = 5.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 5)
+
+# Qatar factsheet appendix table 
+qatar_fs_appendix_table <- gadm2_aqli_2022 %>%
+  filter(country == "Qatar") %>%
+  mutate(pm2022 = round(pm2022, 1),
+         le_gain_red_to_who = round((pm2022 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2022*0.3)*le_constant, 1), 
+         pop_millions = round(population/1000, 3)) %>%
+  select(name_1, pop_millions, pm2022, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`District` = name_1, 
+         `Population (Thousands)` = pop_millions, 
+         `Annual Average 2022 PM2.5 Concentration (µg/m³)` = pm2022,
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent)
+
+```
+
+##Nigeria
+```{r nigeria_fs_2024}
+
+#Figure 1: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
+
+# nigeria fs fig 1 data
+nigeria_fs_fig1_dataset <- gadm2_aqli_2022 %>%
+  filter(country == "Nigeria") %>%
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# nigeria fs figure 1
+nigeria_fs_fig1 <- nigeria_fs_fig1_dataset %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "Nigeria"), color = "azure4", fill = "transparent", lwd = 0.15) +
+  geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "Nigeria"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") +
+  theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 15),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(2, "cm"),
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+#Figure 2: Potential gain in life expectancy from reducing PM2.5 from 2022 levels to the WHO guideline in the 10 most populous states of Nigeria
+
+# nigeria fs fig 2 data
+nigeria_fs_fig2_dataset <- gadm2_aqli_2022 %>%
+  filter(country == "Nigeria") %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022') %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2022_pop_weighted = pop_weights*pm2022,
+         llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE),
+            avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
+            llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
+
+# nigeria fs figure 2
+nigeria_fs_fig2 <- nigeria_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
+  labs(x = "State", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 16),
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")),
+        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title = element_text(size = 24, color="#222222"),
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.ticks = element_blank())
+
+#Figure 3: Top 10 threats to life expectancy in Nigeria
+
+# nigeria fs fig 3 data
+gbd_results_nigeria <- gbd_results_master_2022  %>%
+  filter(cause_of_death!= "Cardiovascular diseases")%>%
+  filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
+  filter(country == "Nigeria")
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_nigeria)[3] <- c("llpp_who_2022")
+
+nigeria_fs_fig3_dataset <- gbd_results_nigeria %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  slice_max(llpp_who_2022, n = 10)
+
+# nigeria factsheet figure 3
+nigeria_fs_fig3 <- nigeria_fs_fig3_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),axis.ticks.y = element_blank(),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+#Figure 4: Annual average PM2.5 concentration in Nigeria, 1998-2022
+
+# nigeria factsheet figure 4 dataset
+nigeria_fs_fig4_dataset <- gadm2_aqli_2022 %>%
+  filter(country == "Nigeria") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# nigeria factsheet figure 4
+nigeria_fs_fig4 <- nigeria_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years),
+                          y = as.double(pop_weighted_avg_pm2.5)),
+            lwd = 1.1, color = "#7197be") +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  geom_hline(mapping = aes(yintercept = 20), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 30)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022))  +
+  ggthemes::theme_tufte() +
+  labs(x = "Year",
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.line = element_line(),
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 20, color="#222222"),
+        plot.background = element_rect(color = "white"),
+        axis.ticks = element_blank()) +
+  geom_text(x = 2001.6, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)+
+  geom_text(x = 2006.6, y = 20.6, label = expression("Nigeria National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 5)
+
+# nigeria factsheet appendix table 
+nigeria_fs_appendix_table <- gadm2_aqli_2022 %>%
+  filter(country == "Nigeria") %>%
+  mutate(pm2022 = round(pm2022, 1),
+         le_gain_red_to_who = round((pm2022 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2022*0.3)*le_constant, 1), 
+         pop_millions = round(population/1000000, 3)) %>%
+  select(name_2, pop_millions, pm2022, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`Local Government Area` = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `Annual Average 2022 PM2.5 Concentration (µg/m³)` = pm2022,
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent)
+
+
+```
+##Europe
+```{r europe_fs_2024}
+
+#Figure 1. Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline,
+# comparing Eastern Europe versus Western Europe (demarcated by heavy black line)
+
+# Europe definition and shapefile
+# exclude the following countries to keep the map less wide and to show a stark
+# difference between eastern and western europe
+exclude_countries <-  c("Russia", "Turkey", "Sweden", "Finland", "Norway",
+                        "Kazakhstan", "Iceland", "Georgia", "Azerbaijan",
+                        "Armenia", "Cyprus", "Northern Cyprus",
+                        "Svalbard and Jan Mayen")
+
+countries_except_excluded <- european_countries %>%
+  filter(country %notin% exclude_countries)
+
+europe_gadm1_shp <- gadm1_aqli_2022_shp %>%
+  filter(name0 %in% unlist(countries_except_excluded)) %>%
+  filter(!(name0 == "Spain" & name1 == "Islas Canarias")) %>%
+  filter(!(name0 == "Portugal" & name1 == "Azores")) %>%
+  filter(!(name0 == "Portugal" & name1 == "Madeira"))
+
+# very important: this code is run to obtain a country level shapefile of
+# Europe without Islas Canarias, Azores and Madeira
+europe_gadm0_shp <- europe_gadm1_shp %>%
+  count(name0)
+
+# generate large east and west Europe polygons, then find their intersection to
+# mark their border
+eastern_europe_large_polygon <- europe_gadm1_shp %>%
+  filter(name0 %notin% western_european_countries)%>%
+  st_union()
+
+western_europe_large_polygon <- europe_gadm1_shp %>%
+  filter(name0 %in% western_european_countries) %>%
+  st_union()
+
+east_west_border <- st_intersection(eastern_europe_large_polygon, western_europe_large_polygon, model = "closed")
+
+# europe dataset
+europe_fs_fig1_data <- gadm2_aqli_2022 %>%
+  filter(country %in% unlist(countries_except_excluded), !is.na(llpp_who_2022)) %>%
+  filter(!(country == "Spain" & name_1 == "Islas Canarias")) %>%
+  filter(!(country == "Portugal" & name_1 == "Azores")) %>%
+  filter(!(country == "Portugal" & name_1 == "Madeira")) %>%
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# europe fs fig 1
+europe_fs_fig1 <- europe_fs_fig1_data %>%
+  filter(country %notin% c("Svalbard and Jan Mayen")) %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = europe_gadm1_shp, color = "azure4", fill = "transparent", lwd = 0.1) +
+  geom_sf(data = europe_gadm0_shp, color = "cornsilk4", fill = "transparent", lwd = 0.3) +
+  geom_sf(data = east_west_border, color = "black", fill = NA, lwd = 1) +
+  ggthemes::theme_map()  +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)  ", title = "",
+       subtitle = "") +
+  annotate("text", x = 33, y = 61, label = "Eastern Europe: 13 µg/m³, \n9.4 months potential gain") +
+  annotate("text", x =-11, y = 35, label = "Western Europe: 8.9 µg/m³, \n4.6 months potential gain") +
+  theme(legend.position = "bottom",
+        legend.justification = "center",
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 15),
+        # legend.key = element_rect(color = "black"),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 12),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(0, "cm"),
+        legend.direction = "horizontal",
+        plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1))
+
+#Figure 2:  Potential gain in life expectancy from reducing PM2.5 from 2022 levels to the WHO guideline in the 10 most populous regions of Europe
+
+# create a europe AQLI dataset
+gadm2_aqli_2022_europe <- gadm2_aqli_2022 %>%
+  filter(country %in% european_countries$country)
+
+# europe pop
+europe_pop <- sum(gadm2_aqli_2022_europe$population, na.rm =  TRUE)
+
+# pop living above who guideline
+europe_above_who <- gadm2_aqli_2022_europe %>%
+  filter(pm2022 > 10) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE))
+
+
+# country wise average and how many are above WHO
+europe_country_wise <- gadm2_aqli_2022_europe %>%
+  gadm_level_summary(c("country"), c(2022), 10)
+
+
+# exclude the following countries to keep the map less wide and to show a stark difference between eastern and western europe
+exclude_countries <-  c("Russia", "Turkey", "Sweden", "Finland", "Norway", "Kazakhstan", "Iceland", "Georgia", "Azerbaijan", "Armenia", "Cyprus", "Northern Cyprus", "Svalbard and Jan Mayen")
+
+
+countries_except_excluded <- european_countries %>%
+  filter(country %notin% exclude_countries)
+
+
+# europe figure 2 dataset
+ europe_fs_fig2_dataset <- gadm2_aqli_2022_europe %>%
+  mutate(name_1_country = str_c(name_1, " (", country, ")")) %>%
+  group_by(name_1_country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2022_pop_weighted = pop_weights*pm2022) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_pop_weighted = sum(pm2022_pop_weighted, na.rm = TRUE),
+            gain_in_le = (avg_pm2.5_pop_weighted - 5) * 0.098,
+            gain_in_le = ifelse(gain_in_le < 0, 0, gain_in_le)) %>%
+  ungroup() %>%
+  slice_max(tot_pop, n = 10)
+ # Convert name_1_country to character
+ europe_fs_fig2_dataset$name_1_country <- as.character(europe_fs_fig2_dataset$name_1_country)
+
+ # Convert gain_in_le to numeric
+ europe_fs_fig2_dataset$gain_in_le <- as.numeric(europe_fs_fig2_dataset$gain_in_le)
+
+# dataset
+europe_fs_fig2_dataset <-  europe_fs_fig2_dataset %>%
+  add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "gain_in_le")
+
+# plt
+europe_fs_fig2 <- europe_fs_fig2_dataset %>%
+  aqli_bar(scale_type = "lyl", x_var = "name_1_country", y_var = "gain_in_le", title = "", subtitle = "", x_label = "Region", y_label = "Potential Gain in Life Expectancy (Years)", legend_title = "Potential gain in life expectancy (Years)", caption = "") +
+  themes_aqli_base +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+        legend.box.background = element_rect(color = "black"),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        panel.grid.major.y = element_blank(),
+        plot.background = element_rect(fill = "white", color = "white"),axis.ticks.y = element_blank()) +
+   scale_y_continuous(breaks = seq(0, 2, 0.5)) +
+   guides(fill = guide_legend(nrow = 1))
+
+# Figure 3: Comparison of selected major global threats to life expectancy in the 5 most populous countries in Europe
+
+# create a europe AQLI dataset
+gadm2_aqli_2022_europe <- gadm2_aqli_2022 %>%
+  filter(country %in% european_countries$Country)
+
+
+# europe pop
+europe_pop <- sum(gadm2_aqli_2022_europe$population, na.rm =  TRUE)
+
+# pop living above who guideline
+europe_above_who <- gadm2_aqli_2022_europe %>%
+  filter(pm2022 > 10) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE))
+
+
+# country wise average and how many are above WHO
+europe_country_wise <- gadm2_aqli_2022_europe %>%
+  gadm_level_summary(c("country"), c(2022), 10)
+
+
+# exclude the following countries to keep the map less wide and to show a stark difference between eastern and western europe
+exclude_countries <-  c("Russia", "Turkey", "Sweden", "Finland", "Norway", "Kazakhstan", "Iceland", "Georgia", "Azerbaijan", "Armenia", "Cyprus", "Northern Cyprus", "Svalbard and Jan Mayen")
+
+
+countries_except_excluded <- european_countries %>%
+  filter(country %notin% exclude_countries)
+
+#> europe fig3
+
+diseases_list <- c("PM2.5 relative to WHO guideline",
+                               "Diabetes and kidney diseases","HIV/AIDS and sexually transmitted infections","Tobacco", "Transport injuries")
+
+country_list <- c("Russian Federation", "Turkey", "Germany", "United Kingdom", "France")
+
+# GBD results filtered for relevant cause of death (given Europe) and countries
+gbd_results_europe_fig3 <- gbd_results_master_2022 %>%
+ filter(cause_of_death %in% diseases_list, country %in% country_list)
+
+# making the 'location' column of type factor
+gbd_results_europe_fig3$country <- factor(gbd_results_europe_fig3$country, levels = country_list)
+
+
+
+# Converting 'cause_of_death' to type factor
+gbd_results_europe_fig3$cause_of_death <- factor(gbd_results_europe_fig3$cause_of_death, levels = diseases_list)
+
+# wrapping x-axis labels text
+levels(gbd_results_europe_fig3$cause_of_death) <- str_wrap(levels(gbd_results_europe_fig3$cause_of_death), 30)
+
+
+# reorder within each location as per the total life years lost column
+gbd_results_europe_fig3 <- gbd_results_europe_fig3 %>%
+  mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
+
+# clean the "cause of death" column and save the cwafrica factsheet figure 2
+gbd_results_europe_fig3 <- gbd_results_europe_fig3 %>%
+  mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
+
+
+
+# plot
+europe_fs_fig3 <- gbd_results_europe_fig3 %>%
+  ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) +
+  geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
+  scale_x_reordered() +
+  facet_wrap(~factor(country, levels = country_list), scales = "free_x", ncol = 5) +
+   scale_fill_manual(values = c("#B4CDD9", "#707F8C", "#8F3931",
+                                "#ADE9FA", "#CBE8F3")) +
+  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "",
+       subtitle = "", fill = "Threats to Life Expectancy") +
+  themes_aqli_base +
+   theme(legend.position = "bottom",
+         legend.justification = c(0.5, 3),
+         legend.background = element_rect(color = "black"),
+         legend.text = element_text(size = 15, color="#222222"),
+         axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+         axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+         legend.title = element_text(size = 20, color="#222222"),axis.text.x = element_blank(),
+         axis.ticks = element_blank(),
+         strip.text = element_text(size = 20),
+         plot.background = element_rect(fill = "white", color = "white"))
+
+#Figure 4:  Annual average PM2.5 concentration in Europe, 1998-2022
+
+# create a europe AQLI dataset
+gadm2_aqli_2022_europe <- gadm2_aqli_2022 %>%
+  filter(country %in% european_countries$country)%>%
+  mutate(region = case_when(
+    country %in% eu_countries ~ "European Union",
+    country %notin% eu_countries ~ "Non European Union"))
+
+# europe pop
+europe_pop <- sum(gadm2_aqli_2022_europe$population, na.rm =  TRUE)
+
+# pop living above who guideline
+europe_above_who <- gadm2_aqli_2022_europe %>%
+  filter(pm2022 > 10) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE))
+
+
+# country wise average and how many are above WHO
+europe_country_wise <- gadm2_aqli_2022_europe %>%
+  gadm_level_summary(c("country"), c(2022), 10)
+
+
+# exclude the following countries to keep the map less wide and to show a stark difference between eastern and western europe
+exclude_countries <-  c("Russia", "Turkey", "Sweden", "Finland", "Norway", "Kazakhstan", "Iceland", "Georgia", "Azerbaijan", "Armenia", "Cyprus", "Northern Cyprus", "Svalbard and Jan Mayen")
+
+
+countries_except_excluded <- european_countries %>%
+  filter(country %notin% exclude_countries)
+
+# creating region wise average PM2.5 data from 1998 to 2022
+europe_fs_fig4_regions <- gadm2_aqli_2022_europe %>%
+  group_by(region) %>%
+  filter(!is.na(population)) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years,region, pop_weighted_avg_pm2.5)
+
+europe_fs_fig4_data <- gadm2_aqli_2022_europe %>%
+  filter(!is.na(population)) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "Europe") %>%
+  select(years,region, pop_weighted_avg_pm2.5)
+
+europe_fs_fig4_dataset <- rbind(europe_fs_fig4_regions, europe_fs_fig4_data)
+
+europe_fs_fig4_dataset$region = factor(europe_fs_fig4_dataset$region, levels = c('Europe', 'European Union', 'Non European Union'))
+
+# fig 4
+europe_fs_fig4 <- europe_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years),
+                          y = as.double(pop_weighted_avg_pm2.5),
+                          colour = region, linetype = region), lwd = 1.1) +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  geom_hline(mapping = aes(yintercept = 10), lwd = 0.8, linetype = "dotted") +
+  geom_hline(mapping = aes(yintercept = 25), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 30, 5), limits = c(0, 30)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022)) +
+  scale_color_manual(values = c("Europe" = "#7197be", "European Union" = "#5f7aa5", "Non European Union" = "#CBE8F3")) +
+  scale_linetype_manual(values = c("Europe" = "solid", "European Union" = "dashed", "Non European Union" = "dashed")) +
+  ggthemes::theme_tufte() +
+  labs(x = "Year",
+       y = expression("Annual Average   " ~ PM[2.5] ~ " Concentration (in µg/m³)"),
+       title = "") +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.line = element_line(),
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 20, color="#222222"),
+        plot.background = element_rect(color = "white", fill = "white"),
+        axis.ticks = element_blank()) +
+  geom_text(x = 2001.5, y = 5.7, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)+
+  geom_text(x = 2001.2, y = 25.7, label = expression("European Union " ~ PM[2.5] ~ "Standard: 25 µg/m³"), size = 5)+
+  geom_text(x = 2001.2, y = 10.7, label = expression("European Union " ~ PM[2.5] ~ "2030 targets: 10 µg/m³"), size = 5)
+
+
+## Europe Appendix table
+
+#part-1: country wise summary of average pm2022, populaton, lyl for country as a whole
+country_wise_summary_pol <- gadm2_aqli_2022_europe %>%
+  gadm_level_summary(c("country"), c(2022), 10) %>%
+  select(country, pm2022, population, llpp_who_2022)
+
+# part-2: country wise sum of population of areas above WHO guideline
+country_wise_summary_areas_above_who <-  gadm2_aqli_2022_europe %>%
+  mutate(pop_above_who = ifelse(pm2022 > 5, population, 0)) %>%
+  group_by(country) %>%
+  summarise(sum_new_pop_above_who = sum(pop_above_who, na.rm = TRUE))
+
+
+# combine part 1 and part 2 
+country_wise_part1_2_combined <- country_wise_summary_pol %>%
+  left_join(country_wise_summary_areas_above_who, by = c("country")) %>%
+  mutate(perc_pop_above_who = round((sum_new_pop_above_who/population)*100, 1))
+
+# part-3: country wise most polluted region, pollution, lyl
+country_wise_most_polluted_region_stats <- gadm2_aqli_2022_europe %>%
+  filter(!is.na(population), !is.na(pm2022)) %>%
+  group_by(country) %>%
+  summarise(most_polluted = name_2[which(pm2022 == max(pm2022))], 
+            most_polluted_pm2022 = pm2022[which(pm2022 == max(pm2022))], 
+            lyl_most_polluted_pm2022= llpp_who_2022[which(pm2022 == max(pm2022))]) 
+
+# final dataset
+appendix_table <- country_wise_part1_2_combined %>%
+  left_join(country_wise_most_polluted_region_stats, by = c("country"))
+
+# select relevant columns and bring in final format
+appendix_table_final <- appendix_table %>%
+  select(country, pm2022, llpp_who_2022, perc_pop_above_who, most_polluted, most_polluted_pm2022, lyl_most_polluted_pm2022) %>%
+  mutate(most_polluted_pm2022 = round(most_polluted_pm2022, 1), 
+         lyl_most_polluted_pm2022 = round(lyl_most_polluted_pm2022, 1)) %>%
+  rename(Country = country, 
+         "Annual average PM2.5 concentration (in µg/m³)" = pm2022, 
+         "Life Expectancy Gains from reducing PM2.5 from 2022 Concentrations to the WHO Guideline of 5 µg/m³ in the given country" = llpp_who_2022, 
+         "Percent of population above WHO guideline" = perc_pop_above_who, 
+         "Region with highest PM2.5 concentration in 2022" = most_polluted, 
+         "Annual average PM2.5 concentration in most polluted region" = most_polluted_pm2022, 
+         "Life Expectancy Gains from reducing PM2.5 from 2022 Concentrations to the WHO Guideline of 5 µg/m³ in the most polluted region" = lyl_most_polluted_pm2022)
+
+```
+##DRC
+```{r drc_fs_2024}
+#Figure 1: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
+
+drc_fs_fig1_dataset <- gadm2_aqli_2022 %>%
+  filter(country == "Democratic Republic of the Congo") %>%
+  filter(name_2 != "Tshumbe") %>%
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022', 'geometry') %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# drc fs figure 1
+drc_fs_fig1 <- drc_fs_fig1_dataset %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "Democratic Republic of the Congo"), color = "azure4", fill = "transparent", lwd = 0.15) +
+  geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "Democratic Republic of the Congo"), color = "cornsilk4", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026"))+
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years)") +
+  theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 15),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.key = element_rect(color = "black"),
+        legend.box.spacing = unit(2, "cm"),
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
+# Figure 2: Potential gain in life expectancy from reducing PM2.5 from 2022 levels to the WHO guideline in 10 most populous provinces of Democratic republic of Congo
+
+drc_fs_fig2_dataset <- gadm2_aqli_2022 %>%
+  filter(country == "Democratic Republic of the Congo") %>%
+  select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022') %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2022_pop_weighted = pop_weights*pm2022,
+         llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE),
+            avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
+            le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
+            llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
+
+# drc fs figure 2
+drc_fs_fig2 <- drc_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
+  labs(x = "State", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
+  scale_y_continuous(breaks = seq(0, 4, 1), limits = c(0, 4)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 16),
+        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")),
+        plot.caption = element_text(size = 20, hjust = 0, face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),
+        axis.line = element_line(),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title = element_text(size = 24, color="#222222"),
+        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.ticks = element_blank())
+
+# Figure 3: Top 10 threats to life expectancy in Democratic Republic of Congo
+
+gbd_results_drc <- gbd_results_master_2022  %>%
+  filter(cause_of_death!= "Cardiovascular diseases")%>%
+  filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
+  filter(country == "Democratic Republic of the Congo")
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+colnames(gbd_results_drc)[3] <- c("llpp_who_2022")
+
+drc_fs_fig3_dataset <- gbd_results_drc %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  slice_max(llpp_who_2022, n = 10)
+
+# drc factsheet figure 3
+drc_fs_fig3 <- drc_fs_fig3_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = reorder(lyl_bucket, order_lyl_bucket)), width = 0.5, color = "black") +
+  labs(x = "Threats to life expectancy", y = "Life Years Lost", fill = "Life years lost") +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), face = "italic"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"), face = "italic"),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(color = "white"),axis.ticks.y = element_blank(),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 8, 0.5)) +
+  # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026"))+
+  guides(fill = guide_legend(nrow = 1))
+
+#Figure 4: Annual average PM2.5 concentrations in Democratic republic of Congo, 1998-2022
+
+drc_fs_fig4_dataset <- gadm2_aqli_2022 %>%
+  filter(country == "Democratic Republic of the Congo") %>%
+  filter(name_2 != "Tshumbe") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# DRC factsheet figure 4
+drc_fs_fig4 <- drc_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = aes(x = as.integer(years),
+                          y = as.double(pop_weighted_avg_pm2.5)),
+            lwd = 1.1, color = "#7197be") +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 50)) +
+  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022))  +
+  ggthemes::theme_tufte() +
+  labs(x = "Year",
+       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_blank(),
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.line = element_line(),
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        plot.background = element_rect(color = "white"),
+        axis.ticks = element_blank()) +
+  geom_text(x = 2001.6, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)
+
+
+# DRC factsheet appendix table 
+drc_fs_appendix_table <- gadm2_aqli_2022 %>%
+  filter(country == "Democratic Republic of the Congo") %>%
+  mutate(pm2022 = round(pm2022, 1),
+         le_gain_red_to_who = round((pm2022 - who_guideline)*le_constant, 1),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2022*0.3)*le_constant, 1), 
+         pop_millions = round(population/1000000, 3)) %>%
+  select(name_2, pop_millions, pm2022, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+  mutate(pop_millions = round(pop_millions, 1)) %>%
+  rename(`Local Government Area` = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `Annual Average 2022 PM2.5 Concentration (µg/m³)` = pm2022,
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration to WHO PM2.5 guideline of 5 µg/m` = le_gain_red_to_who, 
+         `Life Expectancy Gains from reducing PM2.5 from 2022 concentration by 30 percent` = le_gain_red_by_30_percent)
+
+```
+##China
+```{r china_fs_2024}
+#Figure 1: Improvements in life expectancy due to reduced pollution between 2014 and 2022
+
+# china figure1 dataset
+china_fs_fig1_data <- gadm2_aqli_2022 %>%
+  filter(country == "China") %>%
+  mutate(lyl2022minus2014 = round((pm2022 - pm2014)*0.098, 2)) %>%
+  add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "lyl2022minus2014") %>%
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+# china figure 1
+china_fs_fig1 <- china_fs_fig1_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket)), color = "aliceblue", lwd = 0.05) +
+ geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "China"), color = "azure4", fill = "transparent", lwd = 0.15) +
+   geom_sf(data = gadm0_aqli_2022_shp %>% filter(name0 == "China"), color = "cornsilk", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() +
+ scale_fill_manual(values = c("< -2" = "#4575b4",
+                               "-2 to (< -0.5)" = "#74add1",
+                               "-0.5 to (< -0.1)" = "#abd9e9",
+                               "-0.1 to (< 0)" = "#e0f3f8",
+                               "0 to (< 0.1)" = "#fee090",
+                               "0.1 to (< 0.5)" = "#fdae61",
+                               "0.5 to (< 2)" = "#f46d43",
+                               ">= 2" = "#d73027")) +
+  ggthemes::theme_map() +
+  labs(fill = "Change in life expectancy between 2014 and 2022 (Years; blue values indicate improvement)", title = "") +
+ theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "#222222"),
+        legend.text = element_text(size = 15, color="#222222"),
+        legend.title = element_text(size = 16, color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 15),
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+       legend.key = element_rect(color = "black"),
+       legend.box.spacing = unit(2, "cm"),
+        legend.direction = "horizontal",
+       plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1))
+
+#Figure 2: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
+
+#> plot 2: map screenshot--------------------
+
+# china figure2 dataset
+china_fs_fig2_data <- gadm2_aqli_2022 %>%
+  filter(country == "China") %>%
+  left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+
+# china figure 2
+china_fs_fig2 <- china_fs_fig2_data %>%
+  ggplot() +
+  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "lightgrey", lwd = 0.05) +
+ geom_sf(data = gadm1_aqli_2022_shp %>% filter(name0 == "China"), color = "black", fill = "transparent", lwd = 0.5) +
+  ggthemes::theme_map() +
+ scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  ggthemes::theme_map() +
+  labs(fill = "Potential gain in life expectancy (Years) ", title = "") +
+ theme(legend.position = "bottom",
+        legend.justification = c(0.5, 3),
+        legend.background = element_rect(color = "#222222"),
+        legend.text = element_text(size = 18, color = "#222222"),
+        legend.title = element_text(size = 20, color = "#222222"),
+        plot.title = element_text(hjust = 0.5, size = 15),
+       # legend.key = element_rect(color = "black"),
+       legend.box.margin = margin(b = 1, unit = "cm"),
+        plot.subtitle = element_text(hjust = 0.5, size = 7),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+       legend.key = element_rect(color = "#222222"),
+       legend.box.spacing = unit(2, "cm"),
+        legend.direction = "horizontal",
+       plot.background = element_rect(fill = "white", color = "white")) +
+  guides(fill = guide_legend(nrow = 1))
+
+# Figure 3: Potential gain in life expectancy from reducing PM2.5 concentrations from 2022 levels to the WHO guideline in the 10 most populous provinces of China
+
+china_fs_fig3_dataset <- gadm2_aqli_2022 %>%
+  filter(country == "China") %>%
+  add_aqli_color_scale_buckets(scale_type = "lyl", col_name = "llpp_who_2022") %>%
+  slice_max(population, n = 10)
+
+china_fs_fig3 <- china_fs_fig3_dataset %>%
+  aqli_bar(scale_type = "lyl", x_var = "name_1", y_var = "llpp_who_2022", title = "", subtitle = "", x_label = "Province", y_label = "Potential Gain in Life Expectancy (Years)", legend_title = "Potential gain in life expectancy (Years)", caption = "") +
+  themes_aqli_base +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+        legend.box.background = element_rect(color = "black"),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_text(size = 20, color="#222222"),
+        panel.grid.major.y = element_blank(),
+        plot.background = element_rect(fill = "white", color = "white"),axis.ticks.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 7, 1)) +
+  guides(fill = guide_legend(nrow = 1))
+
+
+#Figure 4: Top 10 threats to life expectancy in China---------------
+
+# top 10 most deadly diseases
+china_fs_fig4_dataset <- gbd_results_master_2022 %>%
+  filter(cause_of_death!= "Cardiovascular diseases")%>%
+  filter(cause_of_death!= "Respiratory infections and tuberculosis")%>%
+  filter(cause_of_death!= "Neoplasms")%>%
+  filter(cause_of_death!= "Chronic respiratory diseases")%>%
+  filter(country == "China") %>%
+  slice_max(lyl, n =10)
+
+colnames(china_fs_fig4_dataset)[3] <- c("llpp_who_2022")
+
+china_fs_fig4_dataset <- china_fs_fig4_dataset %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
+
+#> figure 4 plot
+
+china_fs_fig4 <- china_fs_fig4_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2022), y = llpp_who_2022, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), width = 0.4, color = "black") +
+  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", fill = "Life years lost",
+       title = "") +
+  coord_flip() +
+  ggthemes::theme_tufte() +
+  themes_aqli_base +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 20, color="#222222"),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm"), color="#222222"),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+        legend.box.background = element_rect(color = "black"),
+        axis.line = element_line(),
+        legend.text = element_text(size = 20),
+        legend.title = element_text(size = 20),
+        panel.grid.major.y = element_blank(),
+        plot.background = element_rect(fill = "white", color = "white"),axis.ticks.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 7, 1)) +
+ # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +
+ scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
+                               "0.1 to < 0.5" = "#ffeda0",
+                               "0.5 to < 1" = "#fed976",
+                               "1 to < 2" = "#feb24c",
+                               "2 to < 3" = "#fd8d3c",
+                               "3 to < 4" = "#fc4e2a",
+                               "4 to < 5" = "#e31a1c",
+                               "5 to < 6" = "#bd0026",
+                               ">= 6" = "#800026")) +
+  guides(fill = guide_legend(nrow = 1))
+
+
+#Figure 5: Annual average PM2.5 concentrations in major regions in Mainland China, 1998-2022
+
+fenwei_plain <- c("Xi’an", "Baoji", "Xianyang", "Weinan","Tongchuan", "Jinzhong", "Lvliang", "Linfen", "Yuncheng", "Luoyang", "Sanmenxia")
+#> plot 5: PM2.5 Concentrations in Major Regions in Mainland China Over Time (1998 to 2022)-----------------
+
+# filtering the color file for China
+color_2022_china <- gadm2_aqli_2022 %>%
+  filter(country == "China", !is.na(population))
+
+# BTH region (name_1)
+bth_region <- c("Beijing", "Tianjin", "Hebei")
+
+# YRD (name_1)
+yrd_region <- c("Shanghai", "Jiangsu", "Zhejiang")
+
+# PRD (name_1, name_2)
+
+prd_region_name_2_guandong_regions <- c("Dongguan", "Foshan", "Guangzhou",
+                                        "Huizhou", "Jiangmen", "Shenzhen",
+                                        "Zhaoqing", "Zhongshan", "Zhuhai")
+
+prd_region_name_1 <- c("Hong Kong", "Macau")
+
+prd <- c(prd_region_name_2_guandong_regions, prd_region_name_1)
+
+
+# add region column
+color_2022_china  <- color_2022_china %>%
+  mutate(region = ifelse(name_1 %in% bth_region, "BTH", "others"),
+         region = ifelse(name_1 %in% yrd_region,  "YRD", region),
+         region = ifelse(name_1 %in% prd_region_name_1, "PRD", region),
+         region = ifelse(name_2 %in% prd_region_name_2_guandong_regions, "PRD", region))
+
+
+# China factsheet figure 3 (part-1): trend lines figure region wise (BTH, YRD, PRD) dataset
+trendlines_china_region_wise_df <- color_2022_china %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5) %>%
+  filter(region %in% c("YRD", "BTH", "PRD"))
+
+# China factsheet figure 3 (part-2): trend line national average dataset
+trendline_national_avg_df <- color_2022_china %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "China") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# China factsheet figure 3 dataset final
+china_fs_fig5_dataset <- rbind(trendlines_china_region_wise_df, trendline_national_avg_df)
+
+china_fs_fig5_dataset <-  china_fs_fig5_dataset %>%
+    mutate(region_order = ifelse(region == "China", 1, NA),
+         region_order = ifelse(region == "PRD", 2, region_order),
+         region_order = ifelse(region == "YRD", 3, region_order),
+         region_order = ifelse(region == "BTH", 4, region_order))
+
+
+china_fs_fig5_dataset$region <- factor(china_fs_fig5_dataset$region, levels = c("BTH", "China", "YRD", "PRD"))
+
+# plot china factsheet figure 5
+china_fs_fig5 <- china_fs_fig5_dataset %>%
+  ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = interaction(region),
+                                   linetype = interaction(region)), lwd = 1.1) +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.5, linetype = "dashed") +
+  geom_hline(mapping = aes(yintercept = 35), lwd = 0.5, linetype = "dashed") +
+    geom_vline(mapping = aes(xintercept = 2014), lwd = 0.5, linetype = "dashed") +
+  scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100)) +
+  scale_x_continuous(breaks = c(seq(1998, 2020, 2), 2022)) +
+    scale_color_manual(values = c("PRD" = "#7197be", "China" = "#5f7aa5", "BTH" = "#5f7aa5", "YRD" = "#7197be"), name = "legend") +
+    scale_linetype_manual(
+    values = c("PRD" = "dashed", "China" = "solid", "BTH" = "dashed", "YRD" = "dashed"), name = "legend") +
+  ggthemes::theme_clean() +
+    themes_aqli_base +
+  labs(x = "Year",
+       y = expression("Annual Average  " ~ PM[2.5] ~ " Concentration (in µg/m³)"),
+       title = "",
+    subtitle = "",
+    color = "Region") +
+  theme(legend.position = "bottom",
+        legend.text = element_text(size = 20, color="#222222"),
+        legend.title = element_blank(),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+        axis.line = element_line(),
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
+        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 20, color="#222222"),
+        plot.background = element_rect(color = "white", fill = "white"),
+        axis.ticks = element_blank()) +
+    geom_text(x = 2001, y = 8.1, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³")) +
+    geom_text(x = 2015.3, y = 92.8, label = str_wrap("China announces war on pollution", width = 18))+
+  geom_text(x = 2001.2, y = 36.7, label = expression("China National" ~ PM[2.5] ~ "Standard: 35 µg/m³"), size = 5)
+
+
+
+china_fs_appendix_table <- gadm2_aqli_2022 %>%
+  gadm_level_summary(c("country", "name_1", "name_2"), c(2014, 2022), 10) %>%
+  filter(country == "China") %>%
+  slice_max(population, n = 25) %>%
+  mutate(pop_millions = round(population/1000000, 1), 
+         le_gain_2014_to_2022 = round((pm2014 - pm2022)*0.098, 1)) %>%
+  select(name_2, pop_millions, pm2022, le_gain_2014_to_2022,
+         llpp_who_2022, llpp_nat_2022) %>%
+  rename(Prefecture = name_2, `Population (Millions)` = pop_millions, 
+         `PM2.5 concentration 2022 (µg/m³)` = pm2022, 
+         `Life Expectancy Gains from reducing PM2.5 from 2014 concentrations to 2022 concentrations` = le_gain_2014_to_2022,
+         `Life Expectancy Gains from reducing PM2.5 concentrations from 2022 Concentration to the WHO Guideline of 5 µg/m³` = llpp_who_2022, 
+         `Life Expectancy Gains from reducing PM2.5 concentrations from 2022 Concentration to the National Standard of 35 µg/m³` = llpp_nat_2022)
+
 
 
 
