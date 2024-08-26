@@ -3,32 +3,6 @@ source("R/july.2024.helper.script.R")
 
 #Figure 1: Potential gain in life expectancy from permanently reducing PM2.5 from 2022 concentration to the WHO guideline
 
-# read and filter AQLI data
-ne_thai <- c("Amnat Charoen", "Bueng Kan", "Buri Ram", "Chaiyaphum", "Kalasin", "Khon Kaen", "Loei",
-             "Maha Sarakham", "Mukdahan", "Nakhon Phanom", "Nakhon Ratchasima", "Nong Bua Lam Phu",
-             "Nong Khai", "Roi Et", "Sakon Nakhon", "Si Sa Ket", "Surin", "Ubon Ratchathani",
-             "Udon Thani", "Yasothon")
-
-n_thai <- c ("Chiang Mai", "Chiang Rai", "Lampang", "Lamphun", "Mae Hong Son", "Nan", "Phayao", "Phrae",
-             "Uttaradit", "Tak", "Kamphaeng Phet", "Phetchabun", "Phichit", "Phitsanulok", "Sukhothai",
-             "Nakhon Sawan", "Uthai Thani")
-
-c_thai <- c("Ang Thong", "Bangkok Metropolis", "Chai Nat", "Lop Buri", "Nakhon Pathom", "Nonthaburi", "Pathum Thani",
-            "Phra Nakhon Si Ayutthaya", "Samut Prakan", "Samut Sakhon", "Samut Songkhram", "Saraburi",
-            "Sing Buri", "Suphan Buri", "Nakhon Nayok", "Chachoengsao", "Chanthaburi", "Chon Buri",
-            "Prachin Buri", "Rayong", "Sa Kaeo", "Trat", "Kanchanaburi", "Ratchaburi", "Phetchaburi", "Prachuap Khiri Khan")
-
-s_thai <- c("Chumphon", "Nakhon Si Thammarat", "Narathiwat", "Pattani", "Phatthalung", "Songkhla", "Surat Thani",
-            "Yala", "Krabi", "Phangnga", "Phuket", "Ranong", "Satun", "Trang")
-
-thai_aqli_2022 <- gadm2_aqli_2022 %>%
-  filter(country == "Thailand") %>%
-  mutate(region = case_when(
-    name_1 %in% ne_thai ~ "Northeastern",
-    name_1 %in% n_thai ~ "Northern",
-    name_1 %in% c_thai ~ "Central",
-    name_1 %in% s_thai ~ "Southern"))
-
 # thailand fs fig 1 data
 thailand_fs_fig1_dataset <- thai_aqli_2022 %>%
   left_join(gadm2_aqli_2022_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%

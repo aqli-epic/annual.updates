@@ -1,9 +1,7 @@
 # read in the helper file
 source("R/july.2024.helper.script.R")
-#Figure 5: Annual average PM2.5 concentrations in major regions in Mainland China, 1998-2022
 
-fenwei_plain <- c("Xi’an", "Baoji", "Xianyang", "Weinan","Tongchuan", "Jinzhong", "Lvliang", "Linfen", "Yuncheng", "Luoyang", "Sanmenxia")
-#> plot 5: PM2.5 Concentrations in Major Regions in Mainland China Over Time (1998 to 2022)-----------------
+# Figure 5: Annual average PM2.5 concentrations in major regions in Mainland China, 1998-2022
 
 # filtering the color file for China
 color_2022_china <- gadm2_aqli_2022 %>%
@@ -16,7 +14,6 @@ bth_region <- c("Beijing", "Tianjin", "Hebei")
 yrd_region <- c("Shanghai", "Jiangsu", "Zhejiang")
 
 # PRD (name_1, name_2)
-
 prd_region_name_2_guandong_regions <- c("Dongguan", "Foshan", "Guangzhou",
                                         "Huizhou", "Jiangmen", "Shenzhen",
                                         "Zhaoqing", "Zhongshan", "Zhuhai")
@@ -25,6 +22,8 @@ prd_region_name_1 <- c("Hong Kong", "Macau")
 
 prd <- c(prd_region_name_2_guandong_regions, prd_region_name_1)
 
+# Fenwei plain
+fenwei_plain <- c("Xi’an", "Baoji", "Xianyang", "Weinan","Tongchuan", "Jinzhong", "Lvliang", "Linfen", "Yuncheng", "Luoyang", "Sanmenxia")
 
 # add region column
 color_2022_china  <- color_2022_china %>%

@@ -18,13 +18,13 @@ library(data.table)
 library(svglite)
 
 # global variables
-`%notin%` <- Negate(`%in%`)
 who_guideline <- 5
+le_constant <- 0.098
+latest_year <- 2022
+first_year <- 1998
 
-# read in latest color file
-# global variables
+# global operations
 `%notin%` <- Negate(`%in%`)
-who_guideline <- 5
 
 # set working directory here
 setwd("~/Desktop/AQLI/2024 AQLI Update")
@@ -54,28 +54,8 @@ gbd_results_master_2022 <- read_csv("data/gbd_results_master.csv")
 # US 1970 calculation master cleaned file read
 us_1970_calc_results_cleaned <- read_csv("data/county_pm25_foraqli_stats_cleaned.csv")
 
-# read in latest national standard file
-nat_standard <- readr::read_csv("~/Desktop/AQLI/2024 AQLI Update/data/country_annual_average_pm2.5_standards_2024.csv", skip = 26) %>%
-  rename(natstandard = `National Annual Average PM2.5 Standard (in µg/m³)`) %>%
-  mutate(natstandard = as.numeric(natstandard))
 
-# read in the country continent file
-country_continent <- read_csv("data/country_continent.csv")
-
-# join gadm2 dataset with the country_continent file using the continent column
-gadm2_aqli_2022 <- gadm2_aqli_2022 %>%
-  left_join(country_continent, by = "country")
-
-# global variables
-who_guideline <- 5
-le_constant <- 0.098
-latest_year <- 2022
-first_year <- 1998
-
-# global operations
-`%notin%` <- Negate(`%in%`)
-
-# other region wise defintions
+# region wise defintions
 # Central Africa definition
 central_african_countries <- c("Angola", "Burundi", "Cameroon",
                                "Central African Republic", "Chad",
@@ -97,7 +77,7 @@ se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia",
                  "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", 
                  "Vietnam")
 
-# Northern plains (India)
+# Indo-gangetic plains states
 indo_gangetic_plains_states <- c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Haryana",
                                  "Punjab", "Chandigarh", "West Bengal")
 
@@ -153,10 +133,10 @@ mena_countries <- c(mid_east_countries, north_africa_countries)
 themes_aqli_base <- ggthemes::theme_tufte() +
   theme(plot.title = element_text(size = 18, hjust = 0.5, margin = margin(b = 0.2, unit = "cm")),
         plot.subtitle = element_text(size = 14, hjust = 0.5, margin = margin(b = 0.7, unit = "cm")),
+        plot.caption = element_text(size = 10, hjust = 0, margin = margin(t = 0.7, unit = "cm"), face = "italic"),
         axis.title.x = element_text(size = 14, margin = margin(t = 0.3, b = 0.5, unit = "cm")),
         axis.title.y = element_text(size = 14, margin = margin(r = 0.3, unit = "cm")),
         axis.text = element_text(size = 13),
-        plot.caption = element_text(size = 10, hjust = 0, margin = margin(t = 0.7, unit = "cm"), face = "italic"),
         legend.box.background = element_rect(color = "black"),
         legend.title = element_text(size = 14),
         legend.text = element_text(size = 13),
