@@ -10,22 +10,22 @@ setwd("~/Desktop/AQLI/2024 AQLI Update/")
 
 # vectors and data for caf funding regions
 north_america <- c("United States", "Canada")
-latin_america <- c("México", "Guatemala", "Honduras", "El Salvador", 
+latin_america <- c("México", "Guatemala", "Honduras", "El Salvador",
                    "Nicaragua", "Costa Rica", "Panama", "Colombia",
-                   "Venezuela", "Ecuador", "Peru", "Bolivia", 
-                   "Brazil", "Paraguay", "Chile", "Argentina", 
+                   "Venezuela", "Ecuador", "Peru", "Bolivia",
+                   "Brazil", "Paraguay", "Chile", "Argentina",
                    "Uruguay", "Cuba", "Haiti", "Dominican Republic",
                    "Puerto Rico")
-continent <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/country_continent.csv")
+continent <- read_csv("data/country_continent.csv")
 
 
 # pm2.5 and lyl data
-aqli <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/gadm0_2022_wide.csv") # %>% 
+aqli <- read_csv("data/gadm0_2022_wide.csv") # %>%
 # select(id, name, population, whostandard, natstandard, pm2022, who2022, nat2022)
 
-# number of aq monitors by country (open_aq). Standardizing all names to AQLI data. 
+# number of aq monitors by country (open_aq). Standardizing all names to AQLI data.
 # govt and non govt sensor data received
-aq_monitors_by_sensor <- read_csv("~/Desktop/AQLI/aq_data_gap/input/no_of_monitors_govt_other.csv") %>% 
+aq_monitors_by_sensor <- read_csv("~/Desktop/AQLI/aq_data_gap/input/no_of_monitors_govt_other.csv") %>%
   select(name, ismonitor, count) %>%
   pivot_wider(names_from = ismonitor,
               values_from = count) %>%
@@ -41,11 +41,21 @@ aq_monitors_by_sensor <- read_csv("~/Desktop/AQLI/aq_data_gap/input/no_of_monito
          name = ifelse(name == "S. Sudan", "South Sudan", name),
          name = ifelse(name == "United States of America", "United States", name))
 
+# high income country data. Standardizing all names to AQLI data
+fund <- read_excel("~/Desktop/AQLI/aq_data_gap/input/caf_funding_data.xlsx") %>%
+  mutate(Country = ifelse(Country == "Congo, Democratic Republic", "Democratic Republic of the Congo", Country),
+         Country = ifelse(Country == "Congo, Republic", "Republic of the Congo", Country),
+         Country = ifelse(Country == "Korea, Democratic People's Republic", "North Korea", Country),
+         Country = ifelse(Country == "Lao PDR", "Laos", Country),
+         Country = ifelse(Country == "Mexico", "México", Country),
+         Country = ifelse(Country == "North Macedonia", "Macedonia", Country),
+         Country = ifelse(Country == "State of Palestine", "Palestine", Country))
+
 # combine data
 summary_data <- aqli %>%
   left_join(continent, by = c("name" = "country")) %>%
   left_join(aq_monitors_by_sensor, by = "name") %>%
-  left_join(fund, by = c("name" = "Country")) 
+  left_join(fund, by = c("name" = "Country"))
 
 summary_data <- summary_data %>%
   mutate(`CAF Funding Region` = case_when(name %in% north_america ~ "North America",
@@ -58,20 +68,21 @@ summary_data <- summary_data %>%
 
 summary_data <- summary_data %>%
   filter(!is.na(`CAF Funding Region`), !is.nan(pm2022)) %>%
-  select(`CAF Funding Region`, starts_with("pm"), population, govt, other, tot_monitor) %>%
+  select(`CAF Funding Region`, starts_with("pm"), population, govt, other, tot_monitor, `Funding in USD million`) %>%
   group_by(`CAF Funding Region`) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(avg_govt_monitors = round(weighted.mean(govt, population, na.rm = TRUE), 2),
-            avg_other_monitors = round(weighted.mean(other, population, na.rm = TRUE), 2), 
+  summarise(`Intl Dev Funding (USD million)` = round(mean(`Funding in USD million`, na.rm = TRUE), 2),
+            avg_govt_monitors = round(weighted.mean(govt, population, na.rm = TRUE), 2),
+            avg_other_monitors = round(weighted.mean(other, population, na.rm = TRUE), 2),
             avg_total_monitors = round(weighted.mean(tot_monitor, population, na.rm = TRUE), 2),
             across(ends_with("weighted"), sum)) %>%
   rename_with(~ gsub("_weighted", "", .), starts_with("pm")) %>%
-  mutate(across(starts_with("pm"), 
-                ~ 0.098 * (.x - 5), 
+  mutate(across(starts_with("pm"),
+                ~ 0.098 * (.x - 5),
                 .names = "who{str_extract(.col, '\\\\d+')}")) %>%
   mutate(across(matches("^(pm|who)\\d+$"), ~ round(.x, 2))) %>%
-  mutate(`Funding (in million USD)` = case_when(`CAF Funding Region` == "North America" ~ 115.5,
+  mutate(`Philanthropic Funding (USD million)` = case_when(`CAF Funding Region` == "North America" ~ 115.5,
                                                 `CAF Funding Region` ==  "Latin America" ~ 6.6,
                                                 `CAF Funding Region` == "India" ~ 52.8,
                                                 `CAF Funding Region` == "China" ~ 49.5,
@@ -81,5 +92,5 @@ summary_data <- summary_data %>%
          `Govt monitor density (per 100,000)` = avg_govt_monitors/100000,
          `Other monitor density (per 100,000)` = avg_other_monitors/100000,
          `Total monitor density (per 100,000)` = avg_total_monitors/100000)
-  
+
 
