@@ -64,7 +64,11 @@ summary_data <- summary_data %>%
                                           name == "China" ~ "China",
                                           continent == "Asia" & name %notin% c("India", "China") ~ "Rest of Asia",
                                           continent == "Africa" ~ "Africa",
-                                          continent == "Europe" ~ "Europe"))
+                                          continent == "Europe" ~ "Europe"),
+        `Funding in USD million` = replace_na(`Funding in USD million`, 0),
+        govt = replace_na(govt, 0),
+        other = replace_na(other, 0),
+        tot_monitor = replace_na(tot_monitor, 0))
 
 summary_data <- summary_data %>%
   filter(!is.na(`CAF Funding Region`), !is.nan(pm2022)) %>%
