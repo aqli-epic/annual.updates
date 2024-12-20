@@ -76,7 +76,8 @@ summary_data <- summary_data %>%
   group_by(`CAF Funding Region`) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(`Intl Dev Funding (USD million)` = round(mean(`Funding in USD million`, na.rm = TRUE), 2),
+  summarise(tot_pop = sum(population)/100000,
+            `Intl Dev Funding (USD million)` = round(mean(`Funding in USD million`, na.rm = TRUE), 2),
             avg_govt_monitors = round(weighted.mean(govt, population, na.rm = TRUE), 2),
             avg_other_monitors = round(weighted.mean(other, population, na.rm = TRUE), 2),
             avg_total_monitors = round(weighted.mean(tot_monitor, population, na.rm = TRUE), 2),
@@ -93,8 +94,8 @@ summary_data <- summary_data %>%
                                                 `CAF Funding Region` == "Rest of Asia" ~ 6.6,
                                                 `CAF Funding Region` == "Africa" ~ 3.3,
                                                 `CAF Funding Region` == "Europe" ~ 52.8),
-         `Govt monitor density (per 100,000)` = avg_govt_monitors/100000,
-         `Other monitor density (per 100,000)` = avg_other_monitors/100000,
-         `Total monitor density (per 100,000)` = avg_total_monitors/100000)
+         `Govt monitor density (per 100,000)` = avg_govt_monitors/tot_pop,
+         `Other monitor density (per 100,000)` = avg_other_monitors/tot_pop,
+         `Total monitor density (per 100,000)` = avg_total_monitors/tot_pop)
 
 
