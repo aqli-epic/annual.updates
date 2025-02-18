@@ -107,6 +107,48 @@ fig1a <- fig1a_data %>%
         plot.background = element_rect(fill = "white", color = "white")) +
   guides(fill = guide_legend(nrow = 1))
 
+fig1b_data <- gadm0_aqli_2022 %>%
+  select(id, name, natstandard) %>%
+  mutate(aq_std_bucket = if_else(natstandard >= 5 & natstandard <= 10, "5 - 10", NA),
+         aq_std_bucket = if_else(natstandard > 10 & natstandard <= 20, "10 - 20", aq_std_bucket),
+         aq_std_bucket = if_else(natstandard > 20 & natstandard <= 30, "20 - 30", aq_std_bucket),
+         aq_std_bucket = if_else(natstandard > 30 & natstandard <= 40, "30 - 40", aq_std_bucket),
+         aq_std_bucket = if_else(natstandard > 40 & natstandard <= 50, "40 - 50", aq_std_bucket, missing = "Does not have a standard")) %>%
+  left_join(gadm0_aqli_2022_shp, by = c("id" = "isoalp3"))  %>%
+  select(-geometry, geometry, ) %>%
+  st_as_sf()
+
+fig1b_data$aq_std_bucket <- factor(fig1b_data$aq_std_bucket,
+                                   levels = c("5 - 10", "10 - 20", "20 - 30",
+                                              "30 - 40", "40 - 50", "Does not have a standard"))
+
+
+fig1b <- ggplot() +
+  geom_sf(data = gadm0_aqli_2022_shp, color = "cornsilk4", fill = "white", lwd = 0.05) +
+  geom_sf(data = fig1b_data, mapping = aes(fill = aq_std_bucket), color = "cornsilk4", lwd = 0.05) +
+  ggthemes::theme_map() +
+  labs(fill="Ambient annual PM2.5 standard (in µg/m³)") +
+  scale_fill_manual(values = c("5 - 10" = "#0078a3",
+                               "10 - 20" = "#599ba8",
+                               "20 - 30" = "#b08a4e",
+                               "30 - 40" = "#cf570e",
+                               "40 - 50" = "#b90d1f",
+                               "Does not have a standard" = "#eeeeee")) +
+  theme(plot.title = element_text(hjust = 0.5, size = 15),
+        plot.background = element_rect(fill = "white", color = "white"),
+        plot.subtitle = element_text(hjust = 0.5, size = 12),
+        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
+        legend.position = "bottom",
+        legend.justification = "center",
+        legend.background = element_rect(color = "black"),
+        legend.text = element_text(size = 14),
+        legend.title = element_text(size = 15),
+        legend.key = element_rect(color = "black"),
+        legend.box.margin = margin(b = 1, unit = "cm"),
+        legend.box.spacing = unit(0, "cm"),
+        legend.direction = "horizontal") +
+  guides(fill = guide_legend(nrow = 1))
+
 #### Change in PM since standard adoption ####
 pm_range_df_long <- gadm0_aqli_2022 %>%
   select(name, natstandard, starts_with("pm")) %>%
@@ -258,3 +300,17 @@ usa %>%
   geom_line(aes(x = years, y = `pm2.5`), linewidth = 1.5) +
   ylim(0,50) +
   labs(title = "USA")
+
+#### Conclusion stats ####
+gadm0_aqli_2022 %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE))
+
+public_data %>%
+  filter(is.na(natstandard)) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE))
+
+public_data %>%
+  filter(`Publicly accessible?` == "No") %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE))
+
+
