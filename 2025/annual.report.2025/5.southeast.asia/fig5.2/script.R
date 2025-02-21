@@ -51,5 +51,3 @@ ar_fig5.2 <- ar_se_asia_fig5.2_data %>%
         strip.text = element_text(size = 14),
         plot.background = element_rect(fill = "white", color = "white")) +
   scale_y_continuous(breaks = seq(0, 7, 0.5))
-ggsave("C:/Users/HP/Downloads/annual.report.2025/5.southeast.asia/fig5.2/ar__se_asia_fig5.2_1.png", ar_fig5.2, width = 15, height = 10)
-
