@@ -18,6 +18,9 @@ first_year <- 1998
 # global operations
 `%notin%` <- Negate(`%in%`)
 
+source("~/Desktop/AQLI/REPO/annual.updates/R/colour_scale.R")
+source("~/Desktop/AQLI/REPO/annual.updates/R/aqli_regions.R")
+
 #### data ####
 # read in latest PM2.5 data file
 gadm2_aqli_2022 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/gadm2_2022_wide.csv")
@@ -32,9 +35,6 @@ nat_standard <- read_excel("~/Desktop/AQLI/nature communications/aq_standards.xl
   filter(!is.na(`Year first adopted`), `Year first adopted` < 2022) %>%
   select(Country, `Year first adopted`)
 
-# European countries
-european_countries <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/europe_countries.csv")
-
 # US data
 us_county <- read_csv("~/Desktop/AQLI/2024 AQLI Update/CleanAirAct/final/county_pm25_foraqli_stats.csv")
 
@@ -47,7 +47,7 @@ gadm0_aqli_2022 %>%
   count()
 
 gadm0_aqli_2022 %>%
-  filter(who2022 > 1.9, is.na(natstandard)) %>%
+  filter(who2022 > 1.9, is.na(natstandard)) %>% # countries where PGLE > global average and don't have natl standard
   view()
 
 above_glob_avg_natstd <- gadm0_aqli_2022 %>%
@@ -58,9 +58,34 @@ above_glob_avg_no_natstd <- gadm0_aqli_2022 %>%
   filter(who2022 > 1.9, is.na(natstandard)) %>%
   select(id)
 
-#### LYL w.r.to WHO map ####
-source("~/Desktop/AQLI/REPO/annual.updates/R/colour_scale.R")
+gadm2_aqli_2022 %>%
+  filter(!is.na(population), !is.na(pm2022)) %>%
+  mutate(region = if_else(name0 %in% south_asia_def, "South Asia", NA),
+         region = if_else(name0 == "China", "China", region),
+         region = if_else(name0 %in% central_african_countries, "Central Africa", region),
+         region = if_else(name0 %in% west_african_countries, "West Africa", region),
+         region = if_else(name0 %in% mena_countries, "Middle East & North Africa", region),
+         region = if_else(name0 %in% se_asia_vec, "South East Asia", region),
+         region = if_else(name0 %in% unlist(european_countries) & name0 %notin% western_european_countries, "Eastern Europe", region),
+         region = if_else(name0 %in% western_european_countries, "Western Europe", region),
+         region = if_else(name0 %in% latin_america_countries_vec, "Latin America", region),
+         region = if_else(name0 == "United States", "United States", region, missing = "Rest of the World")) %>%
+  group_by(region) %>%
+  summarise(avg_pm = weighted.mean(pm2022,population)) %>%
+  mutate(lyl = 0.098*(avg_pm-5)) %>%
+  arrange(desc(avg_pm))
 
+gadm0_aqli_2022 %>%
+  filter(name %in% c("Bangladesh", "India", "Democratic Republic of the Congo",
+                     "Cameroon", "China", "United States", "Canada", "Japan")) %>%
+  select(name, population, natstandard, pm2022, who2022) %>%
+  arrange(desc(pm2022))
+
+gadm0_aqli_2022 %>%
+  filter(!is.na(natstandard), !is.na(population)) %>%
+  summarise(tot_pop = sum(population/1000000))
+
+#### LYL w.r.to WHO map ####
 fig1a_data <- gadm0_aqli_2022 %>%
   mutate(who2022 = if_else(pm2022 <= whostandard, 0, who2022, missing = 0)) %>%
   # filter(!is.nan(who2022)) %>%
@@ -125,7 +150,7 @@ fig1b_data$aq_std_bucket <- factor(fig1b_data$aq_std_bucket,
 
 fig1b <- ggplot() +
   geom_sf(data = gadm0_aqli_2022_shp, color = "cornsilk4", fill = "white", lwd = 0.05) +
-  geom_sf(data = fig1b_data, mapping = aes(fill = aq_std_bucket), color = "cornsilk4", lwd = 0.05) +
+  geom_sf(data = fig1b_data, mapping = aes(fill = aq_std_bucket), color = "cornsilk4", lwd = 0.05, alpha = 0.7) +
   ggthemes::theme_map() +
   labs(fill="Ambient annual PM2.5 standard (in µg/m³)") +
   scale_fill_manual(values = c("5 - 10" = "#0078a3",
@@ -133,7 +158,7 @@ fig1b <- ggplot() +
                                "20 - 30" = "#b08a4e",
                                "30 - 40" = "#cf570e",
                                "40 - 50" = "#b90d1f",
-                               "Does not have a standard" = "#eeeeee")) +
+                               "Does not have a standard" = "#111111")) +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         plot.background = element_rect(fill = "white", color = "white"),
         plot.subtitle = element_text(hjust = 0.5, size = 12),
@@ -216,7 +241,7 @@ table1a <- public_data %>%
                             "30 - 40", "40 - 50", "more than 50")))
 
 table1b <- public_data %>%
-  select(name, natstandard, population) %>%
+  select(name, natstandard, population, pm2022) %>%
   mutate(aq_std_bucket = if_else(natstandard >= 5 & natstandard <= 10, "5 - 10", NA),
          aq_std_bucket = if_else(natstandard > 10 & natstandard <= 20, "10 - 20", aq_std_bucket),
          aq_std_bucket = if_else(natstandard > 20 & natstandard <= 30, "20 - 30", aq_std_bucket),
@@ -224,8 +249,9 @@ table1b <- public_data %>%
          aq_std_bucket = if_else(natstandard > 40 & natstandard <= 50, "40 - 50", aq_std_bucket, missing = "Does not have a standard")) %>%
   group_by(aq_std_bucket) %>%
   summarise(num_countries = n(),
-            aq_bucket_pop = round(sum(population/1000000, na.rm = TRUE), 0)) %>%
-  mutate(percent_pop = round(100*aq_bucket_pop/sum(aq_bucket_pop, na.rm = TRUE), 1)) %>%
+            aq_bucket_pop = round(sum(population[pm2022<=natstandard]/1000000, na.rm = TRUE), 0),
+            tot_pop = round(sum(population/1000000, na.rm = TRUE), 0)) %>%
+  mutate(percent_pop = round(100*aq_bucket_pop/tot_pop, 1)) %>%
   arrange(factor(aq_std_bucket,
                  levels = c("5 - 10", "10 - 20", "20 - 30",
                             "30 - 40", "40 - 50", "Does not have a standard")))
@@ -234,7 +260,7 @@ table1b <- public_data %>%
 public_data %>%
   filter(!is.na(`Is there any evidence of government operated AQ monitoring system in 2022?`)) %>%
   mutate(`Publicly accessible?` = if_else(`Publicly accessible?` == "Yes*", "Yes", `Publicly accessible?`)) %>%
-  group_by(`Is there any evidence of current government operated AQ monitoring system in 2024?`) %>%
+  group_by(`Publicly accessible?`) %>%
   count()
 
 table2 <- public_data %>%
@@ -249,7 +275,7 @@ table2 <- public_data %>%
   arrange(factor(government_aq_monitoring,
                  levels = c("Yes", "No")))
 
-#### Rergional points ####
+#### Regional points ####
 # Europe and Central Asia
 europe_pm2022 <- gadm0_aqli_2022 %>%
   select(name, natstandard, pm2022, population) %>%
@@ -303,7 +329,17 @@ usa %>%
 
 #### Conclusion stats ####
 gadm0_aqli_2022 %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE))
+  summarise(no_std_pop = sum(population[is.na(natstandard)], na.rm = TRUE),
+            dsnt_meet_std_pop = sum(population[pm2022>natstandard], na.rm = TRUE),
+            tot_pop = sum(population, na.rm = TRUE))
+
+gadm0_aqli_2022 %>%
+  filter(is.na(natstandard)) %>%
+  count()
+
+gadm0_aqli_2022 %>%
+  filter(pm2022>natstandard) %>%
+  count()
 
 public_data %>%
   filter(is.na(natstandard)) %>%
