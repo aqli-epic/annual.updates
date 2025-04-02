@@ -3,13 +3,13 @@ source("~/R/july.2025.helper.script.R")
 
 # Latin America figure 6.1 ===========
 # GBD results filtered for relevant cause of death and countries
-country_list <-c("Bolivia", "Guatemala", "Brazil", "Mexico", "Colombia")
+country_list <-c("Bolivia", "Honduras", "El Salvador", "Brazil", "Mexico")
 diseases_list <- c("Tobacco",
                    "Child and maternal malnutrition",
                    "Self-harm and interpersonal violence",
                    "PM2.5 relative to WHO guideline")
-ar_latam_fig6.1_data <- gbd_results_master_2025 %>%
-  filter(cause_of_death %in% diseases_list, 
+ar_latam_fig6.1_data <- gbd_results_master_2023 %>%
+  filter(cause_of_death %in% diseases_list,
          country %in% country_list)
 
 # making the 'location' column of type factor
@@ -26,7 +26,7 @@ levels(ar_latam_fig6.1_data$cause_of_death) <- str_wrap(levels(ar_latam_fig6.1_d
 ar_latam_fig6.1_data <- ar_latam_fig6.1_data %>%
   mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
 
-# clean the "cause of death" column 
+# clean the "cause of death" column
 ar_latam_fig6.1_data <- ar_latam_fig6.1_data %>%
   mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
 
@@ -42,5 +42,9 @@ ar_latam_fig6.1 <- ar_latam_fig6.1_data %>%
        subtitle = "", fill = "Threats to Life Expectancy") +
   themes_aqli_base +
   theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank(),
-        strip.text = element_text(size = 14),
+        axis.title.y = element_text(size = 20, margin = margin(r = 0.3, unit = "cm")),
+        axis.text = element_text(size = 17),
+        legend.title = element_text(size = 18),
+        legend.text = element_text(size = 17),
+        strip.text = element_text(size = 20),
         plot.background = element_rect(fill = "white", color = "white"))
