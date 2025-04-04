@@ -2,52 +2,43 @@
 source("R/july.2025.helper.script.R")
 
 # US, Canada, Europe figure 8.1 ============
-# US + Canada county level shape file
-county_shp <- gadm2_aqli_2023_shp %>%
-  filter(name0 %in% c("United States", "Canada"))
+# US + Canada trendlines data
+us_can_trendlines_fig8.1 <- gadm2_aqli_2023 %>%
+  filter(!is.na(population), country %in% c("United States", "Canada")) %>%
+  group_by(country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2023_weighted , names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(country, years, pop_weighted_avg_pm2.5)
 
-# Change in life expectancy map (change geo_name to name_2) and remove any counties that belong to Hawaii or Alaska
-county_shp <- inner_join(county_shp, gadm2_aqli_2023, by = c("obidgadm2"="objectid_gadm2")) %>%
-  filter(!(name1 %in% c("Alaska", "Hawaii")))
-
-# fig 8.1 data
-us_can_1998_2023_map_data <- county_shp %>%
-  mutate(lyl1998minus2023 = round((pm1998 - pm2023)*0.098, 2)) %>%
-  add_aqli_color_scale_buckets("lyldiff", "lyl1998minus2023") %>%
-  select(-geometry, geometry)
+# set country as factor for correct legend order
+us_can_trendlines_fig8.1$country <- factor(us_can_trendlines_fig8.1$country, levels = c("United States", "Canada"))
 
 # plot
-ar_us_can_fig8.1 <- us_can_1998_2023_map_data %>%
-  st_as_sf() %>%
+ar_us_can_fig8.1 <- us_can_trendlines_fig8.1 %>%
+  ungroup() %>%
   ggplot() +
-  geom_sf(mapping = aes(fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket)),
-          color = "aliceblue", lwd = 0.05) +
-  geom_sf(data = gadm1_aqli_2023_shp %>% filter(name0 %in% c("United States", "Canada"),
-                                           name1 %notin% c("Alaska", "Hawaii")),
-          color = "azure4", fill = "transparent", lwd = 0.5) +
-  ggthemes::theme_map() +
-  scale_fill_manual(values = c(">= 2" = "#008fbb",
-                               "0.5 to (< 2)" = "#4fb6d3",
-                               "0.1 to (< 0.5)" = "#99dbe9",
-                               "0 to (< 0.1)" = "#d2eef4",
-                               "-0.1 to (< 0)" = "#ffd393",
-                               "-0.5 to (< -0.1)" = "#fea222",
-                               "-2 to (< -0.5)" = "#ec6f29",
-                               "< -2" = "#d63333")) +
-  ggthemes::theme_map() +
-  labs(fill = "Change in life expectancy between 1998 and 2023 \n(Years; blue values indicate improvement)", title = "") +
-  theme(legend.position = "bottom",
-        legend.justification = "center",
-        legend.background = element_rect(color = "black"),
-        legend.text = element_text(size = 14),
-        legend.title = element_text(size = 15),
-        plot.title = element_text(hjust = 0.5, size = 15),
-        # legend.key = element_rect(color = "black"),
-        legend.box.margin = margin(b = 1, unit = "cm"),
-        plot.subtitle = element_text(hjust = 0.5, size = 7),
-        plot.caption = element_text(hjust = 0.7, size = 9, face = "italic"),
-        legend.key = element_rect(color = "black"),
-        legend.box.spacing = unit(0, "cm"),
-        legend.direction = "horizontal",
-        plot.background = element_rect(fill = "white", color = "white")) +
-  guides(fill = guide_legend(nrow = 1))
+  geom_line(mapping = aes(x = years, y = pop_weighted_avg_pm2.5,
+                          color = country,
+                          linetype = country),
+            lwd = 2) +
+  labs(x = "Year", y = expression("Annual Average " ~ PM[2.5] ~ " concentrations (in µg/m³)"),
+       color = "") +
+  ggthemes::theme_fivethirtyeight() +
+  scale_color_manual(values = c("Canada" = "#800026", "United States" = "#f29e37"),
+                     name = "legend") +
+  scale_linetype_manual(values = c("Canada" = "dashed", "United States" = "dashed"),
+                        name = "legend") +
+  scale_y_continuous(breaks = seq(0, 15, 3), limits = c(0, 15)) +
+  scale_x_continuous(breaks = c(seq(1998, 2023, 1))) +
+  themes_aqli_base +
+  theme(axis.title.x = element_text(size = 20, margin = margin(r = 0.3, unit = "cm")),
+        axis.title.y = element_text(size = 20, margin = margin(r = 0.3, unit = "cm")),
+        axis.text = element_text(size = 17),
+        legend.text = element_text(size = 20),
+        legend.title = element_blank(),
+        legend.key.width = unit(1, "cm"),
+        plot.background = element_rect(fill = "white", color = "white"))
