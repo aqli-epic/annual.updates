@@ -11,7 +11,7 @@ se_asia_def <-  c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia",
 #filter for relevant countries
 country_list <- c("Indonesia", "Malaysia", "Myanmar", "Thailand", "Vietnam")
 # filter for relevant cause of death
-diseases_list <- c("High fasting plasma glucose","PM2.5 relative to WHO guideline",
+diseases_list <- c("Child and maternal malnutrition","PM2.5 relative to WHO guideline",
                    "Tobacco", "Transport injuries")
 
 ar_se_asia_fig5.2_data <- gbd_results_master_2025 %>%
@@ -36,7 +36,7 @@ ar_se_asia_fig5.2_data <- ar_se_asia_fig5.2_data %>%
   mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
 
 # southeast asia figure 5.2: GBD
-ar_fig5.2 <- ar_se_asia_fig5.2_data %>%
+ar_se_asia_fig5.2 <- ar_se_asia_fig5.2_data %>%
   ggplot(mapping = aes(x = cause_of_death, y = lyl)) +
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +
