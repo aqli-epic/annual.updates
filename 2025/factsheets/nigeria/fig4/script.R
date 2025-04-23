@@ -1,46 +1,52 @@
 # read in the helper file
-source("R/july.2024.helper.script.R")
+source("R/july.2025.helper.script.R")
 
-#Figure 4: Annual average PM2.5 concentration in Nigeria, 1998-2022
+#Figure 4: Top external threats to life expectancy in Nigeria
 
-# nigeria factsheet figure 4 dataset
-nigeria_fs_fig4_dataset <- gadm2_aqli_2022 %>%
-  filter(country == "Nigeria") %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE),
-         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm1998_weighted:pm2022_weighted, names_to = "years",
-               values_to = "pop_weighted_avg_pm2.5") %>%
-  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
-         region = "National Average") %>%
-  select(years, region, pop_weighted_avg_pm2.5)
+nigeria_fs_fig4_data <- gbd_results_master_2023 %>%
+  filter(country == "Nigeria",
+         cause_of_death %in% c("HIV/AIDS and sexually transmitted infections",
+                               "Neglected tropical diseases and malaria",
+                               "PM2.5 relative to WHO guideline",
+                               "Unsafe water, sanitation, and handwashing"))
 
-# nigeria factsheet figure 4
-nigeria_fs_fig4 <- nigeria_fs_fig4_dataset %>%
+colnames(nigeria_fs_fig4_data)[3] <- c("llpp_who_2023")
+
+nigeria_fs_fig4_data <- nigeria_fs_fig4_data %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2023")
+
+# figure 3
+# Source: Global Burden of Disease (https://vizhub.healthdata.org/gbd-results/)
+# causes and risks data and WHO Life Tables (https://apps.who.int/gho/data/node.main.LIFECOUNTRY?lang=en)
+# were used combined with the Life table method to arrive at these results.
+# 'PM2.5 relative to WHO Guideline' bar displays life years lost relative to the
+# WHO guideline as calculated by latest AQLI (2023) data, which will be published
+# in 2024.
+
+nigeria_fs_fig4 <- nigeria_fs_fig4_data %>%
   ggplot() +
-  geom_line(mapping = aes(x = as.integer(years),
-                          y = as.double(pop_weighted_avg_pm2.5)),
-            lwd = 1.1, color = "#7197be") +
-  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
-  geom_hline(mapping = aes(yintercept = 20), lwd = 0.8, linetype = "dotted") +
-  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 30)) +
-  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2022))  +
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2023),
+                         y = llpp_who_2023,
+                         fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)),
+           width = 0.5) +
+  labs(x = "Threats to Life Expectancy", y = "Life Years Lost", fill = "Life years lost",
+       title = expression("")) +
+  coord_flip() +
   ggthemes::theme_tufte() +
-  labs(x = "Year",
-       y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
-  theme(legend.position = "bottom",
-        legend.text = element_text(size = 20, color="#222222"),
-        legend.title = element_blank(),
-        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
-        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
+  themes_aqli_base +
+  theme(axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
         axis.line = element_line(),
-        legend.box.background = element_rect(color = "black"),
-        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
-        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
-        plot.caption = element_text(size = 7, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
-        axis.text = element_text(size = 20, color="#222222"),
-        plot.background = element_rect(color = "white"),
-        axis.ticks = element_blank()) +
-  geom_text(x = 2001.6, y = 5.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5)+
-  geom_text(x = 2006.6, y = 20.6, label = expression("Nigeria National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 5)
-
+        plot.background = element_rect(fill = "white", color = "white")) +
+  scale_y_continuous(breaks = seq(0, 3, 0.5)) +
+  scale_fill_manual(values = c("0 to < 0.1" = "#FFFFFF",
+                               "0.1 to < 0.5" = "#FFF2E1",
+                               "0.5 to < 1" = "#FFEDD3",
+                               "1 to < 2" = "#FFC97A",
+                               "2 to < 3" = "#FFA521",
+                               "3 to < 4" = "#EB6C2A",
+                               "4 to < 5" = "#D63333",
+                               "5 to < 6" = "#8E2946",
+                               ">= 6" = "#451F59")) +
+  guides(fill = guide_legend(nrow = 1))

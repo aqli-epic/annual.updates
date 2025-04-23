@@ -1,53 +1,75 @@
 # read in the helper file
-source("R/july.2024.helper.script.R")
+source("R/july.2025.helper.script.R")
 
-#Figure 2: Potential gain in life expectancy from reducing PM2.5 from 2022 levels to the WHO guideline in the 10 most populous states of Nigeria
+# Figure 2: Average PM2.5 concentration in Nigeria from 1998 to 2023 ------
+# adding a niger river delta/rest of nigeria region column
+niger_river_delta <- c("Rivers", "Delta", "Akwa Ibom", "Imo", "Edo", "Ondo",
+                       "Cross River", "Abia", "Bayelsa")
 
-# nigeria fs fig 2 data
-nigeria_fs_fig2_dataset <- gadm2_aqli_2022 %>%
-  filter(country == "Nigeria") %>%
-  select('country', 'name_1', 'name_2', 'population', 'pm2022', 'llpp_who_2022') %>%
-  group_by(name_1) %>%
+nigeria_fs_fig2_data_part1 <- gadm2_aqli_2023 %>%
+  filter(country == "Nigeria", !is.na(population)) %>%
+  mutate(region = ifelse(name_1 %in% niger_river_delta, "Niger River Delta", "All other regions (excluding Niger River Delta)"))
+
+# creating Nigeria's region wise average PM2.5 data from 1998 to 2023
+nigeria_fs_fig2_data_part1 <- nigeria_fs_fig2_data_part1 %>%
+  group_by(region) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
-         pm2022_pop_weighted = pop_weights*pm2022,
-         llpp_who_2022_pop_weighted = pop_weights*llpp_who_2022) %>%
-  summarise(tot_pop = sum(population, na.rm = TRUE),
-            avg_pm2.5_2022 = sum(pm2022_pop_weighted, na.rm = TRUE),
-            le_gain = (avg_pm2.5_2022 - who_guideline)*le_constant,
-            llpp_who_2022 = sum(llpp_who_2022_pop_weighted, na.rm = TRUE),
-            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
-  slice_max(tot_pop, n = 10) %>%
-  add_aqli_color_scale_buckets("lyl", "llpp_who_2022")
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2023_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5)
 
-# nigeria fs figure 2
-nigeria_fs_fig2 <- nigeria_fs_fig2_dataset %>%
-  ggplot() +
-  geom_col(mapping = aes(x = reorder(name_1, llpp_who_2022), y = llpp_who_2022, fill = lyl_bucket), width = 0.5) +
-  labs(x = "State", y = "Potential Gain in Life Expectancy (Years)", fill = "Potential gain in life expectancy (Years)") +
-  scale_y_continuous(breaks = seq(0, 3, 1), limits = c(0, 3)) +
-  scale_fill_manual(values = c("0 to < 0.1" = "#ffffff",
-                               "0.1 to < 0.5" = "#ffeda0",
-                               "0.5 to < 1" = "#fed976",
-                               "1 to < 2" = "#feb24c",
-                               "2 to < 3" = "#fd8d3c",
-                               "3 to < 4" = "#fc4e2a",
-                               "4 to < 5" = "#e31a1c",
-                               "5 to < 6" = "#bd0026",
-                               ">= 6" = "#800026")) +
-  coord_flip() +
+# creating a national average PM2.5 trendlines data from 1998 to 2023
+nigeria_fs_fig2_data_part2 <- gadm2_aqli_2023 %>%
+  filter(country == "Nigeria") %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2023_weighted, names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))),
+         region = "National Average") %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# Nigeria factsheet figure 2 dataset
+nigeria_fs_fig2_data <- bind_rows(nigeria_fs_fig2_data_part1, nigeria_fs_fig2_data_part2)
+
+# Nigeria factsheet figure 2
+nigeria_fs_fig2_data$region <- factor(nigeria_fs_fig2_data$region,
+                                      levels = c("Niger River Delta",
+                                                 "National Average",
+                                                 "All other regions (excluding Niger River Delta)"))
+
+nigeria_fs_fig2 <- ggplot(nigeria_fs_fig2_data) +
+  geom_line(mapping = aes(x = years, y = pop_weighted_avg_pm2.5,
+                          color = interaction(region),
+                          linetype = interaction(region)), lwd = 1.3) +
+  geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted", color = "lightgrey") +
+  geom_hline(mapping = aes(yintercept = 20), lwd = 0.8, linetype = "dotted", color = "darkgrey") +
+  scale_y_continuous(breaks = seq(0, 80, 10), limits = c(0, 80)) +
+  scale_x_continuous(breaks = c(seq(1998, 2021, 2), 2023)) +
+  scale_color_manual(values = c("Niger River Delta" = "#3db1c8",
+                                "National Average" =  "#66c4d6",
+                                "All other regions (excluding Niger River Delta)" = "#66c4d6"),
+                     name = "legend") +
+  scale_linetype_manual(values = c("Niger River Delta" = "dashed",
+                                   "National Average" = "solid",
+                                   "All other regions (excluding Niger River Delta)" = "dotted"),
+                        name = "legend")  +
+  labs(x = "Year",
+       y = expression("Annual Average " ~ PM[2.5] ~ " Concentration (in µg/m³)"),
+       title = "") +
   ggthemes::theme_tufte() +
-  theme(legend.position = "bottom",
-        legend.text = element_text(size = 20, color="#222222"),
-        legend.title = element_text(size = 20, color="#222222"),
-        plot.title = element_text(hjust = 0.5, size = 16),
-        plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")),
-        plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
-        legend.box.background = element_rect(color = "black"),
-        plot.background = element_rect(color = "white"),
+  themes_aqli_base +
+  theme(axis.text = element_text(size = 14),
+        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
         axis.line = element_line(),
-        axis.text = element_text(size = 20, color="#222222"),
-        axis.title = element_text(size = 24, color="#222222"),
-        axis.title.y = element_text(margin = margin(r = 0.7, unit = "cm"), color="#222222"),
-        axis.title.x = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
-        axis.ticks = element_blank())
-
+        plot.background = element_rect(fill = "white", color = "white"),
+        axis.ticks = element_blank(),
+        legend.title = element_blank(),
+        legend.key.width = unit(2, "cm")) +
+  geom_text(x = 2002.5, y = 7.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5) +
+  geom_text(x = 2001.5, y = 22, label = expression("Nigeria National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 4.5)
