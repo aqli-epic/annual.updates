@@ -48,7 +48,7 @@ nigeria_fs_fig2 <- ggplot(nigeria_fs_fig2_data) +
                           linetype = interaction(region)), lwd = 1.3) +
   geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted", color = "lightgrey") +
   geom_hline(mapping = aes(yintercept = 20), lwd = 0.8, linetype = "dotted", color = "darkgrey") +
-  scale_y_continuous(breaks = seq(0, 80, 10), limits = c(0, 80)) +
+  scale_y_continuous(breaks = seq(0, 35, 5), limits = c(0, 35)) +
   scale_x_continuous(breaks = c(seq(1998, 2021, 2), 2023)) +
   scale_color_manual(values = c("Niger River Delta" = "#3db1c8",
                                 "National Average" =  "#66c4d6",
@@ -71,5 +71,6 @@ nigeria_fs_fig2 <- ggplot(nigeria_fs_fig2_data) +
         axis.ticks = element_blank(),
         legend.title = element_blank(),
         legend.key.width = unit(2, "cm")) +
-  geom_text(x = 2002.5, y = 7.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5) +
-  geom_text(x = 2001.5, y = 22, label = expression("Nigeria National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 4.5)
+  geom_text(x = 2002.5, y = 5.6, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 4.5) +
+  geom_text(x = 2001.5, y = 20.6, label = expression("Nigeria National" ~ PM[2.5] ~ "Standard: 20 µg/m³"), size = 4.5)
+
