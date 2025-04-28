@@ -27,18 +27,6 @@ europe_gadm1_shp <- gadm1_aqli_2023_shp %>%
 europe_gadm0_shp <- europe_gadm1_shp %>%
   count(name0)
 
-# generate large east and west Europe polygons, then find their intersection to
-# mark their border
-eastern_europe_large_polygon <- europe_gadm1_shp %>%
-  filter(name0 %notin% western_european_countries)%>%
-  st_union()
-
-western_europe_large_polygon <- europe_gadm1_shp %>%
-  filter(name0 %in% western_european_countries) %>%
-  st_union()
-
-east_west_border <- st_intersection(eastern_europe_large_polygon, western_europe_large_polygon, model = "closed")
-
 # europe dataset
 europe_fs_fig1_data <- gadm2_aqli_2023 %>%
   filter(country %in% unlist(countries_except_excluded), !is.na(llpp_who_2023)) %>%
@@ -71,8 +59,6 @@ europe_fs_fig1 <- europe_fs_fig1_data %>%
   ggthemes::theme_map() +
   labs(fill = "Potential gain in life expectancy (Years)  ", title = "",
        subtitle = "") +
-  annotate("text", x = 33, y = 61, label = "Eastern Europe: 11.7 µg/m³, \n7.9 months potential gain") +
-  annotate("text", x =-11, y = 35, label = "Western Europe: 7.9 µg/m³, \n3.4 months potential gain") +
   theme(legend.position = "bottom",
         legend.justification = "center",
         legend.background = element_rect(color = "black"),
