@@ -13,7 +13,7 @@ gadm2_aqli_2023_europe <- gadm2_aqli_2023 %>%
   mutate(region = if_else(country %in% western_european_countries, "Western Europe", "Eastern Europe"))
 
 # creating region wise average PM2.5 data from 1998 to 2023
-europe_fs_fig3_data <- gadm2_aqli_2023_europe %>%
+europe_fs_fig4_data <- gadm2_aqli_2023_europe %>%
   group_by(region) %>%
   filter(!is.na(population)) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -24,27 +24,29 @@ europe_fs_fig3_data <- gadm2_aqli_2023_europe %>%
   mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
   select(years, region, pop_weighted_avg_pm2.5)
 
-europe_fs_fig3_data$region = factor(europe_fs_fig3_data$region, levels = c("Eastern Europe", "Western Europe"))
+europe_fs_fig4_data$region = factor(europe_fs_fig4_data$region, levels = c("Eastern Europe", "Western Europe"))
 
-connected_data <- europe_fs_fig3_data %>%
+connected_data <- europe_fs_fig4_data %>%
   select(years, region, pop_weighted_avg_pm2.5) %>%
   pivot_wider(names_from = region, values_from = pop_weighted_avg_pm2.5) %>%
   drop_na()
 
-# fig 3
-europe_fs_fig3 <- ggplot() +
+# fig 4
+europe_fs_fig4 <- ggplot() +
   geom_segment(data = connected_data,
                aes(x = years, xend = years,
                    y = `Western Europe`, yend = `Eastern Europe`),
                color = "lightgrey",
                linetype = "solid",
                linewidth = 0.5) +
-  geom_line(data = europe_fs_fig3_data,
+  geom_line(data = europe_fs_fig4_data,
             mapping = aes(x = years, y = pop_weighted_avg_pm2.5,
                           color = interaction(region),
                           linetype = interaction(region)), lwd = 1.3) +
   geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted", color = "lightgrey") +
   geom_hline(mapping = aes(yintercept = 10), lwd = 0.8, linetype = "dotted", color = "darkgrey") +
+  annotate("text", x = 1999, y = 23, label = "Difference in \nlife expectancy \nbetween Eastern \nand Western Europe \n(1998): 8.5 months") +
+  annotate("text", x = 2022, y = 16, label = "Difference in \nlife expectancy \nbetween Eastern \nand Western Europe \n(2023): 4.5 months") +
   scale_y_continuous(breaks = seq(0, 25, 5), limits = c(0, 25)) +
   scale_x_continuous(breaks = c(seq(1998, 2021, 2), 2023)) +
   scale_color_manual(values = c("Eastern Europe" = "#8fd8e4",

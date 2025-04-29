@@ -4,11 +4,20 @@ source("R/july_2025_helper_script.R")
 # Fig 3:  GBD India graph --------------------------------------------
 
 # top external health threats
+disease_list <- c("PM2.5 relative to WHO guideline",
+                  "Dietary risks",
+                  "Child and maternal malnutrition",
+                  "Tobacco",
+                  "Unsafe water, sanitation, and handwashing",
+                  "Unintentional injuries",
+                  "Occupational risks",
+                  "Non-optimal temperature",
+                  "Transport injuries",
+                  "Self-harm and interpersonal violence")
+
 india_fs_fig3_dataset <- gbd_results_master_2023 %>%
   filter(country == "India",
-         cause_of_death %in% c("Child and maternal malnutrition", "High alcohol use",
-                               "PM2.5 relative to WHO guideline", "Tobacco",
-                               "Unsafe water, sanitation, and handwashing"))
+         cause_of_death %in% disease_list)
 
 colnames(india_fs_fig3_dataset)[3] <- c("llpp_who_2023")
 
@@ -50,6 +59,3 @@ india_fs_fig3 <- india_fs_fig3_dataset %>%
                                "5 to < 6" = "#8E2946",
                                ">= 6" = "#451F59")) +
   guides(fill = guide_legend(nrow = 1))
-
-
-

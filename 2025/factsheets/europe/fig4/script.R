@@ -2,41 +2,42 @@
 source("R/july.2025.helper.script.R")
 
 # Figure 3: GBD in the 5 most populous countries in Europe ------
-# europe fig4
+# europe fig3
+country_list <- c("Bosnia and Herzegovina", "Armenia", "Turkey", "Serbia", "Bulgaria")
+
 diseases_list <- c("PM2.5 relative to WHO guideline",
-                   "Diabetes and kidney diseases",
+                   "Dietary risks",
                    "Tobacco",
-                   "Transport injuries")
-country_list <- c("Bosnia and Herzegovina", "Armenia", "Turkey", "Serbia", "Bulgaria") # five most polluted countries
+                   "Non-optimal temperature")
 
 # GBD results filtered for relevant cause of death (given Europe) and countries
-gbd_results_europe_fig4 <- gbd_results_master_2023 %>%
+gbd_results_europe_fig3 <- gbd_results_master_2023 %>%
   filter(cause_of_death %in% diseases_list, country %in% country_list)
 
 # making the 'location' column of type factor
-gbd_results_europe_fig4$country <- factor(gbd_results_europe_fig4$country, levels = country_list)
+gbd_results_europe_fig3$country <- factor(gbd_results_europe_fig3$country, levels = country_list)
 
 # Converting 'cause_of_death' to type factor
-gbd_results_europe_fig4$cause_of_death <- factor(gbd_results_europe_fig4$cause_of_death, levels = diseases_list)
+gbd_results_europe_fig3$cause_of_death <- factor(gbd_results_europe_fig3$cause_of_death, levels = diseases_list)
 
 # wrapping x-axis labels text
-levels(gbd_results_europe_fig4$cause_of_death) <- str_wrap(levels(gbd_results_europe_fig4$cause_of_death), 30)
+levels(gbd_results_europe_fig3$cause_of_death) <- str_wrap(levels(gbd_results_europe_fig3$cause_of_death), 30)
 
 # reorder within each location as per the total life years lost column
-gbd_results_europe_fig4 <- gbd_results_europe_fig4 %>%
+gbd_results_europe_fig3 <- gbd_results_europe_fig3 %>%
   mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
 
 # clean the "cause of death" column
-gbd_results_europe_fig4 <- gbd_results_europe_fig4 %>%
+gbd_results_europe_fig3 <- gbd_results_europe_fig3 %>%
   mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
 
 # plot
-europe_fs_fig4 <- gbd_results_europe_fig4 %>%
+europe_fs_fig3 <- gbd_results_europe_fig3 %>%
   ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) +
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +
   facet_wrap(~factor(country, levels = country_list), scales = "free_x", ncol = 5) +
-  scale_fill_manual(values = c("#5e92a9", "#8F3931", "#8ea75b", "#f29e37")) +
+  scale_fill_manual(values = c("#5e92a9", "#8ea75b", "#8F3931", "#f29e37")) +
   labs(x = "Threats to Life Expectancy", y = "Life Years Lost", title = "",
        subtitle = "", fill = "Threats to Life Expectancy") +
   themes_aqli_base +
