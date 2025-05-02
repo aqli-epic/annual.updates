@@ -1,18 +1,23 @@
 # read in the helper file
 source("R/july.2025.helper.script.R")
 
-#Figure 4: Top external threats to life expectancy in Nigeria
-
-nigeria_fs_fig4_data <- gbd_results_master_2023 %>%
+# Figure 4: Top external threats to life expectancy in Nigeria
+nigeria_fs_fig3_data <- gbd_results_master_2023 %>%
   filter(country == "Nigeria",
-         cause_of_death %in% c("HIV/AIDS and sexually transmitted infections",
+         cause_of_death %in% c("Child and maternal malnutrition",
                                "Neglected tropical diseases and malaria",
                                "PM2.5 relative to WHO guideline",
-                               "Unsafe water, sanitation, and handwashing"))
+                               "Unsafe water, sanitation, and handwashing",
+                               "HIV/AIDS and sexually transmitted infections",
+                               "Dietary risks",
+                               "Unsafe sex",
+                               "Unintentional injuries",
+                               "High alcohol use",
+                               "Self-harm and interpersonal violence"))
 
-colnames(nigeria_fs_fig4_data)[3] <- c("llpp_who_2023")
+colnames(nigeria_fs_fig3_data)[3] <- c("llpp_who_2023")
 
-nigeria_fs_fig4_data <- nigeria_fs_fig4_data %>%
+nigeria_fs_fig3_data <- nigeria_fs_fig3_data %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2023")
 
 # figure 3
@@ -23,7 +28,7 @@ nigeria_fs_fig4_data <- nigeria_fs_fig4_data %>%
 # WHO guideline as calculated by latest AQLI (2023) data, which will be published
 # in 2024.
 
-nigeria_fs_fig4 <- nigeria_fs_fig4_data %>%
+nigeria_fs_fig3 <- nigeria_fs_fig3_data %>%
   ggplot() +
   geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2023),
                          y = llpp_who_2023,
@@ -39,7 +44,7 @@ nigeria_fs_fig4 <- nigeria_fs_fig4_data %>%
         axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
         axis.line = element_line(),
         plot.background = element_rect(fill = "white", color = "white")) +
-  scale_y_continuous(breaks = seq(0, 3, 0.5)) +
+  scale_y_continuous(breaks = seq(0, 3.5, 0.5), limits = c(0, 3.5)) +
   scale_fill_manual(values = c("0 to < 0.1" = "#FFFFFF",
                                "0.1 to < 0.5" = "#FFF2E1",
                                "0.5 to < 1" = "#FFEDD3",
@@ -50,3 +55,4 @@ nigeria_fs_fig4 <- nigeria_fs_fig4_data %>%
                                "5 to < 6" = "#8E2946",
                                ">= 6" = "#451F59")) +
   guides(fill = guide_legend(nrow = 1))
+
