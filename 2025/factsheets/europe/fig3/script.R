@@ -45,8 +45,8 @@ europe_fs_fig4 <- ggplot() +
                           linetype = interaction(region)), lwd = 1.3) +
   geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted", color = "lightgrey") +
   geom_hline(mapping = aes(yintercept = 10), lwd = 0.8, linetype = "dotted", color = "darkgrey") +
-  annotate("text", x = 1999, y = 23, label = "Difference in \nlife expectancy \nbetween Eastern \nand Western Europe \n(1998): 8.5 months") +
-  annotate("text", x = 2022, y = 16, label = "Difference in \nlife expectancy \nbetween Eastern \nand Western Europe \n(2023): 4.5 months") +
+  annotate("text", x = 1999, y = 23.5, label = "Difference in gain in \nlife expectancy from \nmeeting WHO guideline\nbetween Eastern \nand Western Europe \n(1998): 8.5 months") +
+  annotate("text", x = 2022, y = 16.5, label = "Difference in gain in \nlife expectancy from \nmeeting WHO guideline\nbetween Eastern \nand Western Europe \n(2023): 4.5 months") +
   scale_y_continuous(breaks = seq(0, 25, 5), limits = c(0, 25)) +
   scale_x_continuous(breaks = c(seq(1998, 2021, 2), 2023)) +
   scale_color_manual(values = c("Eastern Europe" = "#8fd8e4",
@@ -72,3 +72,4 @@ europe_fs_fig4 <- ggplot() +
   geom_text(aes(x = 2002, y = 10.7,
                 label = "European~Union~PM[2.5]~2030~targets:~10~µg/m^3"),
             parse = TRUE, size = 4.5)
+
