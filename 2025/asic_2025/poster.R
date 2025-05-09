@@ -68,21 +68,21 @@ plot_data %>%
   geom_jitter(width = 0.5, height = 0.5, shape = 21, size = 10, colour = "grey") +
   # geom_text(aes(label = name), size = 6, fontface = "bold", check_overlap = TRUE) +
   annotate("text", x = -1, y = 5.5, hjust = 0, size = 6,
-           label = "National Standard <= 15 µg/m³, \nMonitoring Density < 1 per million people") +
-  annotate("text", x = 8, y = 5.5, hjust = 1, size = 6,
-           label = "National Standard <= 15 µg/m³, \nMonitoring Density >= 1 per million people") +
+           label = "National Standard <= 15, \nMonitor Density < 1") +
+  annotate("text", x = 8.5, y = 5.5, hjust = 1, size = 6,
+           label = "National Standard <= 15, \nMonitor Density >= 1") +
   annotate("text", x = -1, y = 0.5, hjust = 0, size = 6,
-           label = "National Standard > 15 µg/m³, \nMonitoring Density < 1 per million people") +
-  annotate("text", x = 8, y = 0.5, hjust = 1, size = 6,
-           label = "National Standard > 15 µg/m³, \nMonitoring Density >= 1 per million people")+
-  annotate("text", x = -1, y = 5.25, hjust = 0, size = 7, fontface = "bold",
-           label = "Share of total PGLE: 4.6%") +
-  annotate("text", x = 8, y = 5.25, hjust = 1, size = 7, fontface = "bold",
-           label = "Share of total PGLE: 5.7%") +
-  annotate("text", x = -1, y = 0.75, hjust = 0, size = 7, fontface = "bold",
-           label = "Share of total PGLE: 61.4%") +
-  annotate("text", x = 8, y = 0.75, hjust = 1, size = 7, fontface = "bold",
-           label = "Share of total PGLE: 28.2%") +
+           label = "National Standard > 15, \nMonitor Density < 1") +
+  annotate("text", x = 8.5, y = 0.5, hjust = 1, size = 6,
+           label = "National Standard > 15, \nMonitor Density >= 1")+
+  annotate("text", x = -1, y = 5.25, hjust = 0, size = 7.5, fontface = "bold",
+           label = "PGLE Share: 4.6%") +
+  annotate("text", x = 8.5, y = 5.25, hjust = 1, size = 7.5, fontface = "bold",
+           label = "PGLE Share: 5.7%") +
+  annotate("text", x = -1, y = 0.75, hjust = 0, size = 7.5, fontface = "bold",
+           label = "PGLE Share: 61.4%") +
+  annotate("text", x = 8.5, y = 0.75, hjust = 1, size = 7.5, fontface = "bold",
+           label = "PGLE Share: 28.2%") +
   scale_fill_manual(values = c("0 to < 0.1" = "#FFFFFF",
                                "0.1 to < 0.5" = "#FFF2E1",
                                "0.5 to < 1" = "#FFEDD3",
@@ -91,21 +91,32 @@ plot_data %>%
                                "3 to < 4" = "#EB6C2A",
                                "4 to < 5" = "#D63333",
                                "5 to < 6" = "#8E2946",
-                               ">= 6" = "#451F59")) +
+                               ">= 6" = "#451F59"),
+                    labels = c("0 to < 0.1  ",
+                               "0.1 to < 0.5  ",
+                               "0.5 to < 1  ",
+                               "1 to < 2  ",
+                               "2 to < 3  ",
+                               "3 to < 4  ",
+                               "4 to < 5  ",
+                               "5 to < 6  ",
+                               ">= 6  ")) +
   guides(#size = guide_legend(title = "Potential gain in \nlife expectancy \n(PGLE, Years)"),
          fill = guide_legend(title = "Potential gain in life expectancy (PGLE, Years)",
                              title.position = "top",
                              title.hjust = 0.5,  # center the title
                              nrow = 1, byrow = TRUE)) +
-  labs(x = "Monitor Density", y = "National Standard") +
+  labs(x = "Monitor Density (per million people)", y = "National Standard (in µg/m³)") +
   theme_tufte() +
   theme(legend.position = "bottom",
         legend.justification = "center",
         legend.box = "vertical",
+        legend.box.background = element_rect(color = "grey"),
         legend.text = element_text(size = 32),
         legend.title = element_text(size = 32),
+        # legend.spacing.x = unit(1.5, "cm"),
+        # legend.key.width = unit(1, "cm"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_text(size = 40, margin = margin(r = 0.3, unit = "cm")),
         axis.title.y = element_text(size = 40, margin = margin(r = 0.3, unit = "cm")))
-
