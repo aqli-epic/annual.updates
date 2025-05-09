@@ -3,6 +3,7 @@
 library(readxl)
 library(tidyverse)
 library(ggthemes)
+library(patchwork)
 
 # global variables
 who_guideline <- 5
@@ -48,20 +49,40 @@ plot_data <- plot_data %>%
   add_aqli_color_scale_buckets("lyl", "who2022")
 
 plot_data %>%
+  summarise(tot_lyl = sum(who2022*population, na.rm = TRUE))
+
+plot_data %>%
+  mutate(quad = if_else(nat_std_qtile > 3 & mon_dens_qtile >= 4, "std <= 15, monitors >= 1 mil", NA),
+         quad = if_else(nat_std_qtile > 3 & mon_dens_qtile < 4, "std <= 15, monitors < 1 mil", quad),
+         quad = if_else(nat_std_qtile <= 3 & mon_dens_qtile < 4, "std > 15, monitors < 1 mil", quad),
+         quad = if_else(nat_std_qtile <= 3 & mon_dens_qtile >= 4, "std > 15, monitors >= 1 mil", quad)) %>%
+  group_by(quad) %>%
+  summarise(tot_lyl = sum(who2022*population, na.rm = TRUE)) %>%
+  mutate(percent = 100*tot_lyl/14532250594)
+
+plot_data %>%
   ggplot(aes(x = mon_dens_qtile, y = nat_std_qtile, fill = lyl_bucket)) +
+  geom_hline(yintercept = 3, linetype = "solid", lwd = 2, colour = "grey") +
+  geom_vline(xintercept = 4, linetype = "solid", lwd = 2, colour = "grey") +
   # geom_point(alpha = 0.7, shape = 21, size = 10) +
-  geom_jitter(width = 0.5, height = 0.5, alpha = 0.7, shape = 21, size = 10) +
+  geom_jitter(width = 0.5, height = 0.5, shape = 21, size = 10, colour = "grey") +
   # geom_text(aes(label = name), size = 6, fontface = "bold", check_overlap = TRUE) +
-  geom_hline(yintercept = 3, linetype = "solid", lwd = 2) +
-  geom_vline(xintercept = 3.1, linetype = "solid", lwd = 2) +
   annotate("text", x = -1, y = 5.5, hjust = 0, size = 6,
-           label = "National Standard < 15 µg/m³, \nMonitoring Density < 1 per million people") +
-  annotate("text", x = 7, y = 5.5, hjust = 1, size = 6,
-           label = "National Standard < 15 µg/m³, \nMonitoring Density > 1 per million people") +
+           label = "National Standard <= 15 µg/m³, \nMonitoring Density < 1 per million people") +
+  annotate("text", x = 8, y = 5.5, hjust = 1, size = 6,
+           label = "National Standard <= 15 µg/m³, \nMonitoring Density >= 1 per million people") +
   annotate("text", x = -1, y = 0.5, hjust = 0, size = 6,
            label = "National Standard > 15 µg/m³, \nMonitoring Density < 1 per million people") +
-  annotate("text", x = 7, y = 0.5, hjust = 1, size = 6,
-           label = "National Standard > 15 µg/m³, \nMonitoring Density > 1 per million people") +
+  annotate("text", x = 8, y = 0.5, hjust = 1, size = 6,
+           label = "National Standard > 15 µg/m³, \nMonitoring Density >= 1 per million people")+
+  annotate("text", x = -1, y = 5.25, hjust = 0, size = 7, fontface = "bold",
+           label = "Share of total PGLE: 4.6%") +
+  annotate("text", x = 8, y = 5.25, hjust = 1, size = 7, fontface = "bold",
+           label = "Share of total PGLE: 5.7%") +
+  annotate("text", x = -1, y = 0.75, hjust = 0, size = 7, fontface = "bold",
+           label = "Share of total PGLE: 61.4%") +
+  annotate("text", x = 8, y = 0.75, hjust = 1, size = 7, fontface = "bold",
+           label = "Share of total PGLE: 28.2%") +
   scale_fill_manual(values = c("0 to < 0.1" = "#FFFFFF",
                                "0.1 to < 0.5" = "#FFF2E1",
                                "0.5 to < 1" = "#FFEDD3",
@@ -71,22 +92,18 @@ plot_data %>%
                                "4 to < 5" = "#D63333",
                                "5 to < 6" = "#8E2946",
                                ">= 6" = "#451F59")) +
-  # scale_size_manual(values = c("0 to < 0.1" = 2,
-  #                              "0.1 to < 0.5" = 4,
-  #                              "0.5 to < 1" = 6,
-  #                              "1 to < 2" = 8,
-  #                              "2 to < 3" = 10,
-  #                              "3 to < 4" = 12,
-  #                              "4 to < 5" = 14,
-  #                              "5 to < 6" = 16,
-  #                              ">= 6" = 18)) +
-  guides(#size = guide_legend(title = "Potential gain in \nlife expectancy (years)"),
-         fill = guide_legend(title = "Potential gain in \nlife expectancy (years)")) +
+  guides(#size = guide_legend(title = "Potential gain in \nlife expectancy \n(PGLE, Years)"),
+         fill = guide_legend(title = "Potential gain in life expectancy (PGLE, Years)",
+                             title.position = "top",
+                             title.hjust = 0.5,  # center the title
+                             nrow = 1, byrow = TRUE)) +
   labs(x = "Monitor Density", y = "National Standard") +
   theme_tufte() +
-  theme(legend.position = "right",
-        legend.text = element_text(size = 36),
-        legend.title = element_text(size = 40),
+  theme(legend.position = "bottom",
+        legend.justification = "center",
+        legend.box = "vertical",
+        legend.text = element_text(size = 32),
+        legend.title = element_text(size = 32),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title.x = element_text(size = 40, margin = margin(r = 0.3, unit = "cm")),
