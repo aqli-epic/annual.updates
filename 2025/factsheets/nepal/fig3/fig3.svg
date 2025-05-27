@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' width='1080.00pt' height='720.00pt' viewBox='0 0 1080.00 720.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHwxMDgwLjAwfDAuMDB8NzIwLjAw'>
+    <rect x='0.00' y='0.00' width='1080.00' height='720.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHwxMDgwLjAwfDAuMDB8NzIwLjAw)'>
+<rect x='-0.00000000000013' y='0.00' width='1080.00' height='720.00' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpMTY1Ljc3fDEwNzQuNTJ8NS40OHw1OTMuOTQ='>
+    <rect x='165.77' y='5.48' width='908.75' height='588.46' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMTY1Ljc3fDEwNzQuNTJ8NS40OHw1OTMuOTQ=)'>
+<rect x='207.08' y='279.28' width='374.01' height='40.87' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+<rect x='207.08' y='34.09' width='711.75' height='40.87' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #8E2946;' />
+<rect x='207.08' y='115.82' width='490.44' height='40.87' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #EB6C2A;' />
+<rect x='207.08' y='197.55' width='421.14' height='40.87' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #EB6C2A;' />
+<rect x='207.08' y='442.74' width='289.44' height='40.87' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+<rect x='207.08' y='361.01' width='341.63' height='40.87' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+<rect x='207.08' y='524.47' width='197.35' height='40.87' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFC97A;' />
+</g>
+<g clip-path='url(#cpMC4wMHwxMDgwLjAwfDAuMDB8NzIwLjAw)'>
+<polyline points='165.77,593.94 165.77,5.48 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<text x='160.84' y='551.52' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='59.98px' lengthAdjust='spacingAndGlyphs'>Karnali</text>
+<text x='160.84' y='469.79' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='114.44px' lengthAdjust='spacingAndGlyphs'>Sudurpaschim</text>
+<text x='160.84' y='388.06' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='67.76px' lengthAdjust='spacingAndGlyphs'>Gandaki</text>
+<text x='160.84' y='306.33' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='67.77px' lengthAdjust='spacingAndGlyphs'>Bagmati</text>
+<text x='160.84' y='224.60' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='68.90px' lengthAdjust='spacingAndGlyphs'>Lumbini</text>
+<text x='160.84' y='142.87' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='47.79px' lengthAdjust='spacingAndGlyphs'>Koshi</text>
+<text x='160.84' y='61.14' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='73.32px' lengthAdjust='spacingAndGlyphs'>Madhesh</text>
+<polyline points='165.77,593.94 1074.52,593.94 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<text x='207.08' y='612.12' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text x='344.77' y='612.12' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>1</text>
+<text x='482.46' y='612.12' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>2</text>
+<text x='620.15' y='612.12' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>3</text>
+<text x='757.84' y='612.12' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>4</text>
+<text x='895.52' y='612.12' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>5</text>
+<text x='1033.21' y='612.12' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>6</text>
+<text x='620.15' y='649.34' text-anchor='middle' style='font-size: 24.00px;fill: #222222; font-family: "Times New Roman";' textLength='402.06px' lengthAdjust='spacingAndGlyphs'>Potential Gain in Life Expectancy (Years)</text>
+<text transform='translate(21.37,299.71) rotate(-90)' text-anchor='middle' style='font-size: 24.00px;fill: #222222; font-family: "Times New Roman";' textLength='85.31px' lengthAdjust='spacingAndGlyphs'>Province</text>
+<rect x='217.42' y='682.49' width='805.46' height='32.03' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<text x='222.90' y='706.45' style='font-size: 24.00px;fill: #222222; font-family: "Times New Roman";' textLength='384.73px' lengthAdjust='spacingAndGlyphs'>Potential gain in life expectancy (Years)</text>
+<rect x='613.82' y='688.68' width='15.86' height='19.66' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFC97A;' />
+<rect x='716.26' y='688.68' width='15.86' height='19.66' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+<rect x='818.70' y='688.68' width='15.86' height='19.66' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #EB6C2A;' />
+<rect x='921.14' y='688.68' width='15.86' height='19.66' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #8E2946;' />
+<text x='635.87' y='706.45' style='font-size: 24.00px;fill: #222222; font-family: "Times New Roman";' textLength='74.20px' lengthAdjust='spacingAndGlyphs'>1 to &lt; 2</text>
+<text x='738.31' y='706.45' style='font-size: 24.00px;fill: #222222; font-family: "Times New Roman";' textLength='74.20px' lengthAdjust='spacingAndGlyphs'>2 to &lt; 3</text>
+<text x='840.75' y='706.45' style='font-size: 24.00px;fill: #222222; font-family: "Times New Roman";' textLength='74.20px' lengthAdjust='spacingAndGlyphs'>3 to &lt; 4</text>
+<text x='943.19' y='706.45' style='font-size: 24.00px;fill: #222222; font-family: "Times New Roman";' textLength='74.20px' lengthAdjust='spacingAndGlyphs'>5 to &lt; 6</text>
+</g>
+</svg>
