@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/HP/Downloads/annual.updates/R/july.2025.helper.script.R")
+source("~/R/july.2025.helper.script.R")
 
 # Figure 3: Top 5 threats to life expectancy in Nepal ------
 
@@ -51,7 +51,3 @@ nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
     "5 to < 6" = "#8E2946", 
     ">= 6" = "#451F59")) +
   guides(fill = guide_legend(nrow = 1))
-# Save the plot
-ggsave("C:/Users/HP/Downloads/factsheets.2025/nepal/fig3/fig3.png", nepal_fs_fig3, width = 15, height = 10)
-svglite("nepal_fs_fig3")
-ggsave("C:/Users/HP/Downloads/factsheets.2025/nepal/fig3/fig3.svg", width = 15, height = 10)

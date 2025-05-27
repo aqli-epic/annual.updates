@@ -1,5 +1,5 @@
 # read in the helper file
-source("C:/Users/HP/Downloads/annual.updates/R/july.2025.helper.script.R")
+source("~/R/july.2025.helper.script.R")
 
 # Figure 4: Annual average PM2.5 concentration in Nepal, 1998-2023 ------
 
@@ -41,7 +41,3 @@ nepal_fs_fig4 <- nepal_fs_fig4_dataset %>%
         plot.background = element_rect(color = "white"),
         axis.ticks = element_blank()) +
   geom_text(x = 2003.6, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 7.5)
-# Save the plot
-ggsave("C:/Users/HP/Downloads/factsheets.2025/nepal/fig4/fig4.png", nepal_fs_fig4, width = 15, height = 10)
-svglite("nepal_fs_fig4")
-ggsave("C:/Users/HP/Downloads/factsheets.2025/nepal/fig4/fig4.svg", width = 15, height = 10)

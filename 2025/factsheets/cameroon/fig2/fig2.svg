@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' class='svglite' width='1080.00pt' height='720.00pt' viewBox='0 0 1080.00 720.00'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHwxMDgwLjAwfDAuMDB8NzIwLjAw'>
+    <rect x='0.00' y='0.00' width='1080.00' height='720.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHwxMDgwLjAwfDAuMDB8NzIwLjAw)'>
+<rect x='-0.00000000000013' y='0.00' width='1080.00' height='720.00' style='stroke-width: 1.07; stroke: #FFFFFF; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpMTY2Ljg0fDEwNzQuNTJ8NS40OHw1OTUuNjk='>
+    <rect x='166.84' y='5.48' width='907.68' height='590.21' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMTY2Ljg0fDEwNzQuNTJ8NS40OHw1OTUuNjk=)'>
+<rect x='208.10' y='257.19' width='471.44' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+<rect x='208.10' y='546.50' width='147.66' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFEDD3;' />
+<rect x='208.10' y='141.46' width='650.96' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #EB6C2A;' />
+<rect x='208.10' y='488.64' width='259.20' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFC97A;' />
+<rect x='208.10' y='83.60' width='663.98' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #D63333;' />
+<rect x='208.10' y='25.73' width='719.15' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #D63333;' />
+<rect x='208.10' y='199.32' width='491.00' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+<rect x='208.10' y='430.78' width='339.58' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+<rect x='208.10' y='372.91' width='361.53' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+<rect x='208.10' y='315.05' width='459.45' height='28.93' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+</g>
+<g clip-path='url(#cpMC4wMHwxMDgwLjAwfDAuMDB8NzIwLjAw)'>
+<polyline points='166.84,595.69 166.84,5.48 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<text x='161.91' y='567.59' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='115.52px' lengthAdjust='spacingAndGlyphs'>Extrême-Nord</text>
+<text x='161.91' y='509.73' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='41.10px' lengthAdjust='spacingAndGlyphs'>Nord</text>
+<text x='161.91' y='451.87' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='86.64px' lengthAdjust='spacingAndGlyphs'>Adamaoua</text>
+<text x='161.91' y='394.00' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='25.56px' lengthAdjust='spacingAndGlyphs'>Est</text>
+<text x='161.91' y='336.14' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='31.13px' lengthAdjust='spacingAndGlyphs'>Sud</text>
+<text x='161.91' y='278.28' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='53.32px' lengthAdjust='spacingAndGlyphs'>Centre</text>
+<text x='161.91' y='220.41' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='84.45px' lengthAdjust='spacingAndGlyphs'>Sud-Ouest</text>
+<text x='161.91' y='162.55' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='59.99px' lengthAdjust='spacingAndGlyphs'>Littoral</text>
+<text x='161.91' y='104.69' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='94.43px' lengthAdjust='spacingAndGlyphs'>Nord-Ouest</text>
+<text x='161.91' y='46.82' text-anchor='end' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='46.66px' lengthAdjust='spacingAndGlyphs'>Ouest</text>
+<polyline points='166.84,595.69 1074.52,595.69 ' style='stroke-width: 1.07; stroke-linecap: butt;' />
+<text x='208.10' y='613.87' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text x='373.13' y='613.87' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>1</text>
+<text x='538.17' y='613.87' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>2</text>
+<text x='703.20' y='613.87' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>3</text>
+<text x='868.23' y='613.87' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>4</text>
+<text x='1033.26' y='613.87' text-anchor='middle' style='font-size: 20.00px;fill: #222222; font-family: "Times New Roman";' textLength='10.00px' lengthAdjust='spacingAndGlyphs'>5</text>
+<text x='620.68' y='651.09' text-anchor='middle' style='font-size: 24.00px;fill: #222222; font-family: "Times New Roman";' textLength='402.06px' lengthAdjust='spacingAndGlyphs'>Potential Gain in Life Expectancy (Years)</text>
+<text transform='translate(21.37,300.58) rotate(-90)' text-anchor='middle' style='font-size: 24.00px;fill: #222222; font-family: "Times New Roman";' textLength='85.31px' lengthAdjust='spacingAndGlyphs'>Province</text>
+<rect x='189.92' y='684.24' width='861.52' height='30.28' style='stroke-width: 0.75; fill: #FFFFFF;' />
+<rect x='189.92' y='684.24' width='861.52' height='30.28' style='stroke-width: 1.07; fill: #FFFFFF;' />
+<text x='195.40' y='706.67' style='font-size: 22.00px;fill: #222222; font-family: "Times New Roman";' textLength='352.74px' lengthAdjust='spacingAndGlyphs'>Potential gain in life expectancy (Years)</text>
+<rect x='554.33' y='690.42' width='15.86' height='17.91' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFEDD3;' />
+<rect x='667.09' y='690.42' width='15.86' height='17.91' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFC97A;' />
+<rect x='763.36' y='690.42' width='15.86' height='17.91' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFA521;' />
+<rect x='859.62' y='690.42' width='15.86' height='17.91' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #EB6C2A;' />
+<rect x='955.89' y='690.42' width='15.86' height='17.91' style='stroke-width: 1.07; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #D63333;' />
+<text x='576.38' y='706.67' style='font-size: 22.00px;fill: #222222; font-family: "Times New Roman";' textLength='84.53px' lengthAdjust='spacingAndGlyphs'>0.5 to &lt; 1</text>
+<text x='689.14' y='706.67' style='font-size: 22.00px;fill: #222222; font-family: "Times New Roman";' textLength='68.03px' lengthAdjust='spacingAndGlyphs'>1 to &lt; 2</text>
+<text x='785.41' y='706.67' style='font-size: 22.00px;fill: #222222; font-family: "Times New Roman";' textLength='68.03px' lengthAdjust='spacingAndGlyphs'>2 to &lt; 3</text>
+<text x='881.67' y='706.67' style='font-size: 22.00px;fill: #222222; font-family: "Times New Roman";' textLength='68.03px' lengthAdjust='spacingAndGlyphs'>3 to &lt; 4</text>
+<text x='977.94' y='706.67' style='font-size: 22.00px;fill: #222222; font-family: "Times New Roman";' textLength='68.03px' lengthAdjust='spacingAndGlyphs'>4 to &lt; 5</text>
+</g>
+</svg>

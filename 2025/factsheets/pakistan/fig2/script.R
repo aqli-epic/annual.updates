@@ -46,8 +46,8 @@ pak_fs_fig2 <- pak_fs_fig2_dataset %>%
   coord_flip() +
   ggthemes::theme_tufte() +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 20, color="#222222"),
-        legend.title = element_text(size = 20, color="#222222"),
+        legend.text = element_text(size = 24, color="#222222"),
+        legend.title = element_text(size = 24, color="#222222"),
         plot.title = element_text(hjust = 0.5, size = 16),
         plot.subtitle = element_text(hjust =  0.5, size = 10, face = "italic", margin = margin(b = 0.8, unit = "cm")),
         plot.caption = element_text(size = 8, hjust = 0, face = "italic"),
