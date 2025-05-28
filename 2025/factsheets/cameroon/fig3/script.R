@@ -32,8 +32,8 @@ cam_fs_fig3 <- cam_fs_fig3_dataset %>%
         legend.box.background = element_rect(color = "black"),
         plot.background = element_rect(color = "white"),axis.ticks.y = element_blank(),
         axis.line = element_line(),
-        legend.text = element_text(size = 20, color="#222222"),
-        legend.title = element_text(size = 20, color="#222222"),
+        legend.text = element_text(size = 24, color="#222222"),
+        legend.title = element_text(size = 24, color="#222222"),
         panel.grid.major.y = element_blank()) +
   scale_y_continuous(breaks = seq(0, 8, 0.5)) +
   # scale_x_discrete(limits = cause_of_death_ordered[seq(1, length(cause_of_death_ordered), by = 2)]) +

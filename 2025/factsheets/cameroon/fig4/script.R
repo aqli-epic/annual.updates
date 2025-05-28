@@ -28,7 +28,7 @@ cam_fs_fig4 <- cam_fs_fig4_dataset %>%
   labs(x = "Year",
        y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 20, color="#222222"),
+        legend.text = element_text(size = 24, color="#222222"),
         legend.title = element_blank(),
         axis.text = element_text(size = 20, color="#222222"),
         axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
