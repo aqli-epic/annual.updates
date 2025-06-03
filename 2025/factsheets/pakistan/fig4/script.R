@@ -45,15 +45,16 @@ pak_fs_fig4 <- pak_fs_fig4_dataset %>%
             lwd = 1.1) +
   geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dotted") +
   geom_hline(mapping = aes(yintercept = 15), lwd = 0.8, linetype = "dotted") +
+  geom_hline(mapping = aes(yintercept = 35), lwd = 0.8, linetype = "dotted") +
   scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 60)) +
-  scale_x_continuous(breaks = c(seq(1998, 2019, 3), 2023))  +
-  scale_color_manual(values = c("Islamabad" = "#3c456f", "Punjab" = "#3c456f", "National Average" = "#4e5e8b", "All other regions (excluding Islamabad and Punjab)" = "#5f7aa5")) +
+  scale_x_continuous(breaks = c(seq(1998, 2020, 2), 2023))  +
+  scale_color_manual(values = c("Islamabad" = "#416891", "Punjab" = "#3f8dac", "National Average" = "#3db1c8", "All other regions (excluding Islamabad and Punjab)" = "#3db1c8")) +
   scale_linetype_manual(values = c("Islamabad" = "dashed", "Punjab" = "dashed", "National Average" = "solid", "All other regions (excluding Islamabad and Punjab)" = "dotted")) +
   ggthemes::theme_tufte() +
   labs(x = "Year",
        y = expression("Annual Average" ~ PM[2.5] ~ "Concentration (in µg/m³)")) +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 20, color="#222222"),
+        legend.text = element_text(size = 24, color="#222222"),
         legend.title = element_blank(),
         axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
         axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
@@ -66,4 +67,5 @@ pak_fs_fig4 <- pak_fs_fig4_dataset %>%
         plot.background = element_rect(color = "white"),
         axis.ticks = element_blank()) +
   geom_text(x = 2003.8, y = 6.8, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 7.5)+
-  geom_text(x = 2003.2, y = 16.7, label = expression("Pakistan National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 7.5)
+  geom_text(x = 2003.2, y = 16.7, label = expression("Old Pakistan National" ~ PM[2.5] ~ "Standard: 15 µg/m³"), size = 7.5)+
+  geom_text(x = 2005.4, y = 36.7, label = expression("New Pakistan National" ~ PM[2.5] ~ "Standard (updated: 2023): 35 µg/m³"), size = 7.5)

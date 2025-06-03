@@ -1,5 +1,5 @@
 # read in the helper file
-source("~~/R/july.2025.helper.script.R")
+source("~/R/july.2025.helper.script.R")
 
 # Figure 3: Potential gain in life expectancy from reducing PM2.5 concentrations from 2023 levels to the WHO guideline in the 10 most populous provinces of China
 
@@ -20,8 +20,8 @@ china_fs_fig3 <- china_fs_fig3_dataset %>%
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
         legend.box.background = element_rect(color = "black"),
         axis.line = element_line(),
-        legend.text = element_text(size = 20, color="#222222"),
-        legend.title = element_text(size = 20, color="#222222"),
+        legend.text = element_text(size = 24, color="#222222"),
+        legend.title = element_text(size = 24, color="#222222"),
         panel.grid.major.y = element_blank(),
         plot.background = element_rect(fill = "white", color = "white"),axis.ticks.y = element_blank()) +
   scale_y_continuous(breaks = seq(0, 7, 1), limits = c(0, 3)) +

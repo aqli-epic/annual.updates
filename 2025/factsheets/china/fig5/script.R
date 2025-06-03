@@ -77,7 +77,7 @@ china_fs_fig5 <- china_fs_fig5_dataset %>%
   geom_hline(mapping = aes(yintercept = 35), lwd = 0.5, linetype = "dashed") +
     geom_vline(mapping = aes(xintercept = 2014), lwd = 0.5, linetype = "dashed") +
   scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100)) +
-  scale_x_continuous(breaks = c(seq(1998, 2018, 5), 2023)) +
+  scale_x_continuous(breaks = c(seq(1998, 2020, 2), 2023)) +
     scale_color_manual(values = c("PRD" = "#7197be", "China" = "#5f7aa5", "BTH" = "#5f7aa5", "YRD" = "#7197be"), name = "legend") +
     scale_linetype_manual(
     values = c("PRD" = "dashed", "China" = "solid", "BTH" = "dashed", "YRD" = "dashed"), name = "legend") +
@@ -89,7 +89,7 @@ china_fs_fig5 <- china_fs_fig5_dataset %>%
     subtitle = "",
     color = "Region") +
   theme(legend.position = "bottom",
-        legend.text = element_text(size = 20, color="#222222"),
+        legend.text = element_text(size = 24, color="#222222"),
         legend.title = element_blank(),
         axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color="#222222"),
         axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color="#222222"),
@@ -104,4 +104,3 @@ china_fs_fig5 <- china_fs_fig5_dataset %>%
     geom_text(x = 2003.54, y = 8.1, label = expression("WHO" ~ PM[2.5] ~ "Guideline (last updated: 2021): 5 µg/m³"), size = 7.5) +
     geom_text(x = 2015.3, y = 92.8, label = str_wrap("China announces war on pollution", width = 18), size = 7.5)+
   geom_text(x = 2003.2, y = 36.7, label = expression("China National" ~ PM[2.5] ~ "Standard: 35 µg/m³"), size = 7.5)
-
