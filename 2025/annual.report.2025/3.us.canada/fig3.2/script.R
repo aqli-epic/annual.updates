@@ -1,7 +1,7 @@
 # read in the helper file
 source("R/july.2025.helper.script.R")
 
-# US, Canada, Europe figure 8.2 ============
+# US, Canada figure 3.2 ============
 # get USA + Canada country level data from the color file
 color_data_us_can <- gadm2_aqli_2023 %>%
   filter(country %in% c("United States", "Canada"), name_1 != "Alaska", name_1 != "Hawaii")
@@ -17,12 +17,12 @@ colormap_shp_us_can <- colormap_shp_us_can %>%
          name_2 = name2)
 
 # join colormap and county level shape file and adding a grouping column
-ar_us_fig8.2_data <- colormap_shp_us_can %>%
+ar_us_fig3.2_data <- colormap_shp_us_can %>%
   left_join(color_data_us_can, by = c("country", "name_1", "name_2")) %>%
   add_aqli_color_scale_buckets("pollution", "pm2023")
 
 # plot
-ar_us_can_fig8.2 <- ggplot(data = ar_us_fig8.2_data) +
+ar_us_can_fig3.2 <- ggplot(data = ar_us_fig3.2_data) +
   geom_sf(mapping = aes(fill = fct_reorder(pollution_category, order_pollution_category)), color = "aliceblue") +
   geom_sf(data = gadm1_aqli_2023_shp %>% filter(name0 %in% c("United States", "Canada"), name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +
   geom_sf(data = gadm1_aqli_2023_shp %>% filter(name0 %in% c("United States", "Canada"), name1 == "California", name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +

@@ -1,11 +1,11 @@
 # read in the helper file
 source("~/R/july.2025.helper.script.R")
 
-# China figure 7.2 ============
+# China figure 6.1 ============
 # filter data for china and create shapefile
-# china figure 7.1 ===========
+# china figure 6.1 ===========
 # data
-ar_china_fig7.1_data <- gadm2_aqli_2023 %>%
+ar_china_fig6.1_data <- gadm2_aqli_2023 %>%
   filter(country == c("China")) %>%
   left_join(gadm2_aqli_2023_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2023") %>%
@@ -13,7 +13,7 @@ ar_china_fig7.1_data <- gadm2_aqli_2023 %>%
   st_as_sf()
 
 # plot
-ar_china_fig7.1 <- ar_china_fig7.1_data %>%
+ar_china_fig6.1 <- ar_china_fig6.1_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2023_shp %>% filter(name0 == c("China")), color = "azure4", fill = "transparent", lwd = 0.1) +

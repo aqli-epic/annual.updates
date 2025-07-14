@@ -11,9 +11,9 @@ latin_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvado
                                  "Puerto Rico")
 
 
-# Latin America figure 6.2 ===========
+# Latin America figure 7.2 ===========
 # data
-ar_latam_fig6.2_data <- gadm2_aqli_2023 %>%
+ar_latam_fig7.2_data <- gadm2_aqli_2023 %>%
   filter(country %in% latin_america_countries_vec) %>%
   left_join(gadm2_aqli_2023_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2023") %>%
@@ -21,7 +21,7 @@ ar_latam_fig6.2_data <- gadm2_aqli_2023 %>%
   st_as_sf()
 
 # plot
-ar_latam_fig6.2 <- ar_latam_fig6.2_data %>%
+ar_latam_fig7.2 <- ar_latam_fig7.2_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2023_shp %>% filter(name0 %in% latin_america_countries_vec), color = "azure4", fill = "transparent", lwd = 0.1) +

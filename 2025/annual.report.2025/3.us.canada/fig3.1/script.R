@@ -1,9 +1,9 @@
 # read in the helper file
 source("R/july.2025.helper.script.R")
 
-# US, Canada, Europe figure 8.1 ============
+# US, Canada figure 3.1 ============
 # US + Canada trendlines data
-us_can_trendlines_fig8.1 <- gadm2_aqli_2023 %>%
+us_can_trendlines_fig3.1 <- gadm2_aqli_2023 %>%
   filter(!is.na(population), country %in% c("United States", "Canada")) %>%
   group_by(country) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
@@ -15,10 +15,10 @@ us_can_trendlines_fig8.1 <- gadm2_aqli_2023 %>%
   select(country, years, pop_weighted_avg_pm2.5)
 
 # set country as factor for correct legend order
-us_can_trendlines_fig8.1$country <- factor(us_can_trendlines_fig8.1$country, levels = c("United States", "Canada"))
+us_can_trendlines_fig3.1$country <- factor(us_can_trendlines_fig3.1$country, levels = c("United States", "Canada"))
 
 # plot
-ar_us_can_fig8.1 <- us_can_trendlines_fig8.1 %>%
+ar_us_can_fig3.1 <- us_can_trendlines_fig3.1 %>%
   ungroup() %>%
   ggplot() +
   geom_line(mapping = aes(x = years, y = pop_weighted_avg_pm2.5,

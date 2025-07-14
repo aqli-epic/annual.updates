@@ -26,9 +26,9 @@ europe_gadm0_shp <- europe_gadm1_shp %>%
 europe_gadm0_shp <- europe_gadm1_shp %>% 
   count(name0)
 
-# US, Canada, Europe figure 8.3 ============
+# Europe figure 4.1 ============
 # europe dataset
-ar_eur_fig8.2_data <- gadm2_aqli_2023 %>%
+ar_eur_fig4.1_data <- gadm2_aqli_2023 %>%
   filter(country %in% unlist(countries_except_excluded), !is.na(llpp_who_2023)) %>%
   filter(!(country == "Spain" & name_1 == "Islas Canarias")) %>%
   filter(!(country == "Portugal" & name_1 == "Azores")) %>%
@@ -40,7 +40,7 @@ ar_eur_fig8.2_data <- gadm2_aqli_2023 %>%
   st_as_sf()
 
 # plot
-ar_eur_fig8.2 <- ar_eur_fig8.2_data %>%
+ar_eur_fig4.1 <- ar_eur_fig4.1_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = europe_gadm1_shp, color = "azure4", fill = "transparent", lwd = 0.1) +

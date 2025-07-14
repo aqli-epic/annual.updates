@@ -2,7 +2,7 @@
 source("~/R/july.2025.helper.script.R") 
 
 
-# 5 most populated countries in Latin America (fig 6.3)--------------
+# 5 most populated countries in Latin America (fig 7.3)--------------
 # Latin America definition
 latin_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvador",
                                  "Nicaragua", "Costa Rica", "Panama", "Colombia",
@@ -11,16 +11,16 @@ latin_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvado
                                  "Uruguay", "Cuba", "Haiti", "Dominican Republic",
                                  "Puerto Rico")
 
-# Latin America figure 6.3 ===========
-# AR figure 6.3 dataset
-ar_latam_fig6.3_dataset <- gadm2_aqli_2023 %>%
+# Latin America figure 7.3 ===========
+# AR figure 7.3 dataset
+ar_latam_fig7.3_dataset <- gadm2_aqli_2023 %>%
   filter(country %in% latin_america_countries_vec ) %>%
   select(country, name_1, name_2, population, pm2023, llpp_who_2023)
 
-ar_latam_fig6.3_dataset <- ar_latam_fig6.3_dataset
+ar_latam_fig7.3_dataset <- ar_latam_fig7.3_dataset
 
 # plot
-ar_latam_fig6.3 <- ar_latam_fig6.3_dataset %>%
+ar_latam_fig7.3 <- ar_latam_fig7.3_dataset %>%
   group_by(country) %>%
   mutate(pop_weights = population/sum(population, na.rm = TRUE),
          pm2023_pop_weighted = pop_weights*pm2023) %>%

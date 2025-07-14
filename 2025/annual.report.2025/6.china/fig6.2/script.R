@@ -1,9 +1,9 @@
 # read in the helper file
 source("~/R/july.2025.helper.script.R")
 
-# China figure 7.2 ============
+# China figure 6.2 ============
 # filter data for china and create shapefile
-ar_china_fig7.2_data <- gadm2_aqli_2023 %>%
+ar_china_fig6.2_data <- gadm2_aqli_2023 %>%
   filter(country == "China", !is.na(llpp_who_2023)) %>%
   mutate(lyl2014minus2023 = round((pm2014 - pm2023)*0.098, 1)) %>% # to reflect gain in life expectancy
   add_aqli_color_scale_buckets(scale_type = "lyldiff", col_name = "lyl2014minus2023") %>% 
@@ -12,7 +12,7 @@ ar_china_fig7.2_data <- gadm2_aqli_2023 %>%
   st_as_sf()
 
 # plot
-ar_china_fig7.2 <- ar_china_fig7.2_data %>%
+ar_china_fig6.2 <- ar_china_fig6.2_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyldiff_bucket, order_lyldiff_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2023_shp %>% filter(name0 == "China"), color = "azure4", fill = "transparent", lwd = 0.15) +

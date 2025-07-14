@@ -1,8 +1,8 @@
 # read in the helper file
 source("~/R/july.2025.helper.script.R") 
 
-# South Asia figure 2.2 ============
-gbd_results_sa_fig2.2 <- gbd_results_master_2025 %>%
+# South Asia figure 5.2 ============
+gbd_results_sa_fig5.2 <- gbd_results_master_2025 %>%
   filter(cause_of_death %in% c("Child and maternal malnutrition", 
                                "Dietary risks", 
                                "PM2.5 relative to WHO guideline", 
@@ -11,22 +11,22 @@ gbd_results_sa_fig2.2 <- gbd_results_master_2025 %>%
          country %in% c("Bangladesh", "Nepal", "India", "Pakistan"))
 
 # making the 'location' column of type factor
-gbd_results_sa_fig2.2$country <- factor(gbd_results_sa_fig2.2$country, 
+gbd_results_sa_fig5.2$country <- factor(gbd_results_sa_fig5.2$country, 
                                         levels = c("Bangladesh", "Nepal", "India", "Pakistan"))
 
 
 # Converting 'cause_of_death' to type factor
-gbd_results_sa_fig2.2$cause_of_death <- as.factor(gbd_results_sa_fig2.2$cause_of_death)
+gbd_results_sa_fig5.2$cause_of_death <- as.factor(gbd_results_sa_fig5.2$cause_of_death)
 
 # Rearranging 'cause of death' levels
-levels(gbd_results_sa_fig2.2$cause_of_death) <- c("Child and maternal malnutrition", 
+levels(gbd_results_sa_fig5.2$cause_of_death) <- c("Child and maternal malnutrition", 
                                                   "Dietary risks", 
                                                   "PM2.5 relative to WHO guideline", 
                                                   "Tobacco",
                                                   "Unsafe water, sanitation, and handwashing")
 
 # wrapping x-axis labels text 
-levels(gbd_results_sa_fig2.2$cause_of_death) <- str_wrap(levels(gbd_results_sa_fig2.2$cause_of_death), 30)
+levels(gbd_results_sa_fig5.2$cause_of_death) <- str_wrap(levels(gbd_results_sa_fig5.2$cause_of_death), 30)
 
 # getting country wise population
 country_wise_population <- gadm2_aqli_2023 %>%
@@ -36,15 +36,15 @@ country_wise_population <- gadm2_aqli_2023 %>%
   arrange(desc(population))
 
 # reorder within each location as per the total life years lost column
-gbd_results_sa_fig2.2 <- gbd_results_sa_fig2.2 %>% 
+gbd_results_sa_fig5.2 <- gbd_results_sa_fig5.2 %>% 
   mutate(cause_of_death = reorder_within(cause_of_death, lyl, country))
 
 # clean the "cause of death" column 
-gbd_results_sa_fig2.2 <- gbd_results_sa_fig2.2 %>%
+gbd_results_sa_fig5.2 <- gbd_results_sa_fig5.2 %>%
   mutate(cause_of_death = str_remove(cause_of_death, "___.+"))
 
 # plot 
-ar_south_asia_fig2.2 <- gbd_results_sa_fig2.2 %>%
+ar_south_asia_fig5.2 <- gbd_results_sa_fig5.2 %>%
   ggplot(mapping = aes(x = reorder_within(cause_of_death, lyl, country), y = lyl)) + 
   geom_col(mapping = aes(fill = cause_of_death), width = 0.5, color = "white") +
   scale_x_reordered() +

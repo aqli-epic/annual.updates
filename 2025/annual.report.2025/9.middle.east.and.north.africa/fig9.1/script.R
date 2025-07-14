@@ -1,17 +1,17 @@
 # read in the helper file
 source("~/R/july.2025.helper.script.R")
 
-# Middle East and North Africa figure 4.1 ============
-# Middle East and North Africa figure 4.1 dataset
-ar_mena_fig4.1_data <- gadm2_aqli_2023 %>%
+# Middle East and North Africa figure 9.1 ============
+# Middle East and North Africa figure 9.1 dataset
+ar_mena_fig9.1_data <- gadm2_aqli_2023 %>%
   filter(country %in% mena_countries, !is.na(llpp_who_2023)) %>%
   left_join(gadm2_aqli_2023_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
-  add_aqli_color_scale_buckets("lyl", "llpp_who_2022") %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2023") %>%
   select(-geometry, geometry) %>%
   st_as_sf()
 
 # plot
-ar_mena_fig4.1 <- ar_mena_fig4.1_data %>%
+ar_mena_fig9.1 <- ar_mena_fig9.1_data %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
   geom_sf(data = gadm1_aqli_2023_shp %>% filter(name0 %in% mena_countries), color = "azure4", fill = "transparent", lwd = 0.1) +

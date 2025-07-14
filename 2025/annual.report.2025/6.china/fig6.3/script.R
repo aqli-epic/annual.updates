@@ -1,22 +1,22 @@
 # read in the helper file
 source("~/R/july.2025.helper.script.R")
 
-# China figure 7.3 ============
+# China figure 6.3 ============
 # 5 deadliest diseases
-ar_china_fig7.3_dataset <- gbd_results_master_2025 %>%
+ar_china_fig6.3_dataset <- gbd_results_master_2025 %>%
   filter(cause_of_death %in% c("Ambient ozone pollution","Child and maternal malnutrition","Childhood sexual abuse and bullying",
 "Dietary risks","Drug use","HIV/AIDS and sexually transmitted infections","High alcohol use","Intimate partner violence","Low physical activity",
 "Neglected tropical diseases and malaria","Nutritional deficiencies","Occupational risks","PM2.5 relative to WHO guideline","Self-harm and interpersonal violence","Substance use disorders", 
 "Tobacco","Transport injuries","Unintentional injuries","Unsafe sex","Unsafe water, sanitation, and handwashing"),country == "China") %>%
   slice_max(lyl, n = 5)
 
-colnames(ar_china_fig7.3_dataset)[3] <- c("llpp_who_2023")
+colnames(ar_china_fig6.3_dataset)[3] <- c("llpp_who_2023")
 
-ar_china_fig7.3_dataset <- ar_china_fig7.3_dataset %>%
+ar_china_fig6.3_dataset <- ar_china_fig6.3_dataset %>%
   add_aqli_color_scale_buckets("lyl", "llpp_who_2023")
 
 # plot 
-ar_china_fig7.3 <- ar_china_fig7.3_dataset %>%
+ar_china_fig6.3 <- ar_china_fig6.3_dataset %>%
   ggplot() + 
   geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2023), 
                          y = llpp_who_2023, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), 

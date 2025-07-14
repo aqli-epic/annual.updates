@@ -27,7 +27,7 @@ europe_gadm0_shp <- europe_gadm1_shp %>%
 europe_gadm0_shp <- europe_gadm1_shp %>% 
   count(name0)
 
-# US, Canada, Europe figure 8.4 ============
+# Europe figure 4.2 ============
 # generate large east and west Europe polygons, then find their intersection to 
 # mark their border
 eastern_europe_large_polygon <- europe_gadm1_shp %>%
@@ -41,7 +41,7 @@ western_europe_large_polygon <- europe_gadm1_shp %>%
 east_west_border <- st_intersection(eastern_europe_large_polygon, western_europe_large_polygon, model = "closed")
 
 # europe dataset
-ar_eur_fig8.4_data <- gadm2_aqli_2023 %>%
+ar_eur_fig4.2_data <- gadm2_aqli_2023 %>%
   filter(country %in% unlist(countries_except_excluded), !is.na(llpp_who_2023)) %>%
   filter(!(country == "Spain" & name_1 == "Islas Canarias")) %>%
   filter(!(country == "Portugal" & name_1 == "Azores")) %>%
@@ -52,7 +52,7 @@ ar_eur_fig8.4_data <- gadm2_aqli_2023 %>%
   st_as_sf()
 
 # plot
-ar_eur_fig8.4 <- ar_eur_fig8.4_data %>%
+ar_eur_fig4.2 <- ar_eur_fig4.2_data %>%
   filter(country %notin% c("Svalbard and Jan Mayen")) %>%
   ggplot() +
   geom_sf(mapping = aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), color = "aliceblue", lwd = 0.05) +
