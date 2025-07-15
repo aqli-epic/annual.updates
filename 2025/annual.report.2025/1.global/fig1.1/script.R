@@ -47,19 +47,19 @@ ar_global_fig1.1 <- ar_global_fig1.1_data %>%
   ggthemes::theme_tufte() +
   themes_aqli_base +
   theme(legend.position = "bottom",
-        axis.text = element_text(size = 14),
-        axis.title.y = element_text(size = 16, margin = margin(r = 0.6, unit = "cm")),
-        axis.title.x = element_text(size = 16, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        axis.text = element_text(size = 24),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
         plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
         plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
         plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
         legend.box.background = element_rect(color = "black"),
         plot.background = element_rect(fill = "white", color = "white"),
         axis.line = element_line(), 
-        legend.text = element_text(size = 11), 
-        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 20), 
+        legend.title = element_text(size = 24),
         panel.grid.major.y = element_blank()) +
-  scale_y_continuous(breaks = seq(0, 7, 1)) +
+  scale_y_continuous(breaks = seq(0, 2, 0.5), limits = c(0, 2.1)) +
   scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
                                "0.1 - 0.5" = "#FFE6B3", 
                                "> 0.5 - 1" = "#FFD25D", 
