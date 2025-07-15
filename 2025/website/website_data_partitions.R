@@ -116,7 +116,7 @@ summary_region1 <- summary_data %>%
             `Percentage of countries with open data` = round(100*(sum(`Publicly accessible?` != "No", na.rm = TRUE)/n()), 2),
             across(ends_with("weighted"), sum)) %>%
   rename_with(~ gsub("_weighted", "", .), starts_with("pm")) %>%
-  mutate(`GDP per capita (2023)` = round(gdp/tot_pop, 2),
+  mutate(`GDP per capita` = round(gdp/tot_pop, 2),
          across(starts_with("pm"),
                 ~ 0.098 * (.x - 5),
                 .names = "who{str_extract(.col, '\\\\d+')}"),
@@ -125,7 +125,7 @@ summary_region1 <- summary_data %>%
                 .names = "total_lyl{str_extract(.col, '\\\\d+')}")) %>%
   mutate(across(matches("^(pm|who|total_lyl)\\d+$"), ~ round(.x, 2))) %>%
   rename("Region" = "region1") %>%
-  select(Region, `Percentage of countries with open data`, `GDP per capita (2023)`, starts_with("pm"), starts_with("who"), starts_with("total"))
+  select(Region, `Percentage of countries with open data`, `GDP per capita`, starts_with("pm"), starts_with("who"), starts_with("total"))
 
 summary_europe <- summary_data %>%
   filter(region2 %in% c("East Europe", "West Europe"), !is.nan(pm2022)) %>%
@@ -138,7 +138,7 @@ summary_europe <- summary_data %>%
             `Percentage of countries with open data` = round(100*(sum(`Publicly accessible?` != "No", na.rm = TRUE)/n()), 2),
             across(ends_with("weighted"), sum)) %>%
   rename_with(~ gsub("_weighted", "", .), starts_with("pm")) %>%
-  mutate(`GDP per capita (2023)` = round(gdp/tot_pop, 2),
+  mutate(`GDP per capita` = round(gdp/tot_pop, 2),
          across(starts_with("pm"),
                 ~ 0.098 * (.x - 5),
                 .names = "who{str_extract(.col, '\\\\d+')}"),
@@ -147,7 +147,7 @@ summary_europe <- summary_data %>%
                 .names = "total_lyl{str_extract(.col, '\\\\d+')}")) %>%
   mutate(across(matches("^(pm|who|total_lyl)\\d+$"), ~ round(.x, 2))) %>%
   rename("Region" = "region2") %>%
-  select(Region, `Percentage of countries with open data`, `GDP per capita (2023)`, starts_with("pm"), starts_with("who"), starts_with("total"))
+  select(Region, `Percentage of countries with open data`, `GDP per capita`, starts_with("pm"), starts_with("who"), starts_with("total"))
 
 summary_aqli_regions <- bind_rows(summary_region1, summary_europe) %>%
   mutate(Category = "AQLI Regions")
@@ -164,7 +164,7 @@ summary_wb <- summary_data %>%
             `Percentage of countries with open data` = round(100*(sum(`Publicly accessible?` != "No", na.rm = TRUE)/n()), 2),
             across(ends_with("weighted"), sum)) %>%
   rename_with(~ gsub("_weighted", "", .), starts_with("pm")) %>%
-  mutate(`GDP per capita (2023)` = round(gdp/tot_pop, 2),
+  mutate(`GDP per capita` = round(gdp/tot_pop, 2),
          across(starts_with("pm"),
                 ~ 0.098 * (.x - 5),
                 .names = "who{str_extract(.col, '\\\\d+')}"),
@@ -173,7 +173,7 @@ summary_wb <- summary_data %>%
                 .names = "total_lyl{str_extract(.col, '\\\\d+')}")) %>%
   mutate(across(matches("^(pm|who|total_lyl)\\d+$"), ~ round(.x, 2))) %>%
   rename("Region" = "Income group") %>%
-  select(Region, `Percentage of countries with open data`, `GDP per capita (2023)`, starts_with("pm"), starts_with("who"), starts_with("total")) %>%
+  select(Region, `Percentage of countries with open data`, `GDP per capita`, starts_with("pm"), starts_with("who"), starts_with("total")) %>%
   mutate(Category = "World Bank Income Group")
 
 ##### OECD #####
@@ -188,7 +188,7 @@ summary_oecd <- summary_data %>%
             `Percentage of countries with open data` = round(100*(sum(`Publicly accessible?` != "No", na.rm = TRUE)/n()), 2),
             across(ends_with("weighted"), sum)) %>%
   rename_with(~ gsub("_weighted", "", .), starts_with("pm")) %>%
-  mutate(`GDP per capita (2023)` = round(gdp/tot_pop, 2),
+  mutate(`GDP per capita` = round(gdp/tot_pop, 2),
          across(starts_with("pm"),
                 ~ 0.098 * (.x - 5),
                 .names = "who{str_extract(.col, '\\\\d+')}"),
@@ -197,7 +197,7 @@ summary_oecd <- summary_data %>%
                 .names = "total_lyl{str_extract(.col, '\\\\d+')}")) %>%
   mutate(across(matches("^(pm|who|total_lyl)\\d+$"), ~ round(.x, 2))) %>%
   rename("Region" = "oecd") %>%
-  select(Region, `Percentage of countries with open data`, `GDP per capita (2023)`, starts_with("pm"), starts_with("who"), starts_with("total")) %>%
+  select(Region, `Percentage of countries with open data`, `GDP per capita`, starts_with("pm"), starts_with("who"), starts_with("total")) %>%
   mutate(Category = "OECD vs Non-OECD")
 
 #### Export ####
