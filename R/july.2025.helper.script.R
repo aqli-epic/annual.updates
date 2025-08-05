@@ -147,6 +147,16 @@ north_africa_countries <- c("Algeria", "Djibouti", "Egypt", "Libya", "Morocco", 
 # middle east and north africa
 mena_countries <- c(mid_east_countries, north_africa_countries)
 
+# Oceania definition
+oceania <- c("Australia", "Christmas Island", "Cocos Islands", 
+             "Heard Island and McDonald Islands", "New Zealand"," Norfolk Island", 
+             "Fiji", "New Caledonia", "Papua New Guinea", "Solomon Islands", 
+             "Vanuatu", "Guam", "Kiribati", "Marshall Islands", "Micronesia",
+             "Nauru", "Northern Mariana Islands", "Palau", 
+             "United States Minor Outlying Islands", "American Samoa", "Cook Islands", 
+             "French Polynesia", "Niue", "Pitcairn Islands", "Samoa", "Tokelau", 
+             "Tonga", "Tuvalu", "Wallis and Futuna")
+
 # aqli base theme function---------------------------------------------------------------------------
 # add this to your graphs to standardize them, example: plt1 %>% theme_aqli_base
 themes_aqli_base <- ggthemes::theme_tufte() +
