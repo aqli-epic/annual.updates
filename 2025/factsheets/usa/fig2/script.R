@@ -27,7 +27,7 @@ us_fs_fig2 <- us_fs_fig2_data %>%
                                "5 to < 6" = "#8E2946",
                                ">= 6" = "#451F59")) +
   ggthemes::theme_map() +
-  labs(fill = "Potetial gain in life expectancy (Years)  ", title = "") +
+  labs(fill = "Potential gain in life expectancy (Years)  ", title = "") +
   theme(legend.position = "bottom",
         legend.justification = "center",
         legend.background = element_rect(color = "black"),
