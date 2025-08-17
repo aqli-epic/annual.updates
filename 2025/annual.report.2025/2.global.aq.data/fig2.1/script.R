@@ -1,17 +1,33 @@
-# read in the helper file
-source("~/R/july.2025.helper.script.R")
+# -------------------------------------------------------------------------
+# Step 1: Load helper script and set working directory
+# -------------------------------------------------------------------------
+source("~/R/july.2025.helper.script.R").  # Load custom helper functions
 
-# =========================
-# 1. Read & Clean Monitor Data
-# =========================
+# -------------------------------------------------------------------------
+# Step 2: Define regional country groups
+# -------------------------------------------------------------------------
+us_canada <- c("United States", "Canada")
 
-# Read monitor data and retain only non-missing country names
-monitoring_data <- read_excel("no_of_monitors_govt_other.xlsx") %>% 
-  filter(!is.na(name)) %>%
-  mutate(Monitor_govt_pvt = ifelse(ismonitor == TRUE, "govt", "pvt"))
+europe_countries <- c(
+  "Albania", "Andorra", "Armenia", "Austria", "Azerbaijan", "Belarus", "Belgium",
+  "Bosnia and Herzegovina", "Bulgaria", "Croatia", "Cyprus", "Czechia", "Denmark",
+  "Estonia", "Finland", "France", "Georgia", "Germany", "Greece", "Hungary", "Iceland",
+  "Ireland", "Italy", "Kazakhstan", "Kosovo", "Latvia", "Liechtenstein", "Lithuania",
+  "Luxembourg", "Macedonia", "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands",
+  "Northern Cyprus", "Norway", "Poland", "Portugal", "Romania", "Russia", "San Marino",
+  "Serbia", "Slovakia", "Slovenia", "Spain", "Svalbard and Jan Mayen", "Sweden",
+  "Switzerland", "Turkey", "Ukraine", "United Kingdom", "Vatican City"
+)
 
-# Filter government monitors and fix inconsistent country names
-monitoring_data_gvt <- monitoring_data %>% 
+# -------------------------------------------------------------------------
+# Step 3: Read and clean monitor data
+# -------------------------------------------------------------------------
+monitoring_data <- read_excel("no_of_monitors_govt_other.xlsx") %>%
+  filter(!is.na(name)) %>%                                    # Remove rows with missing country names
+  mutate(Monitor_govt_pvt = ifelse(ismonitor == TRUE, "govt", "pvt"))  # Label govt vs. private monitors
+
+# Keep only government monitors and fix inconsistent country naming
+monitoring_data_gvt <- monitoring_data %>%
   filter(Monitor_govt_pvt == "govt") %>%
   mutate(name = case_when(
     name == "C√¥te d'Ivoire" ~ "Côte d'Ivoire",
@@ -22,155 +38,124 @@ monitoring_data_gvt <- monitoring_data %>%
     TRUE ~ name
   ))
 
-# =========================
-# 2. Read & Clean Population Data
-# =========================
-# 
-# population_country <- read_excel("aqli_gadm0_2023.xlsx") %>% 
-#   select(continent, country, population) %>%
-#   mutate(country = case_when(
-#     country == "CÃ´te d'Ivoire" ~ "Côte d'Ivoire",
-#     country == "SÃ£o TomÃ© and PrÃ­ncipe" ~ "São Tomé and Príncipe",
-#     country == "MÃ©xico" ~ "México",
-#     country == "United States" ~ "United States",
-#     TRUE ~ country
-#   ))
+# Exclude countries without reliable government monitoring data
+countries_filter <- c("Afghanistan", "Chad", "Côte d'Ivoire", "Democratic Republic of the Congo",
+                      "Gabon", "Guinea", "Iraq", "Mali", "Palestine", "Sudan", "Turkmenistan")
 
-# =========================
-# 3. Read Region Mapping and Join with Population
-# =========================
+monitoring_data_gvt <- monitoring_data_gvt %>% filter(!name %in% countries_filter)
 
-#aqli_regions <- read_csv("AQLI Regions Countries.csv")
-
-# Keep consistent naming
-aqli_regions <- aqli_regions %>%
-  mutate(Country = case_when(
-    Country == "United States" ~ "United States",
-    TRUE ~ Country
+# -------------------------------------------------------------------------
+# Step 4: Read and clean population data
+# -------------------------------------------------------------------------
+countries_population <- gadm0_aqli_2023 %>%
+  select(continent, country, population) %>%
+  mutate(country = case_when(
+    country == "CÃ´te d'Ivoire" ~ "Côte d'Ivoire",
+    country == "SÃ£o TomÃ© and PrÃ­ncipe" ~ "São Tomé and Príncipe",
+    country == "MÃ©xico" ~ "México",
+    country == "United States" ~ "United States",
+    TRUE ~ country
   ))
 
-ar_global_fig2.1_data <- gadm2_aqli_2023 %>%
-  filter(!is.na(population)) %>%
-  mutate(region = case_when(
-    country %in% south_asia_def ~ "South Asia",
-    country %in% central_and_west_african_countries ~ "Central and west africa",
-    country %in% se_asia_vec ~ "South East Asia",
-    country %in% latin_america_countries_vec ~ "Latin America",
-    country %in% eu_countries ~ "European Union",
-    country == "China" ~ "China",
-    country %in% mena_countries ~ "Middle East & North Africa",
-    TRUE ~ "Rest of the World" # Default case for all others
-  )) %>% filter(region!="Rest of the World")
+# -------------------------------------------------------------------------
+# Step 5: Map countries to AQLI-defined regions
+# -------------------------------------------------------------------------
+aqli_region_countries <- countries_population %>%
+  mutate(aqli_region = case_when(
+    country %in% south_asia_def             ~ "South Asia",
+    country %in% central_african_countries  ~ "Central and West Africa",
+    country %in% west_african_countries     ~ "Central and West Africa",
+    country %in% mid_east_countries         ~ "Middle East and North Africa",
+    country %in% north_africa_countries     ~ "North Africa",
+    country %in% se_asia_vec                ~ "South East Asia",
+    country %in% latin_america_countries_vec~ "Latin America",
+    country %in% europe_countries           ~ "Europe",
+    country %in% oceania                    ~ "Oceania",
+    country %in% us_canada                  ~ "US + Canada"
+  )) %>%
+  filter(!is.na(aqli_region)) %>%     # Keep only mapped countries
+  select(aqli_region, country, population)
 
+# -------------------------------------------------------------------------
+# Step 6: Merge monitor and population data
+# -------------------------------------------------------------------------
+final_monitoring_density <- left_join(aqli_region_countries, monitoring_data_gvt,
+                                      by = c("country" = "name"))
 
-# Filter countries in both region mapping and population data
-aqli_region_countries <- population_country %>%
-  filter(country %in% aqli_regions$Country) %>%
-  left_join(aqli_regions, by = c("country" = "Country")) %>%
-  select(`AQLI Region`, country, population)
-
-# =========================
-# 4. Join with Monitor Counts
-# =========================
-
-# Merge with government monitoring data
-final_monitoring_density <- left_join(aqli_region_countries, monitoring_data_gvt, by = c("country" = "name"))
-
-# Replace NA counts with 0 (i.e., countries with no govt monitors)
+# Replace missing monitor counts with 0 (no government monitors)
 final_monitoring_density$count[is.na(final_monitoring_density$count)] <- 0
 
-# Keep relevant columns
+# Keep relevant columns only
 final_monitoring_density <- final_monitoring_density %>%
-  select(`AQLI Region`, country, ismonitor, count, population)
+  select(aqli_region, country, ismonitor, count, population)
 
-# =========================
-# 5. Calculate Monitoring Density
-# =========================
+# -------------------------------------------------------------------------
+# Step 7: Calculate monitoring density (per million people)
+# -------------------------------------------------------------------------
+final_data <- left_join(countries_population, monitoring_data_gvt, by = c("country" = "name"))
 
-final_monitoring_density_summary <- final_monitoring_density %>%
-  group_by(`AQLI Region`) %>%
-  summarise(
-    tot_pop = sum(population, na.rm = TRUE),
-    tot_gov_monitor = sum(count, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  mutate(monitor_density = round(tot_gov_monitor * 1000000 / tot_pop, 3))
+final_moni_data_per_m <- final_data %>%
+  mutate(`monitor_density (million)` = round(count * 1000000 / population, 3)) %>%
+  rename(tot_gov_monitor = count) %>%
+  select(continent, country, population, tot_gov_monitor, `monitor_density (million)`)
 
-# Add density buckets for plotting
-final_monitoring_density_summary <- final_monitoring_density_summary %>%
+# -------------------------------------------------------------------------
+# Step 8: Prepare GIS plot of monitoring density
+# -------------------------------------------------------------------------
+# Define color palette for monitor density buckets
+monitor_colors <- c(
+  "0 to < 5"   = "#e0feff",
+  "5 to < 10"  = "#b7ebf1",
+  "10 to < 30" = "#66c4d6",
+  "30 to < 50" = "#229dbb",
+  "50 to < 60" = "#00518a"
+)
+
+# Define factor levels (legend order)
+monitor_levels <- names(monitor_colors)
+
+# Assign density buckets
+ar_global_fig2.2_data <- final_moni_data_per_m %>%
   mutate(monitor_density_bucket = case_when(
-    monitor_density < 0.1 ~ "< 0.1",
-    monitor_density < 0.5 ~ "0.1 < 0.5",
-    monitor_density < 1  ~ "0.5 < 1",
-    monitor_density < 2.5 ~ "1 < 2.5",
-    monitor_density < 5  ~ "2.5 < 5",
-    monitor_density < 10    ~ "5 < 10",
-    TRUE ~ "≥ 10"
-  ))
+    is.na(`monitor_density (million)`) ~ NA_character_,
+    `monitor_density (million)` < 5    ~ "0 to < 5",
+    `monitor_density (million)` < 10   ~ "5 to < 10",
+    `monitor_density (million)` < 30   ~ "10 to < 30",
+    `monitor_density (million)` < 50   ~ "30 to < 50",
+    `monitor_density (million)` < 60   ~ "50 to < 60"
+  )) %>%
+  mutate(monitor_density_bucket = factor(monitor_density_bucket, levels = monitor_levels))
 
-# =========================
-# 6. Plot
-# =========================
+# Merge with world shapefile for GIS plotting
+ar_global_fig2.2_data <- gadm0_aqli_2023_shp %>%
+  left_join(ar_global_fig2.2_data, by = c("name0" = "country"))
 
-# Generate bar plot
-ar_global_aq_density_fig2.1 <- final_monitoring_density_summary %>%
+# -------------------------------------------------------------------------
+# Step 9: Create world map of monitoring density
+# -------------------------------------------------------------------------
+ar_global_fig2.2 <- ar_global_fig2.2_data %>%
   ggplot() +
-  geom_col(
-    aes(x = reorder(`AQLI Region`, monitor_density), y = monitor_density, fill = monitor_density_bucket),
-    width = 0.5
-  ) +
-  geom_hline(
-    yintercept = 3,
-    linetype = "dashed",
-    color = "grey",
-    size = 0.5
-  ) +
-  labs(
-    x = "Regions",
-    y = "No. of Monitors (per million people)",
-    fill = "No. of Monitors (per million people)"
-  ) +
-  ggthemes::theme_tufte() +
-  themes_aqli_base +  # Assuming this is defined earlier
-  scale_x_discrete(labels = scales::label_wrap(15)) +
+  geom_sf(aes(fill = monitor_density_bucket), color = "aliceblue", lwd = 0.05) +
+  geom_sf(data = gadm0_aqli_2023_shp, color = "cornsilk4", fill = "transparent", lwd = 0.3) +
+  ggthemes::theme_map() +
+  scale_fill_manual(values = monitor_colors,
+                    na.value = "grey90", drop = FALSE) +
+  labs(fill = "Monitoring Density\n(per million people)") +
   theme(
     legend.position = "bottom",
-    axis.text = element_text(size = 20, color = "#222222"),
-    axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color = "#222222"),
-    axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color = "#222222"),
-    plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
-    plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
-    plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
-    legend.box.background = element_rect(color = "black"),
+    legend.justification = c(0.5, 3),
+    legend.background = element_rect(color = "black"),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 15),
+    legend.key = element_rect(color = "black"),
+    legend.box.margin = margin(b = 1, unit = "cm"),
+    legend.box.spacing = unit(2, "cm"),
+    legend.direction = "horizontal",
     plot.background = element_rect(fill = "white", color = "white"),
-    axis.ticks.y = element_blank(),
-    axis.line = element_line(),
-    legend.text = element_text(size = 22, color = "#222222"),
-    legend.title = element_text(size = 22, color = "#222222"),
-    panel.grid.major.y = element_blank()
+    plot.title = element_text(hjust = 0.5, size = 15),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    plot.caption = element_text(hjust = 0.7, size = 9, face = "italic")
   ) +
-  scale_y_continuous(breaks = seq(0, 12, 3), limits = c(0, 12)) +
-  scale_fill_manual(values = c(
-    "< 0.1" = "#FFEDD3",
-    "0.1 < 0.5" = "#fed976",
-    "0.5 < 1" = "#FFC97A",
-    "1 < 2.5" = "#FFA521",
-    "2.5 < 5" = "#fc4e2a",
-    "5 < 10" = "#fd8d3c",
-    "≥ 10" = "#8E2946"
-  )) +
-  guides(fill = guide_legend(nrow = 1)) +
-  geom_text(
-    aes(x = 0.7, y = 3),  # New annotation for horizontal line
-    label = expression("Recommended minimum monitoring requirement*"),
-    size = 6,
-    hjust = 0,
-    vjust = -0.3,  # Place above the line to avoid overlap with WHO annotation
-    check_overlap = TRUE
-  )
+  guides(fill = guide_legend(nrow = 1))
 
-write_csv(final_monitoring_density_summary, "monitoring_density_chart_bar.csv")
 
-ggsave("ar_global_aq_density_fig2.1.png", ar_global_aq_density_fig2.1, width = 15, height = 10)
-
-ggsave("ar_global_aq_density_fig2.1.svg", ar_global_aq_density_fig2.1, width = 15, height = 10)
