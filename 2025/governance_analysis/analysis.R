@@ -24,7 +24,6 @@ source("~/Desktop/AQLI/REPO/annual.updates/R/aqli_regions.R")
 #### data ####
 # read in latest PM2.5 data file
 gadm2_aqli_2022 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/gadm2_2022_wide.csv")
-gadm1_aqli_2022 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/gadm1_2022_wide.csv")
 gadm0_aqli_2022 <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/gadm0_2022_wide.csv")
 
 # openAQ data on monitoring
@@ -43,6 +42,11 @@ gadm0_aqli_2022_shp <- st_read("~/Desktop/AQLI/shapefiles/global/gadm0/aqli_gadm
 
 #### Introduction stats ####
 gadm0_aqli_2022 %>%
+  mutate(meets_std = if_else(is.na(natstandard) | pm2022>natstandard, "no std or does not meet std", "meets std")) %>%
+  group_by(meets_std) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE))
+
+gadm0_aqli_2022 %>%
   filter(who2022 > 1.9) %>% # number of countries where PGLE > global average
   count()
 
@@ -58,18 +62,18 @@ above_glob_avg_no_natstd <- gadm0_aqli_2022 %>%
   filter(who2022 > 1.9, is.na(natstandard)) %>%
   select(id)
 
-gadm2_aqli_2022 %>%
+gadm0_aqli_2022 %>%
   filter(!is.na(population), !is.na(pm2022)) %>%
-  mutate(region = if_else(name0 %in% south_asia_def, "South Asia", NA),
-         region = if_else(name0 == "China", "China", region),
-         region = if_else(name0 %in% central_african_countries, "Central Africa", region),
-         region = if_else(name0 %in% west_african_countries, "West Africa", region),
-         region = if_else(name0 %in% mena_countries, "Middle East & North Africa", region),
-         region = if_else(name0 %in% se_asia_vec, "South East Asia", region),
-         region = if_else(name0 %in% unlist(european_countries) & name0 %notin% western_european_countries, "Eastern Europe", region),
-         region = if_else(name0 %in% western_european_countries, "Western Europe", region),
-         region = if_else(name0 %in% latin_america_countries_vec, "Latin America", region),
-         region = if_else(name0 == "United States", "United States", region, missing = "Rest of the World")) %>%
+  mutate(region = if_else(name %in% south_asia_def, "South Asia", NA),
+         region = if_else(name == "China", "China", region),
+         region = if_else(name %in% central_african_countries, "Central Africa", region),
+         region = if_else(name %in% west_african_countries, "West Africa", region),
+         region = if_else(name %in% mena_countries, "Middle East & North Africa", region),
+         region = if_else(name %in% se_asia_vec, "South East Asia", region),
+         region = if_else(name %in% unlist(european_countries) & name %notin% western_european_countries, "Eastern Europe", region),
+         region = if_else(name %in% western_european_countries, "Western Europe", region),
+         region = if_else(name %in% latin_america_countries_vec, "Latin America", region),
+         region = if_else(name == "United States", "United States", region, missing = "Rest of the World")) %>%
   group_by(region) %>%
   summarise(avg_pm = weighted.mean(pm2022,population)) %>%
   mutate(lyl = 0.098*(avg_pm-5)) %>%
@@ -84,6 +88,14 @@ gadm0_aqli_2022 %>%
 gadm0_aqli_2022 %>%
   filter(!is.na(natstandard), !is.na(population)) %>%
   summarise(tot_pop = sum(population/1000000))
+
+gadm0_aqli_2022 %>%
+  summarise(tot_lyl = sum(population*who2022, na.rm = TRUE),
+            tot_lyl_25 = sum(population[who2022>1.9]*who2022[who2022>1.9], na.rm = TRUE))
+
+gadm0_aqli_2022 %>%
+  filter(name %in% western_european_countries) %>%
+  summarise(avg_pm = weighted.mean(pm2022, population))
 
 #### LYL w.r.to WHO map ####
 fig1a_data <- gadm0_aqli_2022 %>%
@@ -245,8 +257,7 @@ table1b <- public_data %>%
   mutate(aq_std_bucket = if_else(natstandard >= 5 & natstandard <= 10, "5 - 10", NA),
          aq_std_bucket = if_else(natstandard > 10 & natstandard <= 20, "10 - 20", aq_std_bucket),
          aq_std_bucket = if_else(natstandard > 20 & natstandard <= 30, "20 - 30", aq_std_bucket),
-         aq_std_bucket = if_else(natstandard > 30 & natstandard <= 40, "30 - 40", aq_std_bucket),
-         aq_std_bucket = if_else(natstandard > 40 & natstandard <= 50, "40 - 50", aq_std_bucket, missing = "Does not have a standard")) %>%
+         aq_std_bucket = if_else(natstandard > 30 | is.na(natstandard), "greater than 30 or does not have a standard", aq_std_bucket)) %>%
   group_by(aq_std_bucket) %>%
   summarise(num_countries = n(),
             aq_bucket_pop = round(sum(population[pm2022<=natstandard]/1000000, na.rm = TRUE), 0),
@@ -254,7 +265,18 @@ table1b <- public_data %>%
   mutate(percent_pop = round(100*aq_bucket_pop/tot_pop, 1)) %>%
   arrange(factor(aq_std_bucket,
                  levels = c("5 - 10", "10 - 20", "20 - 30",
-                            "30 - 40", "40 - 50", "Does not have a standard")))
+                            "greater than 30 or does not have a standard")))
+
+public_data %>%
+  mutate(has_std = if_else(is.na(natstandard), "no standard", "has standard")) %>%
+  group_by(has_std) %>%
+  summarise(sum(population, na.rm = TRUE))
+
+gadm2_aqli_2022 %>%
+  left_join(gadm0_aqli_2022 %>% select(name, natstandard), by = c("name0" = "name")) %>%
+  filter(!is.na(natstandard), !is.na(population)) %>%
+  summarise(tot_pop = sum(population),
+            pop = sum(population[pm2022>natstandard]))
 
 ##### AQ monitoring #####
 public_data %>%
