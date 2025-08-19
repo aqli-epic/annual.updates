@@ -1,30 +1,42 @@
 # read in the helper file
 source("~/R/july.2025.helper.script.R")
-public_data <- read_csv("~/Desktop/AQLI/2025 AQLI Update/data/open_data.csv")
 
-# global aq data figure 2.2 ======
+# global aq data figure 2.3 ======
 # data
-ar_global_fig2.2_data <- public_data %>%
-  inner_join(gadm0_aqli_shp, by = c("Country or Dependency" = "name0")) %>%
-  select(-geometry, geometry, ) %>%
+public_data <- read_csv("~/Desktop/AQLI/2025 AQLI Update/data/open_data.csv")
+awardees <- read_excel("~/Desktop/AQLI/2025 AQLI Update/data/Awardee Info.xlsx", skip = 2)
+
+# figure 2.3 data
+ar_global_fig2.3_data <- awardees %>%
+  rename("country" = "Country in which project is being executed") %>%
+  mutate(country = ifelse(country == "Cote d'Ivoire", "Côte d'Ivoire", country),
+         country = ifelse(country == "The Gambia", "Gambia", country)) %>%
+  group_by(country) %>%
+  summarise(num_awards = n()) %>%
+  right_join(public_data, by = c("country" = "Country or Dependency")) %>%
+  inner_join(gadm0_aqli_shp, by = c("country" = "name0")) %>%
+  select(-geometry, geometry) %>%
   st_as_sf()
 
 # plot
-ar_global_fig2.2 <- ggplot() +
-  geom_sf(data = gadm0_aqli_shp, 
-          color = "cornsilk4", 
-          fill = "white", 
-          lwd = 0.05) +
-  geom_sf(data = ar_global_fig2.2_data, 
+ar_global_fig2.3 <- ggplot() +
+  geom_sf(data = ar_global_fig2.3_data, 
           mapping = aes(fill = `Is there any evidence of current government operated AQ monitoring system in 2024?`), 
           color = "white", 
-          lwd = 0.05) + 
+          lwd = 0.3) + 
+  geom_sf(data = gadm0_aqli_shp, 
+          color = "cornsilk4", 
+          fill = "transparent", 
+          lwd = 0.3) +
+  geom_sf(data = filter(ar_global_fig2.3_data, !is.na(num_awards)),
+          fill = NA,            
+          color = "#fed976",     
+          lwd = 0.3,           
+          show.legend = FALSE) +
   ggthemes::theme_map() +
   scale_fill_manual(name = "Is there any evidence of current government operated AQ monitoring system in 2024?",
                     values = c("No" = "#800026",
                                "Yes" = "#5e92a9")) +
-  # scale_shape_manual(name = "",
-  #                    values = c("Awardee" = 21)) +
   theme(plot.title = element_text(hjust = 0.5, size = 15),
         plot.background = element_rect(fill = "white", color = "white"),
         plot.subtitle = element_text(hjust = 0.5, size = 12),
@@ -39,3 +51,4 @@ ar_global_fig2.2 <- ggplot() +
         legend.box.spacing = unit(0, "cm"),
         legend.direction = "horizontal") 
 
+ggsave("ar_global_fig2.3.png", ar_global_fig2.3, width = 10, height = 8)
