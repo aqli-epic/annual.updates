@@ -12,36 +12,20 @@ monitoring_data <- read_csv("no_of_monitors_govt_other.csv") %>%
 monitoring_data_gvt <- monitoring_data %>% 
   # keep only ref grade monitor data
   filter(Monitor_govt_pvt == "govt") %>%
-  mutate(name = case_when(
-    name == "C√¥te d'Ivoire" ~ "Côte d'Ivoire",
-    name == "Bosnia and Herz." ~ "Bosnia and Herzegovina",
-    name == "Mexico" ~ "México",
-    name == "Dem. Rep. Congo" ~ "Democratic Republic of the Congo",
-    name == "United States of America" ~ "United States",
-    TRUE ~ name
-  ))
-
-# keep Population and assign AQLI regions
-aqli_region_countries <- gadm0_aqli_2023 %>%
-  select(name, population) %>%
-  mutate(`AQLI Region` = case_when(
-    name %in% south_asia_def ~ "South Asia",
-    name %in% central_and_west_african_countries ~ "Central and west africa",
-    name %in% se_asia_vec ~ "South East Asia",
-    name %in% latin_america_countries_vec ~ "Latin America",
-    name %in% mena_countries ~ "Middle East and North Africa",
-    name %in% unlist(european_countries) ~ "Europe",
-    name %in% oceania ~ "Oceania",
-    name %in% c("United States", "Canada") ~ "US + Canada",
-    TRUE ~ "Rest of the World" # Default case for all others
-  )) %>%
-  filter(`AQLI Region` != "Rest of the World")
+  mutate(name = ifelse(name == "Bosnia and Herz.", "Bosnia and Herzegovina", name),
+         name = ifelse(name == "Central African Rep.", "Central African Republic", name),
+         name = ifelse(name == "Dem. Rep. Congo", "Democratic Republic of the Congo", name),
+         name = ifelse(name == "Dominican Rep.", "Dominican Republic", name),
+         name = ifelse(name == "Mexico", "México", name),
+         name = ifelse(name == "N. Cyprus", "Northern Cyprus", name),
+         name = ifelse(name == "S. Sudan", "South Sudan", name),
+         name = ifelse(name == "United States of America", "United States", name))
 
 # monitor density
-monitor_density <- aqli_region_countries %>%
+monitor_density <- gadm0_aqli_2023 %>%
+  select(name, population) %>%
   left_join(monitoring_data_gvt, by = c("name")) %>%
-  mutate(count = ifelse(is.na(count), 0, count)) %>%
-  select(`AQLI Region`, name, ismonitor, count, population) %>%
+  select(name, ismonitor, count, population) %>%
   mutate(`monitor_density (million)` = round(count * 1000000 / population, 3))
 
 # define colour scheme
@@ -88,3 +72,4 @@ ar_global_fig2.1 <- ggplot() +
         legend.box.margin = margin(b = 1, unit = "cm"),
         legend.box.spacing = unit(0, "cm"),
         legend.direction = "horizontal") 
+
