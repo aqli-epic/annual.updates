@@ -1,44 +1,51 @@
-# read in the helper file
-source("R/july.2025.helper.script.R")
+# Read the helper file
+source("~/Downloads/annual.updates/R/july.2025.helper.script.R")
 
-# US, Canada figure 3.1 ============
-# US + Canada trendlines data
-us_can_trendlines_fig3.1 <- gadm2_aqli_2023 %>%
-  filter(!is.na(population), country %in% c("United States", "Canada")) %>%
-  group_by(country) %>%
-  mutate(pop_weights = population/sum(population, na.rm = TRUE),
-         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
-  summarise(across(ends_with("weighted"), sum)) %>%
-  pivot_longer(cols = pm1998_weighted:pm2023_weighted , names_to = "years",
-               values_to = "pop_weighted_avg_pm2.5") %>%
-  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
-  select(country, years, pop_weighted_avg_pm2.5)
+# Load the forest fire data
+total_forest_fire_data_country <- read.csv("~/Downloads/total_forest_fire_data_country.csv", check.names = FALSE)
 
-# set country as factor for correct legend order
-us_can_trendlines_fig3.1$country <- factor(us_can_trendlines_fig3.1$country, levels = c("United States", "Canada"))
+# Filter for the selected countries
+selected_countries <- c("United States", "Canada")
+df_filtered <- total_forest_fire_data_country[total_forest_fire_data_country$country %in% selected_countries, ]
 
-# plot
-ar_us_can_fig3.1 <- us_can_trendlines_fig3.1 %>%
-  ungroup() %>%
-  ggplot() +
-  geom_line(mapping = aes(x = years, y = pop_weighted_avg_pm2.5,
-                          color = country,
-                          linetype = country),
-            lwd = 2) +
-  labs(x = "Year", y = expression("Annual Average " ~ PM[2.5] ~ " concentrations (in µg/m³)"),
-       color = "") +
-  ggthemes::theme_fivethirtyeight() +
-  scale_color_manual(values = c("Canada" = "#800026", "United States" = "#f29e37"),
-                     name = "legend") +
-  scale_linetype_manual(values = c("Canada" = "dashed", "United States" = "dashed"),
-                        name = "legend") +
-  scale_y_continuous(breaks = seq(0, 15, 3), limits = c(0, 15)) +
-  scale_x_continuous(breaks = c(seq(1998, 2023, 1))) +
-  themes_aqli_base +
-  theme(axis.title.x = element_text(size = 20, margin = margin(r = 0.3, unit = "cm")),
-        axis.title.y = element_text(size = 20, margin = margin(r = 0.3, unit = "cm")),
-        axis.text = element_text(size = 17),
-        legend.text = element_text(size = 20),
+# Check the column names to ensure we are targeting the correct year columns
+print(colnames(df_filtered))
+
+# Pivot data from wide to long format, selecting the years dynamically
+df_new <- df_filtered %>% 
+  # Using select and starts_with to ensure we target the correct year columns
+  select(country, starts_with("20")) %>%
+  pivot_longer(cols = -country, names_to = "Year", values_to = "Area_burnt")
+
+# Remove the 'x' prefix from the 'Year' column (if necessary) and convert it to numeric
+df_new$Year <- gsub("^x", "", df_new$Year)
+df_new$Year <- as.numeric(df_new$Year)
+# Create the plot
+forest_fire_US_Can <- ggplot(data = df_new, aes(x = Year, y = Area_burnt / 10^6, color = country, group = country)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  scale_y_continuous(breaks = seq(0, 3, 0.5), limits = c(0, 3)) +
+  scale_x_continuous(breaks = c(seq(2002, 2020, 3), 2023)) +
+  labs(title = "",
+       x = "Year",
+       caption = "Global Wildfire Information System GWIS (https://gwis.jrc.ec.europa.eu/apps/country.profile/downloads)
+GWIS derives wildfire events and burnt areas using the GlobFire methodology, based on the MODIS burnt area product (MCD64A1)",
+       y = "Area burnt (million Hectares)",
+       color = "country") +
+  theme_minimal() +
+  scale_color_manual(values = c("#1f77b4", "#ff7f0e")) + # Distinct colors for light/dark themes
+  theme(legend.position = "bottom",
+        axis.title.y = element_text(size = 13, margin = margin(r = 0.6, unit = "cm")),
         legend.title = element_blank(),
-        legend.key.width = unit(1, "cm"),
-        plot.background = element_rect(fill = "white", color = "white"))
+        axis.title.x = element_text(size = 13, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        axis.line = element_line(),
+        legend.text = element_text(size = 11),
+        legend.box.background = element_rect(color = "black"),
+        plot.title = element_text(hjust = 0.5, size = 16, margin = margin(b = 0.7, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 8, face = "italic"),
+        plot.caption = element_text(size = 14, margin = margin(t = 0.8, unit = "cm"), hjust = 0, face = "italic"),
+        axis.text = element_text(size = 12),
+        plot.background = element_rect(color = "white"),
+        axis.ticks = element_blank(),
+        legend.key.width = unit(2, "cm"),
+        panel.grid = element_blank())

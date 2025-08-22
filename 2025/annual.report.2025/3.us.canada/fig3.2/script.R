@@ -1,42 +1,44 @@
 # read in the helper file
 source("R/july.2025.helper.script.R")
 
-# US, Canada figure 3.2 ============
-# get USA + Canada country level data from the color file
-color_data_us_can <- gadm2_aqli_2023 %>%
-  filter(country %in% c("United States", "Canada"), name_1 != "Alaska", name_1 != "Hawaii")
+# US, Canada figure 3.1 ============
+# US + Canada trendlines data
+us_can_trendlines_fig3.1 <- gadm2_aqli_2023 %>%
+  filter(!is.na(population), country %in% c("United States", "Canada")) %>%
+  group_by(country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2023_weighted , names_to = "years",
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(country, years, pop_weighted_avg_pm2.5)
 
-# filter colormap (county level) shape file to only include United States
-colormap_shp_us_can <- gadm2_aqli_2023_shp %>%
-  filter(name0 %in% c("United States", "Canada"), name1 != "Alaska", name1 != "Hawaii")
-
-# rename columns in the county level shape file
-colormap_shp_us_can <- colormap_shp_us_can %>%
-  rename(country = name0,
-         name_1 = name1,
-         name_2 = name2)
-
-# join colormap and county level shape file and adding a grouping column
-ar_us_fig3.2_data <- colormap_shp_us_can %>%
-  left_join(color_data_us_can, by = c("country", "name_1", "name_2")) %>%
-  add_aqli_color_scale_buckets("pollution", "pm2023")
+# set country as factor for correct legend order
+us_can_trendlines_fig3.1$country <- factor(us_can_trendlines_fig3.1$country, levels = c("United States", "Canada"))
 
 # plot
-ar_us_can_fig3.2 <- ggplot(data = ar_us_fig3.2_data) +
-  geom_sf(mapping = aes(fill = fct_reorder(pollution_category, order_pollution_category)), color = "aliceblue") +
-  geom_sf(data = gadm1_aqli_2023_shp %>% filter(name0 %in% c("United States", "Canada"), name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +
-  geom_sf(data = gadm1_aqli_2023_shp %>% filter(name0 %in% c("United States", "Canada"), name1 == "California", name1 != "Alaska", name1 != "Hawaii"), fill = "transparent", color = "white", lwd = 1) +
-  ggthemes::theme_map() +
-  labs(fill = expression("Annual Average" ~ PM[2.5] ~ " Concentration (in  µg/m³)"), title = "") +
-  scale_fill_manual(values = c("0 to < 5" = "#e0feff",
-                               "5 to < 10" = "#b7ebf1",
-                               "10 to < 20" = "#8fd8e4",
-                               "20 to < 30" = "#66c4d6",
-                               "30 to < 40" = "#3db1c8",
-                               "40 to < 50" = "#3f8dac")) +
-  theme(plot.background = element_rect(colour = "white", fill = "white"),
-        legend.position = "bottom",
-        legend.justification = "center",
-        legend.text = element_text(size = 15),
-        legend.title = element_text(size = 16),
-        legend.box.background = element_rect(color = "black"))
+ar_us_can_fig3.1 <- us_can_trendlines_fig3.1 %>%
+  ungroup() %>%
+  ggplot() +
+  geom_line(mapping = aes(x = years, y = pop_weighted_avg_pm2.5,
+                          color = country,
+                          linetype = country),
+            lwd = 2) +
+  labs(x = "Year", y = expression("Annual Average " ~ PM[2.5] ~ " concentrations (in µg/m³)"),
+       color = "") +
+  ggthemes::theme_fivethirtyeight() +
+  scale_color_manual(values = c("Canada" = "#800026", "United States" = "#f29e37"),
+                     name = "legend") +
+  scale_linetype_manual(values = c("Canada" = "dashed", "United States" = "dashed"),
+                        name = "legend") +
+  scale_y_continuous(breaks = seq(0, 15, 3), limits = c(0, 15)) +
+  scale_x_continuous(breaks = c(seq(1998, 2023, 1))) +
+  themes_aqli_base +
+  theme(axis.title.x = element_text(size = 20, margin = margin(r = 0.3, unit = "cm")),
+        axis.title.y = element_text(size = 20, margin = margin(r = 0.3, unit = "cm")),
+        axis.text = element_text(size = 17),
+        legend.text = element_text(size = 20),
+        legend.title = element_blank(),
+        legend.key.width = unit(1, "cm"),
+        plot.background = element_rect(fill = "white", color = "white"))
