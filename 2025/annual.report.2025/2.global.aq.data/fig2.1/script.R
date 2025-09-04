@@ -1,7 +1,7 @@
 # read in the helper file
 source("~/R/july.2025.helper.script.R").  # Load custom helper functions
 
-# global aq data figure 2.2 ======
+# global aq data figure 2.1 ======
 # data
 monitoring_data <- read_csv("no_of_monitors_govt_other.csv") %>% 
   # remove rows with missing country names
@@ -72,4 +72,3 @@ ar_global_fig2.1 <- ggplot() +
         legend.box.margin = margin(b = 1, unit = "cm"),
         legend.box.spacing = unit(0, "cm"),
         legend.direction = "horizontal") 
-

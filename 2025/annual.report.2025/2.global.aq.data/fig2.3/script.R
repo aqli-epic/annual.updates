@@ -50,5 +50,3 @@ ar_global_fig2.3 <- ggplot() +
         legend.box.margin = margin(b = 1, unit = "cm"),
         legend.box.spacing = unit(0, "cm"),
         legend.direction = "horizontal") 
-
-ggsave("ar_global_fig2.3.png", ar_global_fig2.3, width = 10, height = 8)
