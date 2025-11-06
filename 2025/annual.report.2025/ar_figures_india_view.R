@@ -4,9 +4,11 @@ source("~/R/july.2025.helper.script.R")
 # create aksai chin from Xinjiang Uygur and Xizang provinces in China
 # china_without_aksai_chin <- st_read("~/Desktop/AQLI/shapefiles//china_state_cut.shp") %>%
 #   select(obidgadm1, name0, name1, geometry) %>%
+#   # replace name1 with Xinjiang Uygur for aksai_chin_xu
 #   filter(name1 == "Xizang")
 # 
 # china_w_aksai_chin <- gadm1_aqli_2022_shp %>%
+#   # replace name1 with Xinjiang Uygur for aksai_chin_xu
 #   filter(name1 == "Xizang")
 # 
 # aksai_chin_xu <- st_difference(china_w_aksai_chin, china_without_aksai_chin)
