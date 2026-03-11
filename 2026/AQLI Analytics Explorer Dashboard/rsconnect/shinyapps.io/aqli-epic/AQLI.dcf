@@ -1,0 +1,13 @@
+name: AQLI
+title: aqli
+username: aqli-epic
+account: aqli-epic
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15159155
+bundleId: 11555803
+url: https://aqli-epic.shinyapps.io/AQLI/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data1
