@@ -1,162 +1,71 @@
-# ------------------------------------------------------------------------------
-# AQLI 2026 – Global PM2.5 Trend Analysis
-# Description : Computes population-weighted global PM2.5 and generates a 
-#               time series plot with key trend periods.
-#
-# Developed By: Purushottam Gupta
-# Role        : Data Architect & Data Analyst, AQLI (University of Chicago)
-# Contact     : guptap@uchicago.edu
-# Dependencies: dplyr, tidyr, ggplot2, stringr
+# read in the helper file
+source("~/R/july.2026.helper.script.R") 
 
-# ------------------------------------------------------------------------------
-# Load Dependencies & Source Files
-# ------------------------------------------------------------------------------
-source("/AQLI 2026/Updated plots code/helper_function_2026.R")
+# Global section figure 1.1 ============
+# create a version of the figure with the same diseases as used in the same figure in last year's report
+ar_global_fig1.1_data <- gbd_results_master_2026 %>%
+  filter(country == "Global", cause_of_death %in% c("PM2.5 relative to WHO guideline", "Tobacco", 
+                                                    "Child and maternal malnutrition",  
+                                                    "Alcohol use", 
+                                                    "Transport injuries", 
+                                                    "Unsafe water, sanitation, and handwashing", 
+                                                    "Neglected tropical diseases and malaria", 
+                                                    "HIV/AIDS and sexually transmitted infections", 
+                                                    "Nutritional deficiencies"))
+colnames(ar_global_fig1.1_data)[3] <- c("llpp_who_2023")
 
-# ------------------------------------------------------------------------------
-# Data Preparation: Global Aggregation (Population-weighted PM2.5)
-# ------------------------------------------------------------------------------
-gadm0_aqli_2024 <- gadm0_aqli_2024 %>%
-  mutate(global = "Global")
+ar_global_fig1.1_data <- ar_global_fig1.1_data %>%
+  mutate(lyl_bucket = ifelse((llpp_who_2023 >= 0) & (llpp_who_2023 < 0.1), "0 - < 0.1 years", NA), 
+         lyl_bucket = ifelse((llpp_who_2023 >= 0.1) & (llpp_who_2023 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2023 > 0.5) & (llpp_who_2023 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2023 > 1) & (llpp_who_2023 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2023 > 2) & (llpp_who_2023 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2023 > 3) & (llpp_who_2023 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2023 > 4) & (llpp_who_2023 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2023 > 5) & (llpp_who_2023 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2023 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1 years", 1, NA), 
+         order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 1 - 2", 4, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 2 - 3", 5, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 3 - 4", 6, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 4 - 5", 7, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == "> 5 - 6", 8, order_lyl_bucket), 
+         order_lyl_bucket = ifelse(lyl_bucket == ">= 6", 9, order_lyl_bucket))
 
-global_pm <- gadm0_aqli_2024 %>%
-  group_by(global) %>%
-  summarise(
-    across(
-      starts_with("pm"),
-      ~ round(
-        sum(.x * population, na.rm = TRUE) /
-          sum(population, na.rm = TRUE),
-        2
-      )
-    ),
-    population = sum(population, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  select(global, starts_with("pm"))
-
-# ------------------------------------------------------------------------------
-# Data Transformation: Long Format for Time Series
-# ------------------------------------------------------------------------------
-df_global <- global_pm %>%
-  pivot_longer(
-    cols = -global,
-    names_to = "year",
-    values_to = "pm"
-  ) %>%
-  mutate(
-    year = str_extract(year, "\\d+") %>% as.integer()
-  )
-
-# ------------------------------------------------------------------------------
-# Plot Parameters
-# ------------------------------------------------------------------------------
-y_max <- ceiling(max(df_global$pm, na.rm = TRUE))
-
-# ------------------------------------------------------------------------------
-# Visualization: Global PM2.5 Trend
-# ------------------------------------------------------------------------------
-final_plot <- ggplot(df_global, aes(x = year, y = pm)) +
-  
-  # --- Background Shading: Time Periods ---
-  annotate("rect", xmin = -Inf, xmax = 2015,
-           ymin = -Inf, ymax = Inf,
-           fill = "white", alpha = 0.6) +
-  
-  annotate("rect", xmin = 2015, xmax = 2020,
-           ymin = -Inf, ymax = Inf,
-           fill = "#F4F6F6", alpha = 0.6) +
-  
-  annotate("rect", xmin = 2020, xmax = 2024.5,
-           ymin = -Inf, ymax = Inf,
-           fill = "#F7FAFF", alpha = 0.7) +
-  
-  # --- Period Annotations ---
-  annotate("text", x = 2006, y = y_max,
-           label = "Period of consistent increase in\nglobal particulate levels",
-           family = "Arial", size = 4) +
-  
-  annotate("text", x = 2017.5, y = y_max + 1,
-           label = "Period of global \nclean air progress",
-           family = "Arial", size = 4) +
-  
-  annotate("text", x = 2022.5, y = y_max - 3,
-           label = "Period of stagnation in\nglobal particulate levels",
-           family = "Arial", size = 4) +
-  
-  # --- Trend Line ---
-  geom_line(
-    color = "#1F4E8C",
-    linewidth = 1
-  ) +
-  
-  # --- Structural Break Lines ---
-  geom_vline(xintercept = c(2015, 2020),
-             linetype = "dotted",
-             linewidth = 0.8,
-             color = "#454545") +
-  
-  # --- Scales ---
-  scale_x_continuous(
-    breaks = seq(1998, 2024, by = 2)
-  ) +
-  
-  scale_y_continuous(
-    limits = c(10, y_max + 10),
-    breaks = seq(10, y_max + 10, by = 10),
-    expand = c(0, 0)
-  ) +
-  
-  # --- Labels ---
-  labs(
-    x = "Year",
-    y = expression(
-      "Annual Average PM"[2.5] *
-        " Concentration (" * mu * "g/m"^3 * ")"
-    )
-  ) +
-  
-  theme_minimal(base_size = 14) +
-  theme(
-    legend.position = "none",
-    
-    axis.title = element_text(size = 18, color = "#222222"),
-    axis.title.y = element_text(margin = ggplot2::margin(r = 18)),
-    axis.title.x = element_text(margin = ggplot2::margin(t = 18)),
-    
-    plot.margin = margin(20, 80, 20, 20),
-    
-    axis.text = element_text(size = 18, color = "#222222"),
-    axis.line = element_line(color = "#222222"),
-    axis.ticks = element_blank(),
-    
-    # 🔴 REMOVE EVERYTHING FROM PANEL
-    panel.grid.major = element_blank(),
-    panel.grid.minor = element_blank(),
-    panel.grid.major.y = element_blank(),
-    panel.grid.minor.y = element_blank(),
-    panel.border = element_blank(),
-    panel.background = element_rect(fill = "white", color = NA),
-    
-    plot.background = element_rect(fill = "white", color = "white")
-  )
-
-
-ggsave(
-  filename = "~/Desktop/Final plots aqli/global/fig1.2/ar_global_fig1.1.png",
-  plot = final_plot,
-  width = 14,
-  height = 9,
-  dpi = 300,
-  bg = "white"
-)
-
-ggsave(
-  filename = "~/Desktop/Final plots aqli/global/fig1.2/ar_global_fig1.1.svg",
-  plot = final_plot,
-  width = 14,
-  height = 9,
-  units = "in",
-  bg = "white"
-)
-
+# ar_fig1.1 plot
+ar_global_fig1.1 <- ar_global_fig1.1_data %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2023), 
+                         y = llpp_who_2023, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), 
+           width = 0.4, color = "black") +
+  labs(x = "Threats to Life Expectancy", y = "Life years lost", fill = "Life years lost", 
+       title = "") +
+  coord_flip() + 
+  ggthemes::theme_tufte() +
+  themes_aqli_base +
+  theme(legend.position = "bottom",
+        axis.text = element_text(size = 24),
+        axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm")),
+        axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+        plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+        plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+        plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm")),
+        legend.box.background = element_rect(color = "black"),
+        plot.background = element_rect(fill = "white", color = "white"),
+        axis.line = element_line(), 
+        legend.text = element_text(size = 20), 
+        legend.title = element_text(size = 24),
+        panel.grid.major.y = element_blank()) +
+  scale_y_continuous(breaks = seq(0, 2, 0.5), limits = c(0, 2.1)) +
+  scale_fill_manual(values = c("0 - < 0.1 years" = "#FFFFFF", 
+                               "0.1 - 0.5" = "#FFE6B3", 
+                               "> 0.5 - 1" = "#FFD25D", 
+                               "> 1 - 2" = "#FFBA00", 
+                               "> 2 - 3" = "#FF9600", 
+                               "> 3 - 4" = "#FF6908", 
+                               "> 4 - 5" = "#E63D23", 
+                               "> 5 - < 6" = "#BD251C", 
+                               ">= 6" = "#8C130E")) + 
+  guides(fill = guide_legend(nrow = 1)) 
