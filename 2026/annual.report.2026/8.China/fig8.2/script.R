@@ -4,7 +4,7 @@
 #               loss (LYL) in China using GBD data.
 #
 # Developed By: Purushottam Gupta
-# Role        : Data Architect & Data Analyst, AQLI (University of Chicago)
+# Role        : Data Architect/Data Analyst, AQLI (University of Chicago)
 # Contact     : guptap@uchicago.edu
 # Dependencies: dplyr, readxl, ggplot2, forcats, ggthemes, stringr
 # ------------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 # Load Dependencies & Data
 # ------------------------------------------------------------------------------
-source("/AQLI 2026/Updated plots code/helper_function_2026.R")
+source("~/R/helper_function_2026.R")
 # ------------------------------------------------------------------------------
 # Data Preparation: Filter + Top 5 Causes (China)
 # ------------------------------------------------------------------------------
@@ -69,6 +69,3 @@ ar_china_fig8.2 <- ar_china_fig8.2_dataset %>%
                                "5 to < 6" = "#bd0026", 
                                ">= 6" = "#800026")) + 
   guides(fill = guide_legend(nrow = 1))
-
-ggsave("~/Desktop/Final plots aqli/China/fig8.2/ar_china_fig8.2.png", plot = ar_china_fig8.2, width = 12, height = 8, dpi = 300)
-ggsave("~/Desktop/Final plots aqli/China/fig8.2/ar_china_fig8.2.svg", plot = ar_china_fig8.2, width = 12, height = 8, dpi = 300)

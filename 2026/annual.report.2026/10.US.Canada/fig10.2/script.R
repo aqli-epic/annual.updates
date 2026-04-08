@@ -5,7 +5,7 @@
 #               United States and Canada.
 #
 # Developed By: Purushottam Gupta
-# Role        : Data Architect & Data Analyst, AQLI (University of Chicago)
+# Role        : Data Architect/Data Analyst, AQLI (University of Chicago)
 # Contact     : guptap@uchicago.edu
 # Dependencies: dplyr, sf, ggplot2, forcats, ggthemes
 # ------------------------------------------------------------------------------
@@ -13,7 +13,7 @@
 # ------------------------------------------------------------------------------
 # Load Dependencies & Source Files
 # ------------------------------------------------------------------------------
-source("/AQLI 2026/Updated plots code/helper_function_2026.R")
+source("~/R/helper_function_2026.R")
 
 # ------------------------------------------------------------------------------
 # Data Preparation: US & Canada Dataset

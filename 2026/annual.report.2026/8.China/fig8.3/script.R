@@ -4,7 +4,7 @@
 #               (BTH, YRD, PRD) and national average for China (1998–2024).
 #
 # Developed By: Purushottam Gupta
-# Role        : Data Architect & Data Analyst, AQLI (University of Chicago)
+# Role        : Data Architect/Data Analyst, AQLI (University of Chicago)
 # Contact     : guptap@uchicago.edu
 # Dependencies: dplyr, tidyr, ggplot2, stringr, ggrepel, ggthemes
 # ------------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 # Load Dependencies & Source Files
 # ------------------------------------------------------------------------------
-source("~/Desktop/My AQLI Work/AQLI 2026/Updated plots code/helper_function_2026.R")
+source("~/R/helper_function_2026.R")
 
 # ------------------------------------------------------------------------------
 # Data Preparation: Base China Dataset
@@ -193,22 +193,3 @@ ar_chinal_fig8.3 <- china_trend_dataset %>% ggplot() +
     min.segment.length = 0,
     show.legend = FALSE
   )
-
-ggsave(
-  filename = "~/Desktop/Final plots aqli/China/fig8.3/ar_chinal_fig8.3.png",
-  plot = ar_chinal_fig8.3,
-  width = 14,
-  height = 8,
-  dpi = 300,
-  bg = "white"
-)
-
-
-ggsave(
-  filename = "~/Desktop/Final plots aqli/China/fig8.3/ar_chinal_fig8.3.svg",
-  plot = ar_chinal_fig8.3,
-  width = 14,
-  height = 8,
-  dpi = 300,
-  bg = "white"
-)

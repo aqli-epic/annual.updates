@@ -4,14 +4,14 @@
 #               time series plot with key trend periods.
 #
 # Developed By: Purushottam Gupta
-# Role        : Data Architect & Data Analyst, AQLI (University of Chicago)
+# Role        : Data Analyst/Data Architect, AQLI (University of Chicago)
 # Contact     : guptap@uchicago.edu
 # Dependencies: dplyr, tidyr, ggplot2, stringr
 
 # ------------------------------------------------------------------------------
 # Load Dependencies & Source Files
 # ------------------------------------------------------------------------------
-source("/AQLI 2026/Updated plots code/helper_function_2026.R")
+source("~R/helper_function_2026.R")
 
 # ------------------------------------------------------------------------------
 # Data Preparation: Global Aggregation (Population-weighted PM2.5)
@@ -140,23 +140,4 @@ final_plot <- ggplot(df_global, aes(x = year, y = pm)) +
     
     plot.background = element_rect(fill = "white", color = "white")
   )
-
-
-ggsave(
-  filename = "~/Desktop/Final plots aqli/global/fig1.2/ar_global_fig1.1.png",
-  plot = final_plot,
-  width = 14,
-  height = 9,
-  dpi = 300,
-  bg = "white"
-)
-
-ggsave(
-  filename = "~/Desktop/Final plots aqli/global/fig1.2/ar_global_fig1.1.svg",
-  plot = final_plot,
-  width = 14,
-  height = 9,
-  units = "in",
-  bg = "white"
-)
 

@@ -4,7 +4,7 @@
 #               Eastern and Western Europe (1998–2024), highlighting divergence.
 #
 # Developed By: Purushottam Gupta
-# Role        : Data Architect & Data Analyst, AQLI (University of Chicago)
+# Role        : Data Architect/Data Analyst, AQLI (University of Chicago)
 # Contact     : guptap@uchicago.edu
 # Dependencies: dplyr, tidyr, ggplot2, stringr, ggthemes
 # ------------------------------------------------------------------------------
@@ -112,21 +112,5 @@ europe_trend_plot <- ggplot() +
 
 
 # ------------------------------------------------------------------------------
-# Export Plot
+# End Here
 # ------------------------------------------------------------------------------
-ggsave(
-  filename = "~/Desktop/Final plots aqli/Europe/fig9.2/ar_europe_fig9.2.png",
-  plot = europe_trend_plot,
-  width = 12,
-  height = 8,
-  dpi = 300,
-  bg = "white"
-)
-ggsave(
-  filename = "~/Desktop/Final plots aqli/Europe/fig9.2/ar_europe_fig9.2.svg",
-  plot = europe_trend_plot,
-  width = 12,
-  height = 8,
-  dpi = 300,
-  bg = "white"
-)

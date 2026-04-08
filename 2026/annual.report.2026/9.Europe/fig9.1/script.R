@@ -4,7 +4,7 @@
 #               highlighting east-west disparities.
 #
 # Developed By: Purushottam Gupta
-# Role        : Data Architect & Data Analyst, AQLI (University of Chicago)
+# Role        : Data Architect/Data Analyst, AQLI (University of Chicago)
 # Contact     : guptap@uchicago.edu
 # Dependencies: dplyr, sf, ggplot2, forcats, ggthemes
 # ------------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 # ------------------------------------------------------------------------------
 # Load Dependencies & Source Files
 # ------------------------------------------------------------------------------
-source("/AQLI 2026/Updated plots code/helper_function_2026.R")
+source("~/R/helper_function_2026.R")
 
 # ------------------------------------------------------------------------------
 # Data Preparation: Europe Shapefiles
@@ -124,22 +124,5 @@ europe_lyl_map <- ggplot(europe_lyl_data) +
   guides(fill = guide_legend(nrow = 1))
 
 # ------------------------------------------------------------------------------
-# Export Plot
+# End Here
 # ------------------------------------------------------------------------------
-ggsave(
-  filename = "~/Desktop/Final plots aqli/Europe/fig9.1/ar_eur_fig9.1.png",
-  plot = europe_lyl_map,
-  width = 14,
-  height = 9,
-  dpi = 300,
-  bg = "white"
-)
-
-ggsave(
-  filename = "~/Desktop/Final plots aqli/Europe/fig9.1/ar_eur_fig9.1.svg",
-  plot = europe_lyl_map,
-  width = 14,
-  height = 9,
-  units = "in",
-  bg = "white"
-)

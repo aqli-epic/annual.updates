@@ -13,7 +13,7 @@
 # ------------------------------------------------------------------------------
 # Load Dependencies & Source Files
 # ------------------------------------------------------------------------------
-source("~/Desktop/My AQLI Work/AQLI 2026/Updated plots code/helper_function_2026.R")
+source("~/R/helper_function_2026.R")
 
 # ------------------------------------------------------------------------------
 # Data Preparation: US & Canada Subnational Data
@@ -110,21 +110,5 @@ ar_us_canada_fig10.1 <- ar_us_canada_fig10.1_data %>%
   guides(fill = guide_legend(nrow = 1))
 
 # ------------------------------------------------------------------------------
-# Export Plot
+# End Here
 # ------------------------------------------------------------------------------
-ggsave(
-  filename = "~/Desktop/Final plots aqli/US and Canada/fig10.1/ar_us_canada_fig10.1.png",
-  plot = ar_us_canada_fig10.1,
-  width = 14,
-  height = 10,
-  dpi = 300
-)
-
-ggsave(
-  filename = "~/Desktop/Final plots aqli/US and Canada/fig10.1/ar_us_canada_fig10.1.svg",
-  plot = ar_us_canada_fig10.1,
-  width = 14,
-  height = 9,
-  units = "in",
-  bg = "white"
-)

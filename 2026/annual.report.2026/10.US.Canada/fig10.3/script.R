@@ -4,18 +4,10 @@
 #               United States and Canada with end-point labeling.
 #
 # Developed By: Purushottam Gupta
-# Role        : Data Architect & Data Analyst, AQLI (University of Chicago)
+# Role        : Data Architect/Data Analyst, AQLI (University of Chicago)
 # Contact     : guptap@uchicago.edu
 # Dependencies: dplyr, tidyr, ggplot2, ggthemes, stringr
 # ------------------------------------------------------------------------------
-
-# ------------------------------------------------------------------------------
-# Load Libraries
-# ------------------------------------------------------------------------------
-library(arrow)
-library(data.table)
-library(tidyverse)
-
 # ------------------------------------------------------------------------------
 # Data Preparation
 # ------------------------------------------------------------------------------
@@ -130,21 +122,5 @@ ar_us_canada_fig10.3 <- ggplot(
   )
 
 # ------------------------------------------------------------------------------
-# Export Plot
+# End Here
 # ------------------------------------------------------------------------------
-ggsave(
-  filename = "~/Desktop/Final plots aqli/US and Canada/fig10.3/ar_us_canada_fig10.3.png",
-  plot = ar_us_canada_fig10.3,
-  width = 14,
-  height = 8,
-  dpi = 300,
-  bg = "white"
-)
-ggsave(
-  filename = "~/Desktop/Final plots aqli/US and Canada/fig10.3/ar_us_canada_fig10.3.svg",
-  plot = ar_us_canada_fig10.3,
-  width = 14,
-  height = 8,
-  dpi = 300,
-  bg = "white"
-)
