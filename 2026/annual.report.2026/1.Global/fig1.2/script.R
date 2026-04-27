@@ -12,18 +12,18 @@ ar_global_fig1.1_data <- gbd_results_master_2026 %>%
                                                     "Neglected tropical diseases and malaria", 
                                                     "HIV/AIDS and sexually transmitted infections", 
                                                     "Nutritional deficiencies"))
-colnames(ar_global_fig1.1_data)[3] <- c("llpp_who_2023")
+colnames(ar_global_fig1.1_data)[3] <- c("llpp_who_2024")
 
 ar_global_fig1.1_data <- ar_global_fig1.1_data %>%
-  mutate(lyl_bucket = ifelse((llpp_who_2023 >= 0) & (llpp_who_2023 < 0.1), "0 - < 0.1 years", NA), 
-         lyl_bucket = ifelse((llpp_who_2023 >= 0.1) & (llpp_who_2023 <= 0.5), "0.1 - 0.5", lyl_bucket), 
-         lyl_bucket = ifelse((llpp_who_2023 > 0.5) & (llpp_who_2023 <= 1), "> 0.5 - 1", lyl_bucket), 
-         lyl_bucket = ifelse((llpp_who_2023 > 1) & (llpp_who_2023 <= 2), "> 1 - 2", lyl_bucket), 
-         lyl_bucket = ifelse((llpp_who_2023 > 2) & (llpp_who_2023 <= 3), "> 2 - 3", lyl_bucket), 
-         lyl_bucket = ifelse((llpp_who_2023 > 3) & (llpp_who_2023 <= 4), "> 3 - 4", lyl_bucket), 
-         lyl_bucket = ifelse((llpp_who_2023 > 4) & (llpp_who_2023 <= 5), "> 4 - 5", lyl_bucket), 
-         lyl_bucket = ifelse((llpp_who_2023 > 5) & (llpp_who_2023 < 6), "> 5 - < 6", lyl_bucket), 
-         lyl_bucket = ifelse((llpp_who_2023 >= 6), ">= 6", lyl_bucket)) %>%
+  mutate(lyl_bucket = ifelse((llpp_who_2024 >= 0) & (llpp_who_2024 < 0.1), "0 - < 0.1 years", NA), 
+         lyl_bucket = ifelse((llpp_who_2024 >= 0.1) & (llpp_who_2024 <= 0.5), "0.1 - 0.5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2024 > 0.5) & (llpp_who_2024 <= 1), "> 0.5 - 1", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2024 > 1) & (llpp_who_2024 <= 2), "> 1 - 2", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2024 > 2) & (llpp_who_2024 <= 3), "> 2 - 3", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2024 > 3) & (llpp_who_2024 <= 4), "> 3 - 4", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2024 > 4) & (llpp_who_2024 <= 5), "> 4 - 5", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2024 > 5) & (llpp_who_2024 < 6), "> 5 - < 6", lyl_bucket), 
+         lyl_bucket = ifelse((llpp_who_2024 >= 6), ">= 6", lyl_bucket)) %>%
   mutate(order_lyl_bucket = ifelse(lyl_bucket == "0 - < 0.1 years", 1, NA), 
          order_lyl_bucket = ifelse(lyl_bucket == "0.1 - 0.5", 2, order_lyl_bucket), 
          order_lyl_bucket = ifelse(lyl_bucket == "> 0.5 - 1", 3, order_lyl_bucket), 
@@ -37,8 +37,8 @@ ar_global_fig1.1_data <- ar_global_fig1.1_data %>%
 # ar_fig1.1 plot
 ar_global_fig1.1 <- ar_global_fig1.1_data %>%
   ggplot() + 
-  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2023), 
-                         y = llpp_who_2023, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, llpp_who_2024), 
+                         y = llpp_who_2024, fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)), 
            width = 0.4, color = "black") +
   labs(x = "Threats to Life Expectancy", y = "Life years lost", fill = "Life years lost", 
        title = "") +
