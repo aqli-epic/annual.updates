@@ -1,0 +1,515 @@
+---
+title: "India Factsheet 2024"
+format: docx
+editor: visual
+fig-width: 14
+fig-height: 10
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+source("~/USAID IDG TATTVA/data_AQ/Helper_AQLI.R")
+
+
+
+selected_country <- "Pakistan"
+
+# Filter data at different geographic levels
+district_data <- gadm2_aqli_2023 %>% filter(country == selected_country)
+province_data <- gadm1_aqli_2023 %>% filter(country == selected_country)
+national_data <- gadm0_aqli_2023 %>% filter(country == selected_country)
+
+# Ensure numeric conversion for LLPP columns
+district_data <- district_data %>% mutate(across(starts_with("llpp_nat_"), as.numeric))
+national_data <- national_data %>% mutate(across(starts_with("llpp_nat_"), as.numeric))
+
+# National air quality standard
+national_pm25_standard <- unique(district_data$natstandard)
+
+# 2. National-level population statistics
+total_population <- sum(district_data$population)
+largest_district_population <- max(district_data$population)
+largest_district_name <- district_data %>% 
+  filter(population == largest_district_population) %>% pull(name_2)
+
+# 3. WHO guideline-based statistics
+national_llpp_if_who_met <- round(national_data$llpp_who_2023, 1)
+
+total_life_years_gained_if_who_met <- district_data %>%
+  filter(pm2023 > who_guideline) %>%
+  summarise(total_lyl = round(sum(population * llpp_who_2023, na.rm = TRUE) / 1e6, 1)) %>%
+  pull(total_lyl)
+
+percent_population_exposed_above_who <- district_data %>%
+  filter(pm2023 > who_guideline) %>%
+  summarise(percent = round(sum(population, na.rm = TRUE) * 100 / total_population, 1)) %>%
+  pull(percent)
+
+# WHO-based life expectancy loss in most polluted provinces
+top2_polluted_provinces_llpp_who <- province_data %>%
+  arrange(desc(pm2023)) %>%
+  head(2) %>%
+  mutate(adjusted_llpp = ifelse(llpp_who_2023 < 1,
+                                paste0(llpp_who_2023 * 12, " months"),
+                                paste0(llpp_who_2023, " years"))) %>%
+  pull(adjusted_llpp)
+
+province1_llpp_who <- top2_polluted_provinces_llpp_who[1]
+province2_llpp_who <- top2_polluted_provinces_llpp_who[2]
+
+# 4. National standard-based statistics
+percent_population_exposed_above_national <- district_data %>%
+  filter(pm2023 > national_pm25_standard) %>%
+  summarise(percent = round(sum(population, na.rm = TRUE) * 100 / total_population, 1)) %>%
+  pull(percent)
+
+
+total_life_years_lost_if_national_met <- district_data %>%
+  filter(pm2023 > national_pm25_standard) %>%
+  summarise(total_lyl = round(sum(population * llpp_nat_2023, na.rm = TRUE) / 1e6, 1)) %>%
+  pull(total_lyl)
+
+adjusted_llpp_national_level <- national_data %>%
+  filter(country == selected_country) %>%
+  mutate(adjusted_llpp = ifelse(llpp_nat_2023 < 1,
+                                paste0(llpp_nat_2023 * 12, " months"),
+                                paste0(llpp_nat_2023, " years"))) %>%
+  pull(adjusted_llpp)
+
+# 5. Subnational highlights
+# Top 3 most polluted districts
+top3_polluted_districts <- district_data %>%
+  arrange(desc(pm2023)) %>%
+  head(3) %>%
+  pull(name_2)
+
+district1_name <- top3_polluted_districts[1]
+district2_name <- top3_polluted_districts[2]
+district3_name <- top3_polluted_districts[3]
+
+# Their corresponding life expectancy loss (WHO guideline)
+top3_districts_llpp_who <- district_data %>%
+  arrange(desc(pm2023)) %>%
+  head(3) %>%
+  pull(llpp_who_2023)
+
+district1_llpp_who <- top3_districts_llpp_who[1]
+district2_llpp_who <- top3_districts_llpp_who[2]
+district3_llpp_who <- top3_districts_llpp_who[3]
+
+# Most polluted provinces
+top2_polluted_provinces <- province_data %>%
+  arrange(desc(pm2023)) %>%
+  head(2) %>%
+  pull(name_1)
+
+province1_name <- top2_polluted_provinces[1]
+province2_name <- top2_polluted_provinces[2]
+
+# Delhi (capital city) life loss
+delhi_llpp_who <- district_data %>%
+  filter(name_2 == "NCT of Delhi") %>%
+  select(name_2, llpp_who_2023)
+
+#GBD
+
+
+
+
+
+######
+
+top_10_pop <- district_data %>%
+  arrange(desc(population)) %>%
+  slice_head(n = 10)
+
+top_10_pop_names <- top_10_pop$name_2
+top_10_pop_pm <- top_10_pop$pm2023
+top_10_pop_llpp <- top_10_pop$llpp_who_2023
+
+
+# WHO/National guideline comparisons
+lt_who <- district_data %>% filter(pm2023 < whostandard)
+lt_nat <- district_data %>% filter(pm2023 < natstandard)
+gt_who <- district_data %>% filter(pm2023 > whostandard)
+gt_nat <- district_data %>% filter(pm2023 > natstandard)
+
+pop_lt_who <- sum(lt_who$population) / total_population * 100
+pop_lt_nat <- sum(lt_nat$population) / total_population * 100
+pop_gt_who <- sum(gt_who$population) / total_population * 100
+pop_gt_nat <- sum(gt_nat$population) / total_population * 100
+
+
+
+poll_inc_pc <- (mean(district_data$pm2023) - mean(district_data$pm1999)) / mean(district_data$pm1999) * 100
+
+
+lyl_inc_pc <- (mean(district_data$llpp_who_2023) - mean(district_data$llpp_who_1999)) / mean(district_data$llpp_who_1999) * 100
+lyl_inc_month <- (mean(district_data$llpp_who_2023) - mean(district_data$llpp_who_1999)) * 12
+
+```
+
+```{r}
+selected_causes <- c(
+  "Ambient ozone pollution", "Child and maternal malnutrition", "Childhood sexual abuse and bullying",
+  "Dietary risks", "Drug use", "HIV/AIDS and sexually transmitted infections", "High alcohol use",
+  "Intimate partner violence", "Low physical activity", "Neglected tropical diseases and malaria",
+  "Nutritional deficiencies", "Occupational risks", "PM2.5 relative to WHO guideline",
+  "Self-harm and interpersonal violence", "Substance use disorders", "Tobacco", "Transport injuries",
+  "Non-optimal temperature", "Other environmental risks", "Unintentional injuries",
+  "Unsafe sex", "Unsafe water, sanitation, and handwashing"
+)
+
+# Rank causes of death for selected country
+ranked_data <- gbd_results_master_2025 %>%
+  filter(country == selected_country) %>%
+  filter(cause_of_death %in% selected_causes) %>%
+  arrange(desc(lyl)) %>%
+  mutate(rank = dense_rank(desc(lyl)))
+
+# --- 2. Find WHO guideline Rank & LYL ---
+who_row <- ranked_data %>%
+  filter(cause_of_death == "PM2.5 relative to WHO guideline")
+
+who_rank <- who_row$rank
+who_lyl <- who_row$lyl
+
+# --- 3. Format Function: Convert LYL to Human-Readable ---
+format_years_months <- function(lyl_val) {
+  if (is.na(lyl_val)) return(NA)
+  
+  if (lyl_val < 1) {
+    months <- round(lyl_val * 12)
+    return(paste0(months, " month", ifelse(months == 1, "", "s")))
+  } else {
+    return(paste0(round(lyl_val, 1), " year", ifelse(round(lyl_val, 1) == 1, "", "s")))
+  }
+}
+
+
+# --- 4. Pick 2 comparison causes based on WHO's rank ---
+comparison_causes <- tibble()
+if (length(who_rank) > 0) {
+  if (who_rank == 1) {
+    comparison_causes <- ranked_data %>% filter(rank %in% c(2, 3))
+  } else if (who_rank == 2) {
+    comparison_causes <- ranked_data %>% filter(rank %in% c(1, 3))
+  } else {
+    comparison_causes <- ranked_data %>% filter(rank %in% c(who_rank + 1, who_rank + 2))
+  }
+}
+
+# --- 5. Extract comparison cause names and LYLs ---
+cause1 <- comparison_causes$cause_of_death[1]
+loss1 <- format_years_months(comparison_causes$lyl[1])
+
+cause2 <- comparison_causes$cause_of_death[2]
+loss2 <- format_years_months(comparison_causes$lyl[2])
+
+# --- 6. Format WHO loss ---
+who_loss <- format_years_months(who_lyl)
+
+# --- 7. Lowercase causes for sentence flow ---
+cause1_lc <- str_to_lower(cause1)
+cause2_lc <- str_to_lower(cause2)
+```
+
+### Gains if WHO Guideline is Met
+
+**Life expectancy gain**: `r national_llpp_if_who_met` years
+
+**Total life years gained**: `r total_life_years_gained_if_who_met` million
+
+**Population exposed above WHO guideline**: `r percent_population_exposed_above_who` %
+
+#### Most Polluted Districts (Years Gained if WHO Met)
+
+**`r district1_name`** – `r round(district1_llpp_who, 1)` years
+
+**`r district2_name`** – `r round(district2_llpp_who, 1)` years
+
+**`r district3_name`** – `r round(district3_llpp_who, 1)` years
+
+**Capital City (`r delhi_llpp_who$name_2`)** – `r round(delhi_llpp_who$llpp_who_2023, 1)` years
+
+### Gains if National Standard is Met
+
+**Life expectancy gain**: `r adjusted_llpp_national_level`
+
+**Total life years gained**: `r total_life_years_lost_if_national_met` million
+
+**Population exposed above national standard**: `r percent_population_exposed_above_national` %
+
+#### Most Polluted Provinces (Years Gained if National Standard Met)
+
+**`r province1_name`** – `r province1_llpp_who`
+
+**`r province2_name`** – `r province2_llpp_who`
+
+Particulate pollution is the `r if (who_rank == 1) {      "greatest"    } else if (who_rank == 2) {      "second greatest"    } else {      paste0(who_rank, "th greatest")    }` external health threat to life expectancy in the country `r if (who_rank == 1) {      paste0("followed by ", cause1_lc, ".")    } else {      paste0("after ", cause1_lc, ".")    }`
+
+While particulate pollution takes `r who_loss` off the life of an average `r selected_country` resident, threats like `r cause1_lc` and `r cause2_lc` take off `r loss1` and `r loss2`, respectively.
+
+Figure 1: Potential gain in life expectancy from reducing PM~2.5~ from 2023 levels to the WHO guideline in 10 most populous provinces.
+
+```{r figs, include=TRUE}
+knitr::opts_chunk$set(echo = FALSE)
+# plot ----------------------------------------------------------------------------------------------------------------------------------------------------
+
+# fs fig 1 data
+fs_fig1_dataset <- district_data %>%
+  left_join(gadm2_aqli_2023_shp, by = c("objectid_gadm2" = "obidgadm2")) %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2023") %>%
+  select(-geometry, geometry) %>%
+  st_as_sf()
+
+
+# fs figure 1
+#|  layout: [ [100]]
+
+#| fig-cap: 
+#|    "Potential gain in life expectancy"
+# Join tabular and spatial data, classify by color buckets
+
+
+
+# --- 4. Create Map Plot -------------------------------------------------------
+
+fs_fig1_dataset %>%
+  ggplot() +
+  
+  # Fill districts by life expectancy gain bucket
+  geom_sf(
+    aes(fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)),
+    color = "aliceblue", lwd = 0.05
+  ) +
+  
+  # Overlay provincial boundaries
+  geom_sf(
+    data = gadm1_aqli_2023_shp %>% filter(name0 %in% selected_country),
+    color = "azure4", fill = "transparent", lwd = 0.1
+  ) +
+  
+  # Overlay national boundaries
+  geom_sf(
+    data = gadm0_aqli_2023_shp %>% filter(name0 %in% selected_country),
+    color = "cornsilk4", fill = "transparent", lwd = 0.3
+  ) +
+  ggthemes::theme_map() +
+  
+  # Manual fill scale based on AQLI bucket color codes
+  scale_fill_manual(values = c(
+    "0 to < 0.1" = "#FFFFFF", 
+    "0.1 to < 0.5" = "#FFF2E1", 
+    "0.5 to < 1" = "#FFEDD3", 
+    "1 to < 2"   = "#FFC97A", 
+    "2 to < 3"   = "#FFA521", 
+    "3 to < 4"   = "#EB6C2A", 
+    "4 to < 5"   = "#D63333", 
+    "5 to < 6"   = "#8E2946", 
+    ">= 6"       = "#451F59" )) +
+  
+  # Titles and subtitles (currently empty)
+  labs(
+    fill = "Potential gain in life expectancy (Years)",
+    title = "",
+    subtitle = "" ) +
+  
+  # Custom theming for legend and layout
+  theme(
+    legend.position = "bottom",
+    legend.justification = c(0.5, 3),
+    legend.background = element_rect(color = "black"),
+    legend.text = element_text(size = 14),
+    legend.title = element_text(size = 15),
+    legend.key = element_rect(color = "black"),
+    legend.box.margin = margin(b = 1, unit = "cm"),
+    legend.box.spacing = unit(2, "cm"),
+    legend.direction = "horizontal",
+    plot.background = element_rect(fill = "white", color = "white"),
+    plot.title = element_text(hjust = 0.5, size = 15),
+    plot.subtitle = element_text(hjust = 0.5, size = 12),
+    plot.caption = element_text(hjust = 0.7, size = 9, face = "italic")) +
+  
+  # Arrange legend items horizontally
+  guides(fill = guide_legend(nrow = 1))
+
+
+```
+
+Figure 2: Potential gain in life expectancy from reducing PM~2.5~ from 2023 levels to the WHO guideline in 10 most populous provinces.
+
+```{r}
+#|  layout: [ [100]]
+
+#| fig-cap: 
+#|   - "Potential gain in life expectancy"
+ 
+
+# Filter and get top 10 based on life years lost
+fs_fig2_data <- ranked_data %>%
+  filter(
+    cause_of_death %in% selected_causes
+  ) %>%
+  slice_max(lyl, n = 10)
+
+# Rename column for consistency with AQLI functions
+colnames(fs_fig2_data)[3] <- "llpp_who_2023"
+
+# Apply AQLI-style color bucket classification
+fs_fig2_data <- fs_fig2_data %>%
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2023")
+
+
+# --- 3. Plot: Figure 2 – Top 10 Life Expectancy Threats -----------------------
+
+fs_fig2_data %>%
+  ggplot() +
+  geom_col(
+    aes(
+      x = forcats::fct_reorder(cause_of_death, llpp_who_2023),
+      y = llpp_who_2023,
+      fill = forcats::fct_reorder(lyl_bucket, order_lyl_bucket)
+    ),
+    width = 0.5
+  ) +
+  
+  # Axis labels and titles
+  labs(
+    x = "Threats to Life Expectancy",
+    y = "Life Years Lost",
+    fill = "Life years lost",
+    title = ""
+  ) +
+  
+  coord_flip() +  # Flip coordinates for horizontal bar chart
+  
+  # Apply Tufte-style and AQLI base theme
+  ggthemes::theme_tufte() +
+  themes_aqli_base +
+  
+  theme(
+    legend.position = "bottom",
+    legend.text = element_text(size = 24, color = "#222222"),
+    legend.title = element_text(size = 24, color = "#222222"),
+    axis.text = element_text(size = 20, color = "#222222"),
+    axis.title.y = element_text(size = 24, margin = margin(r = 0.6, unit = "cm"), color = "#222222"),
+    axis.title.x = element_text(size = 24, margin = margin(t = 0.6, b = 0.6, unit = "cm"), color = "#222222"),
+    axis.ticks.y = element_blank(),
+    axis.line = element_line(),
+    panel.grid.major.y = element_blank(),
+    plot.background = element_rect(fill = "white", color = "white"),
+    legend.box.background = element_rect(color = "black"),
+    plot.caption = element_text(hjust = 0, size = 8, margin = margin(t = 0.8, unit = "cm")),
+    plot.title = element_text(hjust = 0.5, size = 20, margin = margin(b = 0.8, unit = "cm")),
+    plot.subtitle = element_text(hjust = 0.5, size = 10, margin = margin(b = 0.8, unit = "cm"))
+  ) +
+  
+  # Y-axis range and tick marks
+  scale_y_continuous(breaks = seq(0, 4, 1), limits = c(0, 4)) +
+  
+  # Custom color scale based on AQLI buckets
+  scale_fill_manual(values = c(
+    "0 to < 0.1" = "#FFFFFF", 
+    "0.1 to < 0.5" = "#FFF2E1", 
+    "0.5 to < 1" = "#FFEDD3", 
+    "1 to < 2" = "#FFC97A", 
+    "2 to < 3" = "#FFA521", 
+    "3 to < 4" = "#EB6C2A", 
+    "4 to < 5" = "#D63333", 
+    "5 to < 6" = "#8E2946", 
+    ">= 6" = "#451F59"
+  )) +
+  
+  # Legend layout
+  guides(fill = guide_legend(nrow = 1))
+
+```
+
+Figure 3: Potential gain in life expectancy from reducing PM~2.5~ from 2023 levels to the WHO guideline in 10 most populous provinces.
+
+```{r fig3, include=TRUE}
+# figure 3 ------------
+#  Figure 3 dataset
+
+fs_fig3_dataset <- district_data %>%
+  select(country, name_1, name_2, population, pm2023, llpp_who_2023) %>%
+  group_by(name_1) %>%                                # province level
+  mutate(
+    pop_weights               = population / sum(population, na.rm = TRUE),
+    pm2023_weighted           = pop_weights * pm2023,
+    llpp_who_2023_weighted    = pop_weights * llpp_who_2023
+  ) %>%
+  summarise(
+    total_population   = sum(population, na.rm = TRUE),
+    avg_pm25_2023      = sum(pm2023_weighted, na.rm = TRUE),
+    llpp_who_2023_avg  = sum(llpp_who_2023_weighted, na.rm = TRUE),
+    .groups            = "drop"
+  ) %>%
+  mutate(
+    # Translate excess PM2.5 into life‑expectancy gain
+    le_gain = pmax((avg_pm25_2023 - who_guideline) * le_constant, 0)
+  ) %>%
+  slice_max(total_population, n = 10) %>%             # top‑10 most‑populous provinces
+  add_aqli_color_scale_buckets("lyl", "llpp_who_2023_avg")   # custom helper
+
+
+# --- 3.  Draw Figure 3 -------------------------------------------------------
+
+fs_fig3_dataset %>%
+  ggplot() +
+  geom_col(
+    aes(x = reorder(name_1, llpp_who_2023_avg),
+        y = llpp_who_2023_avg,
+        fill = lyl_bucket),
+    width = 0.5
+  ) +
+  coord_flip() +                                     # horizontal bars
+  
+  # Axis & legend labels
+  labs(
+    x    = "Province",
+    y    = "Potential Gain in Life Expectancy (Years)",
+    fill = "Potential Gain in Life Expectancy (Years)"
+  ) +
+  
+  # Y‑axis scale (0–2 years in 1‑year steps)
+  scale_y_continuous(breaks = seq(0, 5, 1), limits = c(0, 5)) +
+  
+  # Manual fill palette
+  scale_fill_manual(values = c(
+    "0 to < 0.1" = "#FFFFFF",
+    "0.1 to < 0.5" = "#FFF2E1",
+    "0.5 to < 1"   = "#FFEDD3",
+    "1 to < 2"     = "#FFC97A",
+    "2 to < 3"     = "#FFA521",
+    "3 to < 4"     = "#EB6C2A",
+    "4 to < 5"     = "#D63333",
+    "5 to < 6"     = "#8E2946",
+    ">= 6"         = "#451F59"
+  )) +
+  
+  ggthemes::theme_tufte() +                          # minimal theme
+  theme(
+    legend.position   = "bottom",
+    legend.text       = element_text(size = 24, color = "#222222"),
+    legend.title      = element_text(size = 24, color = "#222222"),
+    plot.title        = element_text(hjust = 0.5, size = 16),
+    plot.subtitle     = element_text(hjust = 0.5, size = 10, face = "italic",
+                                     margin = margin(b = 0.8, unit = "cm")),
+    plot.caption      = element_text(size = 8, hjust = 0, face = "italic"),
+    legend.box.background = element_rect(color = "black"),
+    plot.background   = element_rect(color = "white"),
+    axis.line         = element_line(),
+    axis.text         = element_text(size = 20, color = "#222222"),
+    axis.title        = element_text(size = 24, color = "#222222"),
+    axis.title.y      = element_text(margin = margin(r = 0.7, unit = "cm")),
+    axis.title.x      = element_text(margin = margin(t = 0.6, b = 0.6, unit = "cm")),
+    axis.ticks        = element_blank()
+  )
+
+
+
+
+
+```

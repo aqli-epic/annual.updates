@@ -1,0 +1,51 @@
+location,cause_of_death,est_le_diff_vs_actual_women,est_le_diff_vs_actual_men,est_le_diff_vs_actual_aggregate,Cause of Death
+cameroon,"PM2.5 relative
+to WHO___cameroon",0.844,0.991,2.59,"PM2.5 relative
+to WHO"
+cameroon,HIV/AIDS___cameroon,2.628,1.738,2.168575714,HIV/AIDS
+cameroon,Malaria___cameroon,1.94,1.91,1.924513788,Malaria
+cameroon,"Unsafe Water,
+Sanitation and
+Handwashing___cameroon",1.491,1.762,1.630892114,"Unsafe Water,
+Sanitation and
+Handwashing"
+DRC,"PM2.5 relative
+to WHO___DRC",0.299,0.366,2.86,"PM2.5 relative
+to WHO"
+DRC,HIV/AIDS___DRC,0.432,0.197,0.31069134,HIV/AIDS
+DRC,Malaria___DRC,1.307,1.397,1.353458636,Malaria
+DRC,"Unsafe Water,
+Sanitation and
+Handwashing___DRC",0.925,1.373,1.156260764,"Unsafe Water,
+Sanitation and
+Handwashing"
+ghana,"PM2.5 relative
+to WHO___ghana",0.97,1.093,0.79,"PM2.5 relative
+to WHO"
+ghana,HIV/AIDS___ghana,1.526,0.871,1.187884373,HIV/AIDS
+ghana,Malaria___ghana,1.72,1.804,1.763361393,Malaria
+ghana,"Unsafe Water,
+Sanitation and
+Handwashing___ghana",0.722,0.863,0.794785196,"Unsafe Water,
+Sanitation and
+Handwashing"
+nigeria,"PM2.5 relative
+to WHO___nigeria",0.806,0.89,1.83,"PM2.5 relative
+to WHO"
+nigeria,HIV/AIDS___nigeria,1.232,1.009,1.116885825,HIV/AIDS
+nigeria,Malaria___nigeria,2.264,2.273,2.268645864,Malaria
+nigeria,"Unsafe Water,
+Sanitation and
+Handwashing___nigeria",2.26,2.195,2.226446541,"Unsafe Water,
+Sanitation and
+Handwashing"
+Angola,"PM2.5 relative
+to WHO___Angola",0.471,0.583,1.21,"PM2.5 relative
+to WHO"
+Angola,HIV/AIDS___Angola,2.313,0.916,1.591858732,HIV/AIDS
+Angola,Malaria___Angola,0.789,0.816,0.802937591,Malaria
+Angola,"Unsafe Water,
+Sanitation and
+Handwashing___Angola",1.18,1.304,1.244009676,"Unsafe Water,
+Sanitation and
+Handwashing"

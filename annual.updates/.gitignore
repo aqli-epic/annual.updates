@@ -1,0 +1,11 @@
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+
+# ShinyApps deployment metadata
+rsconnect/
+
+# shinytest2 debug snapshots
+*_.new.png
