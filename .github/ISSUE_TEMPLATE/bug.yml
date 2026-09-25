@@ -1,0 +1,25 @@
+name: Bug
+description: A figure, script, or app fails or shows the wrong result
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What went wrong
+      description: Name the year, folder, and figure or app.
+    validations:
+      required: true
+  - type: textarea
+    id: expect
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce
+      description: Script path, R version, and whether AQLI_DATA_DIR was set.
+    validations:
+      required: true

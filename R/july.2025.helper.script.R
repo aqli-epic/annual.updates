@@ -5,7 +5,6 @@
 
 # metadata
 # author: Nishka Sharma
-# email: nishkasharma@uchicago.edu
 
 # libraries
 library(tidytext)
@@ -26,32 +25,49 @@ who_guideline <- 5
 `%notin%` <- Negate(`%in%`)
 who_guideline <- 5
 
-# set working directory here
-setwd("~/Desktop/")
+# Inputs are not stored in the repo. Set AQLI_DATA_DIR, or leave the files
+# at their historical Desktop locations. This script does not call setwd().
+source(file.path(dirname(normalizePath(
+  (function() {
+    for (i in rev(seq_len(sys.nframe()))) {
+      f <- sys.frame(i)$ofile
+      if (!is.null(f)) return(f)
+    }
+    file.path(getwd(), "R/july.2025.helper.script.R")
+  })()
+)), "paths.R"))
 
-# read in latest PM2.5 data file
-gadm2_aqli_2023 <- read_csv("~/Desktop/aqli_gadm2_2023.csv")
-gadm1_aqli_2023 <- read_csv("~/Desktop/aqli_gadm1_2023.csv")
-gadm0_aqli_2023 <- read_csv("~/Desktop/aqli_gadm0_2023.csv")
+gadm2_aqli_2023 <- read_csv(aqli_input("aqli_gadm2_2023.csv", legacy = "~/Desktop/aqli_gadm2_2023.csv"))
+gadm1_aqli_2023 <- read_csv(aqli_input("aqli_gadm1_2023.csv", legacy = "~/Desktop/aqli_gadm1_2023.csv"))
+gadm0_aqli_2023 <- read_csv(aqli_input("aqli_gadm0_2023.csv", legacy = "~/Desktop/aqli_gadm0_2023.csv"))
 
-# read in the shapefile
-gadm2_aqli_2023_shp <- st_read("~/Desktop/shapefile/aqli_gadm2_final_june302023.shp")
-gadm1_aqli_2023_shp <- st_read("~/Desktop/shapefile/aqli_gadm1_final_june302023.shp")
-gadm0_aqli_2023_shp <- st_read("~/Desktop/shapefile/aqli_gadm0_final_june302023.shp")
+gadm2_aqli_2023_shp <- st_read(aqli_input(
+  "aqli_gadm2_final_june302023.shp",
+  legacy = "~/Desktop/shapefile/aqli_gadm2_final_june302023.shp"
+))
+gadm1_aqli_2023_shp <- st_read(aqli_input(
+  "aqli_gadm1_final_june302023.shp",
+  legacy = "~/Desktop/shapefile/aqli_gadm1_final_june302023.shp"
+))
+gadm0_aqli_2023_shp <- st_read(aqli_input(
+  "aqli_gadm0_final_june302023.shp",
+  legacy = "~/Desktop/shapefile/aqli_gadm0_final_june302023.shp"
+))
 
-# india state
-india_state <- st_read("~/Desktop/india_state.shp")
+india_state <- st_read(aqli_input("india_state.shp", legacy = "~/Desktop/india_state.shp"))
 
-# read archive data
-color_2020 <- read_csv("~/Desktop/color_2020.csv")
-color_2019 <- read_csv("~/Desktop/color_2019.csv")
-color_2016 <- read_csv("~/Desktop/color_2016.csv")
+color_2020 <- read_csv(aqli_input("color_2020.csv", legacy = "~/Desktop/color_2020.csv"))
+color_2019 <- read_csv(aqli_input("color_2019.csv", legacy = "~/Desktop/color_2019.csv"))
+color_2016 <- read_csv(aqli_input("color_2016.csv", legacy = "~/Desktop/color_2016.csv"))
 
-# gbd results master
-gbd_results_master_2025 <- read_csv("~/Desktop/gbd_results_master_2025.csv")
-
-# US 1970 calculation master cleaned file read
-us_1970_calc_results_cleaned <- read_csv("~/Desktop/county_pm25_foraqli_stats.csv")
+gbd_results_master_2025 <- read_csv(aqli_input(
+  "gbd_results_master_2025.csv",
+  legacy = "~/Desktop/gbd_results_master_2025.csv"
+))
+us_1970_calc_results_cleaned <- read_csv(aqli_input(
+  "county_pm25_foraqli_stats.csv",
+  legacy = "~/Desktop/county_pm25_foraqli_stats.csv"
+))
 
 # read in latest national standard file
 #nat_standard <- readr::read_csv("C:/Users/Aarsh/Desktop/country_annual_average_pm2.5_standards_2024.csv", skip = 26) %>%
@@ -59,7 +75,10 @@ us_1970_calc_results_cleaned <- read_csv("~/Desktop/county_pm25_foraqli_stats.cs
   #mutate(natstandard = as.numeric(natstandard))
 
 # read in the country continent file
-country_continent <- read_csv("~/Desktop/country_continent.csv")
+country_continent <- read_csv(aqli_input(
+  "country_continent.csv",
+  legacy = "~/Desktop/country_continent.csv"
+))
 
 # join gadm2 dataset with the country_continent file using the continent column
 gadm2_aqli_2023 <- gadm2_aqli_2023 %>%
@@ -106,7 +125,10 @@ fenwei_plain <- c("Xi'an", "Baoji", "Xianyang", "Weinan", "Tongchuan",
                   "Sanmenxia")
 
 # European countries
-european_countries <- read_csv("~/Desktop/europe_countries.csv")
+european_countries <- read_csv(aqli_input(
+  "europe_countries.csv",
+  legacy = "~/Desktop/europe_countries.csv"
+))
 
 # Western European countries
 western_european_countries <- c("Germany", "Switzerland", "Italy", "Monaco",

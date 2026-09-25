@@ -24,7 +24,22 @@ indo_gangetic_plains_states <- c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Hary
                                  "Punjab", "Chandigarh", "West Bengal")
 
 # European countries
-european_countries <- read_csv("~/Desktop/AQLI/2024 AQLI Update/data/europe_countries.csv")
+if (!exists("aqli_input", mode = "function")) {
+  source(file.path(dirname(normalizePath(
+    (function() {
+      for (i in rev(seq_len(sys.nframe()))) {
+        f <- sys.frame(i)$ofile
+        if (!is.null(f)) return(f)
+      }
+      file.path(getwd(), "R/aqli_regions.R")
+    })()
+  )), "paths.R"))
+}
+european_countries <- read_csv(aqli_input(
+  "europe_countries.csv",
+  repo_rel = "archive/2022/other.important.calculations.data/europe_countries.csv",
+  legacy = "~/Desktop/AQLI/2024 AQLI Update/data/europe_countries.csv"
+))
 
 # Western European countries
 western_european_countries <- c("Germany", "Switzerland", "Italy", "Monaco", 

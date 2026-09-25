@@ -1,0 +1,12 @@
+# CODEOWNERS
+# GitHub requests review from these people. Confirm the list with the AQLI team
+# if ownership of a tree changes.
+
+* @nishkasharma @hcgautam
+
+/2026/ @hcgautam @Puru-Gupta
+/2025/ @nishkasharma @hcgautam
+/archive/ @nishkasharma
+/R/ @nishkasharma
+/apps/ @Puru-Gupta @nishkasharma
+/apps/aqfund/ @hcgautam

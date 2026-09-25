@@ -1,1 +1,3 @@
-exportPattern("^[[:alpha:]]+")
+# This repository is not installed as an R package.
+# Shared helpers in R/ are sourced by figure scripts.
+# Do not export the helper scripts: they read data when sourced.

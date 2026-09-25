@@ -1,6 +1,17 @@
 source("~/R/july.2026.helper.script.R")
 
-tree_cover_loss_from_fires__ha <- read.csv("~/treecover_loss_from_fires_global.csv")
+if (!exists("aqli_input", mode = "function")) {
+  d <- normalizePath(getwd(), mustWork = FALSE)
+  for (i in seq_len(8)) {
+    if (file.exists(file.path(d, "R", "paths.R"))) break
+    d <- dirname(d)
+  }
+  source(file.path(d, "R", "paths.R"))
+}
+tree_cover_loss_from_fires__ha <- read.csv(aqli_input(
+  "treecover_loss_from_fires_global.csv",
+  legacy = "~/treecover_loss_from_fires_global.csv"
+))
 
 # =========================
 # 1) GLOBAL TREE COVER LOSS (wide -> long)

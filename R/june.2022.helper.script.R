@@ -2,7 +2,6 @@
 
 # metadata
 # author: Aarsh Batra
-# email: aarshbatra.in@gmail.com
 
 # libraries
 library(readr)
@@ -19,19 +18,33 @@ library(usethis)
 library(devtools)
 library(data.table)
 
-# load and document to keep things updated
-# devtools::load_all()
-# devtools::document()
+# Paths are relative to the repository root (archive/2022 is the former june.2022 tree).
+source(file.path(dirname(normalizePath(
+  (function() {
+    for (i in rev(seq_len(sys.nframe()))) {
+      f <- sys.frame(i)$ofile
+      if (!is.null(f)) return(f)
+    }
+    file.path(getwd(), "R/june.2022.helper.script.R")
+  })()
+)), "paths.R"))
 
-# read in latest color file
-color_2020 <- read_csv("./june.2022/master.dataset/color_2020.csv")
-
-# read in old available color datasets
-color_2019 <- read_csv("./june.2022/master.dataset/color_2019.csv")
-color_2016 <- read_csv("./june.2022/master.dataset/color_2016.csv")
-
-# GBD final results file (resulting file that we get after applying the steps in the GBD technical appendix)
-gbd_results <- read_csv("./june.2022/other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
+color_2020 <- read_csv(aqli_input(
+  "color_2020.csv",
+  repo_rel = "archive/2022/master.dataset/color_2020.csv"
+))
+color_2019 <- read_csv(aqli_input(
+  "color_2019.csv",
+  repo_rel = "archive/2022/master.dataset/color_2019.csv"
+))
+color_2016 <- read_csv(aqli_input(
+  "color_2016.csv",
+  repo_rel = "archive/2022/master.dataset/color_2016.csv"
+))
+gbd_results <- read_csv(aqli_input(
+  "estimated_life_expectancy_differences_master_table_final.csv",
+  repo_rel = "archive/2022/other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv"
+))
 
 # global variables
 who_guideline <- 5

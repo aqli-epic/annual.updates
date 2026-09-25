@@ -425,16 +425,30 @@ aqli_region_weighted <- as.data.table(aqli_region_weighted)
 
 
 # =========================================================
-# AUTHENTICATION DATA (Simple login credentials)
+# AUTHENTICATION DATA
 # =========================================================
+# Usernames and passwords are read from the environment.
+# AQLI_DASHBOARD_USERS and AQLI_DASHBOARD_PASSWORDS are comma-separated
+# lists of the same length. Rotate any password that was previously
+# committed in this file before setting the new values.
 
-# Create a simple credentials dataframe
-# NOTE: Passwords are stored in plain text (not recommended for production)
-credentials <- data.frame(
-  user = c("aqli", "puru"),     # allowed usernames
-  password = c("admin", "abcd"), # corresponding passwords
-  stringsAsFactors = FALSE
-)
+aqli_dashboard_credentials <- function() {
+  users <- strsplit(Sys.getenv("AQLI_DASHBOARD_USERS", unset = ""), ",", fixed = TRUE)[[1]]
+  passwords <- strsplit(Sys.getenv("AQLI_DASHBOARD_PASSWORDS", unset = ""), ",", fixed = TRUE)[[1]]
+  users <- trimws(users)
+  passwords <- trimws(passwords)
+  users <- users[nzchar(users)]
+  passwords <- passwords[nzchar(passwords)]
+  if (length(users) == 0 || length(users) != length(passwords)) {
+    stop(
+      "Set AQLI_DASHBOARD_USERS and AQLI_DASHBOARD_PASSWORDS to comma-separated lists of the same length.",
+      call. = FALSE
+    )
+  }
+  data.frame(user = users, password = passwords, stringsAsFactors = FALSE)
+}
+
+credentials <- aqli_dashboard_credentials()
 
 
 

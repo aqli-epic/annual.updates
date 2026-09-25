@@ -1,0 +1,36 @@
+name: Update National Standard
+description: Report an outdated or incorrect national annual PM2.5 standard
+title: "[Standard] "
+labels: ["data"]
+body:
+  - type: input
+    id: country
+    attributes:
+      label: Country
+    validations:
+      required: true
+  - type: input
+    id: current
+    attributes:
+      label: Current value in the dataset (µg/m³)
+    validations:
+      required: true
+  - type: input
+    id: suggested
+    attributes:
+      label: Suggested value (µg/m³)
+    validations:
+      required: true
+  - type: input
+    id: year
+    attributes:
+      label: Year of the update
+    validations:
+      required: true
+  - type: textarea
+    id: reference
+    attributes:
+      label: Official reference
+      description: Government or legal document. Issues without a source are closed.
+    validations:
+      required: true
