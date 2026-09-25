@@ -1,0 +1,12 @@
+name: explorerShiny
+title: explorerShiny
+username: aqli-epic
+account: aqli-epic
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15114057
+bundleId: 10662926
+url: https://aqli-epic.shinyapps.io/explorerShiny/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
