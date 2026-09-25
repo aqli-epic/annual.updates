@@ -1,0 +1,41 @@
+country,cause_of_death,lyl
+France,"PM2.5 relative to WHO
+guideline",0.4
+France,"Child and maternal
+malnutrition",0.176052271
+France,Diabetes and kidney diseases,0.483235955
+France,"Respiratory infections and
+tuberculosis",0.44850122
+France,Transport injuries,0.216433808
+Germany,"PM2.5 relative to WHO
+guideline",0.4
+Germany,"Child and maternal
+malnutrition",0.110540146
+Germany,Diabetes and kidney diseases,0.77335767
+Germany,"Respiratory infections and
+tuberculosis",0.329875913
+Germany,Transport injuries,0.152279804
+Russian Federation,"PM2.5 relative to WHO
+guideline",0.6
+Russian Federation,"Child and maternal
+malnutrition",0.152140913
+Russian Federation,Diabetes and kidney diseases,0.219280856
+Russian Federation,"Respiratory infections and
+tuberculosis",0.435459667
+Russian Federation,Transport injuries,0.383565595
+Turkey,"PM2.5 relative to WHO
+guideline",1.6
+Turkey,"Child and maternal
+malnutrition",0.538867447
+Turkey,Diabetes and kidney diseases,1.036325533
+Turkey,"Respiratory infections and
+tuberculosis",0.440810917
+Turkey,Transport injuries,0.278781679
+United Kingdom,"PM2.5 relative to WHO
+guideline",0.4
+United Kingdom,"Child and maternal
+malnutrition",0.150374696
+United Kingdom,Diabetes and kidney diseases,0.26673236
+United Kingdom,"Respiratory infections and
+tuberculosis",0.809430659
+United Kingdom,Transport injuries,0.12168613

@@ -1,0 +1,568 @@
+location,cause_of_death,est_le_diff_vs_actual_women,est_le_diff_vs_actual_men,est_le_diff_vs_actual_aggregate
+argentina,Alcohol use,0.406,1.295,0.864908079
+argentina,PM2.5 relative to WHO,0.42,0.481,0.64
+argentina,Cardiovascular diseases,4.901,3.982,4.426605709
+argentina,Child and maternal malnutrition,0.369,0.414,0.392229318
+argentina,Conflict and terrorism,0,0,0
+argentina,Dengue,0,0,0
+argentina,Diabetes mellitus,0.381,0.367,0.373773101
+argentina,Diarrheal diseases,0.039,0.027,0.032805515
+argentina,Dietary risks,1.657,1.73,1.694683116
+argentina,Drug use,0.047,0.205,0.128560716
+argentina,HIV/AIDS,0.067,0.133,0.101069666
+argentina,Household air pollution from solid fuels,0.028,0.022,0.024902758
+argentina,Low birth weight and short gestation,0.281,0.337,0.309907596
+argentina,Lower respiratory infections,1.44,1.157,1.293913401
+argentina,Malaria,0,0,0
+argentina,Maternal and neonatal disorders,0.054,0,0.026124819
+argentina,Maternal disorders,0.054,0,0.026124819
+argentina,Neonatal disorders,0.329,0.396,0.363585873
+argentina,Neoplasms,3.65,3.491,3.567923077
+argentina,Nutritional deficiencies,0.052,0.039,0.045289308
+argentina,Road injuries,0.183,0.536,0.365221093
+argentina,Smoking,1.604,2.317,1.972055636
+argentina,Substance use disorders,0.01,0.069,0.040456217
+argentina,Tobacco,1.869,2.56,2.225699081
+argentina,"Tracheal, bronchus, and lung cancer",0.361,0.656,0.513281084
+argentina,Tuberculosis,0.027,0.039,0.033194485
+argentina,"Unsafe water, sanitation, and handwashing",0.052,0.04,0.045805515
+brazil,Alcohol use,0.189,1.37,0.798640542
+brazil,PM2.5 relative to WHO,0.407,0.424,0.485
+brazil,Cardiovascular diseases,4.787,4.3,4.53560716
+brazil,Child and maternal malnutrition,0.709,0.823,0.767847605
+brazil,Conflict and terrorism,0,0,0
+brazil,Dengue,0.006,0.006,0.006
+brazil,Diabetes mellitus,0.714,0.491,0.598885825
+brazil,Diarrheal diseases,0.103,0.09,0.096289308
+brazil,Dietary risks,1.384,1.48,1.433555878
+brazil,Drug use,0.035,0.109,0.073199323
+brazil,HIV/AIDS,0.136,0.215,0.176780358
+brazil,Household air pollution from solid fuels,0.156,0.123,0.138965167
+brazil,Low birth weight and short gestation,0.514,0.619,0.568201742
+brazil,Lower respiratory infections,0.999,0.844,0.918987905
+brazil,Malaria,0.002,0.002,0.002
+brazil,Maternal and neonatal disorders,0.056,0,0.027092404
+brazil,Maternal disorders,0.056,0,0.027092404
+brazil,Neonatal disorders,0.655,0.799,0.729333817
+brazil,Neoplasms,2.679,2.69,2.684678278
+brazil,Nutritional deficiencies,0.089,0.087,0.087967586
+brazil,Road injuries,0.224,0.83,0.53682148
+brazil,Smoking,1.276,1.899,1.597597
+brazil,Substance use disorders,0.029,0.187,0.110560716
+brazil,Tobacco,1.515,2.117,1.825756652
+brazil,"Tracheal, bronchus, and lung cancer",0.299,0.357,0.32894001
+brazil,Tuberculosis,0.035,0.074,0.055132075
+brazil,"Unsafe water, sanitation, and handwashing",0.133,0.116,0.12422448
+cambodia,Alcohol use,0.446,2.131,1.315808902
+cambodia,PM2.5 relative to WHO,0.38,0.504,1.55
+cambodia,Cardiovascular diseases,5.22,4.341,4.766253991
+cambodia,Child and maternal malnutrition,1.31,1.499,1.407563135
+cambodia,Conflict and terrorism,0,0,0
+cambodia,Dengue,0.008,0.009,0.008516207
+cambodia,Diabetes mellitus,0.515,0.364,0.437052733
+cambodia,Diarrheal diseases,0.234,0.213,0.223159652
+cambodia,Dietary risks,1.713,1.82,1.768234156
+cambodia,Drug use,0.04,0.204,0.124657958
+cambodia,HIV/AIDS,0.171,0.246,0.20971553
+cambodia,Household air pollution from solid fuels,1.998,1.826,1.909212385
+cambodia,Low birth weight and short gestation,0.811,0.953,0.884301403
+cambodia,Lower respiratory infections,1.787,1.714,1.749316884
+cambodia,Malaria,0.009,0.009,0.009
+cambodia,Maternal and neonatal disorders,0.151,0,0.073052733
+cambodia,Maternal disorders,0.151,0,0.073052733
+cambodia,Neonatal disorders,0.816,0.902,0.860393807
+cambodia,Neoplasms,1.92,1.95,1.935486212
+cambodia,Nutritional deficiencies,0.072,0.061,0.066321722
+cambodia,Road injuries,0.223,0.609,0.422255926
+cambodia,Smoking,0.614,4.072,2.399044025
+cambodia,Substance use disorders,0.007,0.039,0.023518626
+cambodia,Tobacco,1.222,4.357,2.840309144
+cambodia,"Tracheal, bronchus, and lung cancer",0.2,0.52,0.36518626
+cambodia,Tuberculosis,0.63,0.935,0.787443154
+cambodia,"Unsafe water, sanitation, and handwashing",0.355,0.332,0.343127238
+cameroon,Alcohol use,0.413,1.165,0.801187712
+cameroon,PM2.5 relative to WHO,0.844,0.991,2.59
+cameroon,Cardiovascular diseases,3.614,2.952,3.272270924
+cameroon,Child and maternal malnutrition,2.285,2.549,2.421278665
+cameroon,Conflict and terrorism,0.032,0.065,0.049034833
+cameroon,Dengue,0,0,0
+cameroon,Diabetes mellitus,0.59,0.454,0.519795839
+cameroon,Diarrheal diseases,1.225,1.504,1.369021771
+cameroon,Dietary risks,0.922,0.892,0.906513788
+cameroon,Drug use,0.031,0.04,0.035645864
+cameroon,HIV/AIDS,2.628,1.738,2.168575714
+cameroon,Household air pollution from solid fuels,1.178,1.006,1.089212385
+cameroon,Low birth weight and short gestation,0.97,1.204,1.090792453
+cameroon,Lower respiratory infections,1.459,1.477,1.468291727
+cameroon,Malaria,1.94,1.91,1.924513788
+cameroon,Maternal and neonatal disorders,0.5,0,0.241896468
+cameroon,Maternal disorders,0.5,0,0.241896468
+cameroon,Neonatal disorders,1.007,1.216,1.114887276
+cameroon,Neoplasms,1.575,1.338,1.452658926
+cameroon,Nutritional deficiencies,0.095,0.062,0.077965167
+cameroon,Road injuries,0.221,0.832,0.536402516
+cameroon,Smoking,0.079,0.924,0.515194969
+cameroon,Substance use disorders,0.008,0.039,0.024002419
+cameroon,Tobacco,0.234,1.018,0.638706338
+cameroon,"Tracheal, bronchus, and lung cancer",0.103,0.197,0.151523464
+cameroon,Tuberculosis,0.478,0.719,0.602405902
+cameroon,"Unsafe water, sanitation, and handwashing",1.491,1.762,1.630892114
+colombia,Alcohol use,0.078,0.771,0.435731495
+colombia,PM2.5 relative to WHO,0.646,0.66,0.97
+colombia,Cardiovascular diseases,4.725,4.123,4.414243348
+colombia,Child and maternal malnutrition,0.459,0.56,0.511136913
+colombia,Conflict and terrorism,0,0,0
+colombia,Dengue,0.027,0.026,0.026483793
+colombia,Diabetes mellitus,0.407,0.277,0.339893082
+colombia,Diarrheal diseases,0.063,0.051,0.056805515
+colombia,Dietary risks,1.536,1.824,1.684667634
+colombia,Drug use,0.014,0.04,0.027421384
+colombia,HIV/AIDS,0.078,0.215,0.148720368
+colombia,Household air pollution from solid fuels,0.144,0.1,0.121286889
+colombia,Low birth weight and short gestation,0.295,0.418,0.358493469
+colombia,Lower respiratory infections,0.459,0.42,0.438867925
+colombia,Malaria,0.004,0.004,0.004
+colombia,Maternal and neonatal disorders,0.067,0,0.032414127
+colombia,Maternal disorders,0.067,0,0.032414127
+colombia,Neonatal disorders,0.362,0.487,0.426525883
+colombia,Neoplasms,2.836,2.486,2.655327528
+colombia,Nutritional deficiencies,0.089,0.082,0.085386551
+colombia,Road injuries,0.197,0.697,0.455103532
+colombia,Smoking,0.633,1.051,0.848774552
+colombia,Substance use disorders,0.007,0.022,0.014743106
+colombia,Tobacco,0.786,1.209,1.004355588
+colombia,"Tracheal, bronchus, and lung cancer",0.293,0.317,0.30538897
+colombia,Tuberculosis,0.034,0.059,0.046905177
+colombia,"Unsafe water, sanitation, and handwashing",0.07,0.06,0.064837929
+democratic republic of the congo,Alcohol use,0.211,0.766,0.49749492
+democratic republic of the congo,PM2.5 relative to WHO,0.299,0.366,2.86
+democratic republic of the congo,Cardiovascular diseases,4.832,3.019,3.896116594
+democratic republic of the congo,Child and maternal malnutrition,1.566,1.809,1.691438316
+democratic republic of the congo,Conflict and terrorism,0.028,0.056,0.042453798
+democratic republic of the congo,Dengue,0,0,0
+democratic republic of the congo,Diabetes mellitus,0.297,0.442,0.371850024
+democratic republic of the congo,Diarrheal diseases,0.639,1.106,0.880068699
+democratic republic of the congo,Dietary risks,1.072,0.945,1.006441703
+democratic republic of the congo,Drug use,0.014,0.033,0.023807934
+democratic republic of the congo,HIV/AIDS,0.432,0.197,0.31069134
+democratic republic of the congo,Household air pollution from solid fuels,2.032,1.714,1.867846154
+democratic republic of the congo,Low birth weight and short gestation,0.783,0.988,0.888822448
+democratic republic of the congo,Lower respiratory infections,1.355,1.324,1.338997581
+democratic republic of the congo,Malaria,1.307,1.397,1.353458636
+democratic republic of the congo,Maternal and neonatal disorders,0.651,0,0.314949202
+democratic republic of the congo,Maternal disorders,0.651,0,0.314949202
+democratic republic of the congo,Neonatal disorders,0.822,1.034,0.931435897
+democratic republic of the congo,Neoplasms,1.408,1.12,1.259332366
+democratic republic of the congo,Nutritional deficiencies,0.164,0.169,0.166581035
+democratic republic of the congo,Road injuries,0.543,1.082,0.821235607
+democratic republic of the congo,Smoking,0.114,0.904,0.52180358
+democratic republic of the congo,Substance use disorders,0.013,0.042,0.027970005
+democratic republic of the congo,Tobacco,0.191,0.967,0.591576681
+democratic republic of the congo,"Tracheal, bronchus, and lung cancer",0.07,0.207,0.140720368
+democratic republic of the congo,Tuberculosis,1.29,1.619,1.459832124
+democratic republic of the congo,"Unsafe water, sanitation, and handwashing",0.925,1.373,1.156260764
+ghana,Alcohol use,0.233,1.401,0.83592985
+ghana,PM2.5 relative to WHO,0.97,1.093,0.79
+ghana,Cardiovascular diseases,6.149,2.88,4.46151911
+ghana,Child and maternal malnutrition,1.574,1.644,1.610134494
+ghana,Conflict and terrorism,0.001,0.002,0.001516207
+ghana,Dengue,0,0,0
+ghana,Diabetes mellitus,0.458,0.54,0.500328979
+ghana,Diarrheal diseases,0.525,0.522,0.523451379
+ghana,Dietary risks,1.424,0.954,1.18138268
+ghana,Drug use,0.05,0.048,0.048967586
+ghana,HIV/AIDS,1.526,0.871,1.187884373
+ghana,Household air pollution from solid fuels,1.021,0.809,0.911564103
+ghana,Low birth weight and short gestation,0.965,1.134,1.052238994
+ghana,Lower respiratory infections,0.984,1.684,1.345344944
+ghana,Malaria,1.72,1.804,1.763361393
+ghana,Maternal and neonatal disorders,0.233,0,0.112723754
+ghana,Maternal disorders,0.233,0,0.112723754
+ghana,Neonatal disorders,1.21,1.352,1.283301403
+ghana,Neoplasms,1.784,1.376,1.573387518
+ghana,Nutritional deficiencies,0.184,0.131,0.156641026
+ghana,Road injuries,0.22,0.675,0.454874214
+ghana,Smoking,0.142,0.722,0.441400097
+ghana,Substance use disorders,0.006,0.039,0.023034833
+ghana,Tobacco,0.241,0.817,0.538335269
+ghana,"Tracheal, bronchus, and lung cancer",0.076,0.144,0.11110208
+ghana,Tuberculosis,0.393,1.237,0.828678761
+ghana,"Unsafe water, sanitation, and handwashing",0.722,0.863,0.794785196
+global,Alcohol use,0.208,1.03,0.632322206
+global,PM2.5 relative to WHO,0.954,1.162,2.207803
+global,Cardiovascular diseases,6.709,5.66,6.167498791
+global,Child and maternal malnutrition,1.546,1.596,1.571810353
+global,Conflict and terrorism,0.02,0.027,0.023613449
+global,Dengue,0.013,0.013,0.013
+global,Diabetes mellitus,0.409,0.327,0.366671021
+global,Diarrheal diseases,0.594,0.48,0.535152395
+global,Dietary risks,1.922,2.119,2.023692791
+global,Drug use,0.085,0.189,0.138685535
+global,HIV/AIDS,0.323,0.275,0.298222061
+global,Household air pollution from solid fuels,0.724,0.668,0.695092404
+global,Low birth weight and short gestation,0.912,1.061,0.988914852
+global,Lower respiratory infections,0.839,0.773,0.804930334
+global,Malaria,0.298,0.272,0.284578616
+global,Maternal and neonatal disorders,0.159,0,0.076923077
+global,Maternal disorders,0.159,0,0.076923077
+global,Neonatal disorders,0.952,1.106,1.031495888
+global,Neoplasms,2.51,2.791,2.655054185
+global,Nutritional deficiencies,0.106,0.077,0.091029995
+global,Road injuries,0.209,0.562,0.391221093
+global,Smoking,0.772,3.004,1.924174165
+global,Substance use disorders,0.04,0.131,0.086974843
+global,Tobacco,1.141,3.238,2.223486212
+global,"Tracheal, bronchus, and lung cancer",0.335,0.593,0.468181422
+global,Tuberculosis,0.265,0.402,0.335720368
+global,"Unsafe water, sanitation, and handwashing",0.647,0.54,0.591765844
+indonesia,Alcohol use,0.08,0.17,0.126458636
+indonesia,PM2.5 relative to WHO,0.718,0.868,1.18
+indonesia,Cardiovascular diseases,7.341,6.176,6.739618771
+indonesia,Child and maternal malnutrition,0.945,1.093,1.021398645
+indonesia,Conflict and terrorism,0,0.001,5.16E-04
+indonesia,Dengue,0.114,0.132,0.123291727
+indonesia,Diabetes mellitus,0.858,0.687,0.769728592
+indonesia,Diarrheal diseases,0.54,0.516,0.52761103
+indonesia,Dietary risks,2.018,2.255,2.140341074
+indonesia,Drug use,0.019,0.07,0.04532656
+indonesia,HIV/AIDS,0.052,0.066,0.059226899
+indonesia,Household air pollution from solid fuels,0.64,0.52,0.578055152
+indonesia,Low birth weight and short gestation,0.498,0.719,0.612081761
+indonesia,Lower respiratory infections,0.408,0.421,0.414710692
+indonesia,Malaria,0.007,0.006,0.006483793
+indonesia,Maternal and neonatal disorders,0.109,0,0.05273343
+indonesia,Maternal disorders,0.109,0,0.05273343
+indonesia,Neonatal disorders,0.578,0.829,0.707567973
+indonesia,Neoplasms,1.876,1.665,1.76708031
+indonesia,Nutritional deficiencies,0.184,0.122,0.151995162
+indonesia,Road injuries,0.153,0.522,0.343480406
+indonesia,Smoking,0.341,3.377,1.908204644
+indonesia,Substance use disorders,0.004,0.016,0.010194485
+indonesia,Tobacco,0.894,3.582,2.281564586
+indonesia,"Tracheal, bronchus, and lung cancer",0.238,0.44,0.342273827
+indonesia,Tuberculosis,0.46,0.72,0.594213836
+indonesia,"Unsafe water, sanitation, and handwashing",0.489,0.469,0.478675859
+mexico,Alcohol use,0.25,1.686,0.991273343
+mexico,PM2.5 relative to WHO,0.681,0.739,1.09
+mexico,Cardiovascular diseases,4.546,3.787,4.154198839
+mexico,Child and maternal malnutrition,0.552,0.635,0.594845186
+mexico,Conflict and terrorism,0,0,0
+mexico,Dengue,0.002,0.002,0.002
+mexico,Diabetes mellitus,1.561,1.336,1.444853411
+mexico,Diarrheal diseases,0.122,0.098,0.10961103
+mexico,Dietary risks,1.648,1.727,1.688780358
+mexico,Drug use,0.027,0.127,0.078620706
+mexico,HIV/AIDS,0.052,0.162,0.108782777
+mexico,Household air pollution from solid fuels,0.217,0.166,0.19067344
+mexico,Low birth weight and short gestation,0.316,0.427,0.373298984
+mexico,Lower respiratory infections,0.467,0.493,0.480421384
+mexico,Malaria,0,0,0
+mexico,Maternal and neonatal disorders,0.05,0,0.024189647
+mexico,Maternal disorders,0.05,0,0.024189647
+mexico,Neonatal disorders,0.385,0.509,0.449009676
+mexico,Neoplasms,2.302,2.009,2.15075133
+mexico,Nutritional deficiencies,0.168,0.14,0.153546202
+mexico,Road injuries,0.214,0.699,0.464360426
+mexico,Smoking,0.466,1.331,0.91251911
+mexico,Substance use disorders,0.018,0.178,0.10059313
+mexico,Tobacco,0.661,1.51,1.099259797
+mexico,"Tracheal, bronchus, and lung cancer",0.152,0.241,0.197942429
+mexico,Tuberculosis,0.035,0.065,0.050486212
+mexico,"Unsafe water, sanitation, and handwashing",0.098,0.085,0.091289308
+nigeria,Alcohol use,0.24,1.167,0.718523948
+nigeria,PM2.5 relative to WHO,0.806,0.89,1.83
+nigeria,Cardiovascular diseases,3.786,2.847,3.301281567
+nigeria,Child and maternal malnutrition,3.533,3.994,3.770971456
+nigeria,Conflict and terrorism,0.022,0.048,0.035421384
+nigeria,Dengue,0,0,0
+nigeria,Diabetes mellitus,0.371,0.392,0.381840348
+nigeria,Diarrheal diseases,1.928,1.853,1.88928447
+nigeria,Dietary risks,0.946,0.892,0.918124819
+nigeria,Drug use,0.166,0.189,0.177872762
+nigeria,HIV/AIDS,1.232,1.009,1.116885825
+nigeria,Household air pollution from solid fuels,1.423,1.458,1.441067247
+nigeria,Low birth weight and short gestation,1.514,1.996,1.762811805
+nigeria,Lower respiratory infections,1.801,1.842,1.82216449
+nigeria,Malaria,2.264,2.273,2.268645864
+nigeria,Maternal and neonatal disorders,0.438,0,0.211901306
+nigeria,Maternal disorders,0.438,0,0.211901306
+nigeria,Neonatal disorders,1.451,1.912,1.688971456
+nigeria,Neoplasms,1.317,1.228,1.271057571
+nigeria,Nutritional deficiencies,0.055,0.052,0.053451379
+nigeria,Road injuries,0.139,0.31,0.227271408
+nigeria,Smoking,0.089,0.446,0.273285922
+nigeria,Substance use disorders,0.008,0.035,0.021937591
+nigeria,Tobacco,0.203,0.579,0.397093856
+nigeria,"Tracheal, bronchus, and lung cancer",0.062,0.129,0.096585873
+nigeria,Tuberculosis,0.487,0.773,0.63463522
+nigeria,"Unsafe water, sanitation, and handwashing",2.26,2.195,2.226446541
+peru,Alcohol use,0.208,0.955,0.593606676
+peru,PM2.5 relative to WHO,0.756,0.851,1.85
+peru,Cardiovascular diseases,2.901,3.124,3.016114175
+peru,Child and maternal malnutrition,0.56,0.627,0.594585873
+peru,Conflict and terrorism,0,0,0
+peru,Dengue,0,0.001,5.16E-04
+peru,Diabetes mellitus,0.437,0.38,0.407576197
+peru,Diarrheal diseases,0.126,0.117,0.121354136
+peru,Dietary risks,1.094,1.284,1.192079342
+peru,Drug use,0.022,0.073,0.04832656
+peru,HIV/AIDS,0.19,0.284,0.238523464
+peru,Household air pollution from solid fuels,0.244,0.188,0.215092404
+peru,Low birth weight and short gestation,0.355,0.456,0.407136913
+peru,Lower respiratory infections,1.84,1.735,1.785798258
+peru,Malaria,0.002,0.002,0.002
+peru,Maternal and neonatal disorders,0.094,0,0.045476536
+peru,Maternal disorders,0.094,0,0.045476536
+peru,Neonatal disorders,0.44,0.546,0.494717949
+peru,Neoplasms,3.353,3.009,3.17542477
+peru,Nutritional deficiencies,0.133,0.103,0.117513788
+peru,Road injuries,0.241,0.624,0.438707305
+peru,Smoking,0.155,0.604,0.386776971
+peru,Substance use disorders,0.018,0.07,0.044842767
+peru,Tobacco,0.254,0.706,0.487325593
+peru,"Tracheal, bronchus, and lung cancer",0.286,0.304,0.295291727
+peru,Tuberculosis,0.126,0.213,0.170910015
+peru,"Unsafe water, sanitation, and handwashing",0.23,0.217,0.223289308
+philippines,Alcohol use,0.229,1.265,0.763790518
+philippines,PM2.5 relative to WHO,0.485,0.675,1.12
+philippines,Cardiovascular diseases,4.174,4.344,4.261755201
+philippines,Child and maternal malnutrition,0.878,0.951,0.915683116
+philippines,Conflict and terrorism,0.006,0.013,0.009613449
+philippines,Dengue,0.059,0.051,0.054870343
+philippines,Diabetes mellitus,0.557,0.45,0.501765844
+philippines,Diarrheal diseases,0.175,0.168,0.171386551
+philippines,Dietary risks,1.575,1.998,1.793355588
+philippines,Drug use,0.009,0.037,0.023453798
+philippines,HIV/AIDS,0.1,0.139,0.120132075
+philippines,Household air pollution from solid fuels,0.794,0.779,0.786256894
+philippines,Low birth weight and short gestation,0.551,0.589,0.570615868
+philippines,Lower respiratory infections,1.108,1.053,1.079608612
+philippines,Malaria,0.001,0.001,0.001
+philippines,Maternal and neonatal disorders,0.096,0,0.046444122
+philippines,Maternal disorders,0.096,0,0.046444122
+philippines,Neonatal disorders,0.605,0.656,0.63132656
+philippines,Neoplasms,1.81,1.423,1.610227866
+philippines,Nutritional deficiencies,0.073,0.053,0.062675859
+philippines,Road injuries,0.12,0.344,0.235630382
+philippines,Smoking,0.672,2.812,1.776683116
+philippines,Substance use disorders,0.007,0.048,0.02816449
+philippines,Tobacco,1.081,3.101,2.123738268
+philippines,"Tracheal, bronchus, and lung cancer",0.18,0.312,0.248139332
+philippines,Tuberculosis,0.379,0.721,0.555542816
+philippines,"Unsafe water, sanitation, and handwashing",0.217,0.209,0.212870343
+thailand,Alcohol use,0.223,1.909,1.093325109
+thailand,PM2.5 relative to WHO,0.719,0.978,1.85
+thailand,Cardiovascular diseases,3.568,3.672,3.621685535
+thailand,Child and maternal malnutrition,0.249,0.269,0.259324141
+thailand,Conflict and terrorism,0.002,0.004,0.003032414
+thailand,Dengue,0.012,0.012,0.012
+thailand,Diabetes mellitus,0.582,0.395,0.485469279
+thailand,Diarrheal diseases,0.187,0.16,0.173062409
+thailand,Dietary risks,1.204,1.467,1.339762458
+thailand,Drug use,0.124,0.445,0.289702467
+thailand,HIV/AIDS,0.464,0.651,0.560530721
+thailand,Household air pollution from solid fuels,0.203,0.183,0.192675859
+thailand,Low birth weight and short gestation,0.173,0.201,0.187453798
+thailand,Lower respiratory infections,0.817,0.938,0.879461055
+thailand,Malaria,0,0,0
+thailand,Maternal and neonatal disorders,0.026,0,0.012578616
+thailand,Maternal disorders,0.026,0,0.012578616
+thailand,Neonatal disorders,0.208,0.235,0.221937591
+thailand,Neoplasms,2.904,3.493,3.20804596
+thailand,Nutritional deficiencies,0.033,0.02,0.026289308
+thailand,Road injuries,0.317,1.196,0.770746009
+thailand,Smoking,0.365,2.988,1.719011127
+thailand,Substance use disorders,0.006,0.064,0.03594001
+thailand,Tobacco,0.676,3.16,1.958258345
+thailand,"Tracheal, bronchus, and lung cancer",0.424,0.706,0.569570392
+thailand,Tuberculosis,0.159,0.231,0.196166909
+thailand,"Unsafe water, sanitation, and handwashing",0.216,0.201,0.208256894
+uganda,Alcohol use,0.76,2.037,1.41919642
+uganda,PM2.5 relative to WHO,0.297,0.378,2.15
+uganda,Cardiovascular diseases,4.004,2.736,3.349449444
+uganda,Child and maternal malnutrition,1.709,2.01,1.864378326
+uganda,Conflict and terrorism,0.003,0.005,0.004032414
+uganda,Dengue,0,0,0
+uganda,Diabetes mellitus,0.443,0.499,0.471907596
+uganda,Diarrheal diseases,0.691,0.772,0.732812772
+uganda,Dietary risks,1.005,0.842,0.920858249
+uganda,Drug use,0.007,0.016,0.011645864
+uganda,HIV/AIDS,1.606,1.605,1.605483793
+uganda,Household air pollution from solid fuels,1.866,1.686,1.773082729
+uganda,Low birth weight and short gestation,1.024,1.344,1.18918626
+uganda,Lower respiratory infections,1.269,1.119,1.19156894
+uganda,Malaria,1.197,1.174,1.185127238
+uganda,Maternal and neonatal disorders,0.313,0,0.151427189
+uganda,Maternal disorders,0.313,0,0.151427189
+uganda,Neonatal disorders,1.175,1.522,1.354123851
+uganda,Neoplasms,2.272,1.941,2.101135462
+uganda,Nutritional deficiencies,0.222,0.234,0.228194485
+uganda,Road injuries,0.201,0.588,0.400772134
+uganda,Smoking,0.286,0.876,0.590562167
+uganda,Substance use disorders,0.012,0.04,0.026453798
+uganda,Tobacco,0.395,0.973,0.693367683
+uganda,"Tracheal, bronchus, and lung cancer",0.082,0.11,0.096453798
+uganda,Tuberculosis,0.839,1.519,1.190020803
+uganda,"Unsafe water, sanitation, and handwashing",0.944,0.991,0.968261732
+viet nam,Alcohol use,0.105,1.877,1.019718916
+viet nam,PM2.5 relative to WHO,0.582,0.842,1.9
+viet nam,Cardiovascular diseases,6.559,6.801,6.683922109
+viet nam,Child and maternal malnutrition,0.343,0.448,0.397201742
+viet nam,Conflict and terrorism,0,0,0
+viet nam,Dengue,0.001,0.007,0.004097242
+viet nam,Diabetes mellitus,0.762,0.389,0.569454765
+viet nam,Diarrheal diseases,0.036,0.033,0.034451379
+viet nam,Dietary risks,1.778,2.271,2.032490082
+viet nam,Drug use,0.04,0.344,0.196926947
+viet nam,HIV/AIDS,0.032,0.255,0.147114175
+viet nam,Household air pollution from solid fuels,0.659,0.634,0.646094823
+viet nam,Low birth weight and short gestation,0.266,0.347,0.307812772
+viet nam,Lower respiratory infections,0.452,0.494,0.473680697
+viet nam,Malaria,0.002,0.001,0.001483793
+viet nam,Maternal and neonatal disorders,0.014,0,0.006773101
+viet nam,Maternal disorders,0.014,0,0.006773101
+viet nam,Neonatal disorders,0.326,0.374,0.350777939
+viet nam,Neoplasms,2.262,2.362,2.313620706
+viet nam,Nutritional deficiencies,0.002,0.031,0.016970005
+viet nam,Road injuries,0.28,0.833,0.565462506
+viet nam,Smoking,0.271,3.527,1.951770198
+viet nam,Substance use disorders,0.011,0.081,0.047134494
+viet nam,Tobacco,0.753,3.77,2.31039671
+viet nam,"Tracheal, bronchus, and lung cancer",0.302,0.614,0.463056604
+viet nam,Tuberculosis,0.298,0.408,0.354782777
+viet nam,"Unsafe water, sanitation, and handwashing",0.069,0.07,0.069516207
+Angola,Alcohol use,0.677,1.825,1.269605709
+Angola,PM2.5 relative to WHO,0.471,0.583,1.21
+Angola,Cardiovascular diseases,4.55,3.172,3.838666667
+Angola,Child and maternal malnutrition,1.672,1.975,1.82841074
+Angola,Conflict and terrorism,0.001,0.002,0.001516207
+Angola,Dengue,0,0,0
+Angola,Diabetes mellitus,0.383,0.502,0.444428641
+Angola,Diarrheal diseases,0.974,1.084,1.030782777
+Angola,Dietary risks,1.072,1.028,1.049286889
+Angola,Drug use,0.053,0.056,0.054548621
+Angola,HIV/AIDS,2.313,0.916,1.591858732
+Angola,Household air pollution from solid fuels,0.885,0.776,0.82873343
+Angola,Low birth weight and short gestation,0.84,1.158,1.004153846
+Angola,Lower respiratory infections,1.084,1.177,1.132007257
+Angola,Malaria,0.789,0.816,0.802937591
+Angola,Maternal and neonatal disorders,0.382,0,0.184808902
+Angola,Maternal disorders,0.382,0,0.184808902
+Angola,Neonatal disorders,0.894,1.219,1.061767296
+Angola,Neoplasms,1.465,1.36,1.410798258
+Angola,Nutritional deficiencies,0.234,0.225,0.229354136
+Angola,Road injuries,0.522,1.029,0.783716981
+Angola,Smoking,0.227,1.389,0.826832608
+Angola,Substance use disorders,0.012,0.045,0.029034833
+Angola,Tobacco,0.404,1.51,0.974925012
+Angola,"Tracheal, bronchus, and lung cancer",0.09,0.24,0.16743106
+Angola,Tuberculosis,0.856,1.419,1.146624577
+Angola,"Unsafe water, sanitation, and handwashing",1.18,1.304,1.244009676
+Bangladesh,Alcohol use,0.069,0.236,0.15520658
+Bangladesh,PM2.5 relative to WHO,1.019,1.411,6.93
+Bangladesh,Cardiovascular diseases,6.993,7.072,7.033780358
+Bangladesh,Child and maternal malnutrition,1.391,1.459,1.42610208
+Bangladesh,Conflict and terrorism,0.002,0.004,0.003032414
+Bangladesh,Dengue,0.004,0.003,0.003483793
+Bangladesh,Diabetes mellitus,0.635,0.426,0.527112724
+Bangladesh,Diarrheal diseases,0.743,0.375,0.553035801
+Bangladesh,Dietary risks,2.167,2.462,2.319281084
+Bangladesh,Drug use,0.005,0.038,0.022034833
+Bangladesh,HIV/AIDS,0.006,0.007,0.006516207
+Bangladesh,Household air pollution from solid fuels,1.686,1.577,1.62973343
+Bangladesh,Low birth weight and short gestation,1.004,1.263,1.137697629
+Bangladesh,Lower respiratory infections,0.817,0.655,0.733374456
+Bangladesh,Malaria,0.002,0.002,0.002
+Bangladesh,Maternal and neonatal disorders,0.228,0,0.11030479
+Bangladesh,Maternal disorders,0.228,0,0.11030479
+Bangladesh,Neonatal disorders,0.986,1.26,1.127440735
+Bangladesh,Neoplasms,1.618,1.813,1.718660377
+Bangladesh,Nutritional deficiencies,0.132,0.042,0.085541364
+Bangladesh,Road injuries,0.049,0.247,0.151208999
+Bangladesh,Smoking,0.282,2.978,1.673694243
+Bangladesh,Substance use disorders,0.005,0.016,0.010678278
+Bangladesh,Tobacco,0.836,3.289,2.102255926
+Bangladesh,"Tracheal, bronchus, and lung cancer",0.075,0.211,0.145204161
+Bangladesh,Tuberculosis,0.353,0.558,0.458822448
+Bangladesh,"Unsafe water, sanitation, and handwashing",0.861,0.477,0.662776488
+India,Alcohol use,0.085,0.944,0.528421867
+India,PM2.5 relative to WHO,1.375,1.748,4.98
+India,Cardiovascular diseases,4.105,4.779,4.452923561
+India,Child and maternal malnutrition,1.927,1.718,1.819112724
+India,Conflict and terrorism,0.001,0.002,0.001516207
+India,Dengue,0.034,0.032,0.032967586
+India,Diabetes mellitus,0.387,0.369,0.377708273
+India,Diarrheal diseases,1.365,0.698,1.020689889
+India,Dietary risks,1.502,2.046,1.782816642
+India,Drug use,0.077,0.147,0.113134494
+India,HIV/AIDS,0.082,0.084,0.083032414
+India,Household air pollution from solid fuels,1.034,0.92,0.975152395
+India,Low birth weight and short gestation,1.404,1.417,1.410710692
+India,Lower respiratory infections,0.934,0.72,0.823531688
+India,Malaria,0.078,0.067,0.072321722
+India,Maternal and neonatal disorders,0.164,0,0.079342042
+India,Maternal disorders,0.164,0,0.079342042
+India,Neonatal disorders,1.345,1.356,1.350678278
+India,Neoplasms,1.505,1.345,1.42240687
+India,Nutritional deficiencies,0.077,0.036,0.05583551
+India,Road injuries,0.167,0.534,0.356447992
+India,Smoking,0.482,2.509,1.528351717
+India,Substance use disorders,0.014,0.084,0.050134494
+India,Tobacco,0.918,2.826,1.902923077
+India,"Tracheal, bronchus, and lung cancer",0.08,0.164,0.123361393
+India,Tuberculosis,0.492,0.8,0.650991776
+India,"Unsafe water, sanitation, and handwashing",1.35,0.721,1.025305757
+Nepal,Alcohol use,0.195,0.795,0.504724238
+Nepal,PM2.5 relative to WHO,1.12,1.395,4.13
+Nepal,Cardiovascular diseases,3.022,4.206,3.633189163
+Nepal,Child and maternal malnutrition,1.388,1.411,1.399872762
+Nepal,Conflict and terrorism,0.001,0.003,0.002032414
+Nepal,Dengue,0.012,0.009,0.010451379
+Nepal,Diabetes mellitus,0.232,0.218,0.224773101
+Nepal,Diarrheal diseases,0.561,0.257,0.404073053
+Nepal,Dietary risks,1.044,1.602,1.332043541
+Nepal,Drug use,0.037,0.1,0.069521045
+Nepal,HIV/AIDS,0.07,0.185,0.129363812
+Nepal,Household air pollution from solid fuels,1.721,1.44,1.575945815
+Nepal,Low birth weight and short gestation,0.917,1.109,1.016111756
+Nepal,Lower respiratory infections,0.843,0.65,0.743372037
+Nepal,Malaria,0,0,0
+Nepal,Maternal and neonatal disorders,0.283,0,0.136913401
+Nepal,Maternal disorders,0.283,0,0.136913401
+Nepal,Neonatal disorders,0.901,1.059,0.982560716
+Nepal,Neoplasms,1.597,1.518,1.556219642
+Nepal,Nutritional deficiencies,0.129,0.076,0.101641026
+Nepal,Road injuries,0.138,0.291,0.216979681
+Nepal,Smoking,2.039,2.926,2.496875665
+Nepal,Substance use disorders,0.004,0.037,0.021034833
+Nepal,Tobacco,2.345,3.24,2.807005322
+Nepal,"Tracheal, bronchus, and lung cancer",0.083,0.151,0.11810208
+Nepal,Tuberculosis,0.369,0.694,0.536767296
+Nepal,"Unsafe water, sanitation, and handwashing",0.617,0.312,0.459556846
+Pakistan,Alcohol use,0.087,0.337,0.216051766
+Pakistan,PM2.5 relative to WHO,1.09,1.58,3.84
+Pakistan,Cardiovascular diseases,5.36,5.37,5.365162071
+Pakistan,Child and maternal malnutrition,3.032,3.027,3.029418965
+Pakistan,Conflict and terrorism,0.003,0.008,0.005581035
+Pakistan,Dengue,0.014,0.015,0.014516207
+Pakistan,Diabetes mellitus,0.701,0.48,0.586918239
+Pakistan,Diarrheal diseases,0.968,0.786,0.874050314
+Pakistan,Dietary risks,2.145,2.575,2.366969037
+Pakistan,Drug use,0.079,0.124,0.102229318
+Pakistan,HIV/AIDS,0.034,0.056,0.045356555
+Pakistan,Household air pollution from solid fuels,1.339,1.381,1.360680697
+Pakistan,Low birth weight and short gestation,2.144,2.398,2.275116594
+Pakistan,Lower respiratory infections,0.701,0.745,0.723713111
+Pakistan,Malaria,0.045,0.041,0.042935172
+Pakistan,Maternal and neonatal disorders,0.382,0,0.184808902
+Pakistan,Maternal disorders,0.382,0,0.184808902
+Pakistan,Neonatal disorders,2.398,2.757,2.583318336
+Pakistan,Neoplasms,2.553,2.06,2.298509918
+Pakistan,Nutritional deficiencies,0.202,0.12,0.159671021
+Pakistan,Road injuries,0.219,0.221,0.220032414
+Pakistan,Smoking,0.441,2.995,1.75939284
+Pakistan,Substance use disorders,0.006,0.062,0.034907596
+Pakistan,Tobacco,0.905,3.338,2.160931785
+Pakistan,"Tracheal, bronchus, and lung cancer",0.079,0.345,0.216311079
+Pakistan,Tuberculosis,0.644,0.821,0.73536865
+Pakistan,"Unsafe water, sanitation, and handwashing",0.982,0.821,0.898890663

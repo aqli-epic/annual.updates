@@ -1,0 +1,1505 @@
+---
+title: "Factsheets 2022"
+author: "Aarsh"
+date: '2022-07-26'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# get packages, global variables and datasets
+```{r load-lib-helper-files-data-global-var}
+
+# libraries
+library(readr)
+library(dplyr)
+library(stringr)
+library(magrittr)
+library(ggplot2)
+library(readr)
+library(tidytext)
+library(tidyr)
+library(tidyverse)
+library(sf)
+library(usethis)
+library(devtools)
+library(data.table)
+
+# load and document to keep things updated
+devtools::load_all()
+devtools::document()
+
+# read in latest color file
+color_2020 <- read_csv("./june.2022/master.dataset/color_2020.csv")
+
+# read in old available color datasets
+color_2019 <- read_csv("./june.2022/master.dataset/color_2019.csv")
+color_2016 <- read_csv("./june.2022/master.dataset/color_2016.csv")
+
+# GBD final results file (resulting file that we get after applying the steps in the GBD technical appendix)
+gbd_results <- read_csv("./june.2022/other.important.calculations.data/estimated_life_expectancy_differences_master_table_final.csv")
+
+# global variables
+who_guideline <- 5
+le_constant <- 0.098
+
+# pollution standards
+ncap_midpoint <- 25
+nat_stan_india <- 40
+nat_stan_sk <- 25
+nat_stan_bangladesh <- 15
+nat_stan_pak <- 15
+nat_stan_india <- 40
+nat_stan_china <- 35
+
+#> other region wise defintions
+
+# central africa definition
+central_african_countries <- c("Angola", "Burundi", "Cameroon", 
+                                        "Central African Republic", "Chad", 
+                                        "Republic of Congo",
+                                        "Democratic Republic of the Congo", 
+                                        "Equatorial Guinea", "Gabon",
+                                        "São Tomé and Príncipe", 
+                                        "Rwanda")
+# west africa definition
+west_african_countries <- c("Benin", "Burkina Faso", "Cape Verde", 
+                            "Gambia", "Ghana", "Guinea", "Guinea-Bissau", 
+                            "Côte d'Ivoire", "Liberia", "Mali", "Mauritania", 
+                            "Niger", "Nigeria", "Senegal", "Sierra Leone", 
+                            "Togo")
+
+# central and west africa countries definition, combine in a single vector
+central_and_west_african_countries <- c(central_african_countries, west_african_countries)
+
+# South East Asia definition
+se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia", "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", "Vietnam")
+
+
+# global operations
+`%notin%` <- Negate(`%in%`)
+
+
+```
+
+# Nigeria Factsheet
+
+```{r nigeria_fs}
+
+# No National Standard for Nigeria
+nat_stan_nigeria <- "No National Standard"
+
+# filtering the color file for Nigeria
+color_2020_nigeria <- color_2020 %>%
+  filter(country == "Nigeria") %>%
+  mutate(region = ifelse(name_1 %in% c("Ekiti", "Lagos", "Ogun", "Ondo", 
+                                       "Osun", "Oyo"), "South-West Nigeria", 
+                         "All other regions (excluding South-West Nigeria)"))
+
+# nigeria factsheet figure 2 dataset
+nigeria_fs_fig2_dataset <-  color_2020_nigeria %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), gain_in_life_expectancy = (avg_pm2.5_2020 - who_guideline)*le_constant,
+            gain_in_life_expectancy = ifelse(gain_in_life_expectancy < 0,  0, gain_in_life_expectancy),
+            tot_pop = sum(population, na.rm = TRUE)) %>%
+  slice_max(tot_pop, n = 10)  
+
+# save nigeria fs fig2 dataset
+nigeria_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/nigeria/graph.wise.datasets/nigeria_fs_fig2_dataset.csv")
+
+# nigeria fs figure 2
+ nigeria_fs_fig2 <- nigeria_fs_fig2_dataset %>% ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, gain_in_life_expectancy), y = gain_in_life_expectancy, fill = gain_in_life_expectancy)) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 0.5)) +
+   scale_fill_gradient(low = "burlywood1", high = "darkgoldenrod1") +
+  coord_flip() +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none")
+ 
+# save nigeria factsheet figure 2
+ggsave("./june.2022/factsheets/nigeria/graphs/nigeria_fs_fig2.png", nigeria_fs_fig2)
+
+
++
+  labs(x = "Cause of Death", y = "Years Lost") + 
+  coord_flip() +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()
+# getting gbd result for Nigeria from the master file
+gbd_nigeria <- gbd_results %>%
+  filter(location == "nigeria")
+
+# filter out some of the diseases that are already in some* (need to discuss this) way covered in the PM2.5 category
+gbd_nigeria_filter <- gbd_nigeria %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco", 
+                                  "Lower respiratory infections"))
+
+# choosing the top 6 causes of death, based on "est_le_diff_vs_actual_aggregate" variable
+nigeria_fs_fig3_dataset <- gbd_nigeria_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6)
+
+# save nigeria fs figure 3 dataset
+nigeria_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/nigeria/graph.wise.datasets/nigeria_fs_fig3_dataset.csv")
+
+# nigeria fs figure 3
+nigeria_fs_fig3 <- nigeria_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) 
+# save nigeria factsheet figure 3
+ggsave("./june.2022/factsheets/nigeria/graphs/nigeria_fs_fig3.png", nigeria_fs_fig3)
+
+# nigeria factsheet figure 4 dataset 
+nigeria_fs_fig4_dataset <- color_2020_nigeria %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save nigeria fs figure 4 dataset
+nigeria_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/nigeria/graph.wise.datasets/nigeria_fs_fig4_dataset.csv")
+  
+
+# nigeria factsheet figure 4 
+  nigeria_fs_fig4 <- ggplot(nigeria_fs_fig4_dataset) +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 30, 5), limits = c(0, 30)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("National Average" = "darkgrey")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) + 
+     geom_text(x = 2003.5, y = 6.5, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+  
+# save nigeria factsheet figure 4
+ggsave("./june.2022/factsheets/nigeria/graphs/nigeria_fs_fig4.png", nigeria_fs_fig4)  
+
+# appendix table nigeria factsheet 
+
+nigeria_appendix_table <- color_2020_nigeria %>%
+  group_by(name_1) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(total_population_millions = round((sum(population, na.rm = TRUE))/1000000, 1), avg_pm2.5_2020 = round(sum(pm2020_pop_weighted, na.rm = TRUE), 2),
+            life_exp_gain_2020_who  = round((avg_pm2.5_2020 - who_guideline)*le_constant, 2), 
+            life_exp_gain_2020_30perc_reduce = round(((avg_pm2.5_2020*0.30)*le_constant), 2)) %>%
+  ungroup() %>%
+  mutate(life_exp_gain_2020_who = ifelse(life_exp_gain_2020_who < 0, 0, life_exp_gain_2020_who)) %>%
+  rename(`State` = name_1, `Population (Millions)` = total_population_millions, 
+         `PM 2.5 concentration 2020 (µg/m³)` = avg_pm2.5_2020, 
+         `From 2020 Concentration to WHO Guideline of 5 µg/m³` = life_exp_gain_2020_who, 
+         `From 2020 Concentration reduction by 30 percent` = life_exp_gain_2020_30perc_reduce)
+
+# save nigeria factsheet appendix table
+nigeria_appendix_table %>%
+   write_csv("./june.2022/factsheets/nigeria/nigeria_fs_appendix_table_2022.csv")
+  
+
+```
+
+
+# South Korea factsheet
+
+```{r south_korea_fs}
+
+# filter dataset for south korea
+color_2020_south_korea <- color_2020 %>%
+  filter(country %in% "South Korea")
+
+# south korea factsheet figure 2 dataset
+southkorea_fs_fig2_dataset <- color_2020_south_korea %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save south korea fs figure 2 dataset
+southkorea_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/southkorea/graph.wise.datasets/southkorea_fs_fig2_dataset.csv")
+
+
+# southkorea fs figure 2
+southkorea_fs_fig2 <- southkorea_fs_fig2_dataset %>% 
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = le_gain), width = 0.7) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 0.5)) +
+  scale_fill_gradient(low = "burlywood1", high = "darkgoldenrod1") +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = "none")
+
+# save southkorea factsheet figure2
+
+ggsave("./june.2022/factsheets/southkorea/graphs/southkorea_fs_fig2.png", southkorea_fs_fig2) 
+
+# southkorea factsheet figure 3 dataset
+southkorea_fs_fig3_dataset <- color_2020_south_korea %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+
+# save south korea fs figure 3 dataset
+southkorea_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/southkorea/graph.wise.datasets/southkorea_fs_fig3_dataset.csv")
+
+
+  southkorea_fs_fig3 <- southkorea_fs_fig3_dataset %>%
+    ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8, linetype = "dashed") +
+    geom_hline(mapping = aes(yintercept = 25), lwd = 0.8, linetype = "dashed") + 
+  scale_y_continuous(breaks = seq(0, 30, 5), limits = c(0, 30)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("National Average" = "darkgrey")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +  geom_text(x = 2003.6, y = 6.3, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, ""))) +
+    geom_text(x = 2014, y = 26.3, label = expression(paste("South Korea PM2.5 National Standard: 25 ", mu, "g","/", m^3, "")))
+  
+  
+# save southkorea factsheet figure 3
+ggsave("./june.2022/factsheets/southkorea/graphs/southkorea_fs_fig3.png", southkorea_fs_fig3)   
+
+# South Korea fact sheet appendix table
+southkorea_fs_appendix_table <- color_2020_south_korea %>%
+  mutate(le_gain_who = round((pm2020 - who_guideline)*le_constant, 1), 
+         le_gain_who = ifelse(le_gain_who < 0, 0, le_gain_who), 
+         le_gain_nat_stan = round((pm2020 - nat_stan_sk)*le_constant, 1), 
+         le_gain_nat_stan = ifelse(le_gain_nat_stan < 0, 0, le_gain_nat_stan), 
+         change_poll_since_previous_year = pm2020 - pm2019,
+         dir_change = ifelse(change_poll_since_previous_year > 0, "Up", "Down"), 
+         perc_change = (change_poll_since_previous_year/pm2019)*100, 
+         pop_millions = round(population/1000000, 1), 
+         pm2020 = round(pm2020, 1)) %>%
+  slice_max(population, n = 25) %>%
+  select(name_1, name_2, pop_millions, pm2020, 
+         le_gain_who, le_gain_nat_stan) %>%
+  rename(`Province-level division` = name_1, `Municipal-level division` = name_2, `Population (Millions)` = pop_millions, 
+         `PM 2.5 concentration 2020 (µg/m³)` = pm2020, 
+         `From 2020 Concentration to WHO Guideline of 5 µg/m³` = le_gain_who, 
+         `From 2020 Concentration to the National Standard of 25 µg/m³` = le_gain_nat_stan)
+
+# South Korea factsheet appendix table save
+southkorea_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/southkorea/southkorea_fs_appendix_table.csv")
+ 
+
+
+```
+
+# Bangladesh Factsheet
+
+```{r bangladesh_fs}
+
+# filtering color dataset and keeping only bangladesh
+color_2020_bangladesh <- color_2020 %>%
+  filter(country == "Bangladesh")
+
+
+# bangladesh fs figure 2 dataset
+bangladesh_fs_fig2_dataset <- color_2020_bangladesh %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save bangladesh fs figure 2 dataset
+bangladesh_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig2_dataset.csv")
+
+# bangladesh fs figure 2
+bangladesh_fs_fig2 <- bangladesh_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = le_gain), width = 0.5) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 12, 1)) +
+  scale_fill_gradient(low = "red", high = "darkred") +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = "none")
+
+# save bangladesh factsheet figure 2
+ggsave("./june.2022/factsheets/bangladesh/graphs/bangladesh_fs_figure2.png", bangladesh_fs_fig2)
+
+# filtering out the master GBD file for Bnagladesh
+gbd_results_bangladesh <- gbd_results %>% 
+  filter(location  == "Bangladesh")
+
+# remove categories that are sort of* already covered under the PM2.5 category
+gbd_results_bangladesh_filter <- gbd_results_bangladesh %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco", 
+                                "Household air pollution from solid fuels"))
+
+# bangladesh factsheet fig3 dataset
+bangladesh_fs_fig3_dataset <- gbd_results_bangladesh_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6) 
+
+# save bangladesh fs figure 3 dataset
+bangladesh_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig3_dataset.csv")
+
+# bangladesh factsheet figure 3
+bangladesh_fs_fig3 <- ggplot(bangladesh_fs_fig3_dataset) + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) +
+  labs(x = "Cause of Death", y = "Years Lost") +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  scale_y_continuous(breaks = seq(0, 8, 1)) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()  
+
+# save bangladesh factsheet figure 3  
+ggsave("./june.2022/factsheets/bangladesh/graphs/bangladesh_fs_figure3.png", bangladesh_fs_fig3)
+
+# bangladesh factsheet fig4 dataset
+bangladesh_fs_fig4_dataset <- color_2020_bangladesh %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5) 
+
+# save bangladesh fs figure 4 dataset
+bangladesh_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/bangladesh/graph.wise.datasets/bangladesh_fs_fig4_dataset.csv")
+
+# bangladesh factsheet fig4
+bangladesh_fs_fig4 <- bangladesh_fs_fig4_dataset %>%
+  ggplot() +
+  geom_line(mapping = ggplot2::aes(x = as.integer(years), y = as.double(pop_weighted_avg_pm2.5)), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 80, 5), limits = c(0, 80)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2))  +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+   geom_text(x = 2002.8, y = 8.7, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+# save bangladesh factsheet figure 4  
+ggsave("./june.2022/factsheets/bangladesh/graphs/bangladesh_fs_figure4.png", bangladesh_fs_fig4)
+
+# bangladesh fs appendix table
+bangladesh_fs_appendix_table <- color_2020_bangladesh %>%
+  mutate(pm2020 = round(pm2020, 2),
+         le_gain_red_to_who = round((pm2020 - who_guideline)*le_constant, 2),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_to_nat = round((pm2020 - nat_stan_bangladesh)*le_constant, 2),
+         le_gain_red_to_nat = ifelse(le_gain_red_to_nat < 0, 0, le_gain_red_to_nat),
+         le_gain_red_by_30_percent = round((pm2020*0.3)*le_constant, 2), 
+         pop_millions = round(population/1000000, 2)) %>%
+  select(name_2, pop_millions, pm2020, le_gain_red_to_who, le_gain_red_to_nat, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+    rename(Region = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = pm2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = le_gain_red_to_who,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to National Standard of 15 µg/m³` = le_gain_red_to_nat, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save bangladesh factsheet appendix table
+bangladesh_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/bangladesh/bangladesh_fs_appendix_table.csv")
+```
+
+
+# Nepal Factsheet
+
+```{r nepal_fs}
+
+# filtering the color dataset for Nepal
+color_2020_nepal <- color_2020 %>%
+  filter(country == "Nepal")
+
+# nepal factsheet figure 2 dataset
+nepal_fs_fig2_dataset <- color_2020_nepal %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save nepal factsheet figure 2 dataset
+nepal_fs_fig2_dataset %>%
+  write_csv("./factsheets/nepal/graph.wise.datasets/nepal_fs_fig2_dataset.csv")
+
+# nepal fs figure 2
+ nepal_fs_fig2 <- nepal_fs_fig2_dataset %>% 
+   ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = le_gain), width = 0.5) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 12, 1)) +
+  coord_flip() +
+   scale_fill_gradient(low = "red", high = "darkred") +
+  theme_classic() +
+  theme(legend.position = "none")
+ 
+ # save nepal fs figure 2
+ ggsave("./june.2022/factsheets/nepal/graphs/nepal_fs_fig2.png", nepal_fs_fig2)
+
+
+
+# filtering gbd results for Nepal
+gbd_results_nepal <- gbd_results %>%
+  filter(location == "Nepal")
+
+# filtering out those causes of death that are sort of* covered under PM2.5 in some broad way
+gbd_results_nepal_filter <- gbd_results_nepal %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco", 
+                                "Household air pollution from solid fuels"))
+
+nepal_fs_fig3_dataset <- gbd_results_nepal_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6)
+
+# save nepal factsheet figure 3 dataset
+nepal_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/nepal/graph.wise.datasets/nepal_fs_fig3_dataset.csv")
+
+# nepal factsheet figure 3
+nepal_fs_fig3 <- nepal_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) +
+  labs(x = "Cause of Death", y = "Years Lost") +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()  
+
+ # save nepal fs figure 3
+ ggsave("./june.2022/factsheets/nepal/graphs/nepal_fs_fig3.png", nepal_fs_fig3)
+
+
+
+# nepal factsheet figure 4 dataset
+nepal_fs_fig4_dataset <- color_2020_nepal %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5) 
+
+# save nepal factsheet figure 4 dataset
+nepal_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/nepal/graph.wise.datasets/nepal_fs_fig4_dataset.csv")
+
+# nepal factsheet figure 4
+ nepal_fs_fig4 <- nepal_fs_fig4_dataset %>%
+   ggplot() +
+  geom_line(mapping = ggplot2::aes(x = as.integer(years), y = as.double(pop_weighted_avg_pm2.5)), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 60)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2))  +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+   geom_text(x = 2003.5, y = 8.7, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+ 
+  # save nepal fs figure 4
+ ggsave("./june.2022/factsheets/nepal/graphs/nepal_fs_fig4.png", nepal_fs_fig4)
+
+ 
+# Nepal Factsheet Appendix Table 
+nepal_fs_appendix_table <- color_2020_nepal %>%
+  mutate(pm2020 = round(pm2020, 2),
+         le_gain_red_to_who = round((pm2020 - who_guideline)*le_constant, 2),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2020*0.3)*le_constant, 2), 
+         pop_millions = round(population/1000000, 2)) %>%
+  select(name_2, pop_millions, pm2020, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 25) %>%
+    rename(Region = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = pm2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = le_gain_red_to_who, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save nepal factsheet appendix table
+nepal_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/nepal/nepal_fs_appendix_table.csv")
+```
+
+
+# Pakistan Factsheet
+
+```{r pakistan_fs}
+
+# filtering color level data for Pakistan and adding a "region" column
+color_2020_pak <- color_2020 %>%
+  filter(country == "Pakistan") %>%
+  mutate(region = ifelse(name_1  %in% c("Federal Capital Territory", "Punjab"), 
+                         name_1, "All other regions (excluding FCT and Punjab)"))
+
+
+#> figure2: Top 10 gadm level 1 most populous cities LE gains graph
+pak_fs_fig2_dataset <- color_2020_pak %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save figure 2 dataset
+pak_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/pakistan/graph.wise.datasets/pak_fs_fig_2_dataset.csv")
+
+
+# figure2 plot
+pak_fs_fig2 <- pak_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = le_gain), width = 0.5) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 12, 1)) +
+  coord_flip() +
+  scale_fill_gradient(low = "orange", high = "red") +
+  theme_classic() +
+  theme(legend.position = "none")
+
+# save figure 2
+ggsave("./june.2022/factsheets/pakistan/graphs/pak_fs_fig_2.png", pak_fs_fig2)
+
+#> figure 3: GBD, Global Burden of Disease comparison
+
+# Filter GBD master dataset for Pakistan
+gbd_pakistan <- gbd_results %>% 
+  filter(location == "Pakistan")
+
+# filtering out some causes of death that are not so different from PM2.5
+gbd_pakistan_filter <- gbd_pakistan %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco"))
+
+# keeping only top 6 causes and creating the pakistan figure 3 dataset
+pak_fs_fig3_dataset <- gbd_pakistan_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6)
+
+# save figure 3 dataset
+pak_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/pakistan/graph.wise.datasets/pak_fs_fig_3_dataset.csv")
+
+# pakistan figure 3
+pak_fs_fig3 <- ggplot(pak_fs_fig3_dataset) + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) +
+  labs(x = "Cause of Death", y = "Years Lost") +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()
+
+# save pakistan factsheet figure 3
+ggsave("./june.2022/factsheets/pakistan/graphs/pak_fs_fig_3.png", pak_fs_fig3)
+
+
+#> figure 4: Average PM2.5 concentration, 1998 to 2020
+
+# region wise pakistan data for 1998 to 2020
+region_wise_pak_average_ts <- color_2020_pak %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# national average pakistan data for 1998 to 2020
+ national_average_pak_ts <- color_2020_pak %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# pakistan factsheet figure 4 final dataset 
+pak_fs_fig4_dataset <- rbind(region_wise_pak_average_ts, national_average_pak_ts)
+
+# save figure 4 dataset
+pak_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/pakistan/graph.wise.datasets/pak_fs_fig_4_dataset.csv")
+  
+# pakistan factsheet figure 4
+pak_fs_fig4 <- ggplot(pak_fs_fig4_dataset) +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.1) +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 60, 5), limits = c(0, 60)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("National Average" = "darkgrey", "Federal Capital Territory" = "darkred", "Punjab" = "orange", "All other regions (excluding FCT and Punjab)" = "tan")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )")), 
+       caption = "*FCT refers to the Federal Capital Territory region in Pakistan") +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9), 
+        plot.caption = element_text(hjust = 0, size = 5), plot.caption.position = "plot") +
+    geom_text(x = 2002.7, y = 8, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+    
+# save pakistan factsheet figure 4
+ggsave("./june.2022/factsheets/pakistan/graphs/pak_fs_fig_4.png", pak_fs_fig4)
+
+
+# pakistan factsheet appendix table
+
+pakistan_appendix_table_gadm2 <- color_2020_pak %>%
+  mutate(pm2020 = round(pm2020, 2),
+         le_gain_red_to_who = round((pm2020 - who_guideline)*le_constant, 2),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_to_nat = round((pm2020 - nat_stan_pak)*le_constant, 2),
+         le_gain_red_to_nat = ifelse(le_gain_red_to_nat < 0, 0, le_gain_red_to_nat),
+         le_gain_red_by_30_percent = round((pm2020*0.3)*le_constant, 2), 
+         pop_millions = round(population/1000000, 2)) %>%
+  select(name_2, pop_millions, pm2020, le_gain_red_to_who, le_gain_red_to_nat, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pop_millions, n = 26) %>%
+    rename(Region = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = pm2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = le_gain_red_to_who,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to National Standard of 15 µg/m³` = le_gain_red_to_nat, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = le_gain_red_by_30_percent) %>%
+  filter(!is.na(Region))
+  
+# save appendix table
+pak_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/pakistan/pak_fs_app_table.csv")
+
+
+```
+
+# India factsheet
+
+```{r india_fs}
+
+# Filtering color dataset for India
+color_2020_india <- color_2020 %>%
+  filter(country %in% "India")
+
+# adding a north India/rest of india region column (specifically Indo gangetic plain)
+north_india <- c("West Bengal", "Uttar Pradesh", "Punjab", "Haryana", 
+                 "Chandigarh", "Bihar", "NCT of Delhi")
+
+color_2020_india <- color_2020_india %>%
+  mutate(region = ifelse(name_1 %in% north_india, "North India", "All other regions (excluding North India)"))
+
+#> Figure 2 
+
+# fig 2 dataset: PM2.5 in top 10 most populous states in 2020 
+india_fs_fig2_dataset <- color_2020_india %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save figure 2 dataset
+
+india_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/india/graph.wise.datasets/india_fs_fig2_dataset.csv")
+
+# Fig 2 plot
+ india_fs_fig2 <- india_fs_fig2_dataset %>%
+   ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = avg_pm2.5_2020), width = 0.5) +
+  labs(x = "State", y = "Average PM2.5 concentrations (in µg/m³)", 
+       subtitle = "Top 10 Most Polluted States in India") +
+  scale_y_continuous(breaks = seq(0, 9, 1)) +
+  scale_fill_gradient(low = "red", high = "darkred") +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = "none") +
+  ggtitle("Average PM2.5 concentrations in 2020") 
+ 
+ # save india fs figure 2
+ ggsave("./june.2022/factsheets/india/graphs/india_fs_fig2.png", india_fs_fig2)
+
+ #> Figure 3: India GBD
+ 
+ # GBD results for India
+ gbd_india <- gbd_results %>%
+   filter(location == "India")
+
+# filtering out some of the causes of deaths that are similar to PM2.5
+gbd_india_filter <- gbd_india %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco"))
+
+# figure 3 dataset: choosing top 6 causes of deaths from the remaining causes of deaths
+india_fs_fig3_dataset <- gbd_india_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6)
+
+
+# save india factsheet figure 3 dataset
+india_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/india/graph.wise.datasets/india_fs_fig3_dataset.csv")
+
+
+# figure 3 plot
+india_fs_fig3 <- india_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) +
+  labs(x = "Cause of Death", y = "Years Lost") +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()
+
+ # save india fs figure 3
+ ggsave("./june.2022/factsheets/india/graphs/india_fs_fig3.png", india_fs_fig3)
+
+
+#> Figure 4: Average PM2.5 pollution in North India, All regions (excluding North India), National Average: 1998 to 2020
+
+# creating India's region wise average PM2.5 data from 1998 to 2020 
+region_wise_avg_pm2.5_india_ts <- color_2020_india %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# creating a national average PM2.5 trendlines data from 1998 to 2020
+national_avg_pm2.5_india_ts <- color_2020_india %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# India factsheet figure 4 dataset
+india_fs_fig4_dataset <- rbind(region_wise_avg_pm2.5_india_ts, national_avg_pm2.5_india_ts)
+
+# save india factsheet figure 4 dataset
+india_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/india/graph.wise.datasets/india_fs_fig4_dataset.csv")
+  
+# India factsheet figure 4
+india_fs_fig4 <- ggplot(india_fs_fig4_dataset) +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.1) +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 100, 5), limits = c(0, 100)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("National Average" = "darkgrey", "North India" = "darkred", "All other regions (excluding North India)" = "orange")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 6.5), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+     geom_text(x = 2002.8, y = 10, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+
+ # save india fs figure 4
+ ggsave("./june.2022/factsheets/india/graphs/india_fs_fig4.png", india_fs_fig4)
+
+# Appendix table
+
+india_fs_appendix_table <- color_2020_india %>%
+  group_by(name_1) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020, 
+         pm2017_pop_weighted = pop_weights*pm2017) %>%
+  summarise(total_population_millions = (sum(population, na.rm = TRUE))/1000000, avg_pm2.5_2020 = round(sum(pm2020_pop_weighted, na.rm = TRUE), 2),
+            avg_pm2.5_2017 = round(sum(pm2017_pop_weighted, na.rm = TRUE), 2),
+            life_exp_gain_2020_who  = round((avg_pm2.5_2020 - who_guideline)*le_constant, 2), 
+            life_exp_gain_2020_nat_standard = round((avg_pm2.5_2020 - nat_stan_india)*le_constant, 2), 
+            life_exp_gain_2017_25perc_reduce = round(((avg_pm2.5_2017*(ncap_midpoint/100))*le_constant), 2)) %>%
+  ungroup() %>%
+  mutate(life_exp_gain_2020_who = ifelse(life_exp_gain_2020_who < 0, 0, life_exp_gain_2020_who), 
+         life_exp_gain_2020_nat_standard = ifelse(life_exp_gain_2020_nat_standard < 0, 0, life_exp_gain_2020_nat_standard)) %>%
+  select(-avg_pm2.5_2017) %>%
+  rename(`State/UT` = name_1, `Population (Millions)` = total_population_millions, 
+         `PM 2.5 concentration 2020 (µg/m³)` = avg_pm2.5_2020, 
+         `From 2020 Concentration to WHO Guideline of 5 µg/m³` = life_exp_gain_2020_who, 
+         `From 2020 Concentration to the National Standard of 40 µg/m³` = life_exp_gain_2020_nat_standard, 
+         `From 2017 Concentration by 25% per NCAP` = life_exp_gain_2017_25perc_reduce)
+
+# save appendix table
+india_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/india/india_fs_appendix_table.csv")
+
+
+```
+
+# Indonesia Factsheet
+
+```{r indonesia_fs}
+
+# color 2020 Indonesia
+color_2020_indonesia <- color_2020 %>%
+  filter(country == "Indonesia")
+
+#> Figure 2: Potential Gain in Life Expectancy through Reducing PM2.5 to the WHO Guideline in 10 Largest gadm level 1 regions in Indonesia.
+
+
+# fig2 dataset
+indonesia_fs_fig2_dataset <-  color_2020_indonesia %>%
+  mutate(name_1 = str_replace(name_1, "Jawa Barat", "West Java"),
+         name_1 = str_replace(name_1, "Jawa Timur", "East Java"), 
+         name_1 = str_replace(name_1, "Jawa Tengah", "Central Java")) %>%
+  group_by(name_1) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), gain_in_life_expectancy = (avg_pm2.5_2020 - who_guideline)*le_constant,
+            gain_in_life_expectancy = ifelse(gain_in_life_expectancy < 0,  0, gain_in_life_expectancy),
+            tot_pop = sum(population, na.rm = TRUE)) %>%
+  slice_max(tot_pop, n = 10)  
+
+# save indonesia factsheet figure 2 dataset
+indonesia_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/indonesia/graph.wise.datasets/indonesia_fs_fig2_dataset.csv")
+
+# fig2 plot
+
+indonesia_fs_fig2 <- indonesia_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, gain_in_life_expectancy), y = gain_in_life_expectancy, fill = gain_in_life_expectancy), width = 0.6) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 3, 0.5)) +
+  scale_fill_gradient(low = "darkgoldenrod1", high = "darkorange") +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = "none")
+
+# save figure 2
+ggsave("./june.2022/factsheets/indonesia/graphs/indonesia_fs_fig2.png", indonesia_fs_fig2)
+
+
+#> Figure 3: · Life Expectancy Impact of PM2.5 and Unassociated Causes/ Risks of Death
+
+# filtering master GBD file for Indonesia
+gbd_indonesia <- gbd_results %>%
+  filter(location == "indonesia")
+
+# filtering out some of the GBD causes of deaths that are sort of* covered in PM2.5
+gbd_indonesia_filter <- gbd_indonesia %>%
+  filter(cause_of_death %notin% c("Cardiovascular diseases", "Neoplasms", "Tobacco"))
+
+# indonesia factsheet figure3 dataset: filtering out top 6 causes of deaths (in terms of years of life lost)
+indonesia_fs_fig3_dataset <- gbd_indonesia_filter %>%
+  slice_max(est_le_diff_vs_actual_aggregate, n = 6)
+
+# save indonesia factsheet figure 3 dataset
+indonesia_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/indonesia/graph.wise.datasets/indonesia_fs_fig3_dataset.csv")
+
+# indonesia factsheet figure 3
+indonesia_fs_fig3 <- indonesia_fs_fig3_dataset %>%
+  ggplot() + 
+  geom_col(mapping = aes(x = forcats::fct_reorder(cause_of_death, est_le_diff_vs_actual_aggregate), y = est_le_diff_vs_actual_aggregate, fill = cause_of_death), width = 0.5) +
+  labs(x = "Cause of Death", y = "Years Lost") +
+   scale_fill_manual(values = c("royalblue", "royalblue",  
+                                "royalblue", "royalblue", "darkred", "royalblue")) +
+  ggthemes::theme_clean() +
+  theme(legend.position = "none") +
+  coord_flip()  
+
+# save figure 3
+ggsave("./june.2022/factsheets/indonesia/graphs/indonesia_fs_fig3.png", indonesia_fs_fig3)
+
+
+#> Figure 4: Average PM2.5 Concentration in Indonesia from 1998-2020, Indonesia
+
+# indonesia factsheet figure 4 dataset: creating Indonesia's national average PM2.5 data from 1998 to 2020 
+indonesia_fs_fig4_dataset <- color_2020_indonesia %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "National Average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save indonesia factsheet figure 4 dataset
+indonesia_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/indonesia/graph.wise.datasets/indonesia_fs_fig4_dataset.csv")
+
+# indonesia factsheet figure 4
+ indonesia_fs_fig4 <- indonesia_fs_fig4_dataset %>% 
+   ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 30, 5), limits = c(0, 30)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("National Average" = "darkgrey")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) + 
+    geom_text(x = 2002.8, y = 6.3, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+# save figure 4
+ggsave("./june.2022/factsheets/indonesia/graphs/indonesia_fs_fig4.png", indonesia_fs_fig4) 
+ 
+ 
+# indonesia factsheet appendix table
+ 
+indonesia_fs_appendix_table <- color_2020_indonesia %>%
+   mutate(name_1 = str_replace(name_1, "Jawa Barat", "West Java"),
+         name_1 = str_replace(name_1, "Jawa Timur", "East Java"), 
+         name_1 = str_replace(name_1, "Jawa Tengah", "Central Java")) %>%
+  group_by(name_1) %>%
+   mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(total_population_millions = round((sum(population, na.rm = TRUE))/1000000, 2), avg_pm2.5_2020 = round(sum(pm2020_pop_weighted, na.rm = TRUE), 2),
+            life_exp_gain_2020_who  = round((avg_pm2.5_2020 - who_guideline)*le_constant, 2), 
+            life_exp_gain_2020_30perc_reduce = round(((avg_pm2.5_2020*(0.3))*le_constant), 2)) %>%
+  ungroup() %>%
+  mutate(life_exp_gain_2020_who = ifelse(life_exp_gain_2020_who < 0, 0, life_exp_gain_2020_who)) %>% rename(`Province` = name_1, 
+         `Population (Millions)` = total_population_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = avg_pm2.5_2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = life_exp_gain_2020_who, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = life_exp_gain_2020_30perc_reduce)
+
+# save indonesia factsheet appendix table
+indonesia_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/indonesia/indonesia_fs_appendix_table.csv")
+
+
+```
+
+# South East Asia Factsheet
+
+```{r se_asia_fs}
+
+#> Figure 2: Potential Gain in Years of Life Expectancy Through Permanently Reducing PM2.5 from 2020 Concentrations to the WHO Guideline, in 10 Largest Regions in Southeast Asia
+
+# filtering color file for South East Asia
+color_data_se_asia <- color_2020 %>%
+  filter(country %in% se_asia_vec) %>%
+  mutate(name_1_country = str_c(name_1, "(", country, ")", sep = "")) 
+
+# seasia factsheet figure 2 dataset: filter dataset for South East Asia and add a new column that combines gadm_1 and gadm_0 columns
+seasia_fs_fig2_dataset <- color_data_se_asia %>%
+  mutate(name_1_country = str_c(name_1, "(", country, ")", sep = "")) %>%
+  group_by(name_1_country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE),
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_pop_weighted = sum(pm2020_pop_weighted, na.rm = TRUE),
+            gain_in_le = (avg_pm2.5_pop_weighted - who_guideline) * le_constant,
+            gain_in_le = ifelse(gain_in_le < 0, 0, gain_in_le)) %>%
+  ungroup() %>%
+  mutate(name_1_country = str_replace(name_1_country, "Jawa Barat", "West Java"),
+         name_1_country = str_replace(name_1_country, "Jawa Timur", "East Java"),
+         name_1_country = str_replace(name_1_country, "Jawa Tengah", "Central Java")
+  ) %>%
+  slice_max(tot_pop, n = 10)
+
+# save seasia figure 2 dataset
+seasia_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/seasia/graph.wise.datasets/se_asia_fig2_dataset.csv")
+
+
+# seasia figure 2
+seasia_fs_fig2 <- seasia_fs_fig2_dataset %>%
+  ggplot(mapping = aes(x = forcats::fct_reorder(name_1_country, gain_in_le), y = gain_in_le, fill = gain_in_le)) +
+  geom_col() +
+  labs(y = "Gain In Life Expectancy (Years)", x = "Region") +
+  coord_flip() +
+  scale_fill_gradient(low = "darkgoldenrod1", high = "darkorange2") +
+  ggthemes::theme_tufte() +
+  theme(legend.position = "none")
+
+# save seasia figure 2
+ggsave("./june.2022/factsheets/seasia/graphs/seasia_fs_fig2.png", seasia_fs_fig2)
+
+#> seasia figure 3 
+
+# seasia figure 3 dataset
+seasia_fs_fig3_dataset <- color_data_se_asia %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "Southeast Asia average") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save seasia figure 3 dataset
+seasia_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/seasia/graph.wise.datasets/se_asia_fig3_dataset.csv")
+
+
+# seasia figure 3
+seasia_fs_fig3 <- seasia_fs_fig3_dataset %>%
+  ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5), lwd = 1.1, 
+            color = "darkred") +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 25, 2), limits = c(0, 25)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "none", legend.title = element_blank(), 
+        legend.text = element_text(size = 7), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+   geom_text(x = 2002.8, y = 6.2, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+# save seasia figure 3
+ggsave("./june.2022/factsheets/seasia/graphs/seasia_fs_fig3.png", seasia_fs_fig3)
+
+#> Appendix Table, SE Asia factsheet
+
+seasia_fs_appendix_table <- color_data_se_asia %>%
+  mutate(pm2020 = round(pm2020, 2),
+         le_gain_red_to_who = round((pm2020 - who_guideline)*le_constant, 2),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2020*0.3)*le_constant, 2), 
+         pop_millions = round(population/1000000, 2)) %>%
+  select(country, name_2, pop_millions, pm2020, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pm2020, n = 25) %>%
+    rename(Country = country, 
+           Region = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = pm2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = le_gain_red_to_who, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = le_gain_red_by_30_percent) 
+
+
+# save se asia appendix table
+seasia_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/seasia/seasia_fs_appendix_table.csv")
+
+```
+
+
+# Central and West Africa factsheet
+
+```{r cwafrica_fs}
+
+
+# filtering color 2020 data for central and west african countries
+color_data_cen_west_africa <- color_2020 %>%
+  filter(country %in% central_and_west_african_countries) %>%
+  mutate(name_1_country = str_c(name_1, "(", country, ")", sep = ""), 
+         region = ifelse(country %in% central_african_countries, "central african", 
+                         "west african")) 
+
+
+#> cwafrica fig2
+
+# GBD results filtered for relevant cause of death and countries 
+gbd_results_cwafrica_fig2 <- gbd_results %>%
+  filter(cause_of_death %in% c("PM2.5 relative to WHO",
+                               "Malaria", "Unsafe water, sanitation, and handwashing", 
+                               "HIV/AIDS"), location %in% c("nigeria", "democratic republic of the congo", "Angola", "ghana", "cameroon"))
+
+# making the 'location' column of type factor
+gbd_results_cwafrica_fig2$location <- factor(gbd_results_cwafrica_fig2$location, 
+                                        levels = c("nigeria", "democratic republic of the congo", "Angola", "ghana", "cameroon"))
+
+# Rename Democratic Republic of the Congo to DRC
+gbd_results_cwafrica_fig2$location <-  str_replace(gbd_results_cwafrica_fig2$location, 
+            "democratic republic of the congo", "DRC")
+
+# Converting 'cause_of_death' to type factor
+gbd_results_cwafrica_fig2$cause_of_death <- as.factor(gbd_results_cwafrica_fig2$cause_of_death)
+
+# Rearranging 'cause of death' levels
+levels(gbd_results_cwafrica_fig2$cause_of_death) <- c("HIV/AIDS", "Malaria", "PM2.5 relative to WHO", "Unsafe Water, Sanitation and Handwashing")
+
+# wrapping x-axis labels text 
+levels(gbd_results_cwafrica_fig2$cause_of_death) <- str_wrap(levels(gbd_results_cwafrica_fig2$cause_of_death), 15)
+
+# getting country wise population
+country_wise_population <- color_2020 %>%
+  group_by(country) %>%
+  summarise(population_total = sum(population, na.rm = TRUE)) %>%
+  ungroup() %>%
+  filter(country %in% c("Cameroon", "Nigeria", "Angola", "Ghana", 
+                  "Democratic Republic of the Congo")) %>%
+  arrange(desc(population_total))
+
+# reorder within each location as per the total life years lost column
+gbd_results_cwafrica_fig2 <- gbd_results_cwafrica_fig2 %>% 
+  mutate(cause_of_death = reorder_within(cause_of_death, est_le_diff_vs_actual_aggregate, location))
+
+# clean the "cause of death" column and save the cwafrica factsheet figure 2
+cwafrica_fs_fig2_dataset <- gbd_results_cwafrica_fig2 %>%
+  mutate(`Cause of Death` = str_remove(cause_of_death, "___.+"))
+
+# save cw africa figure 2 dataset
+cwafrica_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/cwafrica/graph.wise.datasets/cwafrica_fs_fig2_dataset.csv")
+
+# plot AR figure 2
+cwafrica_fs_fig2 <- cwafrica_fs_fig2_dataset %>%
+  ggplot(mapping = aes(x = cause_of_death, y = est_le_diff_vs_actual_aggregate)) + 
+  geom_col(mapping = aes(fill = `Cause of Death`), width = 0.7, color = "white") +
+  facet_wrap(~factor(location, levels = c("nigeria", "DRC", "Angola", 
+                  "ghana", "cameroon")), scales = "free_x", ncol = 5) +
+  scale_fill_manual(values = c("darkcyan", "deepskyblue", "red",
+                               "aquamarine")) +
+  labs(x = "", y = "Years Lost", title = "Life Expectancy Impacts of PM2.5 & Other Health Threats", 
+       subtitle = "Five Most Populous Countries in Central and West Africa") +
+  ggthemes::theme_fivethirtyeight() +
+  theme(axis.text.x = element_blank(), legend.position = "bottom", axis.ticks = element_blank()) 
+
+ # save cwafrica fig2
+ ggsave("./june.2022/factsheets/cwafrica/graphs/cwafrica_fig2.png", cwafrica_fs_fig2)
+
+#> cwafrica figure 3
+
+# central and west africa figure 3 dataset
+ cwafrica_fs_fig3_dataset <- color_data_cen_west_africa %>%
+  group_by(name_1_country) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_pop_weighted = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            gain_in_le = (avg_pm2.5_pop_weighted - who_guideline) * 0.098, 
+            gain_in_le = ifelse(gain_in_le < 0, 0, gain_in_le)) %>%
+  ungroup() %>%
+  slice_max(tot_pop, n = 15) 
+ 
+ # save cw africa figure 3 dataset
+cwafrica_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/cwafrica/graph.wise.datasets/cwafrica_fs_fig3_dataset.csv")
+
+# central and west africa figure 3
+ cwafrica_fs_fig3 <- cwafrica_fs_fig3_dataset %>%
+   ggplot(mapping = aes(x = forcats::fct_reorder(name_1_country, avg_pm2.5_pop_weighted), y = gain_in_le, fill = gain_in_le)) +
+  geom_col(width = 0.5) + 
+  labs(y = "Gain In Life Expectancy (Years)", x = "Region") +
+  coord_flip() + 
+  ggthemes::theme_clean() +
+   scale_y_continuous(breaks = seq(0, 4, 1), limits = c(0, 4)) +
+   scale_fill_gradient(low = "orange", high = "red") +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(size = 12), 
+        axis.text.y = element_text(size = 9))
+
+ # save cwafrica fig3
+ ggsave("./june.2022/factsheets/cwafrica/graphs/cwafrica_fig3.png", cwafrica_fs_fig3) 
+ 
+#> cwafrica figure 4 dataset
+cwafrica_fs_fig4_dataset <- color_data_cen_west_africa %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# save cw africa figure 4 dataset
+cwafrica_fs_fig4_dataset %>%
+  write_csv("./june.2022/factsheets/cwafrica/graph.wise.datasets/cwafrica_fs_fig4_dataset.csv")
+
+
+#> cwafrica figure 4
+
+ cwafrica_fs_fig4 <- cwafrica_fs_fig4_dataset %>%
+   ggplot() +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.1) +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.8) +
+  scale_y_continuous(breaks = seq(0, 36, 2), limits = c(0, 36)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("central african" = "darkred", "west african" = "orange")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 6.5), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) +
+     geom_text(x = 2002.8, y = 7, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, "")))
+
+ 
+ # save cwafrica fig4
+ ggsave("./june.2022/factsheets/cwafrica/graphs/cwafrica_fig4.png", cwafrica_fs_fig4)
+ 
+ #> cw africa appendix table
+ cwafrica_fs_appendix_table <- color_data_cen_west_africa %>%
+  mutate(pm2020 = round(pm2020, 2),
+         le_gain_red_to_who = round((pm2020 - who_guideline)*le_constant, 2),
+         le_gain_red_to_who = ifelse(le_gain_red_to_who < 0, 0, le_gain_red_to_who),
+         le_gain_red_by_30_percent = round((pm2020*0.30)*le_constant, 2), 
+         pop_millions = round(population/1000000, 2)) %>%
+  select(country, name_2, pop_millions, pm2020, le_gain_red_to_who, 
+         le_gain_red_by_30_percent) %>%
+  ungroup() %>%
+  slice_max(pm2020, n = 50) %>%
+    rename(Country = country, 
+           Region = name_2, 
+         `Population (Millions)` = pop_millions, 
+         `PM2.5 Concentration, 2020 (µg/m³)` = pm2020,
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration to WHO guideline of 5 µg/m³` = le_gain_red_to_who, 
+         `Years of LE Gain through reducing PM2.5 from 2020 concentration by 30 percent` = le_gain_red_by_30_percent) 
+ 
+ 
+
+```
+
+
+# China factsheet
+
+```{r china_fs}
+
+# filtering the color file for China
+color_2020_china <- color_2020 %>%
+  filter(country == "China")
+
+# BTH region (name_1)
+bth_region <- c("Beijing", "Tianjin", "Hebei")
+
+# YRD (name_1)
+yrd_region <- c("Shanghai", "Jiangsu", "Zhejiang")
+
+# PRD (name_1, name_2)
+
+prd_region_name_2_guandong_regions <- c("Dongguan", "Foshan", "Guangzhou", 
+                                        "Huizhou", "Jiangmen", "Shenzhen", 
+                                        "Zhaoqing", "Zhongshan", "Zhuhai")
+
+prd_region_name_1 <- c("Hong Kong", "Macao")
+
+prd <- c(prd_region_name_2_guandong_regions, prd_region_name_1)
+
+
+# add region column
+color_2020_china  <- color_2020_china %>%
+  mutate(region = ifelse(name_1 %in% bth_region, "BTH", "others"), 
+         region = ifelse(name_1 %in% yrd_region,  "YRD", region), 
+         region = ifelse(name_1 %in% prd_region_name_1, "PRD", region), 
+         region = ifelse(name_2 %in% prd_region_name_2_guandong_regions, "PRD", region))
+
+# China factsheet figure 2 dataset
+china_fs_fig2_dataset <- color_2020_china %>%
+  group_by(name_1) %>% 
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         pm2020_pop_weighted = pop_weights*pm2020) %>%
+  summarise(tot_pop = sum(population, na.rm = TRUE), avg_pm2.5_2020 = sum(pm2020_pop_weighted, na.rm = TRUE), 
+            le_gain = (avg_pm2.5_2020 - who_guideline)*le_constant, 
+            le_gain = ifelse(le_gain < 0 , 0, le_gain)) %>%
+  slice_max(tot_pop, n = 10) %>%
+  ungroup() 
+
+# save China factsheet figure 2 dataset
+china_fs_fig2_dataset %>%
+  write_csv("./june.2022/factsheets/china/graph.wise.datasets/china_fs_fig2.csv")
+
+# plot China factsheet figure 2 dataset
+china_fs_fig2 <- china_fs_fig2_dataset %>%
+  ggplot() +
+  geom_col(mapping = aes(x = forcats::fct_reorder(name_1, le_gain), y = le_gain, fill = le_gain), width = 0.7) +
+  labs(x = "Region", y = "Average Life Expectancy Gains (Years)") +
+  scale_y_continuous(breaks = seq(0, 6, 0.5)) +
+  coord_flip() +
+  theme_classic() +
+  theme(legend.position = "none")
+
+# save China factsheet figure 2
+ggsave("./june.2022/factsheets/china/graphs/china_fs_fig2.png", china_fs_fig2)
+
+# China factsheet figure 3 (part-1): trend lines figure region wise (BTH, YRD, PRD) dataset
+trendlines_china_region_wise_df <- color_2020_china %>%
+  group_by(region) %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+")))) %>%
+  select(years, region, pop_weighted_avg_pm2.5) %>%
+  filter(region %in% c("YRD", "BTH", "PRD"))
+
+# China factsheet figure 3 (part-2): trend line national average dataset
+trendline_national_avg_df <- color_2020_china %>%
+  mutate(pop_weights = population/sum(population, na.rm = TRUE), 
+         mutate(across(starts_with("pm"), ~.x*pop_weights, .names = "{col}_weighted"))) %>%
+  summarise(across(ends_with("weighted"), sum)) %>%
+  pivot_longer(cols = pm1998_weighted:pm2020_weighted, names_to = "years", 
+               values_to = "pop_weighted_avg_pm2.5") %>%
+  mutate(years = as.integer(unlist(str_extract(years, "\\d+"))), 
+         region = "China") %>% 
+  select(years, region, pop_weighted_avg_pm2.5)
+
+# China factsheet figure 3 dataset final
+china_fs_fig3_dataset <- rbind(trendlines_china_region_wise_df, trendline_national_avg_df)
+
+# save China factsheet figure 3 dataset
+china_fs_fig3_dataset %>%
+  write_csv("./june.2022/factsheets/china/graph.wise.datasets/china_fs_fig3.csv")
+
+# plot china factsheet figure 3
+china_fs_fig3 <- ggplot(china_fs_fig3_dataset) +
+  geom_line(mapping = ggplot2::aes(x = years, y = pop_weighted_avg_pm2.5, color = region), lwd = 1.1) +
+    geom_hline(mapping = aes(yintercept = 5), lwd = 0.5, linetype = "dashed") +
+    geom_vline(mapping = aes(xintercept = 2014), lwd = 0.5, linetype = "dashed") +
+  scale_y_continuous(breaks = seq(0, 100, 10), limits = c(0, 100)) +
+  scale_x_continuous(breaks = seq(1998, 2020, 2)) +
+    scale_color_manual(values = c("China" = "darkgrey", "BTH" = "darkred", "YRD" = "darkorange", "PRD" = "burlywood1")) +
+  ggthemes::theme_clean() +
+  labs(x = "Years", 
+       y = expression(paste("Average PM2.5 concentration ( ", mu, "g", "/", m^3, " )"))) +
+  theme(legend.position = "bottom", legend.title = element_blank(), 
+        legend.text = element_text(size = 6.5), 
+        axis.title.y = element_text(size = 9), 
+        axis.title.x = element_text(size = 9)) + 
+    geom_text(x = 2003.8, y = 10, label = expression(paste("WHO PM2.5 Guideline (last updated: 2021): 5 ", mu, "g","/", m^3, ""))) + 
+    geom_text(x = 2016.5, y = 93, label = str_wrap("China announces war on pollution", width = 18))
+  
+
+# save China factsheet figure 3
+ggsave("./june.2022/factsheets/china/graphs/china_fs_fig3.png", china_fs_fig3)
+
+# China factsheet appendix table
+
+china_fs_appendix_table <- color_2020_china %>%
+  mutate(le_gain_who = round((pm2020 - who_guideline)*0.098, 1), 
+         le_gain_who = ifelse(le_gain_who < 0, 0, le_gain_who), 
+         le_gain_nat_stan = round((pm2020 - nat_stan_china)*le_constant, 1), 
+         le_gain_nat_stan = ifelse(le_gain_nat_stan < 0, 0, le_gain_nat_stan), 
+         change_poll_since_2014 = pm2014 - pm2020,
+         le_gain_from_2014_2020 = round(change_poll_since_2014*le_constant, 1),
+         le_gain_from_2014_2020 = ifelse(le_gain_from_2014_2020 < 0, 0, le_gain_from_2014_2020),
+         pop_millions = round(population/1000000, 1), 
+         pm2020 = round(pm2020, 1)) %>%
+  slice_max(population, n = 25) %>%
+  select(name_2, pop_millions, pm2020, le_gain_from_2014_2020,
+         le_gain_who, le_gain_nat_stan) %>%
+  rename(Prefectures = name_2, `Population (Millions)` = pop_millions, 
+         `PM 2.5 concentration 2020 (µg/m³)` = pm2020, 
+         `Life Expectancy Gains From 2014 concentrations to 2020 concentrations` = le_gain_from_2014_2020,
+         `From 2020 Concentration to WHO Guideline of 5 µg/m³` = le_gain_who, 
+         `From 2020 Concentration to the National Standard of 35 µg/m³` = le_gain_nat_stan)
+
+# save China factsheet appendix table
+china_fs_appendix_table %>%
+  write_csv("./june.2022/factsheets/china/china_fs_appendix_table.csv")
+
+
+```
+
+
+```{r}
+
+foo <- color_2020 %>% group_by(country) %>% summarise(min_lyl = min(llpp_who5_2020, na.rm = TRUE), max_lyl = max(llpp_who5_2020, na.rm = TRUE), range_lyl = max_lyl - min_lyl, total_population = sum(population, na.rm = TRUE))
+
+foo1 <- color_2020 %>% 
+  filter(country == "India") %>%
+  group_by(name_1) %>% 
+  summarise(min_lyl = min(llpp_who5_2020, na.rm = TRUE), max_lyl = max(llpp_who5_2020, na.rm = TRUE), range_lyl = max_lyl - min_lyl, total_population = sum(population, na.rm = TRUE))
+
+ 
+  plt <- foo1  %>% 
+    slice_max(total_population, n = 10) %>%
+     ggplot(aes(x = forcats::fct_reorder(name_1, total_population), y = min_lyl)) +
+     geom_point(aes(color = "Minimum life years lost"), size = 5) +
+     geom_point(aes(y = max_lyl, color = "Maximum life years lost"), size = 5) +
+     geom_segment(aes(xend = name_1, yend = max_lyl), 
+                  linetype = "dashed", color = "black") +
+     scale_color_manual(name = "", values = c("Minimum life years lost" = "cornflowerblue", "Maximum life years lost" = "darkred")) +
+     labs(title = "State Wise Life Years Lost to air pollution in India (range)", 
+          x = "State", y = "Life years lost", 
+          subtitle = "(Top 10 most populated states)",
+          caption = str_wrap("* Life years lost are calculated using AQLI methodology and latest (2020) AQLI data, relative to the WHO annual average PM2.5 guideline of 5 µg/m³. AQLI uses satellite derived Annual Average PM2.5 data. States are ordered from most populated to least populated."), width = 120) +
+  coord_flip() +
+    theme_classic() +
+  theme(legend.position = "bottom", 
+        legend.box.background = element_rect(color = "black"), 
+        plot.title = element_text(hjust = 0.5, size = 21), 
+        plot.caption = element_text(hjust = 0, size = 10, margin = margin(t = 1.5, unit = "cm")), 
+        plot.subtitle = element_text(size = 12, hjust = 0.5, margin = margin(b = 1, unit = "cm")), 
+        axis.text = element_text(size = 14), 
+        axis.title = element_text(size = 16, margin = margin(b = 1, unit = "cm")), 
+        legend.text = element_text(size = 16)) + 
+  scale_y_continuous(breaks = seq(0, 13, 1))
+
+
+```
