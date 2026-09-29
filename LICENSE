@@ -1,7 +1,8 @@
 Copyright (c) Air Quality Life Index, Energy Policy Institute at the University of Chicago.
-
 All rights reserved.
 
-This repository holds the code, figures, and datasets behind AQLI annual reports and factsheets. An open license has not been selected. Until AQLI publishes one, no permission is granted to copy, modify, or redistribute the code or the data beyond what applicable law already allows.
+This repository contains code, figures, and datasets used in connection with AQLI annual reports, factsheets, and related analyses.
 
-The open question is whether a future license covers code only, or code and the published datasets. That choice belongs to AQLI.
+No open-source or open-data license has been granted for the contents of this repository. Except as permitted by applicable law or otherwise authorized in writing by the Air Quality Life Index or the Energy Policy Institute at the University of Chicago, no permission is granted to copy, modify, distribute, sublicense, or otherwise reuse the code, figures, or datasets contained in this repository.
+
+Any future licensing of the repository, including whether such licensing applies to code, data, figures, or other materials, will be determined by AQLI.
