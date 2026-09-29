@@ -8,8 +8,8 @@ This repository contains the source archive for figures, datasets, and code used
 
 | Path | Contents |
 |---|---|
-| `2026/` | Current annual update |
-| `2025/` | Previous annual update, including `2025/india-extract/` |
+| `2025/` | Latest completed annual update, including `2025/india-extract/` |
+| `/aqli-internal/2026/` | Work in progress for the next annual update |
 | `archive/2022`, `archive/2023`, `archive/2024` | Closed update years |
 | `R/` | Shared helpers. `R/paths.R` resolves the repository root and external inputs |
 | `man/` | Older roxygen notes for two helper functions. Not a package manual |
@@ -18,15 +18,15 @@ Generated figures and the tables they are built from stay in git when they are t
 
 ## Reproducing a Figure
 
-Figure 1.1 from the 2026 global section is used as the worked example below.
+Figure 1.1 from the 2025 global section is used as the worked example below.
 
-1. Open R with the working directory inside this repository. R 4.3.3 matches the app lockfiles.
-2. The script is `2026/annual.report.2026/1.Global/fig1.1/script.R`.
-3. It sources `~/R/helper_function_2026.R`, which is not in this repository. Place that helper on the machine, or set the script to source the copy your team uses.
-4. The script expects a country-level table already loaded as `gadm0_aqli_2024` (columns `population` and `pm1998` through the latest `pm` year).
-5. The published output next to the script is `ar_global_fig1.1.png`.
+1. Open R with the working directory inside this repository.
+2. Use the corresponding Figure 1.1 script under the `2025/` annual-update directory.
+3. Shared helper functions are available within the repository and can be sourced from the project codebase.
+4. Load the required country-level AQLI input data expected by the figure script.
+5. Run the script to reproduce the published Figure 1.1 output.
 
-For the full 2026 map of scripts, helpers, and outputs, see `2026/README.md`.
+For the latest completed update, see the documentation under `2025/`. The `2026/` directory contains work in progress for the next annual update.
 
 External inputs that are not in git are read from `AQLI_DATA_DIR`. `R/july.2025.helper.script.R` still accepts the historical `~/Desktop/` filenames when `AQLI_DATA_DIR` is unset and those files are present. It does not call `setwd()`.
 
