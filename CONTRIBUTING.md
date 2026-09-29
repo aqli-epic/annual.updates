@@ -1,48 +1,56 @@
 # Contributing to annual.updates
 
-This repository is the source archive for AQLI annual reports, factsheets, and related figures. Changes land through a pull request.
+This repository is the source archive for AQLI annual reports, factsheets, and related figures. Changes should be made through a pull request.
 
 ## Where work goes
 
-- The current update year stays at the repository root (`2026/` while that cycle is open).
-- A closed year moves under `archive/` only after that cycle is finished.
-- Leave `archive/` and the finished `2025/` tree on their current paths. Figure scripts in those trees point at those paths.
+- `2025/` is the latest completed annual update and remains at the repository root.
+- `2026/` is the active work-in-progress annual update.
+- Older closed update years are stored under `archive/`.
+- Do not move or rename historical year directories unless the change is coordinated across all dependent scripts and documentation.
 - Shared helpers stay in `R/`.
-- Shiny apps stay in `apps/`.
-- Draft prompts stay in `internal/factsheet-prompts/`.
 
 ## Naming for new work
 
-Use this convention for new folders. Do not rename historical folders to match it.
+Use these conventions for new folders and files. Do not rename historical folders solely to match the current convention.
 
-- Inside a year: `annual-report/`, `factsheets/`, `website/`, plus a clearly named one-off analysis folder.
-- Sections and figures: `01-global/fig-1-1/`. Numeric prefix, lowercase, hyphens, no spaces.
-- Factsheet countries: lowercase, hyphens (`latin-america`, not `latin america`).
-- Apps: `apps/<short-name>/`, with a README that says whether the app is current.
+- Inside a year: `annual-report/`, `factsheets/`, `website/`, plus a clearly named one-off analysis folder when needed.
+- Sections and figures: `01-global/fig-1-1/`.
+- Use numeric prefixes where ordering matters.
+- Use lowercase names with hyphens for new folders; avoid spaces.
+- Factsheet regions and countries should use lowercase, hyphenated names, for example `latin-america`.
 
-The 2025 tree uses lowercase dotted names (`5.south.asia`). The 2026 tree uses title case (`5.Latin.America`). Both stay as they are until a new year starts.
+Historical naming conventions may differ. Existing historical paths should remain unchanged unless there is a specific migration plan.
 
 ## What a figure change includes
 
-- The script that builds the figure.
-- The input table, if it is part of the published source and is small enough to commit.
-- The output figure (PNG, SVG, or PDF) when that file is the published source.
-- A line in the year README when a new figure is added.
+A figure-related pull request should include, where applicable:
 
-Do not commit `.DS_Store`, `rsconnect/`, R session files, or passwords.
+- The script that builds the figure.
+- The input table when it is part of the published source and is appropriate to keep in git.
+- The output figure (PNG, SVG, or PDF) when that file is the published source.
+- An update to the relevant year README when a new figure is added or an existing figure changes materially.
+
+Do not commit `.DS_Store`, `rsconnect/`, R session files, passwords, credentials, or other machine-specific files.
 
 ## Paths
 
-- Read repository files with paths relative to the repository root. `R/paths.R` resolves that root from the working directory.
-- External inputs (GADM extracts and shapefiles that are not in git) go in a directory named by the `AQLI_DATA_DIR` environment variable.
-- Do not add `setwd()` or a personal Desktop path to shared helpers.
-
-## Apps
-
-Each app has its own `renv.lock`. The lockfiles in this repository were built with R 4.3.3. There is no root lockfile.
-
-`apps/analytics-explorer` reads dashboard logins from `AQLI_DASHBOARD_USERS` and `AQLI_DASHBOARD_PASSWORDS`. Do not commit those values. Rotate any password that was previously stored in `global.R`.
+- Read repository files using paths relative to the repository root.
+- `R/paths.R` resolves the repository root from the working directory.
+- External inputs that are not stored in git should be placed in a directory referenced by the `AQLI_DATA_DIR` environment variable.
+- Do not add `setwd()` calls or personal Desktop paths to shared code.
+- Shared helper functions should be sourced from the repository rather than from user-specific filesystem locations.
 
 ## Pull requests
 
-Use the pull request template. Say which year and figure changed, and how you checked the script.
+Use the pull request template.
+
+A pull request should state:
+
+- The annual-update year affected.
+- The figure, factsheet, or analysis changed.
+- The source data or inputs used.
+- How the output was reproduced or checked.
+- Any path, dependency, or output changes reviewers should know about.
+
+Keep pull requests focused. Avoid combining unrelated refactors, figure changes, and data updates in the same pull request unless they are required for the same reproducible change.
