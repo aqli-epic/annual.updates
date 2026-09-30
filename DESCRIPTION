@@ -6,7 +6,7 @@ Author: Air Quality Life Index, Energy Policy Institute at the University of Chi
 Maintainer: Air Quality Life Index <https://aqli.epic.uchicago.edu>
 Description: Figures, underlying datasets, and code for AQLI annual reports,
     factsheets, and related analyses. This repository is a research archive.
-    It is not built or installed as an R package. Shared helpers live in R/.
+    Shared helpers live in R/.
     Each Shiny app keeps its own renv.lock (R 4.3.3).
 License: file LICENSE
 Encoding: UTF-8
