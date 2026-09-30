@@ -1,3 +1,15 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+
+^\.github$
+^CITATION\.cff$
+^CONTRIBUTING\.md$
+
+^aqli-internal$
+^internal$
+
+^archive$
+^2025$
+
+^\.gitignore$
