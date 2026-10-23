@@ -14,6 +14,8 @@ west_african_countries <- c("Benin", "Burkina Faso", "Cabo Verde", "Gambia",
 # central and west africa countries definition, combine in a single vector
 central_and_west_african_countries <- c(central_african_countries, west_african_countries)
 
+central_asia <- c("Mongolia", "Kazakhstan", "Uzbekistan", "Turkmenistan", "Tajikistan", "Kyrgyzstan")
+
 # South East Asia definition
 se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia", 
                  "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", 
@@ -83,6 +85,7 @@ mid_east_countries <- c("Bahrain", "Iran", "Iraq", "Israel", "Jordan",
 
 # North Africa
 north_africa_countries <- c("Algeria", "Djibouti", "Egypt", "Libya", "Morocco", "Tunisia")
+
 
 # middle east and north africa
 mena_countries <- c(mid_east_countries, north_africa_countries)
