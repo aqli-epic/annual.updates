@@ -17,7 +17,7 @@ central_and_west_african_countries <- c(central_african_countries, west_african_
 # South East Asia definition
 se_asia_vec <- c("Brunei", "Myanmar", "Cambodia", "Timor-Leste", "Indonesia", 
                  "Laos", "Malaysia", "Philippines", "Singapore", "Thailand", 
-                 "Vietnam")
+                 "Vietnam", "North Korea", "South Korea", "Japan")
 
 # Indo-gangetic plains states
 indo_gangetic_plains_states <- c("NCT of Delhi", "Uttar Pradesh", "Bihar", "Haryana",
@@ -68,6 +68,13 @@ latin_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvado
                                  "Brazil", "Paraguay", "Chile", "Argentina", 
                                  "Uruguay", "Cuba", "Haiti", "Dominican Republic",
                                  "Puerto Rico")
+
+central_and_south_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvador",
+                                 "Nicaragua", "Costa Rica", "Panama", "Colombia",
+                                 "Venezuela", "Ecuador", "Peru", "Bolivia",
+                                 "Brazil", "Paraguay", "Chile", "Argentina",
+                                 "Uruguay", "Cuba", "Haiti", "Dominican Republic",
+                                 "Puerto Rico", "Guyana", "French Guiana","Suriname" )
 
 # Middle East definition
 mid_east_countries <- c("Bahrain", "Iran", "Iraq", "Israel", "Jordan", 
