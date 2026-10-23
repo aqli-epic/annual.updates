@@ -69,6 +69,13 @@ latin_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvado
                                  "Uruguay", "Cuba", "Haiti", "Dominican Republic",
                                  "Puerto Rico")
 
+central_and_south_america_countries_vec <- c("México", "Guatemala", "Honduras", "El Salvador",
+                                 "Nicaragua", "Costa Rica", "Panama", "Colombia",
+                                 "Venezuela", "Ecuador", "Peru", "Bolivia",
+                                 "Brazil", "Paraguay", "Chile", "Argentina",
+                                 "Uruguay", "Cuba", "Haiti", "Dominican Republic",
+                                 "Puerto Rico", "Guyana", "French Guiana","Suriname" )
+
 # Middle East definition
 mid_east_countries <- c("Bahrain", "Iran", "Iraq", "Israel", "Jordan", 
                         "Kuwait", "Lebanon", "Oman", "Qatar", "Saudi Arabia", 
