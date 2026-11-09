@@ -58,6 +58,7 @@ europe_trend_data <- gadm2_aqli_2024_europe %>%
 
 europe_trend_data$region = factor(europe_trend_data$region, levels = c("Eastern Europe", "Western Europe"))
 
+################ Requested BY CA ##########
 
 # ------------------------------------------------------------------------------
 # Data Preparation: Gap (Connected Segments)
